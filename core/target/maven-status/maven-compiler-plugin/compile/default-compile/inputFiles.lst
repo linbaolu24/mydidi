@@ -1,0 +1,15 @@
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\property\IConverter.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\resource\IResource.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\filter\impl\NotFilter.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\filter\impl\ArrayOperationFilter.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\property\ICodec.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\property\ISetAble.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\select\ISelector.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\resource\impl\CloseAbleResource.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\excpetion\BaseRuntimeException.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\property\impl\abstractSetAble\ISameTypeConvert.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\filter\IFilter.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\select\impl\AbstractSelector.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\filter\impl\StringFilter.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\property\impl\abstractSetAble\AbstractSetAble.java
+G:\develop\workspace\java\springworkspace\didi\core\src\main\java\cn\com\didi\core\resource\impl\ResourceHolder.java

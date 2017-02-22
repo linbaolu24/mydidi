@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cn.com</groupId>
+	<artifactId>didi</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<modules>
+		<module>core</module>
+		<module>order</module>
+		<module>user</module>
+		<module>message</module>
+		<module>web</module>
+		<module>domain</module>
+		<module>platform</module>
+		<module>boot</module>
+		<module>test</module>
+		<module>webBase</module>
+		<module>thirdExt</module>
+	</modules>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.7</java.version>
+
+		<!-- deploy 部署设置 -->
+		<deploy.url>http://192.168.60.102:8081/nexus/content/repositories/huishui</deploy.url>
+		<deploy.repositoryId>huishui</deploy.repositoryId>
+
+		<!-- 项目版本依赖 -->
+		<core.version>0.0.1-SNAPSHOT</core.version>
+		<user.version>0.0.1-SNAPSHOT</user.version>
+		<message.version>0.0.1-SNAPSHOT</message.version>
+		<web.version>0.0.1-SNAPSHOT</web.version>
+		<order.version>0.0.1-SNAPSHOT</order.version>
+
+		<domain.version>0.0.1-SNAPSHOT</domain.version>
+		<platform.version>0.0.1-SNAPSHOT</platform.version>
+		<test.version>0.0.1-SNAPSHOT</test.version>
+		<boot.version>0.0.1-SNAPSHOT</boot.version>
+		<webBase.version>0.0.1-SNAPSHOT</webBase.version>
+		<thirdExt.version>0.0.1-SNAPSHOT</thirdExt.version>
+
+
+
+		<!-- JAR版本依赖 -->
+		<ant-jsch.version>1.9.7</ant-jsch.version>
+		<jsch.version>0.1.53</jsch.version>
+		<junit.version>4.12</junit.version>
+		<servlet-api.version>3.0.1</servlet-api.version>
+		<jsp-api.version>2.2.1-b03</jsp-api.version>
+		<spring.version>4.1.6.RELEASE</spring.version>
+		<spring-data-redis.version>1.6.1.RELEASE</spring-data-redis.version>
+		<jsonevent-layout.version>1.1.0</jsonevent-layout.version>
+		<httpclient.version>4.5.2</httpclient.version>
+		<httpcore.version>4.4.4</httpcore.version>
+		<fastjson.version>1.1.29</fastjson.version>
+		<commons-lang.version>2.6</commons-lang.version>
+		<uc-api.version>0.0.2-SNAPSHOT</uc-api.version>
+		<dubbo.version>2.5.3</dubbo.version>
+		<zkclient.version>0.4</zkclient.version>
+		<curator.version>1.3.3</curator.version>
+		<jackson.version>2.6.0</jackson.version>
+		<json-lib.version>2.4</json-lib.version>
+		<common.file.version>1.3</common.file.version>
+		<castor.version>1.3.3</castor.version>
+		<mockito-core.version>1.9.5</mockito-core.version>
+		<Java-WebSocket.version>1.3.0</Java-WebSocket.version>
+		<tomcat.version>7.0.57</tomcat.version>
+		<mybatis-paginator.version>0.0.2</mybatis-paginator.version>
+		<commons-compress.version>1.5</commons-compress.version>
+		<dom4j.version>1.6.1</dom4j.version>
+		<jxl.version>2.6.6</jxl.version>
+		<zxing.version>3.2.1</zxing.version>
+		<aliyun-sdk-oss.version>2.2.1</aliyun-sdk-oss.version>
+		<aliyun-java-sdk-core.version>2.1.9</aliyun-java-sdk-core.version>
+		<aliyun-java-sdk-sts.version>2.1.6</aliyun-java-sdk-sts.version>
+		<jedis.version>2.8.1</jedis.version>
+		<pinyin4j.version>2.5.0</pinyin4j.version>
+		<commons-io.version>1.4</commons-io.version>
+		<commons-logging.version>1.0.4</commons-logging.version>
+		<mybatis.version>3.3.0</mybatis.version>
+		<mybatis-spring.version>1.2.3</mybatis-spring.version>
+		<druid.version>1.0.9</druid.version>
+		<mysql-connector.version>5.1.35</mysql-connector.version>
+		<slf4j.version>1.7.21</slf4j.version>
+		<maven.compiler.version>3.5.1</maven.compiler.version>
+		<maven.dependency.version>2.10</maven.dependency.version>
+		<maven.tomcat7.version>2.2</maven.tomcat7.version>
+		<jetty.version>6.1.26</jetty.version>
+		<maven-deploy.version>2.8.1</maven-deploy.version>
+		<mybatis-ehcache.version>1.0.3</mybatis-ehcache.version>
+		<javaee-api.version>5.0-1</javaee-api.version>
+		<maven-deploy.version>2.8.1</maven-deploy.version>
+		<quartz.version>2.2.3</quartz.version>
+		<itext.version>5.5.3</itext.version>
+		<itext.asian.version>5.2.0</itext.asian.version>
+		<spring-mobile.device.version>1.1.5.RELEASE</spring-mobile.device.version>
+		<commons-beanutils.version>1.8.0</commons-beanutils.version>
+		<commons-collections.version>3.2.1</commons-collections.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.ant</groupId>
+				<artifactId>ant-jsch</artifactId>
+				<version>${ant-jsch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch</artifactId>
+				<version>${jsch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<scope>test</scope>
+				<version>${junit.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.openejb</groupId>
+				<artifactId>javaee-api</artifactId>
+				<version>${javaee-api.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>${servlet-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>${jsp-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis</artifactId>
+				<version>${mybatis.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis-spring</artifactId>
+				<version>${mybatis-spring.version}</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>${commons-logging.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>${commons-beanutils.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>${commons-collections.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aspects</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-oxm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.mobile</groupId>
+				<artifactId>spring-mobile-device</artifactId>
+				<version>${spring-mobile.device.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<scope>test</scope>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>druid</artifactId>
+				<version>${druid.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql-connector.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>cn.com.servyou.log4j</groupId>
+				<artifactId>jsonevent-layout</artifactId>
+				<version>${jsonevent-layout.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>${httpclient.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>${httpcore.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>${fastjson.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>${commons-lang.version}</version>
+			</dependency>
+
+			<!-- <dependency> <groupId>cn.com.servyou</groupId> <artifactId>uc-api</artifactId> 
+				<version>${uc-api.version}</version> </dependency> -->
+
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>dubbo</artifactId>
+				<version>${dubbo.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.netflix.curator</groupId>
+				<artifactId>curator-framework</artifactId>
+				<version>${curator.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.101tec</groupId>
+				<artifactId>zkclient</artifactId>
+				<version>${zkclient.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${common.file.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.codehaus.castor</groupId>
+				<artifactId>castor-xml</artifactId>
+				<version>${castor.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${mockito-core.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>net.sf.json-lib</groupId>
+				<artifactId>json-lib</artifactId>
+				<version>${json-lib.version}</version>
+				<classifier>jdk15</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.java-websocket</groupId>
+				<artifactId>Java-WebSocket</artifactId>
+				<version>${Java-WebSocket.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>tomcat-websocket-api</artifactId>
+				<version>${tomcat.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.com.servyou.mybatis</groupId>
+				<artifactId>mybatis-paginator</artifactId>
+				<version>${mybatis-paginator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>${commons-compress.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dom4j</groupId>
+				<artifactId>dom4j</artifactId>
+				<version>${dom4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>jxl</groupId>
+				<artifactId>jxl</artifactId>
+				<version>${jxl.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mybatis.caches</groupId>
+				<artifactId>mybatis-ehcache</artifactId>
+				<version>${mybatis-ehcache.version}</version>
+			</dependency>
+			<!-- 谷歌二维码生 -->
+			<dependency>
+				<groupId>com.google.zxing</groupId>
+				<artifactId>core</artifactId>
+				<version>${zxing.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.zxing</groupId>
+				<artifactId>javase</artifactId>
+				<version>${zxing.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aliyun.oss</groupId>
+				<artifactId>aliyun-sdk-oss</artifactId>
+				<version>${aliyun-sdk-oss.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aliyun</groupId>
+				<artifactId>aliyun-java-sdk-core</artifactId>
+				<version>${aliyun-java-sdk-core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aliyun</groupId>
+				<artifactId>aliyun-java-sdk-sts</artifactId>
+				<version>${aliyun-java-sdk-sts.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-redis</artifactId>
+				<version>${spring-data-redis.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>redis.clients</groupId>
+				<artifactId>jedis</artifactId>
+				<version>${jedis.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.belerweb</groupId>
+				<artifactId>pinyin4j</artifactId>
+				<version>${pinyin4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>${quartz.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.itextpdf</groupId>
+				<artifactId>itextpdf</artifactId>
+				<version>${itext.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itextpdf</groupId>
+				<artifactId>itext-asian</artifactId>
+				<version>${itext.asian.version}</version>
+			</dependency>
+
+
+
+			<dependency>
+				<groupId>cn.com.didi</groupId>
+				<artifactId>core</artifactId>
+				<version>${core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.com.didi</groupId>
+				<artifactId>test</artifactId>
+				<version>${test.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>cn.com.didi</groupId>
+				<artifactId>boot</artifactId>
+				<version>${boot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.com.didi</groupId>
+				<artifactId>user</artifactId>
+				<version>${user.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>cn.com.didi</groupId>
+				<artifactId>webBase</artifactId>
+				<version>${webBase.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>cn.com.didi.order</groupId>
+				<artifactId>order</artifactId>
+				<version>${order.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.com.didi</groupId>
+				<artifactId>message</artifactId>
+				<version>${message.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.com.didi</groupId>
+				<artifactId>thirdExt</artifactId>
+				<version>${thirdExt.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>
