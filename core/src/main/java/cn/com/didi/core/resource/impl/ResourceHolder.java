@@ -23,6 +23,7 @@ public class ResourceHolder<T> implements IResource<T> {
 			return;
 		}
 		closed=true;
+		closeInternal();
 	}
 	protected void closeInternal() throws IOException{
 		

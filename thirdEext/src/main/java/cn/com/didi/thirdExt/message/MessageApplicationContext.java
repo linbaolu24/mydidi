@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -69,9 +70,7 @@ public class MessageApplicationContext extends MessageFactory implements Applica
 
     @Override
     public Message createMessage(String code) {
-        Map<String, String> messageCodeMap = (Map<String, String>) getMessage();
-        String message = messageCodeMap.get(code);
-        return new ResolvableMessage(code, message, resolver);
+        return createMessage(code, null);
     }
 
     @Override
@@ -105,5 +104,15 @@ public class MessageApplicationContext extends MessageFactory implements Applica
     public void setResolver(IMessageResolver resolver) {
         this.resolver = resolver;
     }
+
+	@Override
+	public Message createMessage(String code, String defaultMessage) {
+		Map<String, String> messageCodeMap = (Map<String, String>) getMessage();
+        String message = messageCodeMap.get(code);
+        if(StringUtils.isEmpty(message)){
+        	message=defaultMessage;
+        }
+        return new ResolvableMessage(code, message, resolver);
+	}
 
 }

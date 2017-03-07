@@ -1,5 +1,6 @@
 package cn.com.didi.core.resource;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -14,7 +15,7 @@ public interface IFileStorage {
 	 * @param path 
 	 * @return 返回真正的位置
 	 */
-	String storeFile(IResource<InputStream> in,long size,String path);
+	String storeFile(IResource<InputStream> in,long size,String path) throws IOException;
 	
 	/**
 	 * @param path

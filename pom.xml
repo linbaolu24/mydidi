@@ -18,6 +18,7 @@
 		<module>test</module>
 		<module>webBase</module>
 		<module>thirdExt</module>
+		<module>app</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,7 +41,7 @@
 		<boot.version>0.0.1-SNAPSHOT</boot.version>
 		<webBase.version>0.0.1-SNAPSHOT</webBase.version>
 		<thirdExt.version>0.0.1-SNAPSHOT</thirdExt.version>
-
+		<app.version>0.0.1-SNAPSHOT</app.version>
 
 
 		<!-- JAR版本依赖 -->
@@ -67,7 +68,7 @@
 		<mockito-core.version>1.9.5</mockito-core.version>
 		<Java-WebSocket.version>1.3.0</Java-WebSocket.version>
 		<tomcat.version>7.0.57</tomcat.version>
-		<mybatis-paginator.version>0.0.2</mybatis-paginator.version>
+		<mybatis-paginator.version>1.2.17</mybatis-paginator.version>
 		<commons-compress.version>1.5</commons-compress.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<jxl.version>2.6.6</jxl.version>
@@ -97,7 +98,8 @@
 		<itext.asian.version>5.2.0</itext.asian.version>
 		<spring-mobile.device.version>1.1.5.RELEASE</spring-mobile.device.version>
 		<commons-beanutils.version>1.8.0</commons-beanutils.version>
-		<commons-collections.version>3.2.1</commons-collections.version>
+		<commons-collections.version>4.0</commons-collections.version>
+		<commons-codec.version>1.9</commons-codec.version>
 	</properties>
 
 	<dependencyManagement>
@@ -170,11 +172,10 @@
 			</dependency>
 
 			<dependency>
-				<groupId>commons-collections</groupId>
-				<artifactId>commons-collections</artifactId>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
 				<version>${commons-collections.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
@@ -385,8 +386,11 @@
 				<artifactId>tomcat-websocket-api</artifactId>
 				<version>${tomcat.version}</version>
 			</dependency>
+			<!-- <dependency> <groupId>cn.com.servyou.mybatis</groupId> <artifactId>mybatis-paginator</artifactId> 
+				<version>${mybatis-paginator.version}</version> </dependency> -->
+
 			<dependency>
-				<groupId>cn.com.servyou.mybatis</groupId>
+				<groupId>com.github.miemiedev</groupId>
 				<artifactId>mybatis-paginator</artifactId>
 				<version>${mybatis-paginator.version}</version>
 			</dependency>
@@ -394,6 +398,11 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-compress</artifactId>
 				<version>${commons-compress.version}</version>
+			</dependency>
+			<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons-codec.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>dom4j</groupId>
@@ -503,7 +512,7 @@
 			</dependency>
 
 			<dependency>
-				<groupId>cn.com.didi.order</groupId>
+				<groupId>cn.com.didi</groupId>
 				<artifactId>order</artifactId>
 				<version>${order.version}</version>
 			</dependency>
@@ -516,6 +525,21 @@
 				<groupId>cn.com.didi</groupId>
 				<artifactId>thirdExt</artifactId>
 				<version>${thirdExt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.com.didi</groupId>
+				<artifactId>platform</artifactId>
+				<version>${platform.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.com.didi</groupId>
+				<artifactId>domain</artifactId>
+				<version>${domain.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.com.didi</groupId>
+				<artifactId>app</artifactId>
+				<version>${app.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

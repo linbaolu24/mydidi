@@ -31,4 +31,5 @@ public interface IHashAbleCache<K,HK,V> extends ICache<K, V> {
 	 * @return
 	 */
 	Map<HK,V> entries(K key);
+	public void putAll(K key,Map<? extends HK,? extends V> value);
 }

@@ -13,4 +13,9 @@ public interface ICodec {
 	 * @return
 	 */
 	public byte[] decode(byte[] b);
+	/**
+	 * 大写字符描述
+	 * @return
+	 */
+	public String getType();
 }

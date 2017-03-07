@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import cn.com.didi.message.listener.IMessageListener;
 import cn.com.didi.message.registry.IRegistry;

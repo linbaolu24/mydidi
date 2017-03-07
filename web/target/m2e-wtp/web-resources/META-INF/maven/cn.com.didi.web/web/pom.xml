@@ -103,6 +103,31 @@
 			<groupId>cn.com.didi</groupId>
 			<artifactId>core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>cn.com.didi</groupId>
+			<artifactId>platform</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cn.com.didi</groupId>
+			<artifactId>app</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>cn.com.didi</groupId>
+			<artifactId>boot</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>cn.com.didi</groupId>
+			<artifactId>thirdExt</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>cn.com.didi</groupId>
+			<artifactId>message</artifactId>
+		</dependency>
+		
+
 	</dependencies>
 	<build>
 		<finalName>web</finalName>

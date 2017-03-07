@@ -16,7 +16,6 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 /**
  * <p><b>VerifyCodeUtils Description:</b> (验证码生成)</p>
- * <b>DATE:</b> 2016年6月2日 下午3:53:34
  */
 public class VerifyCodeUtils{
      

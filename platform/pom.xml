@@ -96,5 +96,15 @@
 			<groupId>cn.com.didi</groupId>
 			<artifactId>user</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>cn.com.didi</groupId>
+			<artifactId>webBase</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>cn.com.didi</groupId>
+			<artifactId>order</artifactId>
+		</dependency>
 	</dependencies>
 </project>

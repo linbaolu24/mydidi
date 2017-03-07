@@ -46,5 +46,6 @@ public interface IUserContext extends ICastAble{
 	 * @return
 	 */
 	String getName();
+	
 
 }

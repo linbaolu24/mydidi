@@ -25,5 +25,20 @@
 			<groupId>cn.com.didi</groupId>
 			<artifactId>core</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>cn.com.didi</groupId>
+			<artifactId>thirdExt</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>cn.com.didi</groupId>
+			<artifactId>domain</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>cn.com.didi</groupId>
+			<artifactId>user</artifactId>
+		</dependency>
 	</dependencies>
 </project>

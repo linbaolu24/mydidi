@@ -1,9 +1,15 @@
 package cn.com.didi.core.property.impl.result;
 
+import java.io.Serializable;
+
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.IResultVisitor;
 
-public class Result<T> implements IResult<T> {
+public class Result<T> implements IResult<T>,Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6399731157171531964L;
 	private String message;
 	private String code;
 	private Exception exception;

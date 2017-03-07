@@ -12,34 +12,27 @@ import cn.com.didi.core.message.Message;
  * <p>修改历史记录：</p>
  */
 public class MessageObjectException extends BaseRuntimeException {
-    private Message msg;
+    //private Message msg;
 
-    public MessageObjectException(Message msg) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -452695270430384012L;
+	public MessageObjectException(Message msg) {
         super(msg.getCode(), msg.getMessage());
-        this.msg = msg;
+       // this.msg = msg;
     }
 
     public MessageObjectException(Message msg, Throwable e) {
         super(msg.getCode(), msg.getMessage(), e);
-        this.msg = msg;
+        //this.msg = msg;
+    }
+    public MessageObjectException(Message msg, Throwable e,Object[] arg) {
+        super(msg.getCode(), msg.getMessage(arg), e);
+        //this.msg = msg;
     }
 
-    public String getMessage() {
-        return msg.getMessage(getArg());
-    }
-
-    /**
-     * @return the msg
-     */
-    public Message getMsg() {
-        return msg;
-    }
-
-    /**
-     * @param msg the msg to set
-     */
-    public void setMsg(Message msg) {
-        this.msg = msg;
-    }
-
+	public MessageObjectException(String code, String message) {
+		 super(code, message);
+	}
 }

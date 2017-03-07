@@ -5,10 +5,14 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 import org.springframework.util.ReflectionUtils.MethodFilter;
+import org.springframework.web.context.WebApplicationContext;
 
 import cn.com.didi.test.annotion.FilePath;
 import cn.com.didi.test.annotion.Uri;
@@ -18,7 +22,9 @@ import cn.com.didi.test.spring.IMcvContainer;
  * @author xlm
  *
  */
-public class AnnotionBuilder implements InvokerBuilder {
+public class AnnotionBuilder implements InvokerBuilder, InitializingBean {
+	@Autowired
+	protected WebApplicationContext webContext;
 
 	@Override
 	public Invoker build(Method me) {
@@ -98,6 +104,11 @@ public class AnnotionBuilder implements InvokerBuilder {
 			}
 		});
 		return list;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		MockMvcBuilders.webAppContextSetup(webContext).build();
 	}
 
 }
