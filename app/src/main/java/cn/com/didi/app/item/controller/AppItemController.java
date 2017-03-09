@@ -23,17 +23,19 @@ import cn.com.didi.user.item.service.IItemService;
 public class AppItemController {
 	@Resource
 	protected IItemService item;
-	@RequestMapping(value="/app/b/order/listFls",method={RequestMethod.POST,RequestMethod.GET})
-	public IResult listSlf(){
-		List<FlServiceItemDto> items=item.selectItems();
+
+	@RequestMapping(value = "/app/c/order/listFls", method = { RequestMethod.POST, RequestMethod.GET })
+	public IResult listSlf() {
+		List<FlServiceItemDto> items = item.selectItems();
 		return ResultFactory.success(items);
 	}
-	@RequestMapping(value="/app/b/order/listSlf",method=RequestMethod.POST)
-	public IResult listSls(@RequestBody Map items){
-		Integer flsId=(Integer) items.get(DomainConstatns.FLS_ID);
+
+	@RequestMapping(value = "/app/c/order/listSls", method = RequestMethod.POST)
+	public IResult listSls(@RequestBody Map items) {
+		Integer flsId = (Integer) items.get(DomainConstatns.FLS_ID);
 		AssertUtil.assertNotNullAppend(flsId, "一级服务ID不能为空");
-		
+
 		return ResultFactory.success(SlsItemWrapper.wrap(item.selectSlItems(flsId)));
 	}
-	
+
 }

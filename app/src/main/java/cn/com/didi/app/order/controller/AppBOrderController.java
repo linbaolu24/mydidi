@@ -14,24 +14,50 @@ import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.order.orders.domain.OrderDto;
+import cn.com.didi.order.result.IOrderRuslt;
 
 @RestController
-public class AppBOrderController extends AppBaseOrderController{
-	@RequestMapping(value="/app/c/order/list",method={RequestMethod.POST})
-	public IResult orderList(@RequestBody TimeInterval time, HttpServletRequest request){
-    	Long accountId = resolver.resolve(request);
-    	time.setAccountId(accountId);
-    	return ResultFactory.success(orderInfo.selectBOrderList(time));	
-    }
-	@RequestMapping(value="/app/c/order/detail",method={RequestMethod.POST})
+public class AppBOrderController extends AppBaseOrderController {
+	@RequestMapping(value = "/app/b/order/list", method = { RequestMethod.POST })
+	public IResult orderList(@RequestBody TimeInterval time, HttpServletRequest request) {
+		Long accountId = resolver.resolve(request);
+		time.setAccountId(accountId);
+		return ResultFactory.success(orderInfo.selectBOrderList(time));
+	}
+
+	@RequestMapping(value = "/app/b/order/detail", method = { RequestMethod.POST })
 	public IResult orderDetail(@RequestBody Map map, HttpServletRequest request) {
 		Long orderId = (Long) map.get(DomainConstatns.ORDER_ID);
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
 		OrderDto cou = orderInfo.selectBOrderDetail(orderId, accountId);
-		if (cou == null ) {
+		if (cou == null) {
 			return ResultFactory.success();
 		}
 		return ResultFactory.success(buildBDetail(cou));
+	}
+
+	@RequestMapping(value = "/app/b/order/start", method = { RequestMethod.POST })
+	public IResult startService(@RequestBody Map map, HttpServletRequest request) {
+		Long orderId = (Long) map.get(DomainConstatns.ORDER_ID);
+		assertOrderId(orderId);
+		Long accountId = resolver.resolve(request);
+		IOrderRuslt<Void> or = orderService.startService(orderId, accountId);
+		if (or.success()) {
+			return ResultFactory.success();
+		}
+		return ResultFactory.error(or.getCode(), or.getMessage());
+
+	}
+	@RequestMapping(value = "/app/b/order/finish",method={RequestMethod.POST})
+	public IResult finishService(@RequestBody Map map,HttpServletRequest request){
+		Long orderId = (Long) map.get(DomainConstatns.ORDER_ID);
+		assertOrderId(orderId);
+		Long accountId = resolver.resolve(request);
+		IOrderRuslt<Void> or = orderService.finishService(orderId, accountId);
+		if (or.success()) {
+			return ResultFactory.success();
+		}
+		return ResultFactory.error(or.getCode(), or.getMessage());
 	}
 }

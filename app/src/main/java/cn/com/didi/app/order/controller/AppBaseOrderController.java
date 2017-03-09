@@ -36,6 +36,7 @@ import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
+import cn.com.didi.order.orders.service.IOrderService;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.service.IUserService;
@@ -48,6 +49,8 @@ public class AppBaseOrderController {
 	protected IOrderInfoService orderInfo;
 	@Resource
 	protected IUserService userService;
+	@Resource
+	protected IOrderService orderService;
 
 	protected void assertOrderId(Long orderId) {
 		AssertUtil.assertNotNull(orderId, "订单号");

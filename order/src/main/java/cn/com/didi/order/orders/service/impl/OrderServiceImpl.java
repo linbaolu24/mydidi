@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
 
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.Point;
@@ -25,6 +26,7 @@ import cn.com.didi.order.result.OrderRuslt;
  * @author xlm
  *
  */
+@Service
 public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	@Resource
 	private IOrderInfoService orderInfoService;

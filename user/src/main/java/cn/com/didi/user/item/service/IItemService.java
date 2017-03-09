@@ -74,4 +74,6 @@ public interface IItemService {
 	
 	/**查询Item*/
 	public List<SlsItemDto> selectSlItems(Integer flsId);
+	
+	public SlServiceDto selectSlService(Integer slsId);
 }

@@ -196,4 +196,9 @@ public class ItemServiceImpl implements IItemService {
 		return items;
 	}
 
+	@Override
+	public SlServiceDto selectSlService(Integer slsId) {
+		return slsMapper.selectByPrimaryKey(slsId);
+	}
+
 }
