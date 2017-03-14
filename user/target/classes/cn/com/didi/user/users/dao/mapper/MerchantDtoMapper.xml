@@ -460,6 +460,6 @@
     
  select me.account_Id, me.user_Name, me.cname, me.detail_address, me.address_code, me.state, me.create_time,  me.business_category, me.contact_information, 
     me.bpn, me.masterName, me.Lng, me.lat from  (merchant_area ma STRAIGHT_JOIN merchant_service ms on ma.account_id=ms.account_id)  STRAIGHT_JOIN merchant me on ma.account_id=me.account_Id where me.state='0'    and ma.area_code=#{areaCode,jdbcType=VARCHAR}
-and ms.sls_Id= #{accountId,jdbcType=INTEGER}
+and ms.sls_Id= #{slsId,jdbcType=INTEGER}
   </select>
 </mapper>

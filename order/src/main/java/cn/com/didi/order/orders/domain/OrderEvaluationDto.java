@@ -4,6 +4,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class OrderEvaluationDto implements Serializable{
+	public static final OrderEvaluationDto ZERO=new OrderEvaluationDto();
+	static{
+		ZERO.setMasterEvaluation(BigDecimal.ZERO);
+		ZERO.setOrderCount(0);
+		ZERO.setTotolEvaluation(0);
+	}
 	public int getTotolEvaluation() {
 		return totolEvaluation;
 	}

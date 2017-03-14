@@ -2,6 +2,7 @@ package cn.com.didi.app.order.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.com.didi.app.order.domain.OrderIDJAO;
 import cn.com.didi.app.order.domain.OrderJAO;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.property.IResult;
@@ -30,7 +32,6 @@ import cn.com.didi.order.orders.domain.OrderStateCostDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.result.IOrderRuslt;
-import cn.com.didi.order.result.OrderRuslt;
 import cn.com.didi.user.item.domain.SlServiceDto;
 import cn.com.didi.user.item.service.IItemService;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
@@ -60,8 +61,8 @@ public class AppOrderController extends AppBaseOrderController {
 	}
 
 	@RequestMapping(value = "/app/c/order/detail", method = { RequestMethod.POST })
-	public IResult detail(@RequestBody Map map, HttpServletRequest request) {
-		Long orderId = (Long) map.get(DomainConstatns.ORDER_ID);
+	public IResult detail(@RequestBody OrderIDJAO map, HttpServletRequest request) {
+		Long orderId = map.getOrderId();
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
 		Couple<OrderDto, OrderEvaluationDto> cou = orderInfo.selectCOrderDetail(orderId, accountId);
@@ -74,8 +75,8 @@ public class AppOrderController extends AppBaseOrderController {
 	}
 
 	@RequestMapping(value = "/app/c/order/state", method = { RequestMethod.POST })
-	public IResult state(@RequestBody Map map, HttpServletRequest request) {
-		Long orderId = (Long) map.get(DomainConstatns.ORDER_ID);
+	public IResult state(@RequestBody OrderIDJAO map, HttpServletRequest request) {
+		Long orderId =  map.getOrderId();
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
 		OrderDto orderDto = orderInfo.selectCOrder(orderId, accountId);
@@ -86,9 +87,9 @@ public class AppOrderController extends AppBaseOrderController {
 		return ResultFactory.success(build(orderDto, list));
 	}
 
-	@RequestMapping(value = "/api/app/c/order/evaInfo", method = { RequestMethod.POST })
-	public IResult evaInfo(@RequestBody Map map, HttpServletRequest request) {
-		Long orderId = (Long) map.get(DomainConstatns.ORDER_ID);
+	@RequestMapping(value = "/app/c/order/evaInfo", method = { RequestMethod.POST })
+	public IResult evaInfo(@RequestBody OrderIDJAO map, HttpServletRequest request) {
+		Long orderId = map.getOrderId();
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
 		OrderDto orderDto = orderInfo.selectCOrder(orderId, accountId);
@@ -135,6 +136,8 @@ public class AppOrderController extends AppBaseOrderController {
 	public IResult publish(@RequestBody OrderJAO body, HttpServletRequest request) {
 		Long accountId = resolver.resolve(request);
 		OrderDto order = toOrderDto(body);
+		Date date=new Date();
+		order.setOct(date);
 		SlServiceDto sls = itemService.selectSlService(body.getSlsId());
 		AssertUtil.assertNotNull(sls, "二级服务不存在");
 		order.setBusinessCategory(sls.getBusinessCategory());
@@ -149,6 +152,7 @@ public class AppOrderController extends AppBaseOrderController {
 		}
 		Map p = new HashMap();
 		p.put(DomainConstatns.ORDER_ID, result.getOrderId());
+		p.put(DomainConstatns.OCT, date);
 		return ResultFactory.success(p);
 	}
 
@@ -186,12 +190,12 @@ public class AppOrderController extends AppBaseOrderController {
 	}
 
 	@RequestMapping(value = "/app/c/order/cancel", method = { RequestMethod.POST })
-	public IResult cancel(@RequestBody Map map, HttpServletRequest request) {
-		Long orderId = (Long) map.get(DomainConstatns.ORDER_ID);
+	public IResult cancel(@RequestBody OrderIDJAO map, HttpServletRequest request) {
+		Long orderId = (Long)  map.getOrderId();
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
 		IOrderRuslt<OrderStateCostDto> or = orderService.cannel(orderId, accountId);
-		if (or.success()) {
+		if (or==null||or.success()) {
 			return ResultFactory.success(or.getData());
 		}
 		return ResultFactory.error(or.getCode(), or.getMessage());

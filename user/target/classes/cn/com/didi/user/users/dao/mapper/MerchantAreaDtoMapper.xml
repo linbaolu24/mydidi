@@ -213,8 +213,8 @@
   
   
    <select id="selectPoints" resultMap="BaseResultMap" >
-   select ma.account_Id,ma.lat,ma.lng from merchant_service ms,merchant_area ma,merchant me where ms.sls_id=#{slsId,jdbcType=INTEGER} and ma.account_Id=ms.account_Id
-   and ma.lat&gt;= #{leftDown.lat,jdbcType=DECIMAL} and ma.lat&lt;=#{rightTop.lat,jdbcType=DECIMAL} 
-   and ma.Lng&gt;=#{leftDown.lng,jdbcType=DECIMAL} and ma.Lng&lt;=#{rightTop.lng,jdbcType=DECIMAL}  and  ma.account_id=me.account_Id and me.state='0'
+   select me.account_Id,me.lat,me.lng from merchant_service ms,merchant me where ms.sls_id=#{slsId,jdbcType=INTEGER} and ms.account_Id=me.account_Id
+   and me.lat&gt;= #{leftDown.lat,jdbcType=DECIMAL} and me.lat&lt;=#{rightTop.lat,jdbcType=DECIMAL} 
+   and me.Lng&gt;=#{leftDown.lng,jdbcType=DECIMAL} and me.Lng&lt;=#{rightTop.lng,jdbcType=DECIMAL}   and me.state='0'
   </select>
 </mapper>

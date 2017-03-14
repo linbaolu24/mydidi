@@ -39,10 +39,21 @@
 			<groupId>cn.com.didi</groupId>
 			<artifactId>order</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
+
+		<!-- <dependency>
+			<groupId>net.sinofool</groupId>
+			<artifactId>alipay-java-sdk</artifactId>
+			<version>1.2.1</version>
+		</dependency> -->
+		<dependency>
+		<groupId>com.alipay.api</groupId>
+		<artifactId>alipay</artifactId>
+		<version>1.0</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -42,6 +42,13 @@ public interface IOrderInfoService {
 	 * @return 
 	 */
 	public Couple<OrderDto, OrderEvaluationDto> selectCOrderDetail(Long orderId,Long cid);
+	
+	/**
+	 * @param orderId
+	 * @param cid
+	 * @return 
+	 */
+	public Couple<OrderDto, OrderEvaluationDto> selectOrderDetail(Long orderId);
 	/**
 	 * @param orderId
 	 * @param bid
@@ -96,6 +103,7 @@ public interface IOrderInfoService {
 	/**<p>更新订单状态和花费</p>
 	 * @param orderId
 	 * @param sourceState
+	 * @param cost 如果为空 不更新cost
 	 * @return
 	 */
 	public int updateOrderState(Long orderId,String destState,String sourceState,Integer cost);
@@ -121,7 +129,12 @@ public interface IOrderInfoService {
 	 */
 	public int updateOrderCannelState(Long orderId,String destState,String sourceState,Integer cost);
 	
-	public void deal();
+	/**
+	 * @param orderId
+	 * @param dealId
+	 * @return
+	 */
+	public int updateOrderDealId(Long orderId,Long dealId);
 	
 	
 }

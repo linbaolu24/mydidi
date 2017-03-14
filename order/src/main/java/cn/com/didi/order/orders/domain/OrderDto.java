@@ -624,4 +624,8 @@ public class OrderDto implements Serializable {
     public void setMlat(BigDecimal mlat) {
         this.mlat = mlat;
     }
+    @Override
+    public String toString(){
+    	return "订单编号:"+orderId+"消费者Id:"+consumerAccountId+"商户ID:"+merchantAccountId+"状态:"+state+"cost:"+cost;
+    }
 }

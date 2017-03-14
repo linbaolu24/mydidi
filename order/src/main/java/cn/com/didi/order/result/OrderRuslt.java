@@ -1,9 +1,10 @@
 package cn.com.didi.order.result;
 
+import cn.com.didi.core.message.Message;
 import cn.com.didi.core.property.impl.result.Result;
 
 public class OrderRuslt<T> extends Result<T> implements IOrderRuslt<T>{
-	public static final OrderRuslt SUCCESS_ORDER_RESULT=new OrderRuslt(null);
+	public static final OrderRuslt SUCCESS_ORDER_RESULT=new OrderRuslt((Long)null);
 	public boolean isFinish() {
 		return finish;
 	}
@@ -33,7 +34,16 @@ public class OrderRuslt<T> extends Result<T> implements IOrderRuslt<T>{
 		this(null,SUCCESS_CODE,null,null);
 		this.orderId=orderId;
 	}
-
-	
+	public OrderRuslt(String message, String code) {
+		super(message, code, null, null);
+		// TODO Auto-generated constructor stub
+	}
+	public OrderRuslt(Message message){
+		this(message.getMessage(),message.getCode());
+	}
+	@SuppressWarnings("unchecked")
+	public static <T> OrderRuslt<T> successResult(){
+		return SUCCESS_ORDER_RESULT;
+	}
 
 }

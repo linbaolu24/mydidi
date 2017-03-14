@@ -46,5 +46,17 @@
 	<property name="hashAble" ref="redisCache"></property>
 	 </bean>
 	<bean id="redisCache" class="cn.com.didi.thirdExt.cache.RedisCache"> </bean>
+	
+	
+	
+	<bean id="simpleExecutorFactory" class="cn.com.didi.core.thread.impl.SimpleExecutorFactory" init-method="init"> 
+	<property name="corePoolSize" value="${se.corePoolSize:5}"></property>
+	<property name="keepAliveTime" value="${se.keepAliveTime:-1}"></property>
+	<property name="maximumPoolSize" value="${se.maximumPoolSize:5}"></property>
+	<property name="queueSize" value="${se.queueSize:-1}"></property>
+	<property name="mock" value="${se.mock:false}"></property>
+	</bean>
+	
+	
 	<bean id="didiSimpleCodecImpl" class="cn.com.didi.core.property.impl.codec.SimpleCodecImpl"> </bean>
 </beans>

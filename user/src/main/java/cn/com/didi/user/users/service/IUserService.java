@@ -1,5 +1,7 @@
 package cn.com.didi.user.users.service;
 
+import java.util.List;
+
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.user.users.domain.UserDto;
@@ -84,6 +86,12 @@ public interface IUserService {
 	 * @param accountId
 	 */
 	public UserLinkIdDto selectUserLinkedId(Long accountId);
+	
+	/**
+	 * h
+	 * @param accountId
+	 */
+	public List<UserLinkIdDto> selectUserLinkedId(List<Long> accountId);
 	/**
 	 * @param accountId
 	 * @param gtCid

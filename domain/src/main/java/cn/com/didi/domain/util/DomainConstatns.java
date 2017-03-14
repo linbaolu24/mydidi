@@ -59,7 +59,7 @@ public class DomainConstatns {
 	 */
 	public static final String CSTATE= "cstate";
 	
-	
+	public static final String DEALID= "dealId";
 	
 
 }

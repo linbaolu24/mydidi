@@ -3,9 +3,13 @@ package cn.com.didi.message.shortmessage;
 import com.gexin.rp.sdk.base.IPushResult;
 import com.gexin.rp.sdk.base.impl.SingleMessage;
 import com.gexin.rp.sdk.base.impl.Target;
+import com.gexin.rp.sdk.base.impl.Transparent.Notification;
 import com.gexin.rp.sdk.exceptions.RequestException;
 import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.LinkTemplate;
+import com.gexin.rp.sdk.template.NotificationTemplate;
+import com.gexin.rp.sdk.template.style.Style0;
+import com.gexin.rp.sdk.template.style.Style6;
 
 public class GtTest {
 
@@ -19,7 +23,7 @@ public class GtTest {
 
 	public static void main(String[] args) throws Exception {
 		IGtPush push = new IGtPush(host, appKey, masterSecret);
-		LinkTemplate template = linkTemplateDemo();
+		NotificationTemplate template = notificationTemplateDemo();
 		SingleMessage message = new SingleMessage();
 		message.setOffline(true);
 		// 离线有效时间，单位为毫秒，可选
@@ -63,6 +67,30 @@ public class GtTest {
 		template.setIsClearable(true);
 		// 设置打开的网址地址
 		template.setUrl("http://www.baidu.com");
+		return template;
+	}
+	
+	public static NotificationTemplate notificationTemplateDemo() {
+		NotificationTemplate template = new NotificationTemplate();
+		// 设置APPID与APPKEY
+		template.setAppId(appId);
+		template.setAppkey(appKey);
+		// 设置通知栏标题与内容
+		template.setTitle("请输入通知栏标题");
+		template.setText("请输入通知栏内容");
+		// 配置通知栏图标
+		template.setLogo("icon.png");
+		// 配置通知栏网络图标，填写图标URL地址
+		template.setLogoUrl("");
+		// 设置通知是否响铃，震动，或者可清除
+		template.setIsRing(true);
+		template.setIsVibrate(true);
+		template.setIsClearable(true);
+	//	template.setStyle(new Style6());
+		// 设置打开的网址地址
+		template.setTransmissionContent("{132321312323}");
+		template.setTransmissionType(2);
+		//template.setUrl("http://www.baidu.com");
 		return template;
 	}
 }

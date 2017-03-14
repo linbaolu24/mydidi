@@ -10,7 +10,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 
 import javax.annotation.Resource;
-import javax.annotation.Resources;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -21,6 +20,7 @@ import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.commons.codec.Charsets;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -84,7 +84,7 @@ public class ShortMessageServiceImpl implements IShortMessageService {
 		this.userCode = userCode;
 	}
 
-	private String url = "http://112.124.24.5/api/MsgSend.asmx/sendMsgByEncrypt";
+	private String url = "http://120.55.197.77:1210/Services/MsgSend.asmx/sendMsgByEncrypt";
 	private String userPass;
 	private String channel;
 	private String userCode;
@@ -98,9 +98,9 @@ public class ShortMessageServiceImpl implements IShortMessageService {
 
 	public IResult<Void> sendMessage(ShortMessgaeDto dto) {
 		SmHttpHandler sm = new SmHttpHandler(dto);
-		try{
+		try {
 			httpService.post(sm);
-		}catch(MessageObjectException e){
+		} catch (MessageObjectException e) {
 			return ResultFactory.error(e.getCode(), e.getMessage());
 		}
 		return sm.getResult();
@@ -108,8 +108,8 @@ public class ShortMessageServiceImpl implements IShortMessageService {
 	}
 
 	public String DESEncrypt(String encryptStr) throws InvalidKeyException, InvalidAlgorithmParameterException,
-	InvalidKeySpecException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
-	BadPaddingException, UnsupportedEncodingException {
+			InvalidKeySpecException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
+			BadPaddingException, UnsupportedEncodingException {
 		String result = "";
 		DESKeySpec desKeySpec = new DESKeySpec(encryptKey.getBytes());
 		SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
@@ -163,7 +163,7 @@ public class ShortMessageServiceImpl implements IShortMessageService {
 
 		public boolean preForRequest(HttpEntityEnclosingRequestBase post) {
 			try {
-				
+
 				post.setURI(new URI(getUrl()));
 				StringBuilder sBuilder = new StringBuilder();
 				sBuilder.append("userPass=").append(userPass);
@@ -179,6 +179,7 @@ public class ShortMessageServiceImpl implements IShortMessageService {
 				sBuilder.append("&Channel=").append(channel);
 				String encryptStr;
 				encryptStr = DESEncrypt(sBuilder.toString());
+				LOGGER.debug("加密串为{}", encryptStr);
 				NameValuePair[] pair = new NameValuePair[2];
 				pair[0] = new BasicNameValuePair("userCode", userCode);
 				pair[1] = new BasicNameValuePair("submitInfo", encryptStr);
@@ -199,8 +200,9 @@ public class ShortMessageServiceImpl implements IShortMessageService {
                 	return;
 				} 
 				String str = EntityUtils.toString(post.getEntity(), Charsets.UTF_8);
+				String code=getCode(str);
 				//result = ResultFactory.success();
-				if (str.startsWith("-")) {
+				if (code.startsWith("-")) {
 					LOGGER.error("短信网关返回:" + str);
 					constructResult(MessageConstants.SM_GATE_ERROR);
 				}else{
@@ -211,6 +213,23 @@ public class ShortMessageServiceImpl implements IShortMessageService {
 				LOGGER.error(e.getMessage(), e);
 				constructResult(MessageConstants.SM_PARSE_RESULT_ERROR);
 			}
+		}
+
+		protected String getCode(String str) {
+			if (StringUtils.isEmpty(str)) {
+				LOGGER.error("短信网关返回为空");
+				return "-";
+			}
+			int k = str.indexOf("</string");
+			if (k != -1) {
+				int k1 = str.lastIndexOf(">", k);
+				if (k1 != -1) {
+					return str.substring(k1 + 1, k);
+				}
+			}
+			LOGGER.error("短信网关返回结果未知");
+			return "-";
+
 		}
 
 		protected void constructResult(Message message) {

@@ -7,7 +7,6 @@ import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
 import cn.com.didi.user.users.domain.MerchantDto;
-import cn.com.didi.user.users.domain.MerchantExtDto;
 import cn.com.didi.user.users.domain.MerchantHolderDto;
 import cn.com.didi.user.users.domain.MerchantServiceDto;
 
@@ -51,7 +50,7 @@ public interface IMerchantService {
 	/**
 	 * @param Merchant
 	 */
-	void addMerchant(MerchantExtDto Merchant);
+	//void addMerchant(MerchantExtDto Merchant);
 
 	/**
 	 * @param Merchant

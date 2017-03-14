@@ -19,14 +19,15 @@ public class ShortMessageTest {
 		SimpleHttpService servce=new SimpleHttpService();
 		servce.setHttpExe(exeService);
 		impl.setHttpService(servce);
-		impl.setUserCode("DSKJYX");
-		impl.setUserPass("KJYXabc123");
+		impl.setUserCode("DSKJCF");
+		//impl.setUserPass("KJYXabc123");
+		impl.setUserPass("SIU789SY");
 		impl.setHttpService(servce);
-		impl.setChannel("86");
+		impl.setChannel("0");
 		impl.init();
 		ShortMessgaeDto dto=new ShortMessgaeDto();
 		dto.setPhones(new String[]{"15858150715"});
-		dto.setContent("验证码[123456]【嘀嘀】");
+		dto.setContent("您的验证码为：1234，30分钟内有效【嘀嘀】");
 		impl.sendMessage(dto);
 		
 	}

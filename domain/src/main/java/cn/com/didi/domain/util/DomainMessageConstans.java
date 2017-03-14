@@ -133,4 +133,40 @@ public class DomainMessageConstans {
 	 * 已完成服务的订单不能取消
 	 */
 	public static final String CODE_ORDER_SERVICE_FINISH_CANNOT_CANNEL="5003000005";
+	/**
+	 * 非待付款状态的订单不能创建订单
+	 */
+	public static final String CODE_ORDER_NOT_PENDING_CHARGE="5003000006";
+	
+	
+	/**
+	 * 已接单订单不能超时
+	 */
+	public static final String CODE_ORDER_HAVE_TIKEING="5003000007";
+	
+	/**
+	 * 交易不存在对应的订单
+	 */
+	public static final String CODE_ORDER_DEAL_NOT_EXIST="5003000008";
+	
+	/**
+	 * 非待付款订单不能完成交易
+	 */
+	public static final String CODE_ORDER_NOT_PENDING_CHARGE_FINISH_DEAL="5003000009";
+	
+
+	
+	
+	
+	
+	
+	
+	/**
+	 * 交易记录不存在
+	 */
+	public static final String CODE_DEAL_NOT_EXIST="5004000001";
+	/**
+	 * 交易记录金额不相等
+	 */
+	public static final String CODE_DEAL_ACCOUNT_NOT_EQUAL="5004000002";
 }

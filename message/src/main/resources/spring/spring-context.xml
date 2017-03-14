@@ -20,4 +20,11 @@
 	<property name="userCode" value="${sm.userCode:DSKJYX}"></property>
 	<property name="userPass" value="${sm.userPass:KJYXabc123}"></property>
 	</bean>
+	
+	
+	<bean  id="pushMessageServiceImpl" class="cn.com.didi.message.push.service.impl.PushMessageServiceImpl" init-method="init">
+	<property name="appId" value="${gt.appId}"></property>
+	<property name="appKey" value="${gt.appKey}"></property>
+	<property name="masterSecret" value="${gt.masterSecret}"></property>
+	</bean>
 </beans>

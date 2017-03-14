@@ -53,9 +53,9 @@ public class MerchantExtDto implements Serializable{
 		this.areaList = areaList;
 	}
 
-	public MerchantDto getDto() {
+	/*public MerchantDto getDto() {
 		return dto;
-	}
+	}*/
 
 	public Long getAccountId() {
 		return dto.getAccountId();

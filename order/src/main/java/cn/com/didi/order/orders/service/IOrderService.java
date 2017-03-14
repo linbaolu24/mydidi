@@ -1,5 +1,9 @@
 package cn.com.didi.order.orders.service;
 
+import java.util.Date;
+
+import cn.com.didi.domain.domains.PayResultDto;
+import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.IOrderInfo;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderStateCostDto;
@@ -45,7 +49,7 @@ public interface IOrderService {
 	 */
 	static int ORDER_STATE_Pending_EVALUATION=8;
 	/**
-	 * 发布订单
+	 * 发布订单 date为订单创建时间
 	 */
 	public IOrderRuslt<Void> publish(OrderDto info);
 	/**
@@ -104,15 +108,13 @@ public interface IOrderService {
 	 * @param bId
 	 * @return
 	 */
-	public IOrderRuslt<Long> createDeal(Long orderId, Long bId);
+	public IOrderRuslt<Long> createDeal(Long orderId, Long bId,PayAccountEnum payEnum);
 	
+
 	/**
-	 * 完成交易
-	 * @param orderId
-	 * @param dealId
-	 * @param cost
-	 * @param bId
+	 * @param payResult
 	 * @return
 	 */
-	public IOrderRuslt<Void> finishDeal(Long orderId,Long dealId,Integer cost,Long bId);
+	public IOrderRuslt<Void> finishDeal(PayResultDto payResult);
+	
 }

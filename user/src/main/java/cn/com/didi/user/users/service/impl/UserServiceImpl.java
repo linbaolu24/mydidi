@@ -28,6 +28,7 @@ import cn.com.didi.user.users.dao.mapper.UserLinkIdDtoMapper;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserDtoExample;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
+import cn.com.didi.user.users.domain.UserLinkIdDtoExample;
 import cn.com.didi.user.users.service.IUserService;
 import cn.com.didi.user.util.MessageConstans;
 
@@ -238,6 +239,17 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		cri.andRoleEqualTo(dto.getRole());
 		userDtoMapper.updateByExampleSelective(dto, example);
 		
+	}
+
+	@Override
+	public List<UserLinkIdDto> selectUserLinkedId(List<Long> accountId) {
+		if(CollectionUtils.isEmpty(accountId)){
+			return null;
+		}
+		UserLinkIdDtoExample example=new UserLinkIdDtoExample();
+		UserLinkIdDtoExample.Criteria cri= example.createCriteria();
+		cri.andAccountIdIn(accountId);
+		return userLinkIdDtoMapper.selectByExample(example);
 	}
 
 

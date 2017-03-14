@@ -55,7 +55,7 @@
 
 	<bean id="tmDidi"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-		name="qyfwptTxm">
+		name="transactionManager">
 		<property name="dataSource" ref="didiDatasource" />
 	</bean>
 </beans>

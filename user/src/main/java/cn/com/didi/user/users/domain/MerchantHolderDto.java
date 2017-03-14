@@ -56,7 +56,7 @@ public class MerchantHolderDto implements Serializable {
 	}
 
 	public void fromMerchantExtDto(MerchantExtDto extDto) {
-		this.setDto(extDto.getDto());
+		this.setDto(extDto.dto());
 		this.setAddress(extDto.getAddress());
 		this.setAreaList(extDto.getAreaList());
 	}

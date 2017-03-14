@@ -29,7 +29,7 @@ public interface UserDtoMapper {
     int updateByPrimaryKeySelective(UserDto record);
 
     int updateByPrimaryKey(UserDto record);
-    /**TODO sql未写
+    /**
      * @param interval
      * @return
      */

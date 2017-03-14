@@ -131,7 +131,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cn.com.didi.order.orders.domain.OrderDto" >
+  <insert id="insert" parameterType="cn.com.didi.order.orders.domain.OrderDto" useGeneratedKeys="true" keyProperty="orderId">
     insert into t_order (order_id, sls_id, fls_id, 
       description, cname, cci, 
       consumer_address, cas, consumer_name, 
@@ -155,7 +155,7 @@
       #{cancelFlag,jdbcType=CHAR}, #{commission,jdbcType=INTEGER}, #{poundage,jdbcType=INTEGER}, 
       #{mlng,jdbcType=DECIMAL}, #{mlat,jdbcType=DECIMAL})
   </insert>
-  <insert id="insertSelective" parameterType="cn.com.didi.order.orders.domain.OrderDto" >
+  <insert id="insertSelective" parameterType="cn.com.didi.order.orders.domain.OrderDto" useGeneratedKeys="true" keyProperty="orderId">
     insert into t_order
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -750,7 +750,7 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
  <select id="selectByPrimaryKeyAndCId" resultMap="BaseResultMap"  >
     select 
     <include refid="Base_Column_List" />
-    from t_order
+    from t_order td
     where order_id = #{orderId,jdbcType=BIGINT} and td.consumer_account_id=#{accountId,jdbcType=BIGINT}
   </select>
  
@@ -758,7 +758,7 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
  <select id="selectByPrimaryKeyAndBId" resultMap="BaseResultMap"  >
     select 
     <include refid="Base_Column_List" />
-    from t_order
+    from t_order td
     where order_id = #{orderId,jdbcType=BIGINT} and td.merchant_account_id=#{accountId,jdbcType=BIGINT}
   </select>
  
@@ -788,17 +788,18 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
     where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
   </update>
  
- <update id="updateOrderStateAndCId" >
+ <update id="updateOrderStateAndBId" >
     update t_order
     set  state = #{destState,jdbcType=CHAR},master_name=#{merchant.mastername,jdbcType=VARCHAR},
+    merchant_account_id=#{merchant.accountId,jdbcType=BIGINT},
     mlng=#{merchant.lng,jdbcType=DECIMAL},mlat=#{merchant.lat,jdbcType=DECIMAL},
     mci=#{merchant.contactInformation,jdbcType=VARCHAR},ort=#{ort,jdbcType=TIMESTAMP} 
     where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
   </update>
  <update id="updateOrderStateAndCost" >
     update t_order
-    set  state = #{destState,jdbcType=CHAR} 
-    set  cost=#{cost,jdbcType=INTEGER}
+    set  state = #{destState,jdbcType=CHAR} ,
+      cost=#{cost,jdbcType=INTEGER}
     where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
   </update>
  
@@ -813,12 +814,44 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
   
    <update id="updateOrderEndState" >
     update t_order
-    set  state = #{destState,jdbcType=CHAR},oet=#{date,jdbcType=TIMESTAMP},
+    set  state = #{destState,jdbcType=CHAR},oet=#{date,jdbcType=TIMESTAMP}
     <if test="fail != null">
-    set cause=#{fail,jdbcType=VARCHAR}
+    ,cause=#{fail,jdbcType=VARCHAR}
     </if>
     where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
   </update>
  
+ 
+ 
+ <update id="updateOrderDealId" >
+    update t_order
+    set  deal_id = #{dealId,jdbcType=BIGINT}
+    where order_id = #{orderId,jdbcType=BIGINT} 
+  </update>
+ 
+ <select id="selectOrderSubjectInformation" resultMap="BaseResultMap">
+  select order_id, sls_id, fls_id,  cname, cci, consumer_address, cas, consumer_name, 
+    state,  consumer_account_id, merchant_account_id, Lng, lat, business_charge, 
+    business_category, master_name, mci, cost, deal_id, 
+     cancel_flag, commission, poundage, mlng, mlat  from t_order where order_id = #{orderId,jdbcType=BIGINT}
+  </select>
+  
+  
+  
+  <update id="updateOrderStateAndCostCancelFalg" >
+    update t_order
+    set  state = #{destState,jdbcType=CHAR} ,
+      cost=#{cost,jdbcType=INTEGER},
+     cancel_flag=#{cannelFlag,jdbcType=CHAR} 
+    where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
+  </update>
+  
+   <update id="updateOrderCancelEndState" >
+    update t_order
+    set  state = #{destState,jdbcType=CHAR},oet=#{date,jdbcType=TIMESTAMP},
+    cancel_flag=#{cannelFlag,jdbcType=CHAR} 
+    where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
+  </update>
+  
  
 </mapper>

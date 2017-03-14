@@ -70,16 +70,21 @@ public class AppBaseOrderController {
 		map.put(MASTER_NAME, order.getMasterName());
 
 		map.put(MCI, order.getMci());
-		map.put(ORDER_COUNT, eve == null ? 0 : eve.getOrderCount());
-		map.put(MASTER_EVALUATION, eve == null ? "0" : eve.getMasterEvaluation().toString());
+		if (eve != null) {
+			map.put(ORDER_COUNT, eve == null ? 0 : eve.getOrderCount());
+			map.put(MASTER_EVALUATION, eve == null ? "0" : eve.getMasterEvaluation().toString());
+		}
 		map.put(CONSUMER_ADDRESS, order.getConsumerAddress());
+		if (userLink != null) {
+			map.put(ALIPAY_ACCOUNT, userLink.getAlipayAccount());
+			map.put(WECHAT_ACCOUNT, userLink.getWechatAccount());
+			map.put(GT_CID, userLink.getGtCid());
+			map.put(RY_TOKEN, userLink.getRyToken());
 
-		map.put(ALIPAY_ACCOUNT, userLink.getAlipayAccount());
-		map.put(WECHAT_ACCOUNT, userLink.getWechatAccount());
-		map.put(GT_CID, userLink.getGtCid());
-		map.put(RY_TOKEN, userLink.getRyToken());
-
-		map.put(MPP, userDto.getProfilePhoto());
+		}
+		if (userDto != null) {
+			map.put(MPP, userDto.getProfilePhoto());
+		}
 		return map;
 
 	}
@@ -119,18 +124,22 @@ public class AppBaseOrderController {
 				Map oneMap = new HashMap();
 				oneMap.put(UPDATE_TIME, one.getUpdateTime());
 				oneMap.put(CSTATE, one.getCstate());
+				stateList.add(oneMap);
 			}
 		}
 		return map;
 	}
-	
+
 	public Map buildBDetail(OrderDto order) {
-		Map map=build(order);
-		map.put(DomainConstatns.OCT,order.getOct());//	订单创建时间	
-		map.put(DomainConstatns.SST,order.getSst());//	开始服务时间
-		map.put(DomainConstatns.CONSUMER_ADDRESS,order.getConsumerAddress());//	客户地址
-		map.put(DomainConstatns.CCI,order.getCci());//	客户联系方式		
-		map.put(DomainConstatns.CONSUMER_NAME,order.getConsumerName());//consumerName	客户名称	String			Y	
+		Map map = build(order);
+		map.put(DomainConstatns.OCT, order.getOct());// 订单创建时间
+		map.put(DomainConstatns.SST, order.getSst());// 开始服务时间
+		map.put(DomainConstatns.CONSUMER_ADDRESS, order.getConsumerAddress());// 客户地址
+		map.put(DomainConstatns.CCI, order.getCci());// 客户联系方式
+		map.put(DomainConstatns.CONSUMER_NAME, order.getConsumerName());// consumerName
+																		// 客户名称
+																		// String
+																		// Y
 		return map;
 
 	}

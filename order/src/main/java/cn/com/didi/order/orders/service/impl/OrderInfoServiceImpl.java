@@ -40,7 +40,6 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	@Resource
 	protected IMerchantService merchantService;
 
-	// TODO 未实现
 	public IPage<OrderListDto> selectOrders(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
 		PageList<OrderListDto> list = (PageList<OrderListDto>) orderMapper.selectOrders(interval, pageBounds);
@@ -82,7 +81,7 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	}
 
 	public OrderDto selectBOrderDetail(Long orderId, Long bid) {
-		if (orderId == orderId || bid == null) {
+		if (orderId == null || bid == null) {
 			return null;
 		}
 		OrderDto dto = orderMapper.selectByPrimaryKeyAndBId(orderId, bid);
@@ -105,13 +104,13 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	@Override
 	public List<OrderListDto> selectBOrderList(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), false);
-		return orderMapper.selectCOrderList(interval, pageBounds);
+		return orderMapper.selectBOrderList(interval, pageBounds);
 	}
 
 	@Override
 	public List<OrderListDto> selectCOrderList(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), false);
-		return orderMapper.selectBOrderList(interval, pageBounds);
+		return orderMapper.selectCOrderList(interval, pageBounds);
 	}
 
 	@Override
@@ -128,8 +127,10 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 
 	@Override
 	public OrderDto selectOrderSubjectInformation(Long orderId) {
-		// TODO Auto-generated method stub
-		return null;
+		if(orderId==null){
+			return null;
+		}
+		return orderMapper.selectOrderSubjectInformation(orderId);
 	}
 
 	@Override
@@ -221,9 +222,9 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		int count = 0;
 		Date date = new Date();
 		if (cost != null) {
-			count = orderMapper.updateOrderStateAndCost(orderId, destState, sourceState, cost);
+			count = orderMapper.updateOrderStateAndCostCancelFalg(orderId, destState, sourceState, cost,"1");
 		} else {
-			count = orderMapper.updateOrderEndState(orderId, destState, sourceState, null, date);
+			count = orderMapper.updateOrderCancelEndState(orderId, destState, sourceState, date,"1");
 		}
 		if (count != 0) {
 			addStateUpdate(orderId, destState, date, sourceState);
@@ -231,11 +232,29 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		return 0;
 	}
 
-	@Override
-	@Transactional
-	public void deal() {
-		// TODO Auto-generated method stub
+	/**
+	 * @param orderId
+	 * @param dealId
+	 * @return
+	 */
+	public int updateOrderDealId(Long orderId,Long dealId){
+		if(orderId==null){
+			return 0;
+		}
+		return orderMapper.updateOrderDealId(orderId, dealId);
+	}
 
+	@Override
+	public Couple<OrderDto, OrderEvaluationDto> selectOrderDetail(Long orderId) {
+		if (orderId == null) {
+			return null;
+		}
+		OrderDto dto = selectOrder(orderId);
+		if (dto == null) {
+			return null;
+		}
+		OrderEvaluationDto eve = calculate(dto.getMerchantAccountId());
+		return new Couple<OrderDto, OrderEvaluationDto>(dto, eve);
 	}
 
 }

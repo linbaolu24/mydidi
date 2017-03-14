@@ -82,7 +82,7 @@ public interface OrderDtoMapper {
 			@Param("sourceState") String sourceState, @Param("merchant") MerchantDto cid, @Param("ort") Date ort);
 
 	int updateOrderStateAndCost(@Param("orderId") Long orderId, @Param("destState") String destState,
-			@Param("sourceState") String sourceState, @Param("cost") Integer cost);
+			@Param("sourceState") String sourceState, @Param("cost") Integer cost );
 
 	int updateOrderStateAndEvaluation(@Param("orderId") Long orderId, @Param("destState") String destState,
 			@Param("sourceState") String sourceState,@Param("eval") Integer eval,@Param("textEval") String textEval, @Param("date") Date ort);
@@ -90,4 +90,15 @@ public interface OrderDtoMapper {
 	
 	int updateOrderEndState(@Param("orderId") Long orderId, @Param("destState") String destState,
 			@Param("sourceState") String sourceState,@Param("fail") String fail, @Param("date") Date date);
+	
+	int updateOrderStateAndCostCancelFalg(@Param("orderId") Long orderId, @Param("destState") String destState,
+			@Param("sourceState") String sourceState, @Param("cost") Integer cost,@Param("cannelFlag") String cannelFlag );
+	
+	
+	int updateOrderCancelEndState(@Param("orderId") Long orderId, @Param("destState") String destState,
+			@Param("sourceState") String sourceState, @Param("date") Date date,@Param("cannelFlag") String cannelFlag);
+	
+	
+	int updateOrderDealId(@Param("orderId") Long orderId,@Param("dealId") Long dealId );
+	OrderDto selectOrderSubjectInformation(Long orderId);
 }

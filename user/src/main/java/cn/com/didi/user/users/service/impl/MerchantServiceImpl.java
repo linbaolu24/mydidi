@@ -95,7 +95,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		return dtoExt;
 	}
 
-	@Override
+	//@Override
 	@Transactional
 	public void addMerchant(MerchantExtDto merchant) {
 
@@ -195,7 +195,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		double[] points = LatLngUtiil.getAround(dLat, dLng, radius);
 		MerchantAreaDto leftDown = build(points[0], points[1]);
 		MerchantAreaDto rightTop = build(points[2], points[3]);
-		return merchantAreaDtoMapper.selectPoints(leftDown, rightTop, slsId);
+		return merchantAreaDtoMapper.selectPoints(leftDown, rightTop, slsId);//查询应该存在问题应该根据商户表中的经纬度查询
 	}
 
 	protected MerchantAreaDto build(double lat, double lng) {
