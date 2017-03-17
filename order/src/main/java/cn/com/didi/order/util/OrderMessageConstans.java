@@ -48,8 +48,14 @@ public class OrderMessageConstans {
 	 * 交易不存在对应的订单
 	 */
 	public static final Message ORDER_DEAL_NOT_EXIST=newMessage(DomainMessageConstans.CODE_ORDER_DEAL_NOT_EXIST);
-	
+	/**
+	 * 非待付款订单不能完成交易
+	 */
 	public static final Message ORDER_NOT_PENDING_CHARGE_FINISH_DEAL=newMessage(DomainMessageConstans.CODE_ORDER_NOT_PENDING_CHARGE_FINISH_DEAL);
+	/**
+	 * 更新状态时状态发生变更
+	 */
+	public static final Message ORDER_UPDATE_STATE_CHANGE=newMessage(DomainMessageConstans.CODE_ORDER_UPDATE_STATE_CHANGE);
 	
 	/**
 	 * 交易不存在

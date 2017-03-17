@@ -31,17 +31,17 @@ public class ItemController {
 	protected IItemService itemServiece;
 
 	@RequestMapping(value = "/platform/s/listFls", method = RequestMethod.POST)
-	public IResult listFls(TimeInterval interval) {
+	public IResult listFls(@RequestBody TimeInterval interval) {
 		IPage<FlServiceDto> page = itemServiece.selectFls(interval);
 		return ResultExt.build(page);
 	}
 
 	@RequestMapping(value = "/platform/s/addFls", method = RequestMethod.POST)
-	public IResult addFls(FlServiceDto dto) {
+	public IResult addFls(@RequestBody FlServiceDto dto) {
 		if (dto == null) {
 			return null;
 		}
-		dto.setServiceId(null);
+		//dto.setServiceId(null);
 		dto.setSlsNum(0);
 		dto.setSlsNum(0);
 		dto.setState(State.VALID.getState());
@@ -104,7 +104,7 @@ public class ItemController {
 		return ResultFactory.success();
 	}
 
-	@RequestMapping(value = "/api/platform/s/updateSls", method = RequestMethod.POST)
+	@RequestMapping(value = "/platform/s/updateSls", method = RequestMethod.POST)
 	public IResult updateSls(@RequestBody SlServiceDto dto) {
 		if (dto == null) {
 			LOGGER.warn("对象为空,不做处理");

@@ -61,5 +61,9 @@ public class DomainConstatns {
 	
 	public static final String DEALID= "dealId";
 	
+	/**
+	 * 文本描述
+	 */
+	public static final String S_TEXT="text";
 
 }

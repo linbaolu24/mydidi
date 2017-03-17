@@ -8,7 +8,7 @@ public class FlsTimeInterval {
 	private TimeInterval time;
 
 	public FlsTimeInterval() {
-
+		this(true);
 	}
 
 	public FlsTimeInterval(boolean isNew) {

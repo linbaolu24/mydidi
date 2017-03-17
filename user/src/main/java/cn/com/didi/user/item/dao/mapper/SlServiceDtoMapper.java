@@ -34,7 +34,7 @@ public interface SlServiceDtoMapper {
      * @param flsService
      * @return
      */
-    Integer selectMaxSlsDisplayOrder(Integer flsService);
+    Integer selectMaxSlsDisplayOrder(@Param("flsId") Integer flsService);
     /**
      * @param interval
      * @param bounds

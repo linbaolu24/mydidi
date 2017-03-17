@@ -266,9 +266,9 @@
   </resultMap>
 	
 	<select id="selectItems" resultMap="ItemBaseResultMap">
-		select ft.service_Id ,(select st.service_id from sl_service st where ft.service_Id=st.service_id ans st.state='0' ORDER BY st.display_order DESC LIMIT 1    ) as sls_id,
+		select ft.service_Id ,(select st.service_id from sl_service st where ft.service_Id=st.service_id and st.state='0' ORDER BY st.display_order DESC LIMIT 1    ) as sls_id,
 		ft.cname ,
-		ft.display_order from fl_service ft where ft.state='0' ORDER BY ft.display_order DESC  
+		ft.display_order from fl_service ft where ft.state='0' and ft.sls_num>0 ORDER BY ft.display_order DESC  
 	</select>
 	
 </mapper>

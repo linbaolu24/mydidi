@@ -101,7 +101,7 @@ public class UserController {
 
 	@RequestMapping(value = "/platform/account/list", method = RequestMethod.POST)
 	public IResult accountList(@RequestBody TimeInterval interval) {
-		IPage<UserDto> page = userService.selectUsers(interval);
+		IPage<UserDto> page = userService.selectPlatformUsers(interval);
 		if (page == null) {
 			return new ResultExt<>(null, CountObject.ZERO);
 		}

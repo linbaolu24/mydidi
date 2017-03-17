@@ -61,6 +61,7 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 	public int finishDeal(DealDto source, PayResultDto pay, TranscationalCallBack<PayResultDto> deal) {
 		int count = dealDtoMapper.updateDealState(pay.getDealId(), "1", source.getState());
 		if (count == 0) {
+			dealDtoMapper.updatePureDealState(pay.getDealId(), "1");
 			return count;
 		}
 		MerchantRemainingDto mrd = new MerchantRemainingDto();

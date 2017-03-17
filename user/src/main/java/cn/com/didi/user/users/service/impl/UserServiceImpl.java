@@ -165,7 +165,7 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 	@Override
 	public IPage<UserDto> selectPlatformUsers(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
-		PageList<UserDto> list = (PageList<UserDto>) userDtoMapper.selectUsers(interval,pageBounds);
+		PageList<UserDto> list = (PageList<UserDto>) userDtoMapper.selectPlatformUsers(interval,pageBounds);
 		return new MybatisPaginatorPage<>(list);
 	}
 

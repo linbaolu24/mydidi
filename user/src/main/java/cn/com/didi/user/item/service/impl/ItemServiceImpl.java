@@ -129,13 +129,14 @@ public class ItemServiceImpl implements IItemService {
 
 	@Override
 	public void updateSlsState(Integer serviceId, String state) {
+		
 		if (serviceId == null) {
 			return;
 		}
-		FlServiceDto dto = new FlServiceDto();
+		SlServiceDto dto = new SlServiceDto();
 		dto.setServiceId(serviceId);
 		dto.setState(state);
-		flsMapper.updateByPrimaryKeySelective(dto);
+		slsMapper.updateByPrimaryKeySelective(dto);
 
 	}
 
@@ -144,10 +145,10 @@ public class ItemServiceImpl implements IItemService {
 		if (serviceId == null) {
 			return;
 		}
-		SlServiceDto dto = new SlServiceDto();
+		FlServiceDto dto = new FlServiceDto();
 		dto.setServiceId(serviceId);
 		dto.setState(state);
-		slsMapper.updateByPrimaryKeySelective(dto);
+		flsMapper.updateByPrimaryKeySelective(dto);
 	}
 
 	@Override

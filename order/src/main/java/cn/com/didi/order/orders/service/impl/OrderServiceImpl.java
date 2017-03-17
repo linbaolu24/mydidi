@@ -10,7 +10,6 @@ import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -23,7 +22,6 @@ import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.util.BusinessCharge;
 import cn.com.didi.domain.util.DomainConstatns;
-import cn.com.didi.domain.util.DomainMessageConstans;
 import cn.com.didi.domain.util.IReciverSearchService;
 import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.domain.util.PayAccountEnum;
@@ -113,8 +111,12 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			orderResult.setCode(OrderMessageConstans.ORDER_AUTO_DIS_NO_MASTER.getCode());
 			orderResult.setMessage(OrderMessageConstans.ORDER_AUTO_DIS_NO_MASTER.getMessage());
 		} else {
-			orderInfoService.updateOrderState(info.getOrderId(), OrderState.ORDER_STATE_TAKING.getCode(),
+			int count=orderInfoService.updateOrderState(info.getOrderId(), OrderState.ORDER_STATE_TAKING.getCode(),
 					info.getState(), dto.getAccountId());
+			IOrderRuslt<Void> oResult=orderStateChange(count, info, info.getState());
+			if(oResult!=null){
+				return oResult;
+			}
 			sendMessage(info, "您有新的订单", "您有新的订单", dto);
 			sendMessage(info, "您的订单已接单", "您的订单已接单", false);
 			// 对接单人发送消息,和订单人发送消息
@@ -143,7 +145,11 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			orderResult.setCode(OrderMessageConstans.ORDER_AUTO_DIS_NO_MASTER.getCode());
 			orderResult.setMessage(OrderMessageConstans.ORDER_AUTO_DIS_NO_MASTER.getMessage());
 		}else{
-			orderInfoService.updateOrderState(orderId, OrderState.ORDER_STATE_NOTIFY.getCode(), info.getState(),(Integer) null);
+			int count=orderInfoService.updateOrderState(orderId, OrderState.ORDER_STATE_NOTIFY.getCode(), info.getState(),(Integer) null);
+			IOrderRuslt<Void> oResult=orderStateChange(count, info, info.getState());
+			if(oResult!=null){
+				return oResult;
+			}
 			sendMessage(info,  "您有新的订单", "您有新的订单", reciverDtos);
 		}
 		return orderResult;
@@ -158,8 +164,13 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if (isStateRepeat(OrderState.ORDER_STATE_TAKING, info.getState())) {
 			return null;
 		}
+		
+		int count=orderInfoService.updateOrderState(orderId, OrderState.ORDER_STATE_TAKING.getCode(), info.getState(), info.getMerchantAccountId());
+		temp=orderStateChange(count, info, info.getState());
+		if(temp!=null){
+			return temp;
+		}
 		temp = new OrderRuslt<>(orderId);
-		orderInfoService.updateOrderState(orderId, OrderState.ORDER_STATE_TAKING.getCode(), info.getState(), info.getMerchantAccountId());
 		sendMessage(info,  "您的订单已被接单", "您的订单已被接单", false);
 		return temp;
 
@@ -175,7 +186,11 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return null;
 		}
 		orderResult = new OrderRuslt<>(orderId);
-		orderInfoService.updateOrderStateSs(orderId, OrderState.ORDER_STATE_START_SERVICE.getCode(), order.getState());
+		int count=orderInfoService.updateOrderStateSs(orderId, OrderState.ORDER_STATE_START_SERVICE.getCode(), order.getState());
+		orderResult=orderStateChange(count, order, order.getState());
+		if(orderResult!=null){
+			return orderResult;
+		}
 		// 发送消息
 		sendMessage(order,  "您的订单师傅开始服务", "您的订单师傅开始服务", false);
 		return orderResult;
@@ -197,7 +212,11 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return null;
 		}
 
-		orderInfoService.updateOrderStateFs(orderId, destState.getCode(), order.getState());
+		int count=orderInfoService.updateOrderStateFs(orderId, destState.getCode(), order.getState());
+		orderResult=orderStateChange(count, order, order.getState());
+		if(orderResult!=null){
+			return orderResult;
+		}
 		// TODO 发送消息
 		sendMessage(order,  "您的订单师傅完成服务", "您的订单师傅完成服务", false);
 		return orderResult;
@@ -222,7 +241,11 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if (isStateRepeat(destState, order.getState())) {
 			return null;
 		}
-		orderInfoService.updateOrderState(orderId, destState.getCode(), order.getState(), iCost);
+		int count=orderInfoService.updateOrderState(orderId, destState.getCode(), order.getState(), iCost);
+		orderResult=orderStateChange(count, order, order.getState());
+		if(orderResult!=null){
+			return orderResult;
+		}
 		sendMessage(order,  "您的订单师傅发起收费", "您的订单师傅发起收费", false);
 		// 更新状态
 		// 发送消息
@@ -239,8 +262,12 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if (isStateRepeat(OrderState.ORDER_STATE_FINISH, order.getState())) {
 			return null;
 		}
-		orderInfoService.updateOrderStateAndEvaluation(orderId, OrderState.ORDER_STATE_FINISH.getCode(),
+		int count=orderInfoService.updateOrderStateAndEvaluation(orderId, OrderState.ORDER_STATE_FINISH.getCode(),
 				order.getState(), eval, textEval);
+		orderResult=orderStateChange(count, order, order.getState());
+		if(orderResult!=null){
+			return orderResult;
+		}
 		return null;
 	}
 
@@ -258,8 +285,12 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return new OrderRuslt<>(OrderMessageConstans.ORDER_HAVE_TIKEING.getMessage(),
 					OrderMessageConstans.ORDER_HAVE_TIKEING.getCode());
 		}
-		orderInfoService.updateOrderFailState(orderId, OrderState.ORDER_STATE_FAIL.getCode(), order.getState(),
+		int count=orderInfoService.updateOrderFailState(orderId, OrderState.ORDER_STATE_FAIL.getCode(), order.getState(),
 				"timeout");
+		orderResult=orderStateChange(count, order, order.getState());
+		if(orderResult!=null){
+			return orderResult;
+		}
 		return null;
 	}
 
@@ -284,11 +315,15 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		
 		if (!OrderState.ORDER_STATE_CANNEL.getCode().equals(order.getState())) {// 如果不是
 																				// 重复取消
-			orderInfoService.updateOrderCannelState(orderId, state.getCode(), order.getState(), stateDto.getCost());
+			int count=orderInfoService.updateOrderCannelState(orderId, state.getCode(), order.getState(), stateDto.getCost());
 			/*if (OrderState.ORDER_STATE_CANNEL.equals(state)) {
 				// TODO 通知商户订单被取消
 				
 			}*/
+			orderResult=orderStateChange(count, order, order.getState());
+			if(orderResult!=null){
+				return orderResult;
+			}
 			order.setState(state.getCode());
 			sendMessage(order,  "您的订单已被取消", "您的订单已被取消", false);
 		}
@@ -298,6 +333,72 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		// notifyCannel(info);
 	}
 
+
+	@Override
+	public IOrderRuslt<Long> createDeal(Long orderId, Long bId, PayAccountEnum payEnum) {
+		OrderDto dto = orderInfoService.selectOrderSubjectInformation(orderId);
+		IOrderRuslt<Long> result = normalBVerify(dto, bId);
+		if (result != null) {
+			return result;
+		}
+		if (!OrderState.ORDER_STATE_PENDING_CHARGE.getCode().equals(dto.getState())) {
+			return new OrderRuslt<>(OrderMessageConstans.ORDER_NOT_PENDING_CHARGE.getMessage(),
+					OrderMessageConstans.ORDER_NOT_PENDING_CHARGE.getCode());
+		}
+		if (dto.getDealId() != null) {
+			LOGGER.error("订单{}存在对应交易{},将被替换成新的交易记录", dto.getOrderId(), dto.getDealId());
+		}
+		// PayAccountDto
+		// accountDto=tradeService.getAccountDto(dto.getMerchantAccountId());
+		DealDto deal = new DealDto();
+		deal.setCommission(dto.getCommission());
+		TradeCategory category = TradeCategory.IN;
+		if ("1".equals(dto.getCancelFlag())) {
+			category = TradeCategory.PENALTY;
+		}
+		deal.setCategory(category.getCode());
+		deal.setAmount(dto.getCost());
+		deal.setDai(dto.getMerchantAccountId());
+		deal.setSat(payEnum.getCode());
+		deal.setDat(payEnum.getCode());
+		deal.setDealType(category.getType());
+		deal.setOrderId(dto.getOrderId());
+		deal.setSai(dto.getConsumerAccountId());
+		tradeService.createTrade(deal, dealTranscationalCallBack);
+		result = new OrderRuslt<>("", OrderRuslt.SUCCESS_CODE, null, deal.getDealId());
+		return result;
+	}
+
+	@Override
+	public IOrderRuslt<Void> finishDeal(PayResultDto dto) {
+		if (dto.getOrderId() == null) {
+			Long orderId = tradeService.selectOrderIdFromDeal(dto.getDealId());
+			if (orderId == null) {
+				return new OrderRuslt<>(OrderMessageConstans.ORDER_DEAL_NOT_EXIST);
+			}
+			dto.setOrderId(orderId);
+		}
+		OrderDto orderDto = orderInfoService.selectOrderSubjectInformation(dto.getOrderId());
+		IOrderRuslt<Void> result = orderExist(orderDto);
+		if (result != null) {
+			return result;
+		}
+		// result = isFinish(orderDto.getState(), orderDto.getOrderId());
+		if (!OrderState.ORDER_STATE_PENDING_CHARGE.getCode().equals(orderDto.getState())
+				&& !isRepateFinishDeal(orderDto.getState())) {
+			// 非待付款状态
+			return new OrderRuslt<>(OrderMessageConstans.ORDER_NOT_PENDING_CHARGE_FINISH_DEAL);
+		}
+		dto.setbId(orderDto.getMerchantAccountId());
+		IResult<Void> deal = tradeService.finishDeal(dto, "0".equals(orderDto.getCancelFlag())?dealFinishTranscationalCallBack:dealFinishTranscationalCallBackCannel);
+		if (deal == null || deal.success()) {
+			sendMessage(orderDto, "您的订单用户已完成付款", "您的订单用户已完成付款", true);
+			return OrderRuslt.successResult();
+		}
+		return new OrderRuslt<>(deal.getMessage(), deal.getCode());
+	}
+	
+	
 	public void noReceiver(IOrderInfo info) {
 		notifyNoReceiver(info);
 	}
@@ -407,7 +508,6 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		return temp;
 	}
-
 	/**
 	 * 如果订单的商户ID和和当前账户ID不一致
 	 * 
@@ -423,7 +523,6 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		return null;
 	}
-
 	/**
 	 * 订单消费者ID和当前账户ID
 	 * 
@@ -454,7 +553,6 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		return null;
 	}
-
 	/**
 	 * 订单是否已完成订单
 	 * 
@@ -470,7 +568,6 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		return null;
 	}
-
 	/** 判断是否是重复状态,如果是状态重复返回true */
 	protected boolean isStateRepeat(OrderState destState, String cState) {
 		if (destState.isLess(cState)) {
@@ -478,71 +575,6 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		return false;
 	}
-
-	@Override
-	public IOrderRuslt<Long> createDeal(Long orderId, Long bId, PayAccountEnum payEnum) {
-		OrderDto dto = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Long> result = normalBVerify(dto, bId);
-		if (result != null) {
-			return result;
-		}
-		if (!OrderState.ORDER_STATE_PENDING_CHARGE.getCode().equals(dto.getState())) {
-			return new OrderRuslt<>(OrderMessageConstans.ORDER_NOT_PENDING_CHARGE.getMessage(),
-					OrderMessageConstans.ORDER_NOT_PENDING_CHARGE.getCode());
-		}
-		if (dto.getDealId() != null) {
-			LOGGER.error("订单{}存在对应交易{},将被替换成新的交易记录", dto.getOrderId(), dto.getDealId());
-		}
-		// PayAccountDto
-		// accountDto=tradeService.getAccountDto(dto.getMerchantAccountId());
-		DealDto deal = new DealDto();
-		deal.setCommission(dto.getCommission());
-		TradeCategory category = TradeCategory.IN;
-		if ("1".equals(dto.getCancelFlag())) {
-			category = TradeCategory.PENALTY;
-		}
-		deal.setCategory(category.getCode());
-		deal.setAmount(dto.getCost());
-		deal.setDai(dto.getMerchantAccountId());
-		deal.setSat(payEnum.getCode());
-		deal.setDat(payEnum.getCode());
-		deal.setDealType(category.getType());
-		deal.setOrderId(dto.getOrderId());
-		deal.setSai(dto.getConsumerAccountId());
-		tradeService.createTrade(deal, dealTranscationalCallBack);
-		result = new OrderRuslt<>("", OrderRuslt.SUCCESS_CODE, null, deal.getDealId());
-		return result;
-	}
-
-	@Override
-	public IOrderRuslt<Void> finishDeal(PayResultDto dto) {
-		if (dto.getOrderId() == null) {
-			Long orderId = tradeService.selectOrderIdFromDeal(dto.getDealId());
-			if (orderId == null) {
-				return new OrderRuslt<>(OrderMessageConstans.ORDER_DEAL_NOT_EXIST);
-			}
-			dto.setOrderId(orderId);
-		}
-		OrderDto orderDto = orderInfoService.selectOrderSubjectInformation(dto.getOrderId());
-		IOrderRuslt<Void> result = orderExist(orderDto);
-		if (result != null) {
-			return result;
-		}
-		// result = isFinish(orderDto.getState(), orderDto.getOrderId());
-		if (!OrderState.ORDER_STATE_PENDING_CHARGE.getCode().equals(orderDto.getState())
-				&& !isRepateFinishDeal(orderDto.getState())) {
-			// 非待付款状态
-			return new OrderRuslt<>(OrderMessageConstans.ORDER_NOT_PENDING_CHARGE_FINISH_DEAL);
-		}
-		dto.setbId(orderDto.getMerchantAccountId());
-		IResult<Void> deal = tradeService.finishDeal(dto, "0".equals(orderDto.getCancelFlag())?dealFinishTranscationalCallBack:dealFinishTranscationalCallBackCannel);
-		if (deal == null || deal.success()) {
-			sendMessage(orderDto, "您的订单用户已完成付款", "您的订单用户已完成付款", true);
-			return OrderRuslt.successResult();
-		}
-		return new OrderRuslt<>(deal.getMessage(), deal.getCode());
-	}
-
 	protected boolean isRepateFinishDeal(String state) {
 		return OrderState.ORDER_STATE_FINISH.getCode().equals(state)
 				|| OrderState.ORDER_STATE_Pending_EVALUATION.getCode().equals(state)
@@ -551,5 +583,12 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	@Resource
 	protected void setOrderLifeListener(IOrderLifeListener lifeLisnter){
 		setListenerList(Arrays.asList(lifeLisnter));
+	}
+	
+	protected <T> IOrderRuslt<T> orderStateChange(int count,OrderDto dto,String sourceState){
+		if(count<=0){
+			return new OrderRuslt<T>(OrderMessageConstans.ORDER_UPDATE_STATE_CHANGE);
+		}
+		return null;
 	}
 }

@@ -155,7 +155,10 @@ public class DomainMessageConstans {
 	public static final String CODE_ORDER_NOT_PENDING_CHARGE_FINISH_DEAL="5003000009";
 	
 
-	
+	/**
+	 * 更新状态时状态发生变更
+	 */
+	public static final String CODE_ORDER_UPDATE_STATE_CHANGE="5003000010";
 	
 	
 	

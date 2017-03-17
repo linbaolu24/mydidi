@@ -35,6 +35,12 @@ public interface DealDtoMapper {
     public int updateDealState(@Param("dealId") Long dealId, @Param("destState") String destState, @Param("sourceState") String sourceState);
     /**
      * @param dealId
+     * @param destState
+     * @return
+     */
+    public int updatePureDealState(@Param("dealId") Long dealId, @Param("destState") String destState);
+    /**
+     * @param dealId
      * @return
      */
     Long selectOrderIdFromDeal(Long dealId);
