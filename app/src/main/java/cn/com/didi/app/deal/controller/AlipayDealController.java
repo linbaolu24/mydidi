@@ -3,6 +3,7 @@ package cn.com.didi.app.deal.controller;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,16 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
 
-import cn.com.didi.app.order.domain.OrderIDJAO;
-import cn.com.didi.core.property.IResult;
-import cn.com.didi.core.property.ResultFactory;
-import cn.com.didi.order.result.IOrderRuslt;
+import cn.com.didi.app.deal.domain.AliResultJAO;
 
 @RestController
 public class AlipayDealController {
@@ -50,8 +47,22 @@ public class AlipayDealController {
 		return SUCESS;
 
 	}
-	
-	
-	
-	
+
+	public String alipayResukt(@RequestBody AliResultJAO request) throws UnsupportedEncodingException {
+		Map map = JSON.parseObject(request.getResult(), Map.class);
+		String charSet = (String) map.get("charset");
+		boolean isSuccess = false;
+		try {
+			isSuccess = AlipaySignature.rsaCheckV1(map, ALI_PUBLICK_KEY, charSet);
+		} catch (Exception e) {
+			LOGGER.error("阿里验证签名失败" + map.toString(), e);
+			return FAIL;
+		}
+		if (!isSuccess) {
+			return FAIL;
+		}
+		return SUCESS;
+
+	}
+
 }

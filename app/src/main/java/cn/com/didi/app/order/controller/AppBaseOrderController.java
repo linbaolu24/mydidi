@@ -20,6 +20,7 @@ import static cn.com.didi.domain.util.DomainConstatns.RY_TOKEN;
 import static cn.com.didi.domain.util.DomainConstatns.STATE;
 import static cn.com.didi.domain.util.DomainConstatns.UPDATE_TIME;
 import static cn.com.didi.domain.util.DomainConstatns.WECHAT_ACCOUNT;
+import static cn.com.didi.domain.util.DomainConstatns.S_TEXT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
+
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.order.orders.domain.OrderDto;
@@ -37,6 +40,7 @@ import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderService;
+import cn.com.didi.user.system.domain.CodeDictionaryDto;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.service.IUserService;
@@ -104,7 +108,7 @@ public class AppBaseOrderController {
 
 	}
 
-	public Map build(OrderDto order, List<OrderStateRecordDto> list) {
+	public Map build(OrderDto order, List<OrderStateRecordDto> list,List<CodeDictionaryDto> dto) {
 		Map map = new HashMap(16);
 		map.put(ORDER_ID, order.getOrderId());
 		map.put(STATE, order.getState());
@@ -117,6 +121,7 @@ public class AppBaseOrderController {
 		map.put(MASTER_NAME, order.getMasterName());
 
 		map.put(MCI, order.getMci());
+		String text="";
 		if (!CollectionUtils.isEmpty(list)) {
 			List stateList = new ArrayList(list.size());
 			map.put("stateList", stateList);
@@ -124,12 +129,24 @@ public class AppBaseOrderController {
 				Map oneMap = new HashMap();
 				oneMap.put(UPDATE_TIME, one.getUpdateTime());
 				oneMap.put(CSTATE, one.getCstate());
+				text=findText(dto,  one.getCstate());
+				oneMap.put(S_TEXT, text);
 				stateList.add(oneMap);
 			}
 		}
 		return map;
 	}
-
+	protected String findText(List<CodeDictionaryDto> dto,String cstate){
+		if(CollectionUtils.isEmpty(dto)){
+			return "";
+		}
+		for(CodeDictionaryDto one:dto){
+			if(one.getDcode().equals(cstate)){
+				return one.getText();
+			}
+		}
+		return "";
+	}
 	public Map buildBDetail(OrderDto order) {
 		Map map = build(order);
 		map.put(DomainConstatns.OCT, order.getOct());// 订单创建时间

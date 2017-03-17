@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.com.didi.app.order.domain.OrderEveJAO;
 import cn.com.didi.app.order.domain.OrderIDJAO;
 import cn.com.didi.app.order.domain.OrderJAO;
 import cn.com.didi.core.property.Couple;
@@ -25,7 +26,9 @@ import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.CodeNameConstatns;
 import cn.com.didi.domain.util.DomainConstatns;
+import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderStateCostDto;
@@ -34,6 +37,8 @@ import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.user.item.domain.SlServiceDto;
 import cn.com.didi.user.item.service.IItemService;
+import cn.com.didi.user.system.domain.CodeDictionaryDto;
+import cn.com.didi.user.system.service.ICodeDicService;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
@@ -43,16 +48,13 @@ import cn.com.didi.webBase.util.IAccountResolver;
 
 @RestController
 public class AppOrderController extends AppBaseOrderController {
-	@Resource
-	protected IAccountResolver resolver;
-	@Resource
-	protected IOrderInfoService orderInfo;
-	@Resource
-	protected IUserService userService;
+
 	@Resource
 	protected IItemService itemService;
 	@Resource
 	protected IMerchantService merchantService;
+	@Resource
+	protected ICodeDicService codeDicService;
 
 	@RequestMapping(value = "/app/c/order/prompt", method = { RequestMethod.POST, RequestMethod.GET })
 	public IResult prompt(HttpServletRequest request) {
@@ -84,7 +86,8 @@ public class AppOrderController extends AppBaseOrderController {
 			return ResultFactory.success();
 		}
 		List<OrderStateRecordDto> list = orderInfo.selectStateRecord(orderId);
-		return ResultFactory.success(build(orderDto, list));
+		List<CodeDictionaryDto>  dto=codeDicService.selectCodes(CodeNameConstatns.ORDER_STATE_TEXT_CODE_NAME);
+		return ResultFactory.success(build(orderDto, list,dto));
 	}
 
 	@RequestMapping(value = "/app/c/order/evaInfo", method = { RequestMethod.POST })
@@ -200,4 +203,56 @@ public class AppOrderController extends AppBaseOrderController {
 		}
 		return ResultFactory.error(or.getCode(), or.getMessage());
 	}
+	
+	@RequestMapping(value = "/app/c/order/timeout", method = { RequestMethod.POST })
+	public IResult timeout(@RequestBody OrderIDJAO map, HttpServletRequest request) {
+		Long orderId = (Long)  map.getOrderId();
+		assertOrderId(orderId);
+		Long accountId = resolver.resolve(request);
+		IOrderRuslt<Void> or = orderService.timeout(orderId, accountId);
+		if (or==null||or.success()) {
+			return ResultFactory.success();
+		}
+		return ResultFactory.error(or.getCode(), or.getMessage());
+	}
+	
+	@RequestMapping(value = "app/c/order/evaluate", method = { RequestMethod.POST })
+	public IResult evaluate(@RequestBody OrderEveJAO map, HttpServletRequest request) {
+		Long orderId = (Long)  map.getOrderId();
+		assertOrderId(orderId);
+		AssertUtil.assertNotNull(map.getEvaluation(),"星级评价");
+		Long accountId = resolver.resolve(request);
+		IOrderRuslt<Void> or = orderService.evaluation(orderId, accountId,map.getEvaluation(),map.getTextEvaluation());
+		if (or==null||or.success()) {
+			return ResultFactory.success();
+		}
+		return ResultFactory.error(or.getCode(), or.getMessage());
+	}
+	@RequestMapping(value = "/app/c/order/alipay",method={RequestMethod.POST})
+	public IResult alipay(@RequestBody OrderIDJAO map,HttpServletRequest request){
+		Long orderId = (Long) map.getOrderId();
+		assertOrderId(orderId);
+		Long accountId = resolver.resolve(request);
+		IOrderRuslt<Long> or = orderService.createDeal(orderId, accountId, PayAccountEnum.ALIPAY);
+		if (or.success()) {
+			Map p=new HashMap(1);
+			p.put(DomainConstatns.DEALID, or.getData());
+			return ResultFactory.success(p);
+		}
+		return ResultFactory.error(or.getCode(), or.getMessage());
+	} 
+	@RequestMapping(value = "/app/c/order/finishAlipay",method={RequestMethod.POST})
+	public IResult finishAlipay(@RequestBody OrderIDJAO map,HttpServletRequest request){
+		//TODO 结果不正确
+		Long orderId = (Long) map.getOrderId();
+		assertOrderId(orderId);
+		Long accountId = resolver.resolve(request);
+		IOrderRuslt<Long> or = orderService.createDeal(orderId, accountId, PayAccountEnum.ALIPAY);
+		if (or.success()) {
+			Map p=new HashMap(1);
+			p.put(DomainConstatns.DEALID, or.getData());
+			return ResultFactory.success(p);
+		}
+		return ResultFactory.error(or.getCode(), or.getMessage());
+	} 
 }

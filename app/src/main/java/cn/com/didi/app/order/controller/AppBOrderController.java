@@ -64,17 +64,5 @@ public class AppBOrderController extends AppBaseOrderController {
 		return ResultFactory.error(or.getCode(), or.getMessage());
 	} 
 	
-	@RequestMapping(value = "/app/b/order/alipay",method={RequestMethod.POST})
-	public IResult alipay(@RequestBody OrderIDJAO map,HttpServletRequest request){
-		Long orderId = (Long) map.getOrderId();
-		assertOrderId(orderId);
-		Long accountId = resolver.resolve(request);
-		IOrderRuslt<Long> or = orderService.createDeal(orderId, accountId, PayAccountEnum.ALIPAY);
-		if (or.success()) {
-			Map p=new HashMap(1);
-			p.put(DomainConstatns.DEALID, or.getData());
-			return ResultFactory.success(p);
-		}
-		return ResultFactory.error(or.getCode(), or.getMessage());
-	} 
+	
 }

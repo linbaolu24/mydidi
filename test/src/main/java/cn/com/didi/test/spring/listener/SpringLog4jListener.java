@@ -28,10 +28,7 @@ public class SpringLog4jListener implements TestExecutionListener{
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
 	public void afterTestClass(TestContext testContext) throws Exception {
-		// TODO Auto-generated method stub
 		
 	}
 
