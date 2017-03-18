@@ -33,7 +33,6 @@ import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderStateCostDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
-import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.user.item.domain.SlServiceDto;
 import cn.com.didi.user.item.service.IItemService;
@@ -43,8 +42,6 @@ import cn.com.didi.user.users.domain.MerchantAreaDto;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.service.IMerchantService;
-import cn.com.didi.user.users.service.IUserService;
-import cn.com.didi.webBase.util.IAccountResolver;
 
 @RestController
 public class AppOrderController extends AppBaseOrderController {

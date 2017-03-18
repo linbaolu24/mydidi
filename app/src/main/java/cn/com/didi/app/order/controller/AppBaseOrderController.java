@@ -18,9 +18,9 @@ import static cn.com.didi.domain.util.DomainConstatns.ORDER_ID;
 import static cn.com.didi.domain.util.DomainConstatns.ORT;
 import static cn.com.didi.domain.util.DomainConstatns.RY_TOKEN;
 import static cn.com.didi.domain.util.DomainConstatns.STATE;
+import static cn.com.didi.domain.util.DomainConstatns.S_TEXT;
 import static cn.com.didi.domain.util.DomainConstatns.UPDATE_TIME;
 import static cn.com.didi.domain.util.DomainConstatns.WECHAT_ACCOUNT;
-import static cn.com.didi.domain.util.DomainConstatns.S_TEXT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,8 +30,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
-
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.util.DomainConstatns;
