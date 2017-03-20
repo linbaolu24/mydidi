@@ -55,7 +55,7 @@
 		<jsonevent-layout.version>1.1.0</jsonevent-layout.version>
 		<httpclient.version>4.5.2</httpclient.version>
 		<httpcore.version>4.4.4</httpcore.version>
-		<fastjson.version>1.1.29</fastjson.version>
+		<fastjson.version>1.2.28</fastjson.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<uc-api.version>0.0.2-SNAPSHOT</uc-api.version>
 		<dubbo.version>2.5.3</dubbo.version>
@@ -100,7 +100,7 @@
 		<commons-beanutils.version>1.8.0</commons-beanutils.version>
 		<commons-collections.version>4.0</commons-collections.version>
 		<commons-codec.version>1.9</commons-codec.version>
-		
+		<alipay.version>1.0</alipay.version>
 		 <!-- for maven compiler plugin -->
         <maven_compiler_plugin_version>3.5.1</maven_compiler_plugin_version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -547,18 +547,35 @@
 				<artifactId>app</artifactId>
 				<version>${app.version}</version>
 			</dependency>
+			
+			<dependency>
+		<groupId>com.alipay.api</groupId>
+		<artifactId>alipay</artifactId>
+		<version>${alipay.version}</version>
+		</dependency>
 		</dependencies>
 	</dependencyManagement>
 	
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven_compiler_plugin_version}</version>
-			</plugin>
-		</plugins>
-	</build> 
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>${maven_compiler_plugin_version}</version>
+		</plugin>
+	</plugins>
+	<resources>
+		<resource>
+			<directory>src/main/java</directory>
+			<includes>
+				<include>**/*.xml</include>
+			</includes>
+		</resource>
+		<resource>
+			<directory>src/main/resources</directory>
+		</resource>
+	</resources>
+</build> 
 
 				
 </project>

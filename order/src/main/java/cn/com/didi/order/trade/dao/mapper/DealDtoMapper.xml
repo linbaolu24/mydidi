@@ -114,7 +114,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cn.com.didi.order.trade.domain.DealDto" >
+  <insert id="insert" parameterType="cn.com.didi.order.trade.domain.DealDto"  useGeneratedKeys="true" keyProperty="dealId">
     insert into deal (deal_id, state, cause, 
       deal_type, sat, sa, dat, 
       da, amount, category, 
@@ -128,7 +128,7 @@
       #{remain,jdbcType=INTEGER}, #{sai,jdbcType=BIGINT}, #{dai,jdbcType=BIGINT}, #{commission,jdbcType=INTEGER}, 
       #{orderId,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="cn.com.didi.order.trade.domain.DealDto" >
+  <insert id="insertSelective" parameterType="cn.com.didi.order.trade.domain.DealDto" useGeneratedKeys="true" keyProperty="dealId">
     insert into deal
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="dealId != null" >
@@ -454,7 +454,7 @@
   <select id="selectTrades" resultMap="BaseListResultMap"> 
   select
     deal_id, state, deal_type,  amount, category, create_time, 
-   cment, remain, commission, order_id from deal
+   cment from deal
     <where>
     <if test="time.startTime != null">create_time&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
     <if test="time.endTime != null">and create_time&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>
