@@ -32,9 +32,9 @@ public class SlsItemDto implements Serializable {
 	private SlServiceDto dto;
 	private List<CityCodeDto> cityList;
 
-	public void addSlsCity(SlsCityDtoKey cityDto) {
+	public boolean addSlsCity(SlsCityDtoKey cityDto) {
 		if (dto.getServiceId() == null || cityDto.getServiceId() == null) {
-			return;
+			return false;
 		}
 		if (dto.getServiceId().intValue() == cityDto.getServiceId().intValue()) {
 			if (cityList == null) {
@@ -42,8 +42,10 @@ public class SlsItemDto implements Serializable {
 			}
 			if (cityDto != null) {
 				cityList.add(cityDto.toCityCodeDto());
+				return true;
 			}
 		}
+		return false;
 	}
 
 	public SlsItemDto() {

@@ -1,13 +1,9 @@
-package cn.com.didi.app.deal.domain;
+package cn.com.didi.domain.domains;
 
-/**
- * @author xlm
- *
- */
-public class AliResultJAO {
+public class AliSynResultDto {
 	@Override
 	public String toString() {
-		return "AliResultJAO [memo=" + memo + ", result=" + result + ", resultStatus=" + resultStatus + "]";
+		return "AliSynResultDto [memo=" + memo + ", result=" + result + ", resultStatus=" + resultStatus + "]";
 	}
 	public String getMemo() {
 		return memo;
@@ -30,5 +26,4 @@ public class AliResultJAO {
 	private String memo;
 	private String result;
 	private String resultStatus;
-	
 }

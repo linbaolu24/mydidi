@@ -93,4 +93,9 @@ public class TradeServiceImpl implements ITradeService {
 		return tradeInfoService.selectTrades(interval);
 	}
 
+	@Override
+	public int fail(Long dealId, String cause) {
+		return tradeInfoService.fail(dealId, cause);
+	}
+
 }

@@ -46,4 +46,5 @@ public interface DealDtoMapper {
     Long selectOrderIdFromDeal(Long dealId);
     
     List<DealListDto> selectTrades(@Param("time") TimeInterval time,RowBounds rows);
+    int updateFail(@Param("dealId") Long dealId,@Param("cause") String cause);
 }

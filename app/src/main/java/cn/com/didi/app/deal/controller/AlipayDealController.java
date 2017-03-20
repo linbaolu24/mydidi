@@ -1,6 +1,7 @@
 package cn.com.didi.app.deal.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Map;
@@ -11,20 +12,30 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
 
-import cn.com.didi.app.deal.domain.AliResultJAO;
+import cn.com.didi.core.property.IResult;
+import cn.com.didi.core.property.ResultFactory;
+import cn.com.didi.domain.domains.AliSynResultDto;
+import cn.com.didi.domain.util.DomainMessageConstans;
 
 @RestController
-public class AlipayDealController {
+public class AlipayDealController extends AbstractDealController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AlipayDealController.class);
 	private static String ALI_PUBLICK_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwD3LHDruRIHM5FlHukMkQ1KQdtbTBchbkb2k07656m2yL1YAqjB9EVEAJHqN5AE1zwzZv1zhv8OJqzCVSSSAIu3Vlop/LlHOM7Ig1ss2EHjIfFrM45SFtpYNcWxF1S3kb0uol2BMbgYq/SHFxGwMicQn70Jl0+8iMnG5ZNZoqdVgqLV3yQ+vmkAzsURaLwOUPnQMgQz95gRH6wHX7zc2GuQYNs5W8RNxAFqiZTAH1JCLOfnWAq+wSyKdaFHErkWyHWcj3fipIQWz54ZQeu0ZZCGm/39HVkbc4YPiGW1ftDRsf1+H1IFcINemQTzFtYhMihdGBHYeRxmGU1THYSRy3QIDAQAB";
-	private static final String SUCESS = "";
-	private static final String FAIL = "";
+	private static final String SUCESS = "success";
+	private static final String FAIL = "fail";
+	private static final String OUT_TRADE_NO = "out_trade_no";
+	private static final String TOTAL_AMOUNT = "total_amount";
 
+	private static final BigDecimal YB = new BigDecimal(100);
+
+	@RequestMapping(value = "/app/c/order/aliAsnyNotify", method = RequestMethod.POST)
 	public String alipaySdkNotify(HttpServletRequest request) throws UnsupportedEncodingException {
 		String charSet = request.getParameter("charset");
 		Enumeration<String> names = request.getParameterNames();
@@ -41,14 +52,32 @@ public class AlipayDealController {
 			LOGGER.error("阿里验证签名失败" + map.toString(), e);
 			return FAIL;
 		}
+		// if(AliTrade)
 		if (!isSuccess) {
 			return FAIL;
 		}
-		return SUCESS;
+		try {
+			if ("TRADE_SUCCESS".equalsIgnoreCase((String) map.get("trade_status"))) {
+				IResult<Void> result = finishDeal(map);
+				if (result != null && !result.success()) {
+					return FAIL;
+				}
+			}
+
+			return SUCESS;
+		} catch (Exception e) {
+			return FAIL;
+		}
 
 	}
 
-	public String alipayResukt(@RequestBody AliResultJAO request) throws UnsupportedEncodingException {
+	@RequestMapping(value = "/app/c/order/finishAlipay", method = RequestMethod.POST)
+	public IResult alipayResukt(@RequestBody AliSynResultDto request) throws UnsupportedEncodingException {
+		String resultStatus = request.getResultStatus();
+		if (!resultStatus.equals("9000") && !resultStatus.equals("5000")) {
+			LOGGER.error("阿里返回失败{},对象为", resultStatus, request);
+			return ResultFactory.error(DomainMessageConstans.CODE_DEAL_ALI_RESULT_FAIL, "阿里返回交易失败。");
+		}
 		Map map = JSON.parseObject(request.getResult(), Map.class);
 		String charSet = (String) map.get("charset");
 		boolean isSuccess = false;
@@ -56,13 +85,20 @@ public class AlipayDealController {
 			isSuccess = AlipaySignature.rsaCheckV1(map, ALI_PUBLICK_KEY, charSet);
 		} catch (Exception e) {
 			LOGGER.error("阿里验证签名失败" + map.toString(), e);
-			return FAIL;
+			return ResultFactory.error(DomainMessageConstans.CODE_DEAL_VERIFY_ALI_SIGN_FAIL, "阿里验证签名失败。");
 		}
-		if (!isSuccess) {
-			return FAIL;
+		IResult<Void> result = finishDeal(map);
+		if (result == null || result.success()) {
+			return ResultFactory.success();
 		}
-		return SUCESS;
+		return ResultFactory.error(result.getCode(), result.getMessage());
+	}
 
+	protected IResult<Void> finishDeal(Map map) {
+		String dealId = (String) map.get(OUT_TRADE_NO);
+		String cost = (String) map.get(TOTAL_AMOUNT);
+		BigDecimal dCost = new BigDecimal(cost).multiply(YB);
+		return finishOrderDeal(new Long(dealId), dCost.intValue());
 	}
 
 }

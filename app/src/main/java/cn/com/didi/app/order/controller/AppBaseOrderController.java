@@ -60,16 +60,7 @@ public class AppBaseOrderController {
 	}
 
 	public Map build(OrderDto order, OrderEvaluationDto eve, UserDto userDto, UserLinkIdDto userLink) {
-		Map map = new HashMap(16);
-		map.put(ORDER_ID, order.getOrderId());
-		map.put(STATE, order.getState());
-		map.put(ORT, order.getOrt());
-		map.put(OFST, order.getOfst());
-		map.put(BUSINESS_CATEGORY, order.getBusinessCategory());
-		map.put(BUSINESS_CHARGE, order.getBusinessCharge());
-		map.put(DESCRIPTION, order.getDescription());
-		map.put(COST, order.getCost());
-		map.put(MASTER_NAME, order.getMasterName());
+		Map map =build(order);
 
 		map.put(MCI, order.getMci());
 		if (eve != null) {
@@ -102,6 +93,8 @@ public class AppBaseOrderController {
 		map.put(DESCRIPTION, order.getDescription());
 		map.put(COST, order.getCost());
 		map.put(MASTER_NAME, order.getMasterName());
+		map.put(DomainConstatns.CONSUMER_ADDRESS, order.getConsumerAddress());// 客户地址
+		map.put(DomainConstatns.CCI, order.getCci());// 客户联系方式
 		return map;
 
 	}
@@ -149,8 +142,7 @@ public class AppBaseOrderController {
 		Map map = build(order);
 		map.put(DomainConstatns.OCT, order.getOct());// 订单创建时间
 		map.put(DomainConstatns.SST, order.getSst());// 开始服务时间
-		map.put(DomainConstatns.CONSUMER_ADDRESS, order.getConsumerAddress());// 客户地址
-		map.put(DomainConstatns.CCI, order.getCci());// 客户联系方式
+	
 		map.put(DomainConstatns.CONSUMER_NAME, order.getConsumerName());// consumerName
 																		// 客户名称
 																		// String

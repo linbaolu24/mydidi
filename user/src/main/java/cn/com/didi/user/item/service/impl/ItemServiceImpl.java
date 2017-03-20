@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,12 +16,15 @@ import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.ServiceState;
+import cn.com.didi.domain.util.State;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.item.dao.mapper.FlServiceDtoMapper;
 import cn.com.didi.user.item.dao.mapper.SlServiceDtoMapper;
 import cn.com.didi.user.item.dao.mapper.SlsCityDtoMapper;
 import cn.com.didi.user.item.domain.FlServiceDto;
 import cn.com.didi.user.item.domain.FlServiceItemDto;
+import cn.com.didi.user.item.domain.FlsItemDto;
 import cn.com.didi.user.item.domain.SlServiceDto;
 import cn.com.didi.user.item.domain.SlServiceDtoExample;
 import cn.com.didi.user.item.domain.SlsCityDto;
@@ -74,6 +78,12 @@ public class ItemServiceImpl implements IItemService {
 	public List<FlServiceDto> selectAllFlService() {
 		return flsMapper.selectAllFlService();
 	}
+	
+	public List<FlServiceDto> selectAllFlService(String state) {
+		return flsMapper.selectAllFlService();
+	}
+	
+	
 
 	@Override
 	public Integer selectMaxFlsDisplayOrder() {
@@ -129,7 +139,6 @@ public class ItemServiceImpl implements IItemService {
 
 	@Override
 	public void updateSlsState(Integer serviceId, String state) {
-		
 		if (serviceId == null) {
 			return;
 		}
@@ -153,12 +162,32 @@ public class ItemServiceImpl implements IItemService {
 
 	@Override
 	public List<SlServiceDto> selectSls(Integer flsId) {
+		return selectSls(flsId,null);
+	}
+	
+	public List<SlServiceDto> selectSls(Integer flsId,String state) {
 		if (flsId == null) {
 			return null;
 		}
 		SlServiceDtoExample example = new SlServiceDtoExample();
 		SlServiceDtoExample.Criteria cri = example.createCriteria();
 		cri.andFlsIdEqualTo(flsId);
+		if(!StringUtils.isEmpty(state)){
+			cri.andStateEqualTo(state);
+		}
+		return slsMapper.selectByExample(example);
+	}
+	
+	public List<SlServiceDto> selectSls(List<Integer> flsId,String state) {
+		if (flsId == null) {
+			return null;
+		}
+		SlServiceDtoExample example = new SlServiceDtoExample();
+		SlServiceDtoExample.Criteria cri = example.createCriteria();
+		cri.andFlsIdIn(flsId);
+		if(!StringUtils.isEmpty(state)){
+			cri.andStateEqualTo(state);
+		}
 		return slsMapper.selectByExample(example);
 	}
 
@@ -180,7 +209,11 @@ public class ItemServiceImpl implements IItemService {
 
 	@Override
 	public List<SlsItemDto> selectSlItems(Integer flsId) {
-		List<SlServiceDto> dto = selectSls(flsId);
+		List<SlServiceDto> dto = selectSls(flsId,ServiceState.NORMAL.getCode());
+		return toSlsItems(dto);
+	}
+	
+	protected List<SlsItemDto> toSlsItems(List<SlServiceDto> dto){
 		if (CollectionUtils.isEmpty(dto)) {
 			return null;
 		}
@@ -191,7 +224,9 @@ public class ItemServiceImpl implements IItemService {
 		}
 		for (SlsCityDtoKey one : list) {
 			for (int i = 0; i < items.size(); i++) {
-				items.get(i).addSlsCity(one);
+				if(items.get(i).addSlsCity(one)){
+					break;
+				}
 			}
 		}
 		return items;
@@ -200,6 +235,39 @@ public class ItemServiceImpl implements IItemService {
 	@Override
 	public SlServiceDto selectSlService(Integer slsId) {
 		return slsMapper.selectByPrimaryKey(slsId);
+	}
+
+	@Override
+	public List<SlsItemDto> selectSlItems(List<Integer> flsId) {
+		List<SlServiceDto> slsServiceDto=selectSls(flsId,ServiceState.NORMAL.getCode());
+		return toSlsItems(slsServiceDto);
+	}
+
+	@Override
+	public List<FlsItemDto> selectAllFlsItem() {
+		List<FlServiceDto> flServiceList=selectAllFlService(ServiceState.NORMAL.getCode());
+		if(CollectionUtils.isEmpty(flServiceList)){
+			return null;
+		}
+		List<FlsItemDto> flItem=FlsItemDto.wrap(flServiceList);
+		List<Integer> flIdList=toServiceIdList(flServiceList);
+		List<SlsItemDto> slsItems=selectSlItems(flIdList);
+		for (SlsItemDto one : slsItems) {
+			for (int i = 0; i < flItem.size(); i++) {
+				if(flItem.get(i).addSlsItem(one)){
+					break;
+				}
+			}
+		}
+		return flItem;
+		 
+	}
+	protected List<Integer> toServiceIdList(List<FlServiceDto> list){
+		List<Integer> lists=new ArrayList(list.size());
+		for(int i=0;i<list.size();i++){
+			lists.add(list.get(i).getServiceId());
+		}
+		return lists;
 	}
 
 }

@@ -40,6 +40,12 @@ public interface ITradeService {
 	 * @return
 	 */
 	public IResult<Void> finishDeal(PayResultDto payResult,TranscationalCallBack<PayResultDto> deal);
+	/**
+	 * 交易失败
+	 * @param dealId
+	 * @param cause
+	 */
+	public int fail(Long dealId,String cause);
 	
 	/**
 	 * @param dealId

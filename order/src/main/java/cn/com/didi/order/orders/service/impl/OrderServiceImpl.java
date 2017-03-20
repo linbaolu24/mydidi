@@ -28,6 +28,7 @@ import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.domain.util.TradeCategory;
 import cn.com.didi.message.push.service.IPushMessageService;
 import cn.com.didi.order.IOrderInfo;
+import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderDtoOrderInfo;
 import cn.com.didi.order.orders.domain.OrderStateCostDto;
@@ -335,9 +336,9 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 
 	@Override
-	public IOrderRuslt<Long> createDeal(Long orderId, Long bId, PayAccountEnum payEnum) {
+	public IOrderRuslt<OrderDealDescDto> createDeal(Long orderId, Long bId, PayAccountEnum payEnum) {
 		OrderDto dto = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Long> result = normalBVerify(dto, bId);
+		IOrderRuslt<OrderDealDescDto> result = normalBVerify(dto, bId);
 		if (result != null) {
 			return result;
 		}
@@ -365,10 +366,19 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		deal.setOrderId(dto.getOrderId());
 		deal.setSai(dto.getConsumerAccountId());
 		tradeService.createTrade(deal, dealTranscationalCallBack);
-		result = new OrderRuslt<>("", OrderRuslt.SUCCESS_CODE, null, deal.getDealId());
+		result = new OrderRuslt<>("", OrderRuslt.SUCCESS_CODE, null, createOrderDealDescDto(deal, dto));
 		return result;
 	}
-
+	protected OrderDealDescDto createOrderDealDescDto(DealDto deal,OrderDto order){
+		OrderDealDescDto desc=new OrderDealDescDto();
+		desc.setAmount(deal.getAmount());
+		desc.setCname(order.getCname());
+		desc.setDescription(order.getDescription());
+		desc.setOrderId(order.getOrderId());
+		desc.setDealId(deal.getDealId());
+		desc.setDealTime(deal.getCreateTime());
+		return desc;
+	}
 	@Override
 	public IOrderRuslt<Void> finishDeal(PayResultDto dto) {
 		if (dto.getOrderId() == null) {

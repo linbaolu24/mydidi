@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 
 import cn.com.didi.domain.domains.CityCodeDto;
-import cn.com.didi.user.item.domain.SlServiceDto;
 import cn.com.didi.user.item.domain.SlsItemDto;
 
 public class SlsItemWrapper {

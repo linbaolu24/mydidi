@@ -53,7 +53,7 @@ public class AccountResolverAdapter implements IAccountResolver {
 
 	@Override
 	public String getAttr(HttpServletRequest request, String key) {
-		return (String)request.getAttribute(key);
+		return (String)request.getSession().getAttribute(key);
 	}
 
 }

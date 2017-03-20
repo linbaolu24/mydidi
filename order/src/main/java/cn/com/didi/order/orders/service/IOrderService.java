@@ -1,10 +1,9 @@
 package cn.com.didi.order.orders.service;
 
-import java.util.Date;
-
 import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.IOrderInfo;
+import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderStateCostDto;
 import cn.com.didi.order.result.IOrderRuslt;
@@ -108,7 +107,7 @@ public interface IOrderService {
 	 * @param bId
 	 * @return
 	 */
-	public IOrderRuslt<Long> createDeal(Long orderId, Long bId,PayAccountEnum payEnum);
+	public IOrderRuslt<OrderDealDescDto> createDeal(Long orderId, Long bId,PayAccountEnum payEnum);
 	
 
 	/**

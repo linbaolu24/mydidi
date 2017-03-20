@@ -172,4 +172,18 @@ public class DomainMessageConstans {
 	 * 交易记录金额不相等
 	 */
 	public static final String CODE_DEAL_ACCOUNT_NOT_EQUAL="5004000002";
+	
+	/**
+	 * 验证阿里签名失败
+	 */
+	public static final String CODE_DEAL_VERIFY_ALI_SIGN_FAIL="5004000003";
+	/**
+	 * 阿里返回交易失败
+	 */
+	public static final String CODE_DEAL_ALI_RESULT_FAIL="5004000004";
+	
+	/**
+	 * 生成支付宝订单支付信息异常
+	 */
+	public static final String CODE_DEAL_ALI_PAY_ORDERINFO_FAIL="5004000005";
 }

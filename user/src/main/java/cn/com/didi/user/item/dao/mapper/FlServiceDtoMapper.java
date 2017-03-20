@@ -35,6 +35,11 @@ public interface FlServiceDtoMapper {
      * 
      */
     public List<FlServiceDto> selectAllFlService();
+    
+    /**
+     * 
+     */
+    public List<FlServiceDto> selectAllStateFlService(String state);
     /**
      * @return
      */

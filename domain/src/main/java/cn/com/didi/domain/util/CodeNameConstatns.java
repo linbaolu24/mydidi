@@ -1,5 +1,10 @@
 package cn.com.didi.domain.util;
 
+/**
+ * 编码名常量
+ * @author xlm
+ *
+ */
 public class CodeNameConstatns {
 	/**
 	 * 订单状态列表text描述

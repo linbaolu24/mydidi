@@ -33,4 +33,10 @@ public interface ITradeInfoService {
 	 */
 	Long selectOrderIdFromDeal(Long dealId);
 	public IPage<DealListDto> selectTrades(TimeInterval interval);
+	/**
+	 * 交易失败
+	 * @param dealId
+	 * @param cause
+	 */
+	public int fail(Long dealId,String cause);
 }

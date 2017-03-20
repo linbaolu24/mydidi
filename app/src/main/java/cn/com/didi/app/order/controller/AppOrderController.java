@@ -29,6 +29,7 @@ import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.CodeNameConstatns;
 import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.domain.util.PayAccountEnum;
+import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderStateCostDto;
@@ -230,15 +231,16 @@ public class AppOrderController extends AppBaseOrderController {
 		Long orderId = (Long) map.getOrderId();
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
-		IOrderRuslt<Long> or = orderService.createDeal(orderId, accountId, PayAccountEnum.ALIPAY);
+		IOrderRuslt<OrderDealDescDto> or = orderService.createDeal(orderId, accountId, PayAccountEnum.ALIPAY);
 		if (or.success()) {
 			Map p=new HashMap(1);
-			p.put(DomainConstatns.DEALID, or.getData());
+			p.put(DomainConstatns.DEALID, or.getData().getDealId());
 			return ResultFactory.success(p);
 		}
+		
 		return ResultFactory.error(or.getCode(), or.getMessage());
 	} 
-	@RequestMapping(value = "/app/c/order/finishAlipay",method={RequestMethod.POST})
+	/*@RequestMapping(value = "/app/c/order/finishAlipay",method={RequestMethod.POST})
 	public IResult finishAlipay(@RequestBody OrderIDJAO map,HttpServletRequest request){
 		//TODO 结果不正确
 		Long orderId = (Long) map.getOrderId();
@@ -251,5 +253,5 @@ public class AppOrderController extends AppBaseOrderController {
 			return ResultFactory.success(p);
 		}
 		return ResultFactory.error(or.getCode(), or.getMessage());
-	} 
+	} */
 }

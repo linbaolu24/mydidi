@@ -66,6 +66,21 @@ public class OrderMessageConstans {
 	 * 交易记录金额不相等
 	 */
 	public static final Message DEAL_ACCOUNT_NOT_EQUAL= newMessage(DomainMessageConstans.CODE_DEAL_ACCOUNT_NOT_EQUAL);
+	
+	
+	/**
+	 * 验证阿里签名失败
+	 */
+	public static final Message DEAL_VERIFY_ALI_SIGN_FAIL=newMessage(DomainMessageConstans.CODE_DEAL_VERIFY_ALI_SIGN_FAIL);
+	/**
+	 * 阿里返回交易失败
+	 */
+	public static final Message DEAL_ALI_RESULT_FAIL=newMessage(DomainMessageConstans.CODE_DEAL_ALI_RESULT_FAIL);
+	
+	/**
+	 * 生成支付宝订单支付信息异常
+	 */
+	public static final Message DEAL_ALI_PAY_ORDERINFO_FAIL= newMessage(DomainMessageConstans.CODE_DEAL_ALI_PAY_ORDERINFO_FAIL);
 	/**
 	 * @param code
 	 * @return

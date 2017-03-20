@@ -6,6 +6,7 @@ import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.user.item.domain.FlServiceDto;
 import cn.com.didi.user.item.domain.FlServiceItemDto;
+import cn.com.didi.user.item.domain.FlsItemDto;
 import cn.com.didi.user.item.domain.SlServiceDto;
 import cn.com.didi.user.item.domain.SlsCityDto;
 import cn.com.didi.user.item.domain.SlsItemDto;
@@ -75,5 +76,13 @@ public interface IItemService {
 	/**查询Item*/
 	public List<SlsItemDto> selectSlItems(Integer flsId);
 	
+	/**查询Item*/
+	public List<SlsItemDto> selectSlItems(List<Integer> flsId);
+	
 	public SlServiceDto selectSlService(Integer slsId);
+	/**
+	 * 查询所有一级项目
+	 * @return
+	 */
+	public List<FlsItemDto> selectAllFlsItem();
 }

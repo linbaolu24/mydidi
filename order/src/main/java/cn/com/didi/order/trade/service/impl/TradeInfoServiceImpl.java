@@ -90,4 +90,9 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		return new MybatisPaginatorPage<>(list);
 	}
 
+	@Override
+	public int fail(Long dealId, String cause) {
+		return dealDtoMapper.updateFail(dealId, cause);
+	}
+
 }
