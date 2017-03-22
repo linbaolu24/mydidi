@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import cn.com.didi.domain.util.Role;
 
 public class MerchantDto implements Serializable {
@@ -393,10 +395,14 @@ public class MerchantDto implements Serializable {
     	UserDto userDto=new UserDto();
 		userDto.setBpn(getBpn());
 		userDto.setUserName(getUserName());
+		if(StringUtils.isEmpty(userDto.getUserName())){
+			userDto.setUserName(getBpn());
+		}
 		userDto.setRole(Role.BUSINESS.getCode());
 		userDto.setCname(getMastername());
 		userDto.setProfilePhoto(getMpn());
 		userDto.setState(getState());
+		userDto.setCreateTime(getCreateTime());
 		return userDto;
     }
     

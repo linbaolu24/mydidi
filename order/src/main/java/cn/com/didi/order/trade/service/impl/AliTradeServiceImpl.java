@@ -29,6 +29,7 @@ import cn.com.didi.core.utils.SignUtil;
 import cn.com.didi.domain.domains.AliPAyRequestDto;
 import cn.com.didi.domain.domains.AliSynResultDto;
 import cn.com.didi.domain.domains.PayResultDto;
+import cn.com.didi.domain.util.DomainMessageConstans;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.service.IOrderService;
@@ -113,44 +114,54 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		try {
 			isSuccess = AlipaySignature.rsaCheckV1(map, aliPubkey, charset);
 		} catch (Exception e) {
-			LOGGER.error("阿里异步通知验证签名失败 =   {}  ",map,e);
+			LOGGER.error("阿里异步通知验证签名失败 =   {}  ", map, e);
 		}
 		if (!isSuccess) {
 			return ResultFactory.error(OrderMessageConstans.DEAL_VERIFY_ALI_SIGN_FAIL);
 		}
-		IResult<Void> result=finishDeal(map);
-		return result;
+		if (TRADE_SUCCESS.equalsIgnoreCase((String) map.get(TRADE_STATUS))) {
+			IResult<Void> result = finishDeal(map);
+			return result;
+		}
+		return ResultFactory.success();
+
 	}
 
 	@Override
 	public IResult<Void> synnotify(AliSynResultDto synResultDto) {
+		String resultStatus = synResultDto.getResultStatus();
+		if (!RESULTSTATUS_SUCCESS.equals(resultStatus) && !RESULTSTATUS_REPEAT.equals(resultStatus)) {
+			LOGGER.error("阿里返回失败{},对象为", resultStatus, synResultDto);
+			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_RESULT_FAIL);
+		}
 		Map map = JSON.parseObject(synResultDto.getResult(), Map.class);
-		String response=(String) map.get(ALIPAY_TRADE_APP_PAY_RESPONSE);
+		String response = (String) map.get(ALIPAY_TRADE_APP_PAY_RESPONSE);
 		Map resMap = JSON.parseObject(response, Map.class);
-		String charset=StringUtils.defaultIfEmpty((String) resMap.get(CHARSET), Constans.CHARSET_UTF_8);
-		String sign=(String) map.get(SIGN);
-		String signType=(String) map.get(SIGN_TYPE);
+		String charset = StringUtils.defaultIfEmpty((String) resMap.get(CHARSET), Constans.CHARSET_UTF_8);
+		String sign = (String) map.get(SIGN);
+		String signType = (String) map.get(SIGN_TYPE);
 		boolean isSuccess = false;
 		try {
-			isSuccess=SignUtil.verify(getSignAlgFromSignType(signType), aliPublicKey, response.getBytes(charset), Base64.decodeBase64(sign));
+			isSuccess = SignUtil.verify(getSignAlgFromSignType(signType), aliPublicKey, response.getBytes(charset),
+					Base64.decodeBase64(sign));
 		} catch (InvalidKeyException | NoSuchAlgorithmException | SignatureException | UnsupportedEncodingException e) {
-			LOGGER.error("阿里同步通知验证签名失败 =   {}  ",map,e);
+			LOGGER.error("阿里同步通知验证签名失败 =   {}  ", map, e);
 		}
 		if (!isSuccess) {
 			return ResultFactory.error(OrderMessageConstans.DEAL_VERIFY_ALI_SIGN_FAIL);
 		}
-		IResult<Void> result=finishDeal(map);
+		IResult<Void> result = finishDeal(map);
 		return result;
 	}
-	
-	
-	protected String getSignAlgFromSignType(String signType){
+
+	protected String getSignAlgFromSignType(String signType) {
 		String alg = Constans.SHA1_WITH_RSA;
 		if (RSA2.equals(signType)) {
-			alg =  Constans.SHA256_WITH_RSA;
+			alg = Constans.SHA256_WITH_RSA;
 		}
 		return alg;
 	}
+
 	protected IResult<Void> finishDeal(Map map) {
 		String dealId = (String) map.get(OUT_TRADE_NO);
 		String cost = (String) map.get(TOTAL_AMOUNT);
@@ -162,7 +173,7 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		try {
 			tradeService.fail(dealId, cause);
 		} catch (Exception e) {
-			LOGGER.error("订单 {} 更新为失败 {} 时发生错误 ", dealId,cause,e);
+			LOGGER.error("订单 {} 更新为失败 {} 时发生错误 ", dealId, cause, e);
 		}
 	}
 

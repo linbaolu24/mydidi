@@ -1,6 +1,7 @@
 package cn.com.didi.platform.item.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -134,5 +135,14 @@ public class ItemController {
 		Map map = new HashMap();
 		map.put(DomainConstatns.DISPLAY_ORDER, displayOrder);
 		return ResultFactory.success(map);
+	}
+	
+	@RequestMapping(value = "/platform/s/getSls", method = RequestMethod.POST)
+	public IResult getSls(@RequestBody SlServiceDto dto) {
+		if (dto == null) {
+			return ResultFactory.success();
+		}
+		List<SlServiceDto> slsList = itemServiece.selectSls(dto.getFlsId());
+		return ResultFactory.success(slsList);
 	}
 }

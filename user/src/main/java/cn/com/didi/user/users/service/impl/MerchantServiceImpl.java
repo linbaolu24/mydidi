@@ -20,6 +20,7 @@ import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.LatLngUtiil;
+import cn.com.didi.domain.util.State;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.area.service.IAreaService;
 import cn.com.didi.user.users.dao.mapper.MerchantAreaDtoMapper;
@@ -97,6 +98,7 @@ public class MerchantServiceImpl implements IMerchantService {
 
 	//@Override
 	@Transactional
+	@Deprecated
 	public void addMerchant(MerchantExtDto merchant) {
 
 		if (merchant == null) {
@@ -122,6 +124,9 @@ public class MerchantServiceImpl implements IMerchantService {
 
 	@Transactional
 	public void addMerchant(MerchantDto dto) {
+		if(StringUtils.isEmpty(dto.getState())){
+			dto.setState(State.VALID.getState());
+		}
 		UserDto userDto = dto.toUserDto();
 		userDto.setPassword(DigestUtils.md5Hex("123456"));
 		userService.addUser(userDto);

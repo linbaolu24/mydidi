@@ -7,6 +7,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.domain.domains.AliSynResultDto;
 import cn.com.didi.domain.util.DomainMessageConstans;
+import cn.com.didi.order.trade.service.IAliTradeService;
 
 @RestController
 public class AlipayDealController extends AbstractDealController {
@@ -32,9 +34,31 @@ public class AlipayDealController extends AbstractDealController {
 	private static final String FAIL = "fail";
 	private static final String OUT_TRADE_NO = "out_trade_no";
 	private static final String TOTAL_AMOUNT = "total_amount";
+	@Resource
+	protected IAliTradeService aliTradeService;
 
 	private static final BigDecimal YB = new BigDecimal(100);
 
+	/*
+	 * @RequestMapping(value = "/app/c/order/aliAsnyNotify", method =
+	 * RequestMethod.POST) public String alipaySdkNotify(HttpServletRequest
+	 * request) throws UnsupportedEncodingException { String charSet =
+	 * request.getParameter("charset"); Enumeration<String> names =
+	 * request.getParameterNames(); TreeMap map = new TreeMap(); String name;
+	 * while (names.hasMoreElements()) { name = names.nextElement();
+	 * map.put(name, URLDecoder.decode(request.getParameter(name), charSet)); }
+	 * boolean isSuccess = false; try { isSuccess =
+	 * AlipaySignature.rsaCheckV1(map, ALI_PUBLICK_KEY, charSet); } catch
+	 * (Exception e) { LOGGER.error("阿里验证签名失败" + map.toString(), e); return
+	 * FAIL; } // if(AliTrade) if (!isSuccess) { return FAIL; } try { if
+	 * ("TRADE_SUCCESS".equalsIgnoreCase((String) map.get("trade_status"))) {
+	 * IResult<Void> result = finishDeal(map); if (result != null &&
+	 * !result.success()) { return FAIL; } }
+	 * 
+	 * return SUCESS; } catch (Exception e) { return FAIL; }
+	 * 
+	 * }
+	 */
 	@RequestMapping(value = "/app/c/order/aliAsnyNotify", method = RequestMethod.POST)
 	public String alipaySdkNotify(HttpServletRequest request) throws UnsupportedEncodingException {
 		String charSet = request.getParameter("charset");
@@ -45,33 +69,19 @@ public class AlipayDealController extends AbstractDealController {
 			name = names.nextElement();
 			map.put(name, URLDecoder.decode(request.getParameter(name), charSet));
 		}
-		boolean isSuccess = false;
 		try {
-			isSuccess = AlipaySignature.rsaCheckV1(map, ALI_PUBLICK_KEY, charSet);
-		} catch (Exception e) {
-			LOGGER.error("阿里验证签名失败" + map.toString(), e);
-			return FAIL;
-		}
-		// if(AliTrade)
-		if (!isSuccess) {
-			return FAIL;
-		}
-		try {
-			if ("TRADE_SUCCESS".equalsIgnoreCase((String) map.get("trade_status"))) {
-				IResult<Void> result = finishDeal(map);
-				if (result != null && !result.success()) {
-					return FAIL;
-				}
+			IResult<Void> result=aliTradeService.asynnotify(map);
+			if(result!=null&&!result.success()){
+				return FAIL;
 			}
-
 			return SUCESS;
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
 			return FAIL;
 		}
-
 	}
 
-	@RequestMapping(value = "/app/c/order/finishAlipay", method = RequestMethod.POST)
+	/*@RequestMapping(value = "/app/c/order/finishAlipay", method = RequestMethod.POST)
 	public IResult alipayResukt(@RequestBody AliSynResultDto request) throws UnsupportedEncodingException {
 		String resultStatus = request.getResultStatus();
 		if (!resultStatus.equals("9000") && !resultStatus.equals("5000")) {
@@ -92,6 +102,12 @@ public class AlipayDealController extends AbstractDealController {
 			return ResultFactory.success();
 		}
 		return ResultFactory.error(result.getCode(), result.getMessage());
+	}*/
+	
+	@RequestMapping(value = "/app/c/order/finishAlipay", method = RequestMethod.POST)
+	public IResult alipayResukt(@RequestBody AliSynResultDto request) {
+		IResult<Void> result=aliTradeService.synnotify(request);
+		return result;
 	}
 
 	protected IResult<Void> finishDeal(Map map) {

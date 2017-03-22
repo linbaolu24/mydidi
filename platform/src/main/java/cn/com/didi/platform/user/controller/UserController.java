@@ -60,7 +60,7 @@ public class UserController {
 
 	@RequestMapping(value = "/platform/b/add", method = RequestMethod.POST)
 	public IResult addMerchant(@RequestBody MerchantExtDto dto) {
-		AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
+		//AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
 		dto.setAccountId(null);
 		service.addMerchant(dto.dto(), dto.getServiceList(), dto.getAreaList());
 		return ResultFactory.success();

@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import cn.com.didi.order.orders.domain.OrderDtoOrderInfo;
 import cn.com.didi.order.orders.domain.OrderStateCostDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderLifeListener;
+import cn.com.didi.order.orders.service.IOrderNotifyMessageFinder;
 import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.order.result.OrderRuslt;
 import cn.com.didi.order.trade.domain.DealDto;
@@ -57,6 +59,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	private ITradeService tradeService;
 	@Resource
 	protected IPushMessageService pushMessageService;
+	@Resource
+	protected IOrderNotifyMessageFinder orderMessageFinder;
 	protected TranscationalCallBack<DealDto> dealTranscationalCallBack = new TranscationalCallBack<DealDto>() {
 
 		@Override
@@ -118,8 +122,10 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			if(oResult!=null){
 				return oResult;
 			}
-			sendMessage(info, "您有新的订单", "您有新的订单", dto);
-			sendMessage(info, "您的订单已接单", "您的订单已接单", false);
+			MessageDto tempMDto=orderMessageFinder.findBTakingMessage(info);
+			sendMessage(info, tempMDto, dto);
+			tempMDto=orderMessageFinder.findCTakedMessage(info);
+			sendMessage(info,tempMDto, false);
 			// 对接单人发送消息,和订单人发送消息
 		}
 		// notifyAutoDispatch(info, orderResult, dto);
@@ -151,7 +157,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			if(oResult!=null){
 				return oResult;
 			}
-			sendMessage(info,  "您有新的订单", "您有新的订单", reciverDtos);
+			MessageDto tempMDto=orderMessageFinder.findBToTakeMessage(info);
+			sendMessage(info,  tempMDto, reciverDtos);
 		}
 		return orderResult;
 	}
@@ -172,7 +179,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return temp;
 		}
 		temp = new OrderRuslt<>(orderId);
-		sendMessage(info,  "您的订单已被接单", "您的订单已被接单", false);
+		MessageDto tempMDto=orderMessageFinder.findCTakedMessage(info);
+		sendMessage(info,  tempMDto, false);
 		return temp;
 
 	}
@@ -193,7 +201,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return orderResult;
 		}
 		// 发送消息
-		sendMessage(order,  "您的订单师傅开始服务", "您的订单师傅开始服务", false);
+		MessageDto tempMDto=orderMessageFinder.findBStartMessage(order);
+		sendMessage(order, tempMDto, false);
 		return orderResult;
 
 	}
@@ -218,8 +227,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if(orderResult!=null){
 			return orderResult;
 		}
-		// TODO 发送消息
-		sendMessage(order,  "您的订单师傅完成服务", "您的订单师傅完成服务", false);
+		MessageDto tempMDto=orderMessageFinder.findBFinishMessage(order);
+		sendMessage(order,  tempMDto, false);
 		return orderResult;
 		// 发送消息
 		// notifyFinishService(info);
@@ -247,7 +256,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if(orderResult!=null){
 			return orderResult;
 		}
-		sendMessage(order,  "您的订单师傅发起收费", "您的订单师傅发起收费", false);
+		MessageDto tempMDto=orderMessageFinder.findBChargeMessage(order);
+		sendMessage(order,  tempMDto, false);
 		// 更新状态
 		// 发送消息
 		return null;
@@ -326,7 +336,9 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 				return orderResult;
 			}
 			order.setState(state.getCode());
-			sendMessage(order,  "您的订单已被取消", "您的订单已被取消", false);
+			
+			MessageDto tempMDto=orderMessageFinder.findCCancelMessage(order);
+			sendMessage(order,  tempMDto, true);
 		}
 		OrderRuslt<OrderStateCostDto> or = new OrderRuslt<>(orderId);
 		or.setData(stateDto);
@@ -402,7 +414,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		dto.setbId(orderDto.getMerchantAccountId());
 		IResult<Void> deal = tradeService.finishDeal(dto, "0".equals(orderDto.getCancelFlag())?dealFinishTranscationalCallBack:dealFinishTranscationalCallBackCannel);
 		if (deal == null || deal.success()) {
-			sendMessage(orderDto, "您的订单用户已完成付款", "您的订单用户已完成付款", true);
+			MessageDto tempMDto=orderMessageFinder.findCFinishDealMessage(orderDto);
+			sendMessage(orderDto, tempMDto, true);
 			return OrderRuslt.successResult();
 		}
 		return new OrderRuslt<>(deal.getMessage(), deal.getCode());
@@ -412,7 +425,13 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	public void noReceiver(IOrderInfo info) {
 		notifyNoReceiver(info);
 	}
-
+	protected void sendMessage(OrderDto dto, MessageDto messageDto, boolean isMerchant) {
+		if(messageDto==null||StringUtils.isEmpty(messageDto.getText())||StringUtils.isEmpty(messageDto.getTitle())){
+			return ;
+		}
+		IReciverDto reciver = isMerchant ? getBReciver(dto) : getCReciver(dto);
+		sendMessage(dto, messageDto.getText(), messageDto.getTitle(), reciver);
+	}
 	protected void sendMessage(OrderDto dto, String text, String title, boolean isMerchant) {
 		IReciverDto reciver = isMerchant ? getBReciver(dto) : getCReciver(dto);
 		sendMessage(dto, text, title, reciver);
@@ -429,6 +448,13 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			LOGGER.error("订单{}推送消息,发送消息失败", dto,e);
 		}*/
 	}
+	protected void sendMessage(OrderDto dto,MessageDto messageDto, IReciverDto reciver) {
+		if(messageDto==null||StringUtils.isEmpty(messageDto.getText())||StringUtils.isEmpty(messageDto.getTitle())){
+			return ;
+		}
+		sendMessage(dto,messageDto.getText(), messageDto.getTitle(), reciver);
+	}
+	
 	
 	protected void sendMessage(OrderDto dto, String text, String title, IReciverDto reciver) {
 		if (reciver == null) {
@@ -443,6 +469,13 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		} catch (Exception e) {
 			LOGGER.error("订单{}推送消息,发送消息失败", dto,e);
 		}
+	}
+	
+	protected void sendMessage(OrderDto dto, MessageDto messageDto,List<IReciverDto> lists) {
+		if(messageDto==null||StringUtils.isEmpty(messageDto.getText())||StringUtils.isEmpty(messageDto.getTitle())){
+			return ;
+		}
+		sendMessage(dto, messageDto.getText(), messageDto.getTitle(), lists);
 	}
 	
 	protected void sendMessage(OrderDto dto, String text, String title,List<IReciverDto> lists) {

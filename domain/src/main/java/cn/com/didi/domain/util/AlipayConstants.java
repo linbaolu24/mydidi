@@ -44,4 +44,10 @@ public class AlipayConstants {
 	public static final String DEFAULT_CHARSET="UTF-8";
 	
 	public static final String ALIPAY_TRADE_APP_PAY_RESPONSE="alipay_trade_app_pay_response";
+	
+	public static final String TRADE_SUCCESS ="TRADE_SUCCESS";
+	public static final String RESULTSTATUS_SUCCESS="9000";
+	public static final String RESULTSTATUS_REPEAT= "5000";
+	
+	public static final String TRADE_STATUS= "trade_status";
 }

@@ -1,6 +1,7 @@
 package cn.com.didi.user.users.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -211,6 +212,29 @@ public class MerchantExtDto implements Serializable{
 
 	public void setMpn(String mpn) {
 		dto.setMpn(mpn);
+	}
+
+	public BigDecimal getLng() {
+		return dto.getLng();
+	}
+
+	public void setLng(BigDecimal lng) {
+		dto.setLng(lng);
+	}
+
+	public BigDecimal getLat() {
+		return dto.getLat();
+	}
+
+	public void setLat(BigDecimal lat) {
+		dto.setLat(lat);
+	}
+	public String getMasterName() {
+		return dto.getMastername();
+	}
+
+	public void setMasterName(String mastername) {
+		dto.setMastername(mastername);
 	}
 
 }
