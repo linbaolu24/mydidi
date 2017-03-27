@@ -249,9 +249,13 @@ public class ItemServiceImpl implements IItemService {
 		if(CollectionUtils.isEmpty(flServiceList)){
 			return null;
 		}
-		List<FlsItemDto> flItem=FlsItemDto.wrap(flServiceList);
 		List<Integer> flIdList=toServiceIdList(flServiceList);
 		List<SlsItemDto> slsItems=selectSlItems(flIdList);
+	
+		List<FlsItemDto> flItem=FlsItemDto.wrap(flServiceList);
+		if(CollectionUtils.isEmpty(slsItems)){
+			return flItem;
+		}
 		for (SlsItemDto one : slsItems) {
 			for (int i = 0; i < flItem.size(); i++) {
 				if(flItem.get(i).addSlsItem(one)){

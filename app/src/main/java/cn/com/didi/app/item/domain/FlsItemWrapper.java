@@ -59,6 +59,9 @@ public class FlsItemWrapper {
 		}
 		List<FlsItemWrapper> lists = new ArrayList<FlsItemWrapper>(flsItelDtomList.size());
 		for (FlsItemDto one : flsItelDtomList) {
+			if(one.empty()){
+				continue;
+			}
 			lists.add(new FlsItemWrapper(one));
 		}
 		return lists;

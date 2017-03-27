@@ -70,7 +70,7 @@ public interface IItemService {
 	 * @param state
 	 */
 	public void updateFlsState(Integer serviceId,String state);
-	/**查询Item*/
+	/**查询Item,该方法不过滤不存在二级服务的一级服务*/
 	public List<FlServiceItemDto> selectItems();
 	
 	/**查询Item*/

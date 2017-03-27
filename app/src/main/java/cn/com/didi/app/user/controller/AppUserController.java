@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,6 +40,7 @@ public class AppUserController {
 		Long accountId = registerService.register(dto);
 		Map p = new HashMap(1);
 		p.put(DomainConstatns.ACCOUNT_ID, accountId);
+		p.put(DomainConstatns.BPN,dto.getPhone());
 		return ResultFactory.success(p);
 
 	}
@@ -83,6 +85,7 @@ public class AppUserController {
 		p.put(DomainConstatns.WECHAT_ACCOUNT, ext.wechatAccount());
 		p.put(DomainConstatns.GT_CID, ext.gtCid());
 		p.put(DomainConstatns.RY_TOKEN, ext.ryToken());
+		p.put(DomainConstatns.BPN,StringUtils.defaultIfEmpty(login.getPhone(),ext.getUserDto().getBpn()));
 		resolver.saveAccount(request, ext.getUserDto().getAccountId(),p);
 		return ResultFactory.success(p);
 	}

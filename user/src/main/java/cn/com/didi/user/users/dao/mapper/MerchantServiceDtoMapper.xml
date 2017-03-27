@@ -194,7 +194,7 @@
 
 
 	<resultMap id="BaseResultMap_Sls"
-		type="cn.com.didi.user.users.domain.MerchantServiceDtoKey">
+		type="cn.com.didi.user.users.domain.MerchantServiceDto">
 		<id column="account_Id" property="accountId" jdbcType="BIGINT" />
 		<id column="sls_id" property="slsId" jdbcType="INTEGER" />
 		<id column="cname" property="cname" jdbcType="VARCHAR" />

@@ -26,7 +26,7 @@ public class FlsItemDto {
 		super();
 		this.flsDto = flsDto;
 	}
-
+	
 	
 	
 	public FlsItemDto() {
@@ -57,6 +57,9 @@ public class FlsItemDto {
 			lists.add(new FlsItemDto(one));
 		}
 		return lists;
+	}
+	public boolean empty(){
+		return CollectionUtils.isEmpty(item);
 	}
 	private FlServiceDto flsDto;
 	private List<SlsItemDto> item;

@@ -66,5 +66,10 @@ public class DomainConstatns {
 	 * 文本描述
 	 */
 	public static final String S_TEXT="text";
+	
+	/**
+	 * 绑定手机号
+	 */
+	public static final String BPN="bpn";
 
 }
