@@ -231,7 +231,7 @@ public class AppOrderController extends AppBaseOrderController {
 		Long orderId = (Long) map.getOrderId();
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
-		IOrderRuslt<OrderDealDescDto> or = orderService.createDeal(orderId, accountId, PayAccountEnum.ALIPAY);
+		IOrderRuslt<OrderDealDescDto> or = orderService.createDeal(orderId, accountId, PayAccountEnum.ALIPAY,map.getDescription());
 		if (or.success()) {
 			Map p=new HashMap(1);
 			p.put(DomainConstatns.DEALID, or.getData().getDealId());

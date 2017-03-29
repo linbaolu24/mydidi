@@ -107,7 +107,7 @@ public interface IOrderService {
 	 * @param bId
 	 * @return
 	 */
-	public IOrderRuslt<OrderDealDescDto> createDeal(Long orderId, Long bId,PayAccountEnum payEnum);
+	public IOrderRuslt<OrderDealDescDto> createDeal(Long orderId, Long bId,PayAccountEnum payEnum,String desc);
 	
 
 	/**

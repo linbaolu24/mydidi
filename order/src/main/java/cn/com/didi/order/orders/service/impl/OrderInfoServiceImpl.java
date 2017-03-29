@@ -229,7 +229,7 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		if (count != 0) {
 			addStateUpdate(orderId, destState, date, sourceState);
 		}
-		return 0;
+		return count;
 	}
 
 	/**

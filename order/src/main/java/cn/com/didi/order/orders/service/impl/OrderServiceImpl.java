@@ -348,7 +348,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 
 	@Override
-	public IOrderRuslt<OrderDealDescDto> createDeal(Long orderId, Long bId, PayAccountEnum payEnum) {
+	public IOrderRuslt<OrderDealDescDto> createDeal(Long orderId, Long bId, PayAccountEnum payEnum,String desc) {
 		OrderDto dto = orderInfoService.selectOrderSubjectInformation(orderId);
 		IOrderRuslt<OrderDealDescDto> result = normalBVerify(dto, bId);
 		if (result != null) {
@@ -377,6 +377,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		deal.setDealType(category.getType());
 		deal.setOrderId(dto.getOrderId());
 		deal.setSai(dto.getConsumerAccountId());
+		deal.setCment(StringUtils.defaultIfEmpty(desc, null));
 		tradeService.createTrade(deal, dealTranscationalCallBack);
 		result = new OrderRuslt<>("", OrderRuslt.SUCCESS_CODE, null, createOrderDealDescDto(deal, dto));
 		return result;

@@ -37,11 +37,12 @@ public class AliPayBuilderTest {
 	+"WleeDwTUc26zDYBHliLx8OgTwyffeZ1qsv5m6w2mlM8HxqoGwQczmPu2FlgYTJzK"
 	+"dE88UQly6QC2V8JtN83RCwBHindfYBueZLyzSZ0CbjfXDwzNg7ySNdM+tXBOBxv+"
 	+"YX1M/rDBqjUwPvd/C52LY1jOdQ==";
+	//private static String  KEY="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn4XH5JHTlzPDGLX5tHNjYrPdYIDEByKZ3SWi5L940ynkNBUYi9ZWj5/AMdVgryDNclE6GhI7sOnv8pBVusihJspoGF5ECF30oOtFOTpx2Zx6HJCM6MEJcolPh4Wrk0mUqH++R6V9fFSBhgTUUfdnPPlK6de9ez2AHmaBNMmcaxVKh+B4fNvqRMMEtRfl9u+7twvF+uAXFvXfjOhexQOY7BDvNhpAI/4JKAZ+JYPZHLmsSDYfVsNCl5L2IKPz/U7OfpOryAPbYL4dovC2IBuXFKUEhDHetoQlQLruqU77sVE2F4cKnB+k3igW+EqCeLuwI280HEUMU7sZnfwIWZ5cWQIDAQAB";
 	public static void main(String[] args) throws Exception {
 		System.out.println(KEY);
 		PrivateKey pri=SignUtil.getPrivateKeyFromPKCS8("RSA",Base64.decodeBase64(KEY));
 		AliPayBuilder builder=new AliPayBuilder();
-		builder.appid("2016091300501082");
+		builder.appid("2017032206333439");
 		builder.signType("RSA2");
 		builder.version("1.0");
 		builder.format("json");
@@ -52,11 +53,11 @@ public class AliPayBuilderTest {
 		
 		
 		builder.method("alipay.trade.app.pay");
-		builder.notify_url("http://127.9.9.1:8080");
+		builder.notify_url("http://118.178.226.138/api/app/c/order/aliAsnyNotify");
 		
 		builder.bcbody("服务");
 		builder.bcsubject("服务");
-		builder.seller_id("2088102175431082");
+		builder.seller_id("2088421700572637");
 		builder.product_code("QUICK_MSECURITY_PAY");
 		AliPAyRequestDto dto=builder.build(pri);
 		System.out.println(dto.getOrderInfo());
