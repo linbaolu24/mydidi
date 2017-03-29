@@ -76,8 +76,8 @@ public class AliTradeServiceImpl implements IAliTradeService {
 	}
 
 	@Override
-	public IResult<AliPAyRequestDto> createOdrerRequest(Long orderId, Long bId) {
-		IOrderRuslt<OrderDealDescDto> orderResult = orderService.createDeal(orderId, bId, PayAccountEnum.ALIPAY);
+	public IResult<AliPAyRequestDto> createOdrerRequest(Long orderId, Long bId,String desc) {
+		IOrderRuslt<OrderDealDescDto> orderResult = orderService.createDeal(orderId, bId, PayAccountEnum.ALIPAY,desc);
 		if (orderResult != null && !orderResult.success()) {
 			return ResultFactory.error(orderResult.getCode(), orderResult.getMessage());
 		}

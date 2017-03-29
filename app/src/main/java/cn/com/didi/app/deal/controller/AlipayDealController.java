@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -20,10 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
 
+import cn.com.didi.app.order.domain.OrderIDJAO;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
+import cn.com.didi.domain.domains.AliPAyRequestDto;
 import cn.com.didi.domain.domains.AliSynResultDto;
+import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.domain.util.DomainMessageConstans;
+import cn.com.didi.domain.util.PayAccountEnum;
+import cn.com.didi.order.orders.domain.OrderDealDescDto;
+import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.order.trade.service.IAliTradeService;
 
 @RestController
@@ -109,6 +116,25 @@ public class AlipayDealController extends AbstractDealController {
 		IResult<Void> result=aliTradeService.synnotify(request);
 		return result;
 	}
+	
+	
+	@RequestMapping(value = "/app/c/order/alipay",method={RequestMethod.POST})
+	public IResult alipay(@RequestBody OrderIDJAO map,HttpServletRequest request){
+		Long orderId = (Long) map.getOrderId();
+		assertOrderId(orderId);
+		Long accountId = resolver.resolve(request);
+		IResult<AliPAyRequestDto> or = aliTradeService.createOdrerRequest(orderId, accountId,map.getDescription());
+		if (or.success()) {
+			Map p=new HashMap(1);
+			p.put(DomainConstatns.DEALID, or.getData().getDealId());
+			p.put(DomainConstatns.ORDERINFO, or.getData().getOrderInfo());
+			return ResultFactory.success(p);
+		}
+		
+		return ResultFactory.error(or.getCode(), or.getMessage());
+	} 
+	
+	
 
 	protected IResult<Void> finishDeal(Map map) {
 		String dealId = (String) map.get(OUT_TRADE_NO);

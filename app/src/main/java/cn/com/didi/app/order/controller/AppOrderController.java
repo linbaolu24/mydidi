@@ -226,7 +226,7 @@ public class AppOrderController extends AppBaseOrderController {
 		}
 		return ResultFactory.error(or.getCode(), or.getMessage());
 	}
-	@RequestMapping(value = "/app/c/order/alipay",method={RequestMethod.POST})
+	/*@RequestMapping(value = "/app/c/order/alipay",method={RequestMethod.POST})
 	public IResult alipay(@RequestBody OrderIDJAO map,HttpServletRequest request){
 		Long orderId = (Long) map.getOrderId();
 		assertOrderId(orderId);
@@ -239,7 +239,7 @@ public class AppOrderController extends AppBaseOrderController {
 		}
 		
 		return ResultFactory.error(or.getCode(), or.getMessage());
-	} 
+	} */
 	/*@RequestMapping(value = "/app/c/order/finishAlipay",method={RequestMethod.POST})
 	public IResult finishAlipay(@RequestBody OrderIDJAO map,HttpServletRequest request){
 		//TODO 结果不正确

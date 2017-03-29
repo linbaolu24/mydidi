@@ -12,7 +12,7 @@ public interface IAliTradeService {
 	 * @param bId
 	 * @return
 	 */
-	IResult<AliPAyRequestDto> createOdrerRequest(Long orderId, Long bId);
+	IResult<AliPAyRequestDto> createOdrerRequest(Long orderId, Long bId,String desc);
 	IResult<Void> asynnotify(Map<String,String> map);
 	IResult<Void> synnotify(AliSynResultDto map);
 }
