@@ -60,12 +60,13 @@ public class AliPayBuilder {
 	}
 
 	public AliPayBuilder(boolean isDefault, boolean isDefaultTime) {
-		super();
+		this();
 		if (isDefault) {
 			AliPayBuilder builder = this;
 			builder.signType("RSA2");
 			builder.version("1.0");
-			builder.format("json");
+			//builder.format("json");
+			builder.charset(Constans.CHARSET_UTF_8.toLowerCase());
 			if (isDefaultTime) {
 				builder.timestamp(new Date());
 			}

@@ -2,8 +2,12 @@ package cn.com.didi.order;
 
 import java.security.PrivateKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+
+import com.alibaba.fastjson.JSON;
 
 import cn.com.didi.core.utils.SignUtil;
 import cn.com.didi.domain.domains.AliPAyRequestDto;
@@ -45,8 +49,9 @@ public class AliPayBuilderTest {
 		builder.appid("2017032206333439");
 		builder.signType("RSA2");
 		builder.version("1.0");
-		builder.format("json");
-		builder.bzout_trade_no(1L);
+		builder.charset("utf-8");
+		//builder.format("json");
+		builder.bzout_trade_no(10000000000L);
 		
 		builder.totalAmount(5);
 		builder.timestamp(new Date());
@@ -61,6 +66,7 @@ public class AliPayBuilderTest {
 		builder.product_code("QUICK_MSECURITY_PAY");
 		AliPAyRequestDto dto=builder.build(pri);
 		System.out.println(dto.getOrderInfo());
+		testBuilder();
 		
 		
 	}
@@ -68,4 +74,22 @@ public class AliPayBuilderTest {
 		boolean result="f1hRHtsL6nvVjROIOzh8hLNSYrwdhe0O1XB0xTavbCcwR0BHOLKUonG1v/6bv98tpTTcEK4JWMfu9ZOl9FGBZyBHMK9H7Gsm2PheaeDJSoPLAwDOx6M96be9mLR88FCQaKzReQ46CPOXekObcisjZb/scrssuL0RedX1TeeCOEWJTFRd+Yk5stpqwn5T80prCgntjY8tdgKFENoWgu7RKX37o8kT66M1mCMxd792G6AASCozy6EwCGFPUYn7FUpskUBFN/aOW/cShJmC2bYqD6EHS7Apqs2PBqCmxsReSAi5bIeYn9IXpZ+JLJHq7L/LhOUBHXRAr2r3AATGAn668Q==".equals("f1hRHtsL6nvVjROIOzh8hLNSYrwdhe0O1XB0xTavbCcwR0BHOLKUonG1v/6bv98tpTTcEK4JWMfu9ZOl9FGBZyBHMK9H7Gsm2PheaeDJSoPLAwDOx6M96be9mLR88FCQaKzReQ46CPOXekObcisjZb/scrssuL0RedX1TeeCOEWJTFRd+Yk5stpqwn5T80prCgntjY8tdgKFENoWgu7RKX37o8kT66M1mCMxd792G6AASCozy6EwCGFPUYn7FUpskUBFN/aOW/cShJmC2bYqD6EHS7Apqs2PBqCmxsReSAi5bIeYn9IXpZ+JLJHq7L/LhOUBHXRAr2r3AATGAn668Q==");
 		System.out.println(result);
 	}
+	
+	
+	
+	
+	public static void testBuilder(){
+		String resultStatus="9000";
+		String result="{\"alipay_trade_app_pay_response\":{\"code\":\"10000\",\"msg\":\"Success\",\"app_id\":\"2017032206333439\",\"auth_app_id\":\"2017032206333439\",\"charset\":\"utf-8\",\"timestamp\":\"2017-03-31 12:23:56\",\"total_amount\":\"0.01\",\"trade_no\":\"2017033121001004350231076001\",\"seller_id\":\"2088421700572637\",\"out_trade_no\":\"19\"},\"sign\":\"Cuj1SidUBzZGy3g/+VMSWua2pe1VMsMv44rSouTYBycQ9xdXdXLRPq+BK1+UPW+seXOsstrHwz0O+YWzsdcrE3/SLRWWuBVuhGcQsDorbHGfYOZt9RDMDy4gScbNLSJ5yAWgTA1cNdC1yU1BG/IgKx3jj161pRy7IHFfzJOQfGvf8e9pyLpodVmQcBHGUFDCUmN6jvZswU4fwYxec6bR3uyM2gRN6xToBDRE5qLk10ZepeXdC73ZSwW0PjIWpLLrJZ6Mzo1GFdzjTNAnnssJ10wGr6gr5NdsGPFoho8kkZyhB7eF4kgKhps3zAiPrMiRsj714Zz3AMb7k7j0vQA5nw==\",\"sign_type\":\"RSA2\"}";
+		String  memo="";
+		Map p=new HashMap();
+		p.put("resultStatus", resultStatus);
+		p.put("result", result);
+		p.put("memo", memo);
+		System.out.println(JSON.toJSONString(p));
+	}
+	
+	
+	
+	
 }

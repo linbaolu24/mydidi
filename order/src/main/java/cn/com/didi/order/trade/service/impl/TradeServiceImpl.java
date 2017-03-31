@@ -2,6 +2,7 @@ package cn.com.didi.order.trade.service.impl;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,9 @@ public class TradeServiceImpl implements ITradeService {
 	@Override
 	@Transactional
 	public void createTrade(DealDto dto, TranscationalCallBack<DealDto> deal) {
+		if(StringUtils.isEmpty(dto.getState())){
+			dto.setState(DealEnum.WAITTING.getCode());
+		}
 		tradeInfoService.createTrade(dto, deal);
 	}
 

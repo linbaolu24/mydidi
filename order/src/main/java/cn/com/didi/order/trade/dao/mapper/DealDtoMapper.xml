@@ -425,7 +425,7 @@
   
   
   
-  <select id="selectOrderIdFromDeal" resultType="java.lang.Long">select  order_id from where deal_id = #{dealId,jdbcType=BIGINT}</select>
+  <select id="selectOrderIdFromDeal" resultType="java.lang.Long">select  order_id  from deal where deal_id = #{dealId,jdbcType=BIGINT}</select>
   
   
   
