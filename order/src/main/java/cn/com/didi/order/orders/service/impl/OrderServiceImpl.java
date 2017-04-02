@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.com.didi.core.message.Message;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.tx.TranscationalCallBack;
 import cn.com.didi.domain.domains.IReciverDto;
@@ -98,7 +99,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	public IOrderRuslt<Void> autoDispatch(Long orderId, Long bId) {
 		OrderDto info = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> temp = normalBVerify(info, bId);
+		IOrderRuslt<Void> temp = normalCousemerVerify(info, bId);
 		if (temp != null) {
 			return temp;
 		}
@@ -138,7 +139,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	public IOrderRuslt<Void> notifyOrder(Long orderId, Long bId) {
 		OrderDto info = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> temp = normalBVerify(info, bId);
+		IOrderRuslt<Void> temp = normalCousemerVerify(info, bId);
 		if (temp != null) {
 			return temp;
 		}
@@ -165,7 +166,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	public IOrderRuslt<Void> accept(Long orderId, Long bId) {
 		OrderDto info = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> temp = normalCVerify(info, bId);
+		IOrderRuslt<Void> temp = normalMercharVerify(info, bId);
 		if (temp != null) {
 			return temp;
 		}
@@ -187,7 +188,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	public IOrderRuslt<Void> startService(Long orderId, Long mercharId) {
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> orderResult = normalCVerify(order, mercharId);
+		IOrderRuslt<Void> orderResult = normalMercharVerify(order, mercharId);
 		if (orderResult != null) {
 			return orderResult;
 		}
@@ -209,7 +210,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	public IOrderRuslt<Void> finishService(Long orderId, Long mercharId) {
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> orderResult = normalCVerify(order, mercharId);
+		IOrderRuslt<Void> orderResult = normalMercharVerify(order, mercharId);
 		if (orderResult != null) {
 			return orderResult;
 		}
@@ -236,7 +237,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	public IOrderRuslt<Void> charge(Long orderId, Long mercharId, int cost) {
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> orderResult = normalCVerify(order, mercharId);
+		IOrderRuslt<Void> orderResult = normalMercharVerify(order, mercharId);
 		if (orderResult != null) {
 			return orderResult;
 		}
@@ -266,13 +267,14 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	public IOrderRuslt<Void> evaluation(Long orderId, Long bId, int eval, String textEval) {
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> orderResult = normalCVerify(order, bId);
+		IOrderRuslt<Void> orderResult = normalCousemerVerify(order, bId,false);
 		if (orderResult != null) {
 			return orderResult;
 		}
-		if (isStateRepeat(OrderState.ORDER_STATE_FINISH, order.getState())) {
+		if(OrderState.ORDER_STATE_FINISH.getCode().equals(order.getState())){
 			return null;
 		}
+		orderConvert(order.getState(), OrderMessageConstans.ORDER_NOT_PENDING_EVE, OrderState.ORDER_STATE_PENDING_CHARGE);
 		int count=orderInfoService.updateOrderStateAndEvaluation(orderId, OrderState.ORDER_STATE_FINISH.getCode(),
 				order.getState(), eval, textEval);
 		orderResult=orderStateChange(count, order, order.getState());
@@ -287,7 +289,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if (order != null && OrderState.ORDER_STATE_FAIL.getCode().equals(order.getState())) {// 不需要重复超时
 			return null;
 		}
-		IOrderRuslt<Void> orderResult = normalBVerify(order, bId);
+		IOrderRuslt<Void> orderResult = normalCousemerVerify(order, bId);
 		if (orderResult != null) {
 			return orderResult;
 		}
@@ -307,7 +309,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	public IOrderRuslt<OrderStateCostDto> cannel(Long orderId, Long bId) {
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<OrderStateCostDto> orderResult = normalBVerify(order, bId, false);
+		IOrderRuslt<OrderStateCostDto> orderResult = normalCousemerVerify(order, bId, false);
 		if (orderResult != null) {
 			// orderResult.setData(null);
 			return orderResult;
@@ -350,7 +352,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	@Override
 	public IOrderRuslt<OrderDealDescDto> createDeal(Long orderId, Long bId, PayAccountEnum payEnum,String desc) {
 		OrderDto dto = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<OrderDealDescDto> result = normalBVerify(dto, bId);
+		IOrderRuslt<OrderDealDescDto> result = normalCousemerVerify(dto, bId);
 		if (result != null) {
 			return result;
 		}
@@ -521,7 +523,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	}
 
-	protected <T> IOrderRuslt<T> normalCVerify(OrderDto order, Long mercharId) {
+	protected <T> IOrderRuslt<T> normalMercharVerify(OrderDto order, Long mercharId) {
 		IOrderRuslt<T> temp = orderExist(order);//
 		if (temp != null) {
 			return temp;
@@ -534,11 +536,11 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		return temp;
 	}
 
-	protected <T> IOrderRuslt<T> normalBVerify(OrderDto order, Long cID) {
-		return normalBVerify(order, cID, true);
+	protected <T> IOrderRuslt<T> normalCousemerVerify(OrderDto order, Long cID) {
+		return normalCousemerVerify(order, cID, true);
 	}
 
-	protected <T> IOrderRuslt<T> normalBVerify(OrderDto order, Long cID, boolean isFinish) {
+	protected <T> IOrderRuslt<T> normalCousemerVerify(OrderDto order, Long cID, boolean isFinish) {
 		IOrderRuslt<T> temp = orderExist(order);
 		if (temp != null) {
 			return temp;
@@ -634,5 +636,24 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return new OrderRuslt<T>(OrderMessageConstans.ORDER_UPDATE_STATE_CHANGE);
 		}
 		return null;
+	}
+	
+	/**
+	 * @param now
+	 * @param message
+	 * @param arrays
+	 * @return
+	 */
+	public <T> IOrderRuslt<T> orderConvert(String now, Message message, OrderState... arrays) {
+		if (arrays == null || arrays.length == 0) {
+			return null;
+		}
+		for (OrderState one : arrays) {
+			if (one.getCode().equals(now)) {
+				return null;
+			}
+		}
+		return new OrderRuslt<>(message);
+
 	}
 }

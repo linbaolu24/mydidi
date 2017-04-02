@@ -98,6 +98,7 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		OrderStateRecordDtoExample example = new OrderStateRecordDtoExample();
 		OrderStateRecordDtoExample.Criteria cri = example.createCriteria();
 		cri.andOrderIdEqualTo(orderId);
+		example.setOrderByClause("update_time desc");
 		return orderStateRecordDtoMapper.selectByExample(example);
 	}
 

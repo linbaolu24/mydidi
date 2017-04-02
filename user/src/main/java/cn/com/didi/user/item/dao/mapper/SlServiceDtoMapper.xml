@@ -283,10 +283,21 @@
       </if>
   </select>
   
-  
-  <select id="selectSls" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <resultMap id="BaseResultMap_flsName" type="cn.com.didi.user.item.domain.SlAndFlServiceDto" >
+    <id column="service_id" property="serviceId" jdbcType="INTEGER" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+    <result column="display_order" property="displayOrder" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="CHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="fls_id" property="flsId" jdbcType="INTEGER" />
+    <result column="business_category" property="businessCategory" jdbcType="CHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="business_charge" property="businessCharge" jdbcType="CHAR" />
+    <result column="fls_name" property="flsName" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectSls" resultMap="BaseResultMap_flsName"  >
     select 
-    <include refid="Base_Column_List" />
+    <include refid="Base_Column_List" /> ,(select fl_service.cname from fl_service where fl_service.service_Id=sl_service.fls_id) fls_name
     from sl_service
     <where>
     <if test="time.startTime != null">create_Time&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>

@@ -56,6 +56,9 @@ public class OrderMessageConstans {
 	 * 更新状态时状态发生变更
 	 */
 	public static final Message ORDER_UPDATE_STATE_CHANGE=newMessage(DomainMessageConstans.CODE_ORDER_UPDATE_STATE_CHANGE);
+	/**非待评价订单不能评价*/
+	public static final Message ORDER_NOT_PENDING_EVE=newMessage(DomainMessageConstans.CODE_ORDER_NOT_PENDING_EVE);
+	
 	
 	/**
 	 * 交易不存在

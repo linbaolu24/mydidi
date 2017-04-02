@@ -807,7 +807,7 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
   <update id="updateOrderStateAndEvaluation" >
     update t_order
     set  state = #{destState,jdbcType=CHAR},oet=#{date,jdbcType=TIMESTAMP},
-    evaluation=#{eval,jdbcType=INTEGER}
+    evaluation=#{eval,jdbcType=INTEGER},
     text_evaluation=#{textEval,jdbcType=VARCHAR}
     where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
   </update>

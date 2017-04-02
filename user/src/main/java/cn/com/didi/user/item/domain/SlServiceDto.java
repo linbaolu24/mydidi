@@ -53,7 +53,6 @@ public class SlServiceDto implements Serializable{
      * 业务费用:0代表免费 1代表收费
      */
     private String businessCharge;
-
     /**
      * 服务ID
      **/
