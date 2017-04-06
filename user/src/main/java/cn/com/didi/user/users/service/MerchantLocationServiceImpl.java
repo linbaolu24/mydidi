@@ -66,9 +66,9 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 
 	@Override
 	public IReciverDto match(String areaCode, Point poi, Integer slsId) {
-		if (StringUtils.isEmpty(areaCode)) {
+		/*if (StringUtils.isEmpty(areaCode)) {
 			return null;
-		}
+		}*/
 		if (poi == null) {
 			return null;
 		}

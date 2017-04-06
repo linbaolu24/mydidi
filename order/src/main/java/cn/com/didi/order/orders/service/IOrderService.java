@@ -5,7 +5,7 @@ import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.IOrderInfo;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.domain.OrderDto;
-import cn.com.didi.order.orders.domain.OrderStateCostDto;
+import cn.com.didi.order.orders.domain.OrderStateDto;
 import cn.com.didi.order.result.IOrderRuslt;
 
 /**
@@ -70,15 +70,24 @@ public interface IOrderService {
 	/**
 	 * 开始服务
 	 */
-	public IOrderRuslt<Void> startService(Long orderId,Long mercharId);
+	public IOrderRuslt<OrderDto> startService(Long orderId,Long mercharId);
 	/**
 	 * @param info
 	 */
-	public IOrderRuslt<Void> finishService(Long orderId, Long mercharId);
+	public IOrderRuslt<OrderDto> finishService(Long orderId, Long mercharId);
 	/**
 	 * @param info
 	 */
-	public IOrderRuslt<Void>  charge(Long orderId,Long mercharId,int cost);
+	public IOrderRuslt<OrderDto>  charge(Long orderId,Long mercharId,int cost,String cment);
+	
+	 /**
+	 * @param orderId
+	 * @param mercharId
+	 * @param cost
+	 * @param cment
+	 * @return
+	 */
+	public IOrderRuslt<OrderDto>  finishServiceAndcharge(Long orderId,Long mercharId,int cost,String cment);
 	/**
 	 * 评价
 	 */
@@ -90,7 +99,7 @@ public interface IOrderService {
 	/**
 	 * 取消订单
 	 */
-	public IOrderRuslt<OrderStateCostDto> cannel(Long orderId, Long bId);
+	public IOrderRuslt<OrderStateDto> cannel(Long orderId, Long bId);
 	/**
 	 * 没有接单人
 	 */

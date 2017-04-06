@@ -2225,6 +2225,76 @@ public class OrderDtoExample {
             addCriterion("mlat not between", value1, value2, "mlat");
             return (Criteria) this;
         }
+
+        public Criteria andCmentIsNull() {
+            addCriterion("cment is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentIsNotNull() {
+            addCriterion("cment is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentEqualTo(String value) {
+            addCriterion("cment =", value, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentNotEqualTo(String value) {
+            addCriterion("cment <>", value, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentGreaterThan(String value) {
+            addCriterion("cment >", value, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentGreaterThanOrEqualTo(String value) {
+            addCriterion("cment >=", value, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentLessThan(String value) {
+            addCriterion("cment <", value, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentLessThanOrEqualTo(String value) {
+            addCriterion("cment <=", value, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentLike(String value) {
+            addCriterion("cment like", value, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentNotLike(String value) {
+            addCriterion("cment not like", value, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentIn(List<String> values) {
+            addCriterion("cment in", values, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentNotIn(List<String> values) {
+            addCriterion("cment not in", values, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentBetween(String value1, String value2) {
+            addCriterion("cment between", value1, value2, "cment");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmentNotBetween(String value1, String value2) {
+            addCriterion("cment not between", value1, value2, "cment");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

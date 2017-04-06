@@ -72,5 +72,7 @@ public class DomainConstatns {
 	 * 绑定手机号
 	 */
 	public static final String BPN="bpn";
+	public static final String CNAME="cname";
+	public static final String CMENT="cment";
 
 }

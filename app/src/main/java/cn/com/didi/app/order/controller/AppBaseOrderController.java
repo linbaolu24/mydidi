@@ -61,7 +61,6 @@ public class AppBaseOrderController {
 
 	public Map build(OrderDto order, OrderEvaluationDto eve, UserDto userDto, UserLinkIdDto userLink) {
 		Map map =build(order);
-
 		map.put(MCI, order.getMci());
 		if (eve != null) {
 			map.put(ORDER_COUNT, eve == null ? 0 : eve.getOrderCount());
@@ -78,6 +77,7 @@ public class AppBaseOrderController {
 		if (userDto != null) {
 			map.put(MPP, userDto.getProfilePhoto());
 		}
+		map.put(DomainConstatns.CONSUMER_NAME, order.getConsumerName());
 		return map;
 
 	}
@@ -95,6 +95,7 @@ public class AppBaseOrderController {
 		map.put(MASTER_NAME, order.getMasterName());
 		map.put(DomainConstatns.CONSUMER_ADDRESS, order.getConsumerAddress());// 客户地址
 		map.put(DomainConstatns.CCI, order.getCci());// 客户联系方式
+		map.put(DomainConstatns.CNAME, order.getCname());
 		return map;
 
 	}
@@ -147,6 +148,7 @@ public class AppBaseOrderController {
 																		// 客户名称
 																		// String
 																		// Y
+		map.put(DomainConstatns.CMENT,order.getCment());
 		return map;
 
 	}

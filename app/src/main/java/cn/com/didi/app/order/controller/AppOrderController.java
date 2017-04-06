@@ -32,7 +32,7 @@ import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
-import cn.com.didi.order.orders.domain.OrderStateCostDto;
+import cn.com.didi.order.orders.domain.OrderStateDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.user.item.domain.SlServiceDto;
@@ -169,7 +169,7 @@ public class AppOrderController extends AppBaseOrderController {
 		AssertUtil.assertNotNullAppend(str, "客户联系方式");
 		order.setCci(str);
 		str = body.getCas();
-		AssertUtil.assertNotNullAppend(str, "客户地区代码");
+		//AssertUtil.assertNotNullAppend(str, "客户地区代码");
 		order.setCas(body.getCas());
 		str = body.getConsumerAddress();
 		AssertUtil.assertNotNullAppend(str, "客户地址");
@@ -195,7 +195,7 @@ public class AppOrderController extends AppBaseOrderController {
 		Long orderId = (Long)  map.getOrderId();
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
-		IOrderRuslt<OrderStateCostDto> or = orderService.cannel(orderId, accountId);
+		IOrderRuslt<OrderStateDto> or = orderService.cannel(orderId, accountId);
 		if (or==null||or.success()) {
 			return ResultFactory.success(or.getData());
 		}

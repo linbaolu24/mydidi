@@ -454,7 +454,7 @@
   <select id="selectTrades" resultMap="BaseListResultMap"> 
   select
     deal_id, state, deal_type,  amount, category, create_time, 
-   cment from deal
+   cment,remain from deal
     <where>
     <if test="time.startTime != null">create_time&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
     <if test="time.endTime != null">and create_time&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>

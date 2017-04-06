@@ -2,13 +2,8 @@ package cn.com.didi.user.users.domain;
 
 import java.io.Serializable;
 
-public class MerchantAreaDtoKey implements Serializable{
+public class MerchantAreaDtoKey implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3820611223513916440L;
-
-	/**
      * 用户名
      */
     private Long accountId;
@@ -17,6 +12,8 @@ public class MerchantAreaDtoKey implements Serializable{
      * 地区
      */
     private String areaCode;
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * 用户名

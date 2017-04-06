@@ -167,6 +167,11 @@ public class OrderDto implements Serializable {
      */
     private BigDecimal mlat;
 
+    /**
+     * 发起付款备注
+     */
+    private String cment;
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -624,8 +629,18 @@ public class OrderDto implements Serializable {
     public void setMlat(BigDecimal mlat) {
         this.mlat = mlat;
     }
-    @Override
-    public String toString(){
-    	return "订单编号:"+orderId+"消费者Id:"+consumerAccountId+"商户ID:"+merchantAccountId+"状态:"+state+"cost:"+cost;
+
+    /**
+     * 发起付款备注
+     **/
+    public String getCment() {
+        return cment;
+    }
+
+    /**
+     * 发起付款备注
+     **/
+    public void setCment(String cment) {
+        this.cment = cment == null ? null : cment.trim();
     }
 }

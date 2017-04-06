@@ -19,7 +19,9 @@ import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.query.CountObject;
 import cn.com.didi.domain.query.ResultExt;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.Role;
+import cn.com.didi.domain.util.State;
 
 import static cn.com.didi.domain.util.NameConstans.*;
 import cn.com.didi.user.users.domain.MerchantDto;
@@ -63,6 +65,17 @@ public class UserController {
 		//AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
 		dto.setAccountId(null);
 		service.addMerchant(dto.dto(), dto.getServiceList(), dto.getAreaList());
+		return ResultFactory.success();
+
+	}
+	
+	@RequestMapping(value = "/platform/b/addV2", method = RequestMethod.POST)
+	public IResult addMerchantV2(@RequestBody MerchantExtDto dto) {
+		//AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
+		dto.setAccountId(null);
+		dto.setCr(CrEnum.PASSING.getCode());
+		dto.setState(State.VALID.getState());
+		service.addMerchantV2(dto.dto(), dto.getServiceList(), dto.getAreaList());
 		return ResultFactory.success();
 
 	}

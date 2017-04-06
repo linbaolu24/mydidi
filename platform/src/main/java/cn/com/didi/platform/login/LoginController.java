@@ -59,6 +59,13 @@ public class LoginController {
 		resolver.saveAccount(request, result.getData().getUserDto().getAccountId(),new HashMap(2));
 		return ResultFactory.success();
 	}
+	
+	
+	@RequestMapping(value = "/platform/user/loginout", method = {RequestMethod.POST,RequestMethod.GET})
+	public IResult loginout( HttpServletRequest request) {
+		resolver.clearAccount(request);
+		return ResultFactory.success();
+	}
 
 	@RequestMapping(value = "/platform/user/vc", method = RequestMethod.GET)
 	public void getVc(HttpServletRequest request, HttpServletResponse response) throws IOException {

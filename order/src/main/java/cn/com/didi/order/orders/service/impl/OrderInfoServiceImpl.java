@@ -19,6 +19,7 @@ import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.order.orders.dao.mapper.OrderDtoMapper;
 import cn.com.didi.order.orders.dao.mapper.OrderStateRecordDtoMapper;
+import cn.com.didi.order.orders.domain.OrderBListDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
@@ -98,12 +99,12 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		OrderStateRecordDtoExample example = new OrderStateRecordDtoExample();
 		OrderStateRecordDtoExample.Criteria cri = example.createCriteria();
 		cri.andOrderIdEqualTo(orderId);
-		example.setOrderByClause("update_time desc");
+		example.setOrderByClause("update_time ASC");
 		return orderStateRecordDtoMapper.selectByExample(example);
 	}
 
 	@Override
-	public List<OrderListDto> selectBOrderList(TimeInterval interval) {
+	public List<OrderBListDto> selectBOrderList(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), false);
 		return orderMapper.selectBOrderList(interval, pageBounds);
 	}
@@ -256,6 +257,17 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		}
 		OrderEvaluationDto eve = calculate(dto.getMerchantAccountId());
 		return new Couple<OrderDto, OrderEvaluationDto>(dto, eve);
+	}
+
+	@Override
+	public int updateOrderStateCharge(Long orderId, String destState, String sourceState, Integer cost, String cment) {
+		int count = orderMapper.updateOrderStateCharge(orderId, destState, sourceState, cost, cment);
+		if(count!=0&&!sourceState.equals(destState)){
+			Date date = new Date();
+			addStateUpdate(orderId, destState, date, sourceState);
+		}
+		return count;
+	
 	}
 
 }

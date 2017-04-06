@@ -55,7 +55,10 @@ public interface IMerchantService {
 	/**
 	 * @param Merchant
 	 */
+	@Deprecated
 	void addMerchant(MerchantDto Merchant, List<MerchantServiceDto> serviceList, List<MerchantAreaDto> areaList);
+	
+	void addMerchantV2(MerchantDto Merchant, List<MerchantServiceDto> serviceList, List<MerchantAreaDto> areaList);
 
 	// List<MerchantAreaDto> select(MerchantAreaDto leftDown,MerchantAreaDto
 	// rightTop,Integer slsId);

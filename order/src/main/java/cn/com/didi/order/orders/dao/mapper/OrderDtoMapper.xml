@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.didi.order.orders.dao.mapper.OrderDtoMapper" >
-  <resultMap id="BaseResultMap" type="cn.com.didi.order.orders.domain.OrderDto" >
+<resultMap id="BaseResultMap" type="cn.com.didi.order.orders.domain.OrderDto" >
     <id column="order_id" property="orderId" jdbcType="BIGINT" />
     <result column="sls_id" property="slsId" jdbcType="INTEGER" />
     <result column="fls_id" property="flsId" jdbcType="INTEGER" />
@@ -35,6 +35,7 @@
     <result column="poundage" property="poundage" jdbcType="INTEGER" />
     <result column="mlng" property="mlng" jdbcType="DECIMAL" />
     <result column="mlat" property="mlat" jdbcType="DECIMAL" />
+    <result column="cment" property="cment" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -98,7 +99,7 @@
     order_id, sls_id, fls_id, description, cname, cci, consumer_address, cas, consumer_name, 
     state, cause, consumer_account_id, merchant_account_id, Lng, lat, business_charge, 
     business_category, master_name, mci, cost, deal_id, ort, oct, sst, oet, ofst, evaluation, 
-    text_evaluation, cancel_flag, commission, poundage, mlng, mlat
+    text_evaluation, cancel_flag, commission, poundage, mlng, mlat, cment
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.order.orders.domain.OrderDtoExample" >
     select
@@ -142,7 +143,7 @@
       oct, sst, oet, 
       ofst, evaluation, text_evaluation, 
       cancel_flag, commission, poundage, 
-      mlng, mlat)
+      mlng, mlat, cment)
     values (#{orderId,jdbcType=BIGINT}, #{slsId,jdbcType=INTEGER}, #{flsId,jdbcType=INTEGER}, 
       #{description,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, #{cci,jdbcType=VARCHAR}, 
       #{consumerAddress,jdbcType=VARCHAR}, #{cas,jdbcType=VARCHAR}, #{consumerName,jdbcType=VARCHAR}, 
@@ -153,7 +154,7 @@
       #{oct,jdbcType=TIMESTAMP}, #{sst,jdbcType=TIMESTAMP}, #{oet,jdbcType=TIMESTAMP}, 
       #{ofst,jdbcType=TIMESTAMP}, #{evaluation,jdbcType=INTEGER}, #{textEvaluation,jdbcType=VARCHAR}, 
       #{cancelFlag,jdbcType=CHAR}, #{commission,jdbcType=INTEGER}, #{poundage,jdbcType=INTEGER}, 
-      #{mlng,jdbcType=DECIMAL}, #{mlat,jdbcType=DECIMAL})
+      #{mlng,jdbcType=DECIMAL}, #{mlat,jdbcType=DECIMAL}, #{cment,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.didi.order.orders.domain.OrderDto" useGeneratedKeys="true" keyProperty="orderId">
     insert into t_order
@@ -257,6 +258,9 @@
       <if test="mlat != null" >
         mlat,
       </if>
+      <if test="cment != null" >
+        cment,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -357,6 +361,9 @@
       </if>
       <if test="mlat != null" >
         #{mlat,jdbcType=DECIMAL},
+      </if>
+      <if test="cment != null" >
+        #{cment,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -468,6 +475,9 @@
       <if test="record.mlat != null" >
         mlat = #{record.mlat,jdbcType=DECIMAL},
       </if>
+      <if test="record.cment != null" >
+        cment = #{record.cment,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -507,7 +517,8 @@
       commission = #{record.commission,jdbcType=INTEGER},
       poundage = #{record.poundage,jdbcType=INTEGER},
       mlng = #{record.mlng,jdbcType=DECIMAL},
-      mlat = #{record.mlat,jdbcType=DECIMAL}
+      mlat = #{record.mlat,jdbcType=DECIMAL},
+      cment = #{record.cment,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -611,6 +622,9 @@
       <if test="mlat != null" >
         mlat = #{mlat,jdbcType=DECIMAL},
       </if>
+      <if test="cment != null" >
+        cment = #{cment,jdbcType=VARCHAR},
+      </if>
     </set>
     where order_id = #{orderId,jdbcType=BIGINT}
   </update>
@@ -647,13 +661,51 @@
       commission = #{commission,jdbcType=INTEGER},
       poundage = #{poundage,jdbcType=INTEGER},
       mlng = #{mlng,jdbcType=DECIMAL},
-      mlat = #{mlat,jdbcType=DECIMAL}
+      mlat = #{mlat,jdbcType=DECIMAL},
+      cment = #{cment,jdbcType=VARCHAR}
     where order_id = #{orderId,jdbcType=BIGINT}
   </update>
-  
-  
+
   
    <resultMap id="BaseListResultMap" type="cn.com.didi.order.orders.domain.OrderListDto" >
+    <id column="order_id" property="orderId" jdbcType="BIGINT" />
+    <result column="sls_id" property="slsId" jdbcType="INTEGER" />
+    <result column="fls_id" property="flsId" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+    <result column="cci" property="cci" jdbcType="VARCHAR" />
+    <result column="consumer_address" property="consumerAddress" jdbcType="VARCHAR" />
+    <result column="cas" property="cas" jdbcType="VARCHAR" />
+    <result column="consumer_name" property="consumerName" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="CHAR" />
+    <result column="cause" property="cause" jdbcType="VARCHAR" />
+    <result column="consumer_account_id" property="consumerAccountId" jdbcType="BIGINT" />
+    <result column="merchant_account_id" property="merchantAccountId" jdbcType="BIGINT" />
+    <result column="Lng" property="lng" jdbcType="DECIMAL" />
+    <result column="lat" property="lat" jdbcType="DECIMAL" />
+    <result column="business_charge" property="businessCharge" jdbcType="CHAR" />
+    <result column="business_category" property="businessCategory" jdbcType="CHAR" />
+    <result column="master_name" property="masterName" jdbcType="VARCHAR" />
+    <result column="mci" property="mci" jdbcType="VARCHAR" />
+    <result column="cost" property="cost" jdbcType="INTEGER" />
+    <result column="deal_id" property="dealId" jdbcType="BIGINT" />
+    <result column="ort" property="ort" jdbcType="TIMESTAMP" />
+    <result column="oct" property="oct" jdbcType="TIMESTAMP" />
+    <result column="sst" property="sst" jdbcType="TIMESTAMP" />
+    <result column="oet" property="oet" jdbcType="TIMESTAMP" />
+    <result column="ofst" property="ofst" jdbcType="TIMESTAMP" />
+    <result column="evaluation" property="evaluation" jdbcType="INTEGER" />
+    <result column="text_evaluation" property="textEvaluation" jdbcType="VARCHAR" />
+    <result column="cancel_flag" property="cancelFlag" jdbcType="CHAR" />
+    <result column="commission" property="commission" jdbcType="INTEGER" />
+    <result column="poundage" property="poundage" jdbcType="INTEGER" />
+    <result column="mlng" property="mlng" jdbcType="DECIMAL" />
+    <result column="mlat" property="mlat" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  
+  
+   <resultMap id="BaseBListResultMap" type="cn.com.didi.order.orders.domain.OrderBListDto" >
     <id column="order_id" property="orderId" jdbcType="BIGINT" />
     <result column="sls_id" property="slsId" jdbcType="INTEGER" />
     <result column="fls_id" property="flsId" jdbcType="INTEGER" />
@@ -716,6 +768,7 @@ td.order_Id,
 td.state,
 td.sls_Id,
 td.cname,
+td.oct,
 td.ort,
 td.master_Name,
 td.mci,
@@ -726,17 +779,19 @@ td.business_Charge
 from t_order td where td.consumer_account_id=#{time.accountId,jdbcType=BIGINT} and not (state='2' and ort is null) ORDER BY ort DESC
   </select>
   
-  <select id="selectBOrderList" resultMap="BaseListResultMap"  >
+  <select id="selectBOrderList" resultMap="BaseBListResultMap"  >
   
   select 
 td.order_Id,
 td.state,
 td.sls_Id,
 td.cname,
+td.oct,
 td.ort,
-td.master_Name,
-td.mci,
+td.consumer_name,
+td.cci,
 td.lat ,
+td.consumer_address,
 td.lng ,
 td.business_Category, 
 td.business_Charge
@@ -833,6 +888,7 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
   select order_id, sls_id, fls_id,  cname, cci, consumer_address, cas, consumer_name, 
     state,  consumer_account_id, merchant_account_id, Lng, lat, business_charge, 
     business_category, master_name, mci, cost, deal_id, 
+    ort,ofst,  cment
      cancel_flag, commission, poundage, mlng, mlat  from t_order where order_id = #{orderId,jdbcType=BIGINT}
   </select>
   
@@ -853,5 +909,17 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
     where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
   </update>
   
- 
+ <update id="updateOrderStateCharge" >
+    update t_order
+   <set >
+    state = #{destState,jdbcType=CHAR} ,
+      <if test="cost != null" >
+      cost=#{cost,jdbcType=INTEGER},
+      </if>
+      <if test="cment != null" >
+        cment = #{cment,jdbcType=VARCHAR}
+      </if>
+     </set>
+    where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
+  </update>
 </mapper>

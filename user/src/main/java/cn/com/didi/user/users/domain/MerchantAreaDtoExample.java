@@ -354,6 +354,266 @@ public class MerchantAreaDtoExample {
             addCriterion("lat not between", value1, value2, "lat");
             return (Criteria) this;
         }
+
+        public Criteria andShapeIsNull() {
+            addCriterion("shape is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeIsNotNull() {
+            addCriterion("shape is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeEqualTo(String value) {
+            addCriterion("shape =", value, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeNotEqualTo(String value) {
+            addCriterion("shape <>", value, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeGreaterThan(String value) {
+            addCriterion("shape >", value, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeGreaterThanOrEqualTo(String value) {
+            addCriterion("shape >=", value, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeLessThan(String value) {
+            addCriterion("shape <", value, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeLessThanOrEqualTo(String value) {
+            addCriterion("shape <=", value, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeLike(String value) {
+            addCriterion("shape like", value, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeNotLike(String value) {
+            addCriterion("shape not like", value, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeIn(List<String> values) {
+            addCriterion("shape in", values, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeNotIn(List<String> values) {
+            addCriterion("shape not in", values, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeBetween(String value1, String value2) {
+            addCriterion("shape between", value1, value2, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andShapeNotBetween(String value1, String value2) {
+            addCriterion("shape not between", value1, value2, "shape");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointIsNull() {
+            addCriterion("point is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointIsNotNull() {
+            addCriterion("point is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointEqualTo(String value) {
+            addCriterion("point =", value, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointNotEqualTo(String value) {
+            addCriterion("point <>", value, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointGreaterThan(String value) {
+            addCriterion("point >", value, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointGreaterThanOrEqualTo(String value) {
+            addCriterion("point >=", value, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointLessThan(String value) {
+            addCriterion("point <", value, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointLessThanOrEqualTo(String value) {
+            addCriterion("point <=", value, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointLike(String value) {
+            addCriterion("point like", value, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointNotLike(String value) {
+            addCriterion("point not like", value, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointIn(List<String> values) {
+            addCriterion("point in", values, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointNotIn(List<String> values) {
+            addCriterion("point not in", values, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointBetween(String value1, String value2) {
+            addCriterion("point between", value1, value2, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointNotBetween(String value1, String value2) {
+            addCriterion("point not between", value1, value2, "point");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatIsNull() {
+            addCriterion("rlat is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatIsNotNull() {
+            addCriterion("rlat is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatEqualTo(BigDecimal value) {
+            addCriterion("rlat =", value, "rlat");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatNotEqualTo(BigDecimal value) {
+            addCriterion("rlat <>", value, "rlat");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatGreaterThan(BigDecimal value) {
+            addCriterion("rlat >", value, "rlat");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("rlat >=", value, "rlat");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatLessThan(BigDecimal value) {
+            addCriterion("rlat <", value, "rlat");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("rlat <=", value, "rlat");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatIn(List<BigDecimal> values) {
+            addCriterion("rlat in", values, "rlat");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatNotIn(List<BigDecimal> values) {
+            addCriterion("rlat not in", values, "rlat");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("rlat between", value1, value2, "rlat");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlatNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("rlat not between", value1, value2, "rlat");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngIsNull() {
+            addCriterion("rlng is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngIsNotNull() {
+            addCriterion("rlng is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngEqualTo(BigDecimal value) {
+            addCriterion("rlng =", value, "rlng");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngNotEqualTo(BigDecimal value) {
+            addCriterion("rlng <>", value, "rlng");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngGreaterThan(BigDecimal value) {
+            addCriterion("rlng >", value, "rlng");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("rlng >=", value, "rlng");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngLessThan(BigDecimal value) {
+            addCriterion("rlng <", value, "rlng");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("rlng <=", value, "rlng");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngIn(List<BigDecimal> values) {
+            addCriterion("rlng in", values, "rlng");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngNotIn(List<BigDecimal> values) {
+            addCriterion("rlng not in", values, "rlng");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("rlng between", value1, value2, "rlng");
+            return (Criteria) this;
+        }
+
+        public Criteria andRlngNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("rlng not between", value1, value2, "rlng");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

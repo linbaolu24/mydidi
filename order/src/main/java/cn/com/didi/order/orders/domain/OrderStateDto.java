@@ -1,6 +1,6 @@
 package cn.com.didi.order.orders.domain;
 
-public class OrderStateCostDto {
+public class OrderStateDto {
 	public String getState() {
 		return state;
 	}

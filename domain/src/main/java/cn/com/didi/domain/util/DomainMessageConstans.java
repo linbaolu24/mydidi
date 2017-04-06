@@ -160,7 +160,15 @@ public class DomainMessageConstans {
 	 */
 	public static final String CODE_ORDER_UPDATE_STATE_CHANGE="5003000010";
 	
+	/**
+	 * 非待评价订单不能评价
+	 */
+	public static final String CODE_ORDER_NOT_PENDING_EVE="5003000011";
 	
+	/**
+	 * 非待付费状态不能发起收款
+	 */
+	public static final String CODE_ORDER_NOT_PENDING_CHAREGE_CAN_NOT_CHARGE="5003000012";
 	
 	
 	

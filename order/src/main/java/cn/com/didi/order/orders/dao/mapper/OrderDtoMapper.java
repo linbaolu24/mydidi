@@ -1,19 +1,19 @@
 package cn.com.didi.order.orders.dao.mapper;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.order.orders.domain.OrderBListDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderDtoExample;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
 import cn.com.didi.order.orders.domain.OrderPromptDto;
 import cn.com.didi.user.users.domain.MerchantDto;
-
-import java.util.Date;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
-
-import com.github.miemiedev.mybatis.paginator.domain.Order;
 
 public interface OrderDtoMapper {
 	int countByExample(OrderDtoExample example);
@@ -65,7 +65,7 @@ public interface OrderDtoMapper {
 	 * @param bounds
 	 * @return
 	 */
-	List<OrderListDto> selectBOrderList(@Param("time") TimeInterval interval, RowBounds bounds);
+	List<OrderBListDto> selectBOrderList(@Param("time") TimeInterval interval, RowBounds bounds);
 
 	OrderEvaluationDto selectEvaluation(@Param("accountId") Long bid);
 
@@ -98,7 +98,8 @@ public interface OrderDtoMapper {
 	int updateOrderCancelEndState(@Param("orderId") Long orderId, @Param("destState") String destState,
 			@Param("sourceState") String sourceState, @Param("date") Date date,@Param("cannelFlag") String cannelFlag);
 	
-	
+	public int updateOrderStateCharge(@Param("orderId") Long orderId,  @Param("destState") String destState, 
+			@Param("sourceState")  String sourceState,@Param("cost") Integer cost,@Param("cment") String cment) ;
 	int updateOrderDealId(@Param("orderId") Long orderId,@Param("dealId") Long dealId );
 	OrderDto selectOrderSubjectInformation(Long orderId);
 }

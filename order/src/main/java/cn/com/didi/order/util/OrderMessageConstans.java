@@ -60,6 +60,9 @@ public class OrderMessageConstans {
 	public static final Message ORDER_NOT_PENDING_EVE=newMessage(DomainMessageConstans.CODE_ORDER_NOT_PENDING_EVE);
 	
 	
+	public static final Message ORDER_NOT_PENDING_CHAREGE_CAN_NOT_CHARGE=newMessage(DomainMessageConstans.CODE_ORDER_NOT_PENDING_CHAREGE_CAN_NOT_CHARGE);
+	
+	
 	/**
 	 * 交易不存在
 	 */

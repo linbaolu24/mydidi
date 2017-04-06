@@ -33,7 +33,7 @@ import cn.com.didi.order.IOrderInfo;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderDtoOrderInfo;
-import cn.com.didi.order.orders.domain.OrderStateCostDto;
+import cn.com.didi.order.orders.domain.OrderStateDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderLifeListener;
 import cn.com.didi.order.orders.service.IOrderNotifyMessageFinder;
@@ -96,7 +96,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		notifyPublish(info, orderResult);
 		return orderResult;
 	}
-
+    /**自动分配*/
 	public IOrderRuslt<Void> autoDispatch(Long orderId, Long bId) {
 		OrderDto info = orderInfoService.selectOrderSubjectInformation(orderId);
 		IOrderRuslt<Void> temp = normalCousemerVerify(info, bId);
@@ -111,7 +111,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		 * if (OrderState.ORDER_STATE_PUBLISH.isLess(info.getState())) { //
 		 * 订单状态已完成分派 返回成功即可 return orderResult; }
 		 */
-		IReciverDto dto = search.match(info.getCas(), new Point(info.getLat(), info.getLng()), info.getSlsId());
+		IReciverDto dto = search.match(info.getCas(), new Point( info.getLng(),info.getLat()), info.getSlsId());
 		if (dto == null) {
 			// todo没有找到接单人
 			orderResult.setCode(OrderMessageConstans.ORDER_AUTO_DIS_NO_MASTER.getCode());
@@ -186,14 +186,14 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	}
 
-	public IOrderRuslt<Void> startService(Long orderId, Long mercharId) {
+	public IOrderRuslt<OrderDto> startService(Long orderId, Long mercharId) {
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> orderResult = normalMercharVerify(order, mercharId);
+		IOrderRuslt<OrderDto> orderResult = normalMercharVerify(order, mercharId);
 		if (orderResult != null) {
 			return orderResult;
 		}
 		if (isStateRepeat(OrderState.ORDER_STATE_START_SERVICE, order.getState())) {
-			return null;
+			return build( order);
 		}
 		orderResult = new OrderRuslt<>(orderId);
 		int count=orderInfoService.updateOrderStateSs(orderId, OrderState.ORDER_STATE_START_SERVICE.getCode(), order.getState());
@@ -204,43 +204,74 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		// 发送消息
 		MessageDto tempMDto=orderMessageFinder.findBStartMessage(order);
 		sendMessage(order, tempMDto, false);
-		return orderResult;
+		return build(OrderState.ORDER_STATE_START_SERVICE, order);
 
 	}
-
-	public IOrderRuslt<Void> finishService(Long orderId, Long mercharId) {
+	public IOrderRuslt<OrderDto> finishServiceAndcharge(Long orderId,Long mercharId,int cost,String cment,IOrderCallBack<OrderDto> callBack){
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> orderResult = normalMercharVerify(order, mercharId);
+		IOrderRuslt<OrderDto> orderResult = normalMercharVerify(order, mercharId);
+		if (orderResult != null) {
+			return orderResult;
+		}
+		OrderState destState =callBack.getDest(order);
+		if (isStateRepeat(destState, order.getState())) {
+			return build(order);
+		}
+		OrderState[] fromState=callBack.getFromStates(order, destState);
+		if(fromState!=null&&fromState.length>0){
+			orderResult= orderConvert(order.getState(), callBack.getMessageStateConvert(order, destState), fromState);
+			if(orderResult!=null){
+				return orderResult;
+			}
+		}
+		order.setCment(cment);
+		order.setCost(cost);
+		return callBack.callBack(order, destState);
+	}
+	
+	
+	public IOrderRuslt<OrderDto> finishServiceAndcharge(Long orderId,Long mercharId,int cost,String cment){
+		return finishServiceAndcharge(orderId,mercharId,cost,cment,pendingAndFinishCallBack);
+	}
+	
+	
+	
+	
+	public IOrderRuslt<OrderDto> finishService(Long orderId, Long mercharId) {
+		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
+		IOrderRuslt<OrderDto> orderResult = normalMercharVerify(order, mercharId);
 		if (orderResult != null) {
 			return orderResult;
 		}
 		orderResult = new OrderRuslt<>(orderId);
-		OrderState destState = OrderState.ORDER_STATE_FINISH;
+		OrderState destState = OrderState.ORDER_STATE_Pending_EVALUATION;
 		if (BusinessCharge.isCharge(order.getBusinessCharge())) {
-			destState = OrderState.ORDER_STATE_Pending_EVALUATION;
+			destState = OrderState.ORDER_STATE_PENDING_CHARGE;
 		}
-		if (isStateRepeat(destState, order.getState())) {
-			return null;
+		if (destState.getCode().equals(order.getState())||
+				(!OrderState.ORDER_STATE_FINISH.equals(destState)&&isStateRepeat(destState, order.getState()))) {
+			return build(order);//这个判断比较生硬 考虑优化
 		}
 
-		int count=orderInfoService.updateOrderStateFs(orderId, destState.getCode(), order.getState());
+		int count=orderInfoService.updateOrderStateFs(orderId, destState.getCode(), order.getState());//服务结束更新
 		orderResult=orderStateChange(count, order, order.getState());
 		if(orderResult!=null){
 			return orderResult;
 		}
 		MessageDto tempMDto=orderMessageFinder.findBFinishMessage(order);
 		sendMessage(order,  tempMDto, false);
-		return orderResult;
+		return build(destState, order);
 		// 发送消息
 		// notifyFinishService(info);
 	}
 
-	public IOrderRuslt<Void> charge(Long orderId, Long mercharId, int cost) {
+	public IOrderRuslt<OrderDto> charge(Long orderId, Long mercharId, int cost,String cment) {
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> orderResult = normalMercharVerify(order, mercharId);
+		IOrderRuslt<OrderDto> orderResult = normalMercharVerify(order, mercharId);
 		if (orderResult != null) {
 			return orderResult;
 		}
+		
 		OrderState destState = OrderState.ORDER_STATE_PENDING_CHARGE;
 		Integer iCost = null;
 		if (!BusinessCharge.isCharge(order.getBusinessCharge())) {
@@ -250,18 +281,19 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			iCost = cost;
 		}
 		if (isStateRepeat(destState, order.getState())) {
-			return null;
+			return build(order);
 		}
-		int count=orderInfoService.updateOrderState(orderId, destState.getCode(), order.getState(), iCost);
+		orderConvert(order.getState(), OrderMessageConstans.ORDER_NOT_PENDING_CHAREGE_CAN_NOT_CHARGE, OrderState.ORDER_STATE_PENDING_CHARGE);
+		int count=orderInfoService.updateOrderStateCharge(orderId, destState.getCode(), order.getState(), iCost,cment);
 		orderResult=orderStateChange(count, order, order.getState());
 		if(orderResult!=null){
 			return orderResult;
 		}
 		MessageDto tempMDto=orderMessageFinder.findBChargeMessage(order);
 		sendMessage(order,  tempMDto, false);
-		// 更新状态
-		// 发送消息
-		return null;
+		order.setCment(cment);
+		order.setCost(cost);
+		return build(destState,order);
 		// notifyCharge(info);
 	}
 
@@ -307,9 +339,9 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		return null;
 	}
 
-	public IOrderRuslt<OrderStateCostDto> cannel(Long orderId, Long bId) {
+	public IOrderRuslt<OrderStateDto> cannel(Long orderId, Long bId) {
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<OrderStateCostDto> orderResult = normalCousemerVerify(order, bId, false);
+		IOrderRuslt<OrderStateDto> orderResult = normalCousemerVerify(order, bId, false);
 		if (orderResult != null) {
 			// orderResult.setData(null);
 			return orderResult;
@@ -319,7 +351,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return new OrderRuslt<>(OrderMessageConstans.ORDER_SERVICE_FINISH_CANNOT_CANNEL);
 		}
 		OrderState state = OrderState.ORDER_STATE_CANNEL;
-		OrderStateCostDto stateDto = new OrderStateCostDto();
+		OrderStateDto stateDto = new OrderStateDto();
 		if (BusinessCharge.isCharge(order.getBusinessCharge())) {
 			stateDto.setCost(order.getCommission());
 			state = OrderState.ORDER_STATE_PENDING_CHARGE;
@@ -342,7 +374,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			MessageDto tempMDto=orderMessageFinder.findCCancelMessage(order);
 			sendMessage(order,  tempMDto, true);
 		}
-		OrderRuslt<OrderStateCostDto> or = new OrderRuslt<>(orderId);
+		OrderRuslt<OrderStateDto> or = new OrderRuslt<>(orderId);
 		or.setData(stateDto);
 		return or;
 		// notifyCannel(info);
@@ -637,7 +669,6 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		return null;
 	}
-	
 	/**
 	 * @param now
 	 * @param message
@@ -654,6 +685,133 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			}
 		}
 		return new OrderRuslt<>(message);
-
 	}
+	
+    public IOrderRuslt<OrderDto> build(OrderState state,OrderDto dto){
+		return build(state.getCode(), dto);
+	}
+	public IOrderRuslt<OrderDto> build(String state,OrderDto dto){
+		OrderRuslt<OrderDto> result=new OrderRuslt<>(dto.getOrderId());
+		if(!StringUtils.isEmpty(state)){
+		dto.setState(state);
+		}
+		result.setData(dto);
+		return result;
+	}
+	public IOrderRuslt<OrderDto> build(OrderDto dto){
+	     return build((String)null,dto);	
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * @author xlm
+	 *
+	 * @param <T>
+	 */
+	public static interface IOrderCallBack<T>{
+		IOrderRuslt<T> callBack(OrderDto dto,OrderState dest);
+		OrderState getDest(OrderDto dto);
+		OrderState[] getFromStates(OrderDto dto,OrderState destState);
+		Message getMessageStateConvert(OrderDto dto,OrderState destState);
+	}
+	public IOrderCallBack<OrderDto> pendingChargeCallBack=new IOrderCallBack<OrderDto>() {
+
+		@Override
+		public IOrderRuslt<OrderDto> callBack(OrderDto order, OrderState destState) {
+			int count=orderInfoService.updateOrderStateCharge(order.getOrderId(), destState.getCode(), order.getState(), order.getCost(),order.getCment());
+			IOrderRuslt<OrderDto> orderResult=orderStateChange(count, order, order.getState());
+			if(orderResult!=null){
+				return orderResult;
+			}
+			MessageDto tempMDto=orderMessageFinder.findBChargeMessage(order);
+			sendMessage(order,  tempMDto, false);
+			return build(destState,order);
+		}
+
+		@Override
+		public OrderState getDest(OrderDto dto) {
+			return OrderState.ORDER_STATE_PENDING_CHARGE;
+		}
+
+		@Override
+		public OrderState[] getFromStates(OrderDto dto,OrderState destState) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Message getMessageStateConvert(OrderDto dto, OrderState destState) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
+	
+	public IOrderCallBack<OrderDto> finishChargeCallBack=new IOrderCallBack<OrderDto>() {
+
+		@Override
+		public IOrderRuslt<OrderDto> callBack(OrderDto dto, OrderState destState) {
+			int count=orderInfoService.updateOrderStateFs(dto.getOrderId(), destState.getCode(), dto.getState());
+			 IOrderRuslt<OrderDto> orderResult=orderStateChange(count, dto, dto.getState());
+			if(orderResult!=null){
+				return orderResult;
+			}
+			MessageDto tempMDto=orderMessageFinder.findBFinishMessage(dto);
+			sendMessage(dto,  tempMDto, false);
+			return build(destState, dto);
+		}
+
+		@Override
+		public OrderState getDest(OrderDto dto) {
+			return OrderState.ORDER_STATE_FINISH;
+		}
+
+		@Override
+		public OrderState[] getFromStates(OrderDto dto,OrderState destState) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Message getMessageStateConvert(OrderDto dto, OrderState destState) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
+	
+	public IOrderCallBack<OrderDto> pendingAndFinishCallBack=new IOrderCallBack<OrderDto>() {
+
+		@Override
+		public IOrderRuslt<OrderDto> callBack(OrderDto dto, OrderState dest) {
+			if(OrderState.ORDER_STATE_PENDING_CHARGE.equals(dest)){
+				return pendingChargeCallBack.callBack(dto, dest);
+			}else{
+				return finishChargeCallBack.callBack(dto, dest);
+			}
+		}
+
+		@Override
+		public OrderState getDest(OrderDto dto) {
+			if(BusinessCharge.isCharge(dto.getBusinessCharge())){
+				return pendingChargeCallBack.getDest(dto);
+			}else{
+				return finishChargeCallBack.getDest(dto);
+			}
+		}
+
+		@Override
+		public OrderState[] getFromStates(OrderDto dto,OrderState destState) {
+			return null;
+		}
+
+		@Override
+		public Message getMessageStateConvert(OrderDto dto, OrderState destState) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
 }

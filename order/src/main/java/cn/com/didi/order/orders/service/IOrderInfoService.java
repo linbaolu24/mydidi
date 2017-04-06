@@ -5,6 +5,7 @@ import java.util.List;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.order.orders.domain.OrderBListDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
@@ -66,13 +67,17 @@ public interface IOrderInfoService {
 	public List<OrderStateRecordDto> selectStateRecord(Long orderId);
 	
 	/**查询用户端订单列表*/
-	public List<OrderListDto> selectBOrderList(TimeInterval interval);
+	public List<OrderBListDto> selectBOrderList(TimeInterval interval);
 	/**
 	 * @param interval
 	 * @return
 	 */
 	public List<OrderListDto> selectCOrderList(TimeInterval interval);
 	
+	/**
+	 * @param order
+	 * @return
+	 */
 	public Long addOrder(OrderDto order);  
 	
 	/**
@@ -136,5 +141,13 @@ public interface IOrderInfoService {
 	 */
 	public int updateOrderDealId(Long orderId,Long dealId);
 	
+	
+	/**<p>更新订单状态和花费</p>
+	 * @param orderId
+	 * @param sourceState
+	 * @param cost 如果为空 不更新cost
+	 * @return
+	 */
+	public int updateOrderStateCharge(Long orderId,String destState,String sourceState,Integer cost,String cment);
 	
 }

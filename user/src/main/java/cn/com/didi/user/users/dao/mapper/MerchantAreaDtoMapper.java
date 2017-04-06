@@ -1,5 +1,6 @@
 package cn.com.didi.user.users.dao.mapper;
 
+import cn.com.didi.core.shape.IPoint;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
 import cn.com.didi.user.users.domain.MerchantAreaDtoExample;
 import cn.com.didi.user.users.domain.MerchantAreaDtoKey;
@@ -35,11 +36,13 @@ public interface MerchantAreaDtoMapper {
     List<MerchantAreaDto> selectMerchantArea(MerchantAreaDtoKey key);
     
     
-    /**
+    /**查找该范围的商铺
      * @param leftDown
      * @param rightTop
      * @param slsId
      * @return
      */
     List<MerchantAreaDto> selectPoints(@Param("leftDown") MerchantAreaDto leftDown, @Param("rightTop") MerchantAreaDto rightTop,@Param("slsId") Integer slsId);
+    /**选择包含点的商铺 X 代表经度 Y代表纬度*/
+    List<MerchantAreaDto> selectAreas(@Param("point") IPoint leftDown,@Param("slsId") Integer slsId);
 }
