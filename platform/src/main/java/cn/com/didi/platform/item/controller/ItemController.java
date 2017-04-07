@@ -18,6 +18,7 @@ import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.ResultExt;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.DomainConstatns;
+import cn.com.didi.domain.util.ServiceState;
 import cn.com.didi.domain.util.State;
 import cn.com.didi.platform.item.domain.FlsTimeInterval;
 import cn.com.didi.user.item.domain.FlServiceDto;
@@ -44,8 +45,7 @@ public class ItemController {
 		}
 		//dto.setServiceId(null);
 		dto.setSlsNum(0);
-		dto.setSlsNum(0);
-		dto.setState(State.VALID.getState());
+		dto.setState(ServiceState.NORMAL.getCode());
 		itemServiece.addFlService(dto);
 		return ResultFactory.success();
 
@@ -100,7 +100,8 @@ public class ItemController {
 		if (extDto == null) {
 			return null;
 		}
-		extDto.setServiceId(null);
+		//extDto.setServiceId(null);
+		extDto.setState(ServiceState.DRAFT.getCode());
 		itemServiece.addSlsService(extDto.dto(),extDto.getCityList());
 		return ResultFactory.success();
 	}

@@ -17,7 +17,6 @@ import com.github.miemiedev.mybatis.paginator.domain.PageList;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.ServiceState;
-import cn.com.didi.domain.util.State;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.item.dao.mapper.FlServiceDtoMapper;
 import cn.com.didi.user.item.dao.mapper.SlServiceDtoMapper;
@@ -64,6 +63,9 @@ public class ItemServiceImpl implements IItemService {
 		}
 		if (flServiceDto.getCreateTime() == null) {
 			flServiceDto.setCreateTime(new Date());
+		}
+		if(flServiceDto.getDisplayOrder()==null){
+			flServiceDto.setDisplayOrder(0);
 		}
 		Integer sId = flServiceDto.getServiceId();
 		flServiceDto.setServiceId(null);
@@ -112,6 +114,9 @@ public class ItemServiceImpl implements IItemService {
 		}
 		if (dto.getCreateTime() == null) {
 			dto.setCreateTime(new Date());
+		}
+		if(dto.getDisplayOrder()==null){
+			dto.setDisplayOrder(0);
 		}
 		updateFlsCount(dto.getFlsId());
 		Integer sId = dto.getServiceId();

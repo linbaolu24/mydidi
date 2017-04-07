@@ -3,6 +3,8 @@ package cn.com.didi.domain.query;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author xlm
  *
@@ -86,6 +88,9 @@ public class TimeInterval implements Serializable{
 	}
 
 	public String getState() {
+		if(StringUtils.isEmpty(state)){
+			return null;
+		}
 		return state;
 	}
 
