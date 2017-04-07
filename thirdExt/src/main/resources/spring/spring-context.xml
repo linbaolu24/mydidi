@@ -59,4 +59,5 @@
 	
 	
 	<bean id="didiSimpleCodecImpl" class="cn.com.didi.core.property.impl.codec.SimpleCodecImpl"> </bean>
+	<bean id="jsonConfigureShapeGenerator" class="cn.com.didi.thirdExt.shape.JsonConfigureShapeGenerator"></bean>
 </beans>
