@@ -32,13 +32,13 @@ public interface DealDtoMapper {
 
     int updateByPrimaryKey(DealDto record);
     /**将交易状态改为成功*/
-    public int updateDealState(@Param("dealId") Long dealId, @Param("destState") String destState, @Param("sourceState") String sourceState);
+    public int updateDealState(@Param("dealId") Long dealId, @Param("destState") String destState, @Param("sourceState") String sourceState,@Param("tradeId") String tradeId);
     /**
      * @param dealId
      * @param destState
      * @return
      */
-    public int updatePureDealState(@Param("dealId") Long dealId, @Param("destState") String destState);
+    public int updatePureDealState(@Param("dealId") Long dealId, @Param("destState") String destState,@Param("tradeId") String tradeId);
     /**
      * @param dealId
      * @return

@@ -417,8 +417,8 @@
   
   
   
-  <update  id="updateDealState"> update deal  set state = #{destState,jdbcType=CHAR}   where deal_id = #{dealId,jdbcType=BIGINT} and  state = #{sourceState,jdbcType=CHAR}  </update>
-   <update  id="updatePureDealState"> update deal  set state = #{destState,jdbcType=CHAR}   where deal_id = #{dealId,jdbcType=BIGINT} </update>
+  <update  id="updateDealState"> update deal  set state = #{destState,jdbcType=CHAR},  trade_id = #{tradeId,jdbcType=VARCHAR}   where deal_id = #{dealId,jdbcType=BIGINT} and  state = #{sourceState,jdbcType=CHAR}  </update>
+   <update  id="updatePureDealState"> update deal  set state = #{destState,jdbcType=CHAR} ,  trade_id = #{tradeId,jdbcType=VARCHAR}  where deal_id = #{dealId,jdbcType=BIGINT} </update>
   
   
   

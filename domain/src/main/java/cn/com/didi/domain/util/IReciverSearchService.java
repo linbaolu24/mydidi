@@ -27,5 +27,5 @@ public interface IReciverSearchService {
 	 * @param accoutId
 	 * @return
 	 */
-	public IReciverDto match(Long accoutId);
+	public IReciverDto match(Long accoutId,Role role);
 }

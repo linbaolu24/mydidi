@@ -32,11 +32,11 @@ public class PolygonShape implements IShape {
 				if (first == null) {
 					first = one;
 					first2D = temp;
-					polygon.moveTo(temp.getX(), temp.getX());
+					polygon.moveTo(temp.getX(), temp.getY());
 				}
-				polygon.lineTo(temp.getX(), temp.getX());
+				polygon.lineTo(temp.getX(), temp.getY());
 			}
-			polygon.lineTo(first2D.getX(), first2D.getX());
+			polygon.lineTo(first2D.getX(), first2D.getY());
 			polygon.closePath();
 		}
 	}

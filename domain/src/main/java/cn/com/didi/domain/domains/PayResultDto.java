@@ -54,5 +54,15 @@ public class PayResultDto {
 	private Long destAccountId;
 	private String payAccount;
 	private PayAccountEnum accountEnum;
+	/**
+	 * 交易系统交易ID
+	 */
+	private String tradeId;
+	public String getTradeId() {
+		return tradeId;
+	}
+	public void setTradeId(String tradeId) {
+		this.tradeId = tradeId;
+	}
 	
 }

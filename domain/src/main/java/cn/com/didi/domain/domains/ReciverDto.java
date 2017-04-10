@@ -1,5 +1,7 @@
 package cn.com.didi.domain.domains;
 
+import cn.com.didi.domain.util.Role;
+
 public class ReciverDto implements IReciverDto{
 	public Long getAccountId() {
 		return accountId;
@@ -22,6 +24,24 @@ public class ReciverDto implements IReciverDto{
 	private Long accountId;
 	private String reciveId;
 	private String reciveType;
+	private Role accountType;
+	public Role getAccountType() {
+		return accountType;
+	}
+	public void setAccountType(Role accountType) {
+		this.accountType = accountType;
+	}
+	public ReciverDto(Long accountId, String reciveId, String reciveType, Role accountType) {
+		super();
+		this.accountId = accountId;
+		this.reciveId = reciveId;
+		this.reciveType = reciveType;
+		this.accountType = accountType;
+	}
+	public ReciverDto() {
+		super();
+	}
+	
 	
 	
 

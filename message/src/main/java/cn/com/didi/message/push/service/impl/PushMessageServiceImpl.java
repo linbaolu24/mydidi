@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
-import org.springframework.stereotype.Service;
 
 import com.gexin.rp.sdk.base.IPushResult;
 import com.gexin.rp.sdk.base.impl.ListMessage;
 import com.gexin.rp.sdk.base.impl.SingleMessage;
 import com.gexin.rp.sdk.base.impl.Target;
 import com.gexin.rp.sdk.http.IGtPush;
+import com.gexin.rp.sdk.template.AbstractTemplate;
 import com.gexin.rp.sdk.template.NotificationTemplate;
 
 import cn.com.didi.core.property.IResult;
@@ -19,7 +19,7 @@ import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.MessageDto;
 import cn.com.didi.message.push.service.IPushMessageService;
-@Service
+
 public class PushMessageServiceImpl implements IPushMessageService {
 	public String getAppId() {
 		return appId;
@@ -62,12 +62,12 @@ public class PushMessageServiceImpl implements IPushMessageService {
 	}
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PushMessageServiceImpl.class);
-	private String appId;// = "IRUelUtd5A93EXHPhijUp1";
-	private String appKey;// = "HTSpjOhFlr73IpnzJaZfY6";
-	private String masterSecret;// = "XqXFmluserA8i31KVdTmL2";
-	private String host = "http://sdk.open.api.igexin.com/apiex.htm";
-	private IGtPush push;
-	private int offlineExpireTime = 24 * 1000 * 3600;
+	protected String appId;// = "IRUelUtd5A93EXHPhijUp1";
+	protected String appKey;// = "HTSpjOhFlr73IpnzJaZfY6";
+	protected String masterSecret;// = "XqXFmluserA8i31KVdTmL2";
+	protected String host = "http://sdk.open.api.igexin.com/apiex.htm";
+	protected IGtPush push;
+	protected int offlineExpireTime = 24 * 1000 * 3600;
 
 	public void init() {
 		push = new IGtPush(host, appKey, masterSecret);
@@ -75,11 +75,12 @@ public class PushMessageServiceImpl implements IPushMessageService {
 
 	@Override
 	public IResult<Void> push(IReciverDto reciver, MessageDto messageContext) {
+		LOGGER.debug("消息推送  {}   ");
 		if (reciver == null) {
 			return ResultFactory.success();
 		}
 		SingleMessage message = new SingleMessage();
-		NotificationTemplate template = notificationTemplateDemo(messageContext);
+		AbstractTemplate template = notificationTemplateDemo(messageContext);
 		message.setData(template);
 		// 设置消息离线，并设置离线时间
 		message.setOffline(true);
@@ -106,7 +107,7 @@ public class PushMessageServiceImpl implements IPushMessageService {
 			return ResultFactory.success();
 		}
 		ListMessage message = new ListMessage();
-		NotificationTemplate template = notificationTemplateDemo(messageContext);
+		AbstractTemplate template = notificationTemplateDemo(messageContext);
 		message.setData(template);
 		// 设置消息离线，并设置离线时间
 		message.setOffline(true);
@@ -135,7 +136,7 @@ public class PushMessageServiceImpl implements IPushMessageService {
 	}
 
 	@SuppressWarnings("deprecation")
-	public NotificationTemplate notificationTemplateDemo(MessageDto context) {
+	public AbstractTemplate notificationTemplateDemo(MessageDto context) {
 		NotificationTemplate template = new NotificationTemplate();
 		// 设置APPID与APPKEY
 		template.setAppId(appId);

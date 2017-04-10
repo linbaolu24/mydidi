@@ -235,7 +235,7 @@ public class MerchantServiceImpl implements IMerchantService {
 	}
 
 	protected MerchantAreaDto matchShape(MerchantAreaDto mad, Integer slsId){
-		IPoint point=new SimplePoint(mad.getLat(), mad.getLng());
+		IPoint point=new SimplePoint(mad.getLng(), mad.getLat());
 		 List<MerchantAreaDto> areaList=merchantAreaDtoMapper.selectAreas(point, slsId);
 		 if(CollectionUtils.isEmpty(areaList)){
 			 return null;

@@ -22,5 +22,9 @@ public class MessageDto {
 	private String text;
 	private String title;
 	private String content;
+	@Override
+	public String toString() {
+		return "MessageDto [text=" + text + ", title=" + title + ", content=" + content + "]";
+	}
 	
 }

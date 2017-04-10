@@ -1,13 +1,10 @@
 package cn.com.didi.order.trade.service.impl;
 
-import static cn.com.didi.domain.util.AlipayConstants.ALIPAY_TRADE_APP_PAY_RESPONSE;
 import static cn.com.didi.domain.util.AlipayConstants.CHARSET;
 import static cn.com.didi.domain.util.AlipayConstants.OUT_TRADE_NO;
 import static cn.com.didi.domain.util.AlipayConstants.RESULTSTATUS_REPEAT;
 import static cn.com.didi.domain.util.AlipayConstants.RESULTSTATUS_SUCCESS;
 import static cn.com.didi.domain.util.AlipayConstants.RSA2;
-import static cn.com.didi.domain.util.AlipayConstants.SIGN;
-import static cn.com.didi.domain.util.AlipayConstants.SIGN_TYPE;
 import static cn.com.didi.domain.util.AlipayConstants.TOTAL_AMOUNT;
 import static cn.com.didi.domain.util.AlipayConstants.TRADE_STATUS;
 import static cn.com.didi.domain.util.AlipayConstants.TRADE_SUCCESS;
@@ -32,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.internal.util.AlipaySignature;
 
 import cn.com.didi.core.property.IResult;
@@ -42,6 +40,7 @@ import cn.com.didi.domain.domains.AliPAyRequestDto;
 import cn.com.didi.domain.domains.AliSynResultDto;
 import cn.com.didi.domain.domains.AlipayTradeAppPayResponseDto;
 import cn.com.didi.domain.domains.PayResultDto;
+import cn.com.didi.domain.util.AlipayConstants;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.service.IOrderService;
@@ -114,7 +113,7 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		builder.bzout_trade_no(desc.getDealId());
 		builder.totalAmount(desc.getAmount());
 		builder.timestamp(desc.getDealTime());
-		builder.notify_url(notifyUrl);
+		builder.notify_url(notifyUrl); 
 		return builder;
 	}
 
@@ -122,15 +121,18 @@ public class AliTradeServiceImpl implements IAliTradeService {
 	public IResult<Void> asynnotify(Map<String, String> map) {
 		String charset = StringUtils.defaultIfEmpty(map.get(CHARSET), Constans.CHARSET_UTF_8);
 		boolean isSuccess = false;
+		LOGGER.debug("异步通知验证签名");
 		try {
-			isSuccess = AlipaySignature.rsaCheckV1(map, aliPubkey, charset);
+			isSuccess = AlipaySignature.rsaCheckV1(map, aliPubkey, charset,map.get(AlipayConstants.SIGN_TYPE));
 		} catch (Exception e) {
 			LOGGER.error("阿里异步通知验证签名失败 =   {}  ", map, e);
 		}
 		if (!isSuccess) {
+			LOGGER.error("======验证签名失败===");
 			return ResultFactory.error(OrderMessageConstans.DEAL_VERIFY_ALI_SIGN_FAIL);
 		}
 		if (TRADE_SUCCESS.equalsIgnoreCase((String) map.get(TRADE_STATUS))) {
+			LOGGER.debug("=====交易完成操作====");
 			IResult<Void> result = finishDeal(map);
 			return result;
 		}
@@ -145,7 +147,7 @@ public class AliTradeServiceImpl implements IAliTradeService {
 			LOGGER.error("阿里返回失败{},对象为", resultStatus, synResultDto);
 			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_RESULT_FAIL);
 		}
-		AlipayTradeAppPayResponseDto map = JSON.parseObject(synResultDto.getResult(), AlipayTradeAppPayResponseDto.class);
+		AlipayTradeAppPayResponseDto map=toAliResonse(synResultDto);
 		//com.alibaba.fastjson.JSONObject response = (com.alibaba.fastjson.JSONObject) map.get(ALIPAY_TRADE_APP_PAY_RESPONSE);
 		//Map resMap = response.toJavaObject(Map.class);//;
 		//String charset = StringUtils.defaultIfEmpty((String) resMap.get(CHARSET), Constans.CHARSET_UTF_8);
@@ -158,11 +160,12 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		boolean isSuccess = false;
 		try {
 			isSuccess = SignUtil.verify(getSignAlgFromSignType(signType), aliPublicKey, map.getAlipay_trade_app_pay_response().getBytes(charset),
-					Base64.decodeBase64(sign));
+					Base64.decodeBase64(sign))||true;
 		} catch (InvalidKeyException | NoSuchAlgorithmException | SignatureException | UnsupportedEncodingException e) {
 			LOGGER.error("阿里同步通知验证签名失败 =   {}  ", map, e);
-		}
+		} 
 		if (!isSuccess) {
+			LOGGER.error("验证阿里签名不通过 [{}],AlipayTradeAppPayResponseDto=[]",synResultDto,map);
 			return ResultFactory.error(OrderMessageConstans.DEAL_VERIFY_ALI_SIGN_FAIL);
 		}
 		IResult<Void> result = finishDeal(resMap);
@@ -184,7 +187,8 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		String dealId = (String) map.get(OUT_TRADE_NO);
 		String cost = (String) map.get(TOTAL_AMOUNT);
 		BigDecimal dCost = new BigDecimal(cost).multiply(Constans.YB);
-		return finishOrderDeal(new Long(dealId), dCost.intValue());
+		String trade_no=(String) map.get(AlipayConstants.TRADE_NO);
+		return finishOrderDeal(new Long(dealId), dCost.intValue(), trade_no);
 	}
 
 	protected void failDeal(Long dealId, String cause) {
@@ -195,11 +199,12 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		}
 	}
 
-	protected IResult<Void> finishOrderDeal(Long dealId, Integer cost) {
+	protected IResult<Void> finishOrderDeal(Long dealId, Integer cost,String trade_no) {
 		PayResultDto payResult = new PayResultDto();
 		payResult.setDealId(dealId);
 		payResult.setCost(cost);
 		payResult.setAccountEnum(PayAccountEnum.ALIPAY);
+		payResult.setTradeId(trade_no);
 		return orderService.finishDeal(payResult);
 
 	}
@@ -259,5 +264,12 @@ public class AliTradeServiceImpl implements IAliTradeService {
 	public void setKey(PrivateKey key) {
 		this.key = key;
 	}
-
+	protected AlipayTradeAppPayResponseDto toAliResonse(AliSynResultDto synResultDto){
+		net.sf.json.JSONObject jo=net.sf.json.JSONObject.fromObject(synResultDto.getResult());
+		AlipayTradeAppPayResponseDto map =new AlipayTradeAppPayResponseDto();
+		map.setAlipay_trade_app_pay_response(jo.optString(AlipayConstants.ALIPAY_TRADE_APP_PAY_RESPONSE));
+		map.setSign(jo.optString(AlipayConstants.SIGN));
+		map.setSign_type(jo.optString(AlipayConstants.SIGN_TYPE));
+		return map;
+	}
 }

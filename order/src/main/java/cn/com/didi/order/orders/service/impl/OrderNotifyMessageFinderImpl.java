@@ -27,12 +27,17 @@ public class OrderNotifyMessageFinderImpl implements IOrderNotifyMessageFinder{
 		//sendMessage(info, "您有新的订单", "您有新的订单", dto);
 		return bTakingMessage;
 	}
-
+	public MessageDto sendMessage(OrderDto  info, String title,String text,boolean bool){
+		MessageDto dto=new MessageDto();
+		dto.setText(text);
+		dto.setTitle(title);
+		return dto;
+	}
 	@Override
 	public MessageDto findCTakedMessage(OrderDto dto) {
 		//sendMessage(info, "您的订单已接单", "您的订单已接单", false);
-        //sendMessage(info,  "您的订单已被接单", "您的订单已被接单", false);
-		return null;
+        return sendMessage(dto,  "您的订单已被接单", "您的订单已被接单", false);
+		//return null;
 	}
 
 	@Override
@@ -42,26 +47,26 @@ public class OrderNotifyMessageFinderImpl implements IOrderNotifyMessageFinder{
 
 	@Override
 	public MessageDto findBFinishMessage(OrderDto dto) {
-		//sendMessage(order,  "您的订单师傅完成服务", "您的订单师傅完成服务", false);
-		return null;
+		return sendMessage(dto,  "您的订单师傅完成服务", "您的订单师傅完成服务", false);
+		//return null;
 	}
 
 	@Override
 	public MessageDto findBChargeMessage(OrderDto dto) {
-		//sendMessage(order,  "您的订单师傅发起收费", "您的订单师傅发起收费", false);
-		return null;
+		return sendMessage(dto,  "您的订单师傅发起收费", "您的订单师傅发起收费", false);
+		//return null;
 	}
 
 	@Override
 	public MessageDto findCCancelMessage(OrderDto dto) {
-		//sendMessage(order,  "您的订单已被取消", "您的订单已被取消", false);
-		return null;
+		return sendMessage(dto,  "您的订单已被取消", "您的订单已被取消", false);
+		//return null;
 	}
 
 	@Override
 	public MessageDto findCFinishDealMessage(OrderDto dto) {
-		//sendMessage(orderDto, "您的订单用户已完成付款", "您的订单用户已完成付款", true);
-		return null;
+		return sendMessage(dto, "您的订单用户已完成付款", "您的订单用户已完成付款", true);
+		//return null;
 	}
 	@Override
 	public MessageDto findBStartMessage(OrderDto dto) {

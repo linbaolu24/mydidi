@@ -68,73 +68,82 @@ public class AlipayDealController extends AbstractDealController {
 	 */
 	@RequestMapping(value = "/app/c/order/aliAsnyNotify", method = RequestMethod.POST)
 	public String alipaySdkNotify(HttpServletRequest request) throws UnsupportedEncodingException {
+		LOGGER.debug("=================阿里支付异步通知=======================");
+		logRequest(request);
 		String charSet = request.getParameter("charset");
 		Enumeration<String> names = request.getParameterNames();
 		TreeMap map = new TreeMap();
 		String name;
 		while (names.hasMoreElements()) {
 			name = names.nextElement();
-			map.put(name, URLDecoder.decode(request.getParameter(name), charSet));
+			map.put(name, request.getParameter(name));
 		}
+		LOGGER.debug("阿里支付异步通知结果  = 【{}】", map);
 		try {
-			IResult<Void> result=aliTradeService.asynnotify(map);
-			if(result!=null&&!result.success()){
+			IResult<Void> result = aliTradeService.asynnotify(map);
+			if (result != null && !result.success()) {
 				return FAIL;
 			}
 			return SUCESS;
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(),e);
+			LOGGER.error(e.getMessage(), e);
 			return FAIL;
 		}
 	}
+	protected void logRequest(HttpServletRequest request){
+		if (LOGGER.isDebugEnabled()) {
+			Enumeration<String> names = request.getParameterNames();
+			String name;
+			StringBuilder content = new StringBuilder();
+			int i = 0;
+			while (names.hasMoreElements()) {
+				name = names.nextElement();
+				content.append((i == 0 ? "" : "&") + name + "=" + request.getParameter(name));
+				i++;
+			}
+			LOGGER.debug(content.toString());
+		}
+	}
+	/*
+	 * @RequestMapping(value = "/app/c/order/finishAlipay", method =
+	 * RequestMethod.POST) public IResult alipayResukt(@RequestBody
+	 * AliSynResultDto request) throws UnsupportedEncodingException { String
+	 * resultStatus = request.getResultStatus(); if
+	 * (!resultStatus.equals("9000") && !resultStatus.equals("5000")) {
+	 * LOGGER.error("阿里返回失败{},对象为", resultStatus, request); return
+	 * ResultFactory.error(DomainMessageConstans.CODE_DEAL_ALI_RESULT_FAIL,
+	 * "阿里返回交易失败。"); } Map map = JSON.parseObject(request.getResult(),
+	 * Map.class); String charSet = (String) map.get("charset"); boolean
+	 * isSuccess = false; try { isSuccess = AlipaySignature.rsaCheckV1(map,
+	 * ALI_PUBLICK_KEY, charSet); } catch (Exception e) {
+	 * LOGGER.error("阿里验证签名失败" + map.toString(), e); return
+	 * ResultFactory.error(DomainMessageConstans.CODE_DEAL_VERIFY_ALI_SIGN_FAIL,
+	 * "阿里验证签名失败。"); } IResult<Void> result = finishDeal(map); if (result ==
+	 * null || result.success()) { return ResultFactory.success(); } return
+	 * ResultFactory.error(result.getCode(), result.getMessage()); }
+	 */
 
-	/*@RequestMapping(value = "/app/c/order/finishAlipay", method = RequestMethod.POST)
-	public IResult alipayResukt(@RequestBody AliSynResultDto request) throws UnsupportedEncodingException {
-		String resultStatus = request.getResultStatus();
-		if (!resultStatus.equals("9000") && !resultStatus.equals("5000")) {
-			LOGGER.error("阿里返回失败{},对象为", resultStatus, request);
-			return ResultFactory.error(DomainMessageConstans.CODE_DEAL_ALI_RESULT_FAIL, "阿里返回交易失败。");
-		}
-		Map map = JSON.parseObject(request.getResult(), Map.class);
-		String charSet = (String) map.get("charset");
-		boolean isSuccess = false;
-		try {
-			isSuccess = AlipaySignature.rsaCheckV1(map, ALI_PUBLICK_KEY, charSet);
-		} catch (Exception e) {
-			LOGGER.error("阿里验证签名失败" + map.toString(), e);
-			return ResultFactory.error(DomainMessageConstans.CODE_DEAL_VERIFY_ALI_SIGN_FAIL, "阿里验证签名失败。");
-		}
-		IResult<Void> result = finishDeal(map);
-		if (result == null || result.success()) {
-			return ResultFactory.success();
-		}
-		return ResultFactory.error(result.getCode(), result.getMessage());
-	}*/
-	
 	@RequestMapping(value = "/app/c/order/finishAlipay", method = RequestMethod.POST)
 	public IResult alipayResukt(@RequestBody AliSynResultDto request) {
-		IResult<Void> result=aliTradeService.synnotify(request);
+		IResult<Void> result = aliTradeService.synnotify(request);
 		return result;
 	}
-	
-	
-	@RequestMapping(value = "/app/c/order/alipay",method={RequestMethod.POST})
-	public IResult alipay(@RequestBody OrderIDJAO map,HttpServletRequest request){
+
+	@RequestMapping(value = "/app/c/order/alipay", method = { RequestMethod.POST })
+	public IResult alipay(@RequestBody OrderIDJAO map, HttpServletRequest request) {
 		Long orderId = (Long) map.getOrderId();
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
-		IResult<AliPAyRequestDto> or = aliTradeService.createOdrerRequest(orderId, accountId,map.getDescription());
+		IResult<AliPAyRequestDto> or = aliTradeService.createOdrerRequest(orderId, accountId, map.getDescription());
 		if (or.success()) {
-			Map p=new HashMap(1);
+			Map p = new HashMap(1);
 			p.put(DomainConstatns.DEALID, or.getData().getDealId());
 			p.put(DomainConstatns.ORDERINFO, or.getData().getOrderInfo());
 			return ResultFactory.success(p);
 		}
-		
+
 		return ResultFactory.error(or.getCode(), or.getMessage());
-	} 
-	
-	
+	}
 
 	protected IResult<Void> finishDeal(Map map) {
 		String dealId = (String) map.get(OUT_TRADE_NO);

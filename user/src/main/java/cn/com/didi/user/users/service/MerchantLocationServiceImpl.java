@@ -15,6 +15,7 @@ import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.domains.ReciverDto;
 import cn.com.didi.domain.util.IReciverSearchService;
+import cn.com.didi.domain.util.Role;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
 import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
@@ -54,12 +55,17 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 	}
 
 	protected IReciverDto userLinkIdDtoToReciverDto(UserLinkIdDto user) {
+		return userLinkIdDtoToReciverDto(user, Role.BUSINESS);
+	}
+	
+	protected IReciverDto userLinkIdDtoToReciverDto(UserLinkIdDto user,Role role) {
 		ReciverDto temp = null;
 		if (user != null) {
 			temp = new ReciverDto();
 			temp.setAccountId(user.getAccountId());
 			temp.setReciveType("gt");
 			temp.setReciveId(user.getGtCid());
+			temp.setAccountType(role);
 		}
 		return temp;
 	}
@@ -88,9 +94,9 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 	}
 
 	@Override
-	public IReciverDto match(Long accoutId) {
+	public IReciverDto match(Long accoutId,Role role) {
 		UserLinkIdDto uLinkDto=userService.selectUserLinkedId(accoutId);
-		return userLinkIdDtoToReciverDto(uLinkDto);
+		return userLinkIdDtoToReciverDto(uLinkDto,role);
 	}
 
 }

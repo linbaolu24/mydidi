@@ -888,7 +888,7 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
   select order_id, sls_id, fls_id,  cname, cci, consumer_address, cas, consumer_name, 
     state,  consumer_account_id, merchant_account_id, Lng, lat, business_charge, 
     business_category, master_name, mci, cost, deal_id, 
-    ort,ofst,  cment
+    ort,ofst,  cment,
      cancel_flag, commission, poundage, mlng, mlat  from t_order where order_id = #{orderId,jdbcType=BIGINT}
   </select>
   

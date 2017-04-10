@@ -50,4 +50,6 @@ public class AlipayConstants {
 	public static final String RESULTSTATUS_REPEAT= "5000";
 	
 	public static final String TRADE_STATUS= "trade_status";
+	
+	public static final String TRADE_NO= "trade_no";
 }

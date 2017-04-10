@@ -17,6 +17,7 @@ import com.github.miemiedev.mybatis.paginator.domain.PageList;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.order.orders.dao.mapper.OrderDtoMapper;
 import cn.com.didi.order.orders.dao.mapper.OrderStateRecordDtoMapper;
 import cn.com.didi.order.orders.domain.OrderBListDto;
@@ -129,7 +130,7 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 
 	@Override
 	public OrderDto selectOrderSubjectInformation(Long orderId) {
-		if(orderId==null){
+		if (orderId == null) {
 			return null;
 		}
 		return orderMapper.selectOrderSubjectInformation(orderId);
@@ -152,7 +153,13 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		Date date = new Date();
 		int count = orderMapper.updateOrderStateFs(orderId, destState, sourceState, date);
 		if (count > 0) {
-			addStateUpdate(orderId, destState, date, sourceState);
+			if (OrderState.ORDER_STATE_Pending_EVALUATION.getCode().equals(destState)) {
+				addStateUpdate(orderId, OrderState.ORDER_STATE_PENDING_CHARGE.getCode(), date, sourceState);
+				addStateUpdate(orderId, OrderState.ORDER_STATE_Pending_EVALUATION.getCode(), date,
+						OrderState.ORDER_STATE_PENDING_CHARGE.getCode());
+			} else {
+				addStateUpdate(orderId, destState, date, sourceState);
+			}
 		}
 		return count;
 	}
@@ -224,9 +231,9 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		int count = 0;
 		Date date = new Date();
 		if (cost != null) {
-			count = orderMapper.updateOrderStateAndCostCancelFalg(orderId, destState, sourceState, cost,"1");
+			count = orderMapper.updateOrderStateAndCostCancelFalg(orderId, destState, sourceState, cost, "1");
 		} else {
-			count = orderMapper.updateOrderCancelEndState(orderId, destState, sourceState, date,"1");
+			count = orderMapper.updateOrderCancelEndState(orderId, destState, sourceState, date, "1");
 		}
 		if (count != 0) {
 			addStateUpdate(orderId, destState, date, sourceState);
@@ -239,8 +246,8 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	 * @param dealId
 	 * @return
 	 */
-	public int updateOrderDealId(Long orderId,Long dealId){
-		if(orderId==null){
+	public int updateOrderDealId(Long orderId, Long dealId) {
+		if (orderId == null) {
 			return 0;
 		}
 		return orderMapper.updateOrderDealId(orderId, dealId);
@@ -262,12 +269,12 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	@Override
 	public int updateOrderStateCharge(Long orderId, String destState, String sourceState, Integer cost, String cment) {
 		int count = orderMapper.updateOrderStateCharge(orderId, destState, sourceState, cost, cment);
-		if(count!=0&&!sourceState.equals(destState)){
+		if (count != 0 && !sourceState.equals(destState)) {
 			Date date = new Date();
 			addStateUpdate(orderId, destState, date, sourceState);
 		}
 		return count;
-	
+
 	}
 
 }

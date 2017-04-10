@@ -27,6 +27,7 @@ import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.domain.util.IReciverSearchService;
 import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.domain.util.PayAccountEnum;
+import cn.com.didi.domain.util.Role;
 import cn.com.didi.domain.util.TradeCategory;
 import cn.com.didi.message.push.service.IPushMessageService;
 import cn.com.didi.order.IOrderInfo;
@@ -106,6 +107,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if (isStateRepeat(OrderState.ORDER_STATE_TAKING, info.getState())) {
 			return null;
 		}
+		
 		OrderRuslt<Void> orderResult = new OrderRuslt<Void>(info.getOrderId());
 		/*
 		 * if (OrderState.ORDER_STATE_PUBLISH.isLess(info.getState())) { //
@@ -123,6 +125,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			if(oResult!=null){
 				return oResult;
 			}
+			info.setState(OrderState.ORDER_STATE_TAKING.getCode());
 			MessageDto tempMDto=orderMessageFinder.findBTakingMessage(info);
 			sendMessage(info, tempMDto, dto);
 			tempMDto=orderMessageFinder.findCTakedMessage(info);
@@ -181,6 +184,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		temp = new OrderRuslt<>(orderId);
 		MessageDto tempMDto=orderMessageFinder.findCTakedMessage(info);
+		info.setState(OrderState.ORDER_STATE_TAKING.getCode());
 		sendMessage(info,  tempMDto, false);
 		return temp;
 
@@ -203,7 +207,10 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		// 发送消息
 		MessageDto tempMDto=orderMessageFinder.findBStartMessage(order);
+		String stateSource=order.getState();
+		order.setState(OrderState.ORDER_STATE_START_SERVICE.getCode());
 		sendMessage(order, tempMDto, false);
+		order.setState(stateSource);
 		return build(OrderState.ORDER_STATE_START_SERVICE, order);
 
 	}
@@ -259,6 +266,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return orderResult;
 		}
 		MessageDto tempMDto=orderMessageFinder.findBFinishMessage(order);
+		order.setState(destState.getCode());
 		sendMessage(order,  tempMDto, false);
 		return build(destState, order);
 		// 发送消息
@@ -290,6 +298,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return orderResult;
 		}
 		MessageDto tempMDto=orderMessageFinder.findBChargeMessage(order);
+		order.setState(destState.getCode());
 		sendMessage(order,  tempMDto, false);
 		order.setCment(cment);
 		order.setCost(cost);
@@ -450,6 +459,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		IResult<Void> deal = tradeService.finishDeal(dto, "0".equals(orderDto.getCancelFlag())?dealFinishTranscationalCallBack:dealFinishTranscationalCallBackCannel);
 		if (deal == null || deal.success()) {
 			MessageDto tempMDto=orderMessageFinder.findCFinishDealMessage(orderDto);
+			orderDto.setState("0".equals(orderDto.getCancelFlag())?OrderState.ORDER_STATE_Pending_EVALUATION.getCode():OrderState.ORDER_STATE_CANNEL.getCode());
 			sendMessage(orderDto, tempMDto, true);
 			return OrderRuslt.successResult();
 		}
@@ -530,16 +540,19 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 	protected IReciverDto getBReciver(OrderDto dto) {
 		if (dto == null || dto.getMerchantAccountId() == null) {
+			LOGGER.error("商户ID为空{}",dto);
 			return null;
 		}
-		return search.match(dto.getMerchantAccountId());
+		//ReciverDto dto=new ReciverDto(dto.getMerchantAccountId(), reciveId, reciveType, accountType)
+		return search.match(dto.getMerchantAccountId(),Role.BUSINESS);
+		 
 	}
 
 	protected IReciverDto getCReciver(OrderDto dto) {
 		if (dto == null || dto.getConsumerAccountId() == null) {
 			return null;
 		}
-		return search.match(dto.getConsumerAccountId());
+		return search.match(dto.getConsumerAccountId(),Role.COUSMER);
 	}
 
 	protected MessageDto createMessage(OrderDto order, String text, String title) {
