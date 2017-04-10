@@ -22,9 +22,26 @@
 	</bean>
 	
 	
-	<bean  id="pushMessageServiceImpl" class="cn.com.didi.message.push.service.impl.PushMessageServiceImpl" init-method="init">
+	<bean  id="pushMessageServiceImpl" class="cn.com.didi.message.push.service.impl.PushTransmissionMessageServiceImpl" init-method="init">
 	<property name="appId" value="${gt.appId}"></property>
 	<property name="appKey" value="${gt.appKey}"></property>
 	<property name="masterSecret" value="${gt.masterSecret}"></property>
 	</bean>
+	
+	 <bean  id="bPushMessageServiceImpl" class="cn.com.didi.message.push.service.impl.PushTransmissionMessageServiceImpl" init-method="init">
+	<property name="appId" value="${bgt.appId}"></property>
+	<property name="appKey" value="${bgt.appKey}"></property>
+	<property name="masterSecret" value="${bgt.masterSecret}"></property>
+	</bean> 
+	
+	 <bean  id="mapperPushMessageServiceImpl" class="cn.com.didi.message.push.service.impl.MapperPushMessageServiceImpl" primary="true">
+	<property name="mapper">
+	<map>
+	<entry key="B" value-ref="bPushMessageServiceImpl"></entry>
+	<entry key="C" value-ref="pushMessageServiceImpl"></entry>
+	</map>
+	</property>
+	
+	</bean> 
+	
 </beans>

@@ -25,30 +25,40 @@
 			<groupId>cn.com.didi</groupId>
 			<artifactId>core</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>cn.com.didi</groupId>
 			<artifactId>thirdExt</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>cn.com.didi</groupId>
 			<artifactId>domain</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>cn.com.didi</groupId>
 			<artifactId>user</artifactId>
 		</dependency>
-		
+
 		<dependency>
-				<groupId>com.alibaba</groupId>
-				<artifactId>fastjson</artifactId>
-			</dependency>
-			
-			<dependency>
-		<groupId>com.alipay.api</groupId>
-		<artifactId>alipay</artifactId>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alipay.api</groupId>
+			<artifactId>alipay</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<classifier>jdk15</classifier>
 		</dependency>
 	</dependencies>
 </project>
