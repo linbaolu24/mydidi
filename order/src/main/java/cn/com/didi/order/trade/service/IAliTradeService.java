@@ -13,6 +13,10 @@ public interface IAliTradeService {
 	 * @return
 	 */
 	IResult<AliPAyRequestDto> createOdrerRequest(Long orderId, Long bId,String desc);
+	/**
+	 * @param map
+	 * @return
+	 */
 	IResult<Void> asynnotify(Map<String,String> map);
 	IResult<Void> synnotify(AliSynResultDto map);
 }

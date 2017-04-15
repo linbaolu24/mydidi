@@ -87,6 +87,21 @@ public class OrderMessageConstans {
 	 * 生成支付宝订单支付信息异常
 	 */
 	public static final Message DEAL_ALI_PAY_ORDERINFO_FAIL= newMessage(DomainMessageConstans.CODE_DEAL_ALI_PAY_ORDERINFO_FAIL);
+	
+	
+	
+	/**
+	 * 微信统一下单异常
+	 */
+	public static final Message DEAL_WECHAT_TYXD_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TYXD_ERROR);
+	
+	
+	
+	/**微信统一下单生成请求异常*/
+	public static final Message DEAL_WECHAT_TYXD_BUILD_REQUEST_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TYXD_BUILD_REQUEST_ERROR);
+	
+	/**微信统一下单生成解析返回异常*/
+	public static final Message DEAL_WECHAT_TYXD_PARSE_RESPONSE_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TYXD_PARSE_RESPONSE_ERROR);
 	/**
 	 * @param code
 	 * @return

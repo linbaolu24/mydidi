@@ -15,7 +15,7 @@ public class ResultFactory {
 	}
 
 	public static <T> IResult<T> success(Message message, T obj) {
-		return new Result<T>(message.getCode(), message.getMessage(), null, obj);
+		return new Result<T>( message.getMessage(),message.getCode(), null, obj);
 	}
 
 	@SuppressWarnings("unchecked")

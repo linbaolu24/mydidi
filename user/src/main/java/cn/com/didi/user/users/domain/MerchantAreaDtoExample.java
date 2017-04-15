@@ -614,6 +614,216 @@ public class MerchantAreaDtoExample {
             addCriterion("rlng not between", value1, value2, "rlng");
             return (Criteria) this;
         }
+
+        public Criteria andCnameIsNull() {
+            addCriterion("cname is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameIsNotNull() {
+            addCriterion("cname is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameEqualTo(String value) {
+            addCriterion("cname =", value, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameNotEqualTo(String value) {
+            addCriterion("cname <>", value, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameGreaterThan(String value) {
+            addCriterion("cname >", value, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameGreaterThanOrEqualTo(String value) {
+            addCriterion("cname >=", value, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameLessThan(String value) {
+            addCriterion("cname <", value, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameLessThanOrEqualTo(String value) {
+            addCriterion("cname <=", value, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameLike(String value) {
+            addCriterion("cname like", value, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameNotLike(String value) {
+            addCriterion("cname not like", value, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameIn(List<String> values) {
+            addCriterion("cname in", values, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameNotIn(List<String> values) {
+            addCriterion("cname not in", values, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameBetween(String value1, String value2) {
+            addCriterion("cname between", value1, value2, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andCnameNotBetween(String value1, String value2) {
+            addCriterion("cname not between", value1, value2, "cname");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1IsNull() {
+            addCriterion("ext1 is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1IsNotNull() {
+            addCriterion("ext1 is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1EqualTo(String value) {
+            addCriterion("ext1 =", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1NotEqualTo(String value) {
+            addCriterion("ext1 <>", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1GreaterThan(String value) {
+            addCriterion("ext1 >", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1GreaterThanOrEqualTo(String value) {
+            addCriterion("ext1 >=", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1LessThan(String value) {
+            addCriterion("ext1 <", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1LessThanOrEqualTo(String value) {
+            addCriterion("ext1 <=", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1Like(String value) {
+            addCriterion("ext1 like", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1NotLike(String value) {
+            addCriterion("ext1 not like", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1In(List<String> values) {
+            addCriterion("ext1 in", values, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1NotIn(List<String> values) {
+            addCriterion("ext1 not in", values, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1Between(String value1, String value2) {
+            addCriterion("ext1 between", value1, value2, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1NotBetween(String value1, String value2) {
+            addCriterion("ext1 not between", value1, value2, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2IsNull() {
+            addCriterion("ext2 is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2IsNotNull() {
+            addCriterion("ext2 is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2EqualTo(String value) {
+            addCriterion("ext2 =", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2NotEqualTo(String value) {
+            addCriterion("ext2 <>", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2GreaterThan(String value) {
+            addCriterion("ext2 >", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2GreaterThanOrEqualTo(String value) {
+            addCriterion("ext2 >=", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2LessThan(String value) {
+            addCriterion("ext2 <", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2LessThanOrEqualTo(String value) {
+            addCriterion("ext2 <=", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2Like(String value) {
+            addCriterion("ext2 like", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2NotLike(String value) {
+            addCriterion("ext2 not like", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2In(List<String> values) {
+            addCriterion("ext2 in", values, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2NotIn(List<String> values) {
+            addCriterion("ext2 not in", values, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2Between(String value1, String value2) {
+            addCriterion("ext2 between", value1, value2, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2NotBetween(String value1, String value2) {
+            addCriterion("ext2 not between", value1, value2, "ext2");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

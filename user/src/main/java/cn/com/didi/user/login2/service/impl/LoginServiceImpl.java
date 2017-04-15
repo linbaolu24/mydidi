@@ -27,10 +27,10 @@ public class LoginServiceImpl implements ILoginService {
 	public IResult<UserExtDto> login(LoginDto login) {
 		UserDto dto = userService.selectUser(login.getPhone(), login.getRole());
 		if (dto == null) {
-			return ResultFactory.success(MessageConstans.USER_USER_NOT_EXISTS, null);// 返回用户未注册
+			return ResultFactory.error(MessageConstans.USER_USER_NOT_EXISTS);// 返回用户未注册
 		}
 		if (!dto.getPassword().equals(login.getPassword())) {
-			return ResultFactory.success(MessageConstans.USER_PASSOWRD_NOT_EQUAL, null);// 返回密码不正确
+			return ResultFactory.error(MessageConstans.USER_PASSOWRD_NOT_EQUAL);// 返回密码不正确
 		}
 		UserLinkIdDto linked = userService.selectUserLinkedId(dto.getAccountId());
 		UserExtDto ext = new UserExtDto();

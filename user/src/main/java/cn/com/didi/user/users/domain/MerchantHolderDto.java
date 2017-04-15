@@ -52,6 +52,7 @@ public class MerchantHolderDto implements Serializable {
 		exDto.dto(this.getDto());
 		exDto.setAddress(this.getAddress());
 		exDto.setAreaList(this.getAreaList());
+		exDto.setServiceList(this.getServiceList());
 		return exDto;
 	}
 
@@ -59,6 +60,7 @@ public class MerchantHolderDto implements Serializable {
 		this.setDto(extDto.dto());
 		this.setAddress(extDto.getAddress());
 		this.setAreaList(extDto.getAreaList());
+		this.setServiceList(extDto.getServiceList());
 	}
 
 }

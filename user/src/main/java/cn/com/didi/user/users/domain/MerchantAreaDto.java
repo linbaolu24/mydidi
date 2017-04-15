@@ -33,10 +33,23 @@ public class MerchantAreaDto extends MerchantAreaDtoKey implements Serializable 
      * 右上角纬度
      */
     private BigDecimal rlng;
-    
+
+    /**
+     * 形状名称
+     */
+    private String cname;
+
+    /**
+     * 扩展1
+     */
+    private String ext1;
+
+    /**
+     * 扩展2
+     */
+    private String ext2;
     // add by my
     private String area;
-
     private static final long serialVersionUID = 1L;
 
     /**
@@ -121,6 +134,48 @@ public class MerchantAreaDto extends MerchantAreaDtoKey implements Serializable 
      **/
     public void setRlng(BigDecimal rlng) {
         this.rlng = rlng;
+    }
+
+    /**
+     * 形状名称
+     **/
+    public String getCname() {
+        return cname;
+    }
+
+    /**
+     * 形状名称
+     **/
+    public void setCname(String cname) {
+        this.cname = cname == null ? null : cname.trim();
+    }
+
+    /**
+     * 扩展1
+     **/
+    public String getExt1() {
+        return ext1;
+    }
+
+    /**
+     * 扩展1
+     **/
+    public void setExt1(String ext1) {
+        this.ext1 = ext1 == null ? null : ext1.trim();
+    }
+
+    /**
+     * 扩展2
+     **/
+    public String getExt2() {
+        return ext2;
+    }
+
+    /**
+     * 扩展2
+     **/
+    public void setExt2(String ext2) {
+        this.ext2 = ext2 == null ? null : ext2.trim();
     }
 
 	public String getArea() {

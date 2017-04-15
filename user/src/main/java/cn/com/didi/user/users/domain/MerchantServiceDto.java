@@ -6,6 +6,8 @@ import java.util.Date;
 public class MerchantServiceDto extends MerchantServiceDtoKey implements Serializable {
     private Date createTime;
 
+    
+    
     /**
      * 0表示有效 1表示无效
      */
@@ -17,7 +19,11 @@ public class MerchantServiceDto extends MerchantServiceDtoKey implements Seriali
     private String cr;
 
     private static final long serialVersionUID = 1L;
-
+  //add by my
+    private String cname;
+    
+    
+    
     public Date getCreateTime() {
         return createTime;
     }
@@ -53,4 +59,13 @@ public class MerchantServiceDto extends MerchantServiceDtoKey implements Seriali
     public void setCr(String cr) {
         this.cr = cr == null ? null : cr.trim();
     }
+
+	public String getCname() {
+		return cname;
+	}
+
+	public void setCname(String cname) {
+		this.cname = cname;
+	}
+    
 }

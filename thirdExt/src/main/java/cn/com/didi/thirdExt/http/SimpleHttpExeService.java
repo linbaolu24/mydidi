@@ -48,6 +48,7 @@ public class SimpleHttpExeService implements IHttpExeService {
 	protected int maxTotal = -1;
 	protected int maxPerRoute = -1;
 	protected boolean logRequestTime;
+	protected IHttpBuilderInitalize initalize;
 	public void init() {
 		LOGGER.info("最大连接数为{},每个路由连接数为{}",maxTotal,maxPerRoute);
 		if (client == null) {
@@ -57,6 +58,10 @@ public class SimpleHttpExeService implements IHttpExeService {
 			}
 			if (maxPerRoute >0) {
 				builder.setMaxConnPerRoute(maxPerRoute);
+			}
+			if(initalize!=null){
+				LOGGER.debug("初始化器不为空,进行初始化.");
+				initalize.init(builder);
 			}
 			client = builder.build();
 		}
@@ -243,6 +248,12 @@ public class SimpleHttpExeService implements IHttpExeService {
 	 */
 	public void setLogRequestTime(boolean logRequestTime) {
 		this.logRequestTime = logRequestTime;
+	}
+	public IHttpBuilderInitalize getInitalize() {
+		return initalize;
+	}
+	public void setInitalize(IHttpBuilderInitalize initalize) {
+		this.initalize = initalize;
 	}
 
 }
