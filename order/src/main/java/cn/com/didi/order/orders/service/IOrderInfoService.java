@@ -66,6 +66,12 @@ public interface IOrderInfoService {
 	 */
 	public List<OrderStateRecordDto> selectStateRecord(Long orderId);
 	
+	/**
+	 * @return
+	 */
+	public Couple<OrderDto,List<OrderStateRecordDto>> selectCOrderStateRecordAndResolver(Long orderId, Long cid);
+
+	
 	/**查询用户端订单列表*/
 	public List<OrderBListDto> selectBOrderList(TimeInterval interval);
 	/**

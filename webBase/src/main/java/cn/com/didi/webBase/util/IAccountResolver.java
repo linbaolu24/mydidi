@@ -32,4 +32,15 @@ public interface IAccountResolver {
 	 * @param request
 	 */
 	public void clearAccount(HttpServletRequest request);
+	
+	/**
+	 * @param request
+	 */
+	public void reflashAccount(HttpServletRequest request);
+	
+	/**
+	 * @param request
+	 * @return
+	 */
+	public long getSessionTimepout(HttpServletRequest request);
 }

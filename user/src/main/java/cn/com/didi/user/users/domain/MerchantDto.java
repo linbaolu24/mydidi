@@ -124,6 +124,9 @@ public class MerchantDto implements Serializable {
      * 师傅头像
      */
     private String mpn; 
+    
+    //add by my
+    private String password;
     private static final long serialVersionUID = 1L;
 
     /**
@@ -405,5 +408,14 @@ public class MerchantDto implements Serializable {
 		userDto.setCreateTime(getCreateTime());
 		return userDto;
     }
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+    
     
 }

@@ -27,5 +27,7 @@ public class Couple<A,B> implements java.io.Serializable{
 	}
 	private A first;
 	private B second;
-	
+	public static <AA,BB> Couple<AA,BB> empty(){
+		return new Couple<>();
+	}
 }

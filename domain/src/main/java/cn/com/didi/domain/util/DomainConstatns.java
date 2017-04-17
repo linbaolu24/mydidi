@@ -74,5 +74,9 @@ public class DomainConstatns {
 	public static final String BPN="bpn";
 	public static final String CNAME="cname";
 	public static final String CMENT="cment";
+	public static final String TIMEOUT="timeout";
+	public static final String TYPE="type";
+	
+	public static final String OBJ="obj";
 
 }

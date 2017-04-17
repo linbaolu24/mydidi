@@ -59,11 +59,11 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 
 	@Override
 	public int finishDeal(DealDto source, PayResultDto pay, TranscationalCallBack<PayResultDto> deal) {
-		int count = dealDtoMapper.updateDealState(pay.getDealId(), "1", source.getState(),pay.getTradeId());
-		if (count == 0) {
+		int count = dealDtoMapper.updateDealState(pay.getDealId(), "1", source.getState(),pay.getTradeId());//
+		if (count == 0) {//
 			dealDtoMapper.updatePureDealState(pay.getDealId(), "1",pay.getTradeId());
 			return count;
-		}
+		}//
 		MerchantRemainingDto mrd = new MerchantRemainingDto();
 		mrd.setAccountId(SYSTEM_ACCOUNT);
 		mrd.setAt(pay.getAccountEnum().getCode());

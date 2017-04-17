@@ -43,4 +43,12 @@ public class OrderStateRecordDto extends OrderStateRecordDtoKey implements Seria
     public void setBstate(String bstate) {
         this.bstate = bstate == null ? null : bstate.trim();
     }
+    public static OrderStateRecordDto newInstance(OrderStateRecordDto obj){
+    	OrderStateRecordDto rObj=new OrderStateRecordDto();
+    	rObj.setBstate(obj.getBstate());
+    	rObj.setCstate(obj.getCstate());
+    	rObj.setOrderId(obj.getOrderId());
+    	rObj.setUpdateTime(obj.getUpdateTime());
+    	return rObj;
+    }
 }

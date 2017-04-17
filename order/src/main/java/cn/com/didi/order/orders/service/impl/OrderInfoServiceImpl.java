@@ -28,6 +28,7 @@ import cn.com.didi.order.orders.domain.OrderPromptDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDtoExample;
 import cn.com.didi.order.orders.service.IOrderInfoService;
+import cn.com.didi.order.orders.service.IOrderStateTransform;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.service.IMerchantService;
@@ -41,6 +42,9 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	protected OrderStateRecordDtoMapper orderStateRecordDtoMapper;
 	@Resource
 	protected IMerchantService merchantService;
+	
+	@Resource
+	protected IOrderStateTransform orderStateTransform;
 
 	public IPage<OrderListDto> selectOrders(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
@@ -103,6 +107,25 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		example.setOrderByClause("update_time ASC");
 		return orderStateRecordDtoMapper.selectByExample(example);
 	}
+	
+	@Override
+	public Couple<OrderDto,List<OrderStateRecordDto>> selectCOrderStateRecordAndResolver(Long orderId, Long cid) {
+		
+		OrderDto order=selectCOrder(orderId, cid);
+		if(order==null){
+			return null;
+		}
+		
+		OrderStateRecordDtoExample example = new OrderStateRecordDtoExample();
+		OrderStateRecordDtoExample.Criteria cri = example.createCriteria();
+		cri.andOrderIdEqualTo(orderId);
+		example.setOrderByClause("update_time ASC");
+		List<OrderStateRecordDto> list=orderStateRecordDtoMapper.selectByExample(example);
+		list =orderStateTransform.resolve(order, list);
+		 return new Couple<OrderDto, List<OrderStateRecordDto>>(order, list);
+	}
+	
+	
 
 	@Override
 	public List<OrderBListDto> selectBOrderList(TimeInterval interval) {

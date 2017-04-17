@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,8 +30,6 @@ import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.CodeNameConstatns;
 import cn.com.didi.domain.util.DomainConstatns;
-import cn.com.didi.domain.util.PayAccountEnum;
-import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderStateDto;
@@ -46,7 +46,7 @@ import cn.com.didi.user.users.service.IMerchantService;
 
 @RestController
 public class AppOrderController extends AppBaseOrderController {
-
+	private static final Logger LOGGER=LoggerFactory.getLogger(AppOrderController.class);
 	@Resource
 	protected IItemService itemService;
 	@Resource
@@ -79,11 +79,18 @@ public class AppOrderController extends AppBaseOrderController {
 		Long orderId =  map.getOrderId();
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
-		OrderDto orderDto = orderInfo.selectCOrder(orderId, accountId);
+		/*OrderDto orderDto = orderInfo.selectCOrder(orderId, accountId);
 		if (orderDto == null) {
 			return ResultFactory.success();
 		}
-		List<OrderStateRecordDto> list = orderInfo.selectStateRecord(orderId);
+		List<OrderStateRecordDto> list = orderInfo.selectStateRecord(orderId);*/
+		Couple<OrderDto,List<OrderStateRecordDto>> cou=orderInfo.selectCOrderStateRecordAndResolver(orderId, accountId);
+		if(cou==null){
+			LOGGER.error("订单号 {} 消费者ID {}不存在对应订单信息,返回成功",orderId,accountId);
+			return ResultFactory.success();
+		}
+		OrderDto orderDto =cou.getFirst();
+		List<OrderStateRecordDto> list=cou.getSecond();
 		List<CodeDictionaryDto>  dto=codeDicService.selectCodes(CodeNameConstatns.ORDER_STATE_TEXT_CODE_NAME);
 		return ResultFactory.success(build(orderDto, list,dto));
 	}

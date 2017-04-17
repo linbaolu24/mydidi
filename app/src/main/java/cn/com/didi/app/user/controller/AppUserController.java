@@ -1,5 +1,6 @@
 package cn.com.didi.app.user.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,6 @@ public class AppUserController {
 		p.put(DomainConstatns.ACCOUNT_ID, accountId);
 		p.put(DomainConstatns.BPN,dto.getPhone());
 		return ResultFactory.success(p);
-
 	}
 
 	@RequestMapping(value = "/app/user/sendVc", method = RequestMethod.POST)
@@ -73,6 +73,7 @@ public class AppUserController {
 
 	@RequestMapping(value = "/app/user/login", method = RequestMethod.POST)
 	public IResult login(@RequestBody LoginDto login, HttpServletRequest request) {
+		long now=System.currentTimeMillis();
 		IResult<UserExtDto> result = tloginService.login(login);
 		if (!result.success()) {
 			return ResultFactory.error(result.getCode(), result.getMessage());
@@ -86,6 +87,9 @@ public class AppUserController {
 		p.put(DomainConstatns.GT_CID, ext.gtCid());
 		p.put(DomainConstatns.RY_TOKEN, ext.ryToken());
 		p.put(DomainConstatns.BPN,StringUtils.defaultIfEmpty(login.getPhone(),ext.getUserDto().getBpn()));
+		Long timeOut=resolver.getSessionTimepout(request);
+		Date date=new Date(now+timeOut*1000);
+		p.put(DomainConstatns.TIMEOUT,date);
 		resolver.saveAccount(request, ext.getUserDto().getAccountId(),p);
 		return ResultFactory.success(p);
 	}
@@ -94,6 +98,21 @@ public class AppUserController {
 		resolver.clearAccount(request);
 		return ResultFactory.success();
 	}
+	
+	
+	@RequestMapping(value = "/app/user/reflashToken", method = { RequestMethod.POST, RequestMethod.GET })
+	public IResult reflashToken(HttpServletRequest request) {
+		long now=System.currentTimeMillis();
+		resolver.reflashAccount(request);
+		Long timeOut=resolver.getSessionTimepout(request);
+		Map p = new HashMap(4);
+		Date date=new Date(now+timeOut*1000);
+		p.put(DomainConstatns.TIMEOUT,date);
+		return ResultFactory.success(p);
+	}
+	
+	
+	
 	@RequestMapping(value = "/app/user/setThirdId", method = { RequestMethod.POST })
 	public IResult setThirdId(@RequestBody  UserLinkIdDto linkedDto,HttpServletRequest request) {
 		Long accountId=resolver.resolve(request);

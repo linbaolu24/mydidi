@@ -75,7 +75,7 @@ public class PushMessageServiceImpl implements IPushMessageService {
 
 	@Override
 	public IResult<Void> push(IReciverDto reciver, MessageDto messageContext) {
-		LOGGER.debug("消息推送  {}   ");
+		LOGGER.debug("消息推送  {}   ",messageContext);
 		if (reciver == null) {
 			return ResultFactory.success();
 		}
