@@ -19,7 +19,7 @@
 		<property name="accessKey" value="${file.qn.accessKey}"></property>
 		<property name="secretKey" value="${file.qn.secretKey}"></property>
 		<property name="bucket" value="${file.qn.bucket:didi}"></property>
-		<property name="downLoadUrl" value="{file.qn.downLoadUrl}"></property>
+		<property name="downLoadUrl" value="${file.qn.downLoadUrl}"></property>
 		<property name="zone">
 			<value type="java.lang.Integer">${file.qn.zone:2}</value>
 		</property>
@@ -60,4 +60,10 @@
 	
 	<bean id="didiSimpleCodecImpl" class="cn.com.didi.core.property.impl.codec.SimpleCodecImpl"> </bean>
 	<bean id="jsonConfigureShapeGenerator" class="cn.com.didi.thirdExt.shape.JsonConfigureShapeGenerator"></bean>
+	
+	
+	<bean id="appEnvImpl" class="cn.com.didi.thirdExt.produce.impl.AppEnvImpl" init-method="init">
+	<property name="orderTransJson" value="${appEnv.orderTransJson}"></property>
+	<property name="appEnviroment" ref="cacheEnvironment"></property>
+	</bean>
 </beans>
