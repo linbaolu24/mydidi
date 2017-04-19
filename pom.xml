@@ -42,9 +42,10 @@
 		<webBase.version>0.0.1-SNAPSHOT</webBase.version>
 		<thirdExt.version>0.0.1-SNAPSHOT</thirdExt.version>
 		<app.version>0.0.1-SNAPSHOT</app.version>
-
+      
 
 		<!-- JAR版本依赖 -->
+		  <dom4j.version>1.6.1</dom4j.version>
 		<ant-jsch.version>1.9.7</ant-jsch.version>
 		<jsch.version>0.1.53</jsch.version>
 		<junit.version>4.12</junit.version>
@@ -394,7 +395,11 @@
 			</dependency>
 			<!-- <dependency> <groupId>cn.com.servyou.mybatis</groupId> <artifactId>mybatis-paginator</artifactId> 
 				<version>${mybatis-paginator.version}</version> </dependency> -->
-
+             <dependency>
+				<groupId>dom4j</groupId>
+				<artifactId>dom4j</artifactId>
+				<version>${dom4j.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.github.miemiedev</groupId>
 				<artifactId>mybatis-paginator</artifactId>
@@ -547,6 +552,8 @@
 				<artifactId>app</artifactId>
 				<version>${app.version}</version>
 			</dependency>
+			
+			
 			
 			<dependency>
 		<groupId>com.alipay.api</groupId>
