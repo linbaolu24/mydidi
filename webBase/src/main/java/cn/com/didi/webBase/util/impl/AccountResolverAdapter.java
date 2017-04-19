@@ -7,9 +7,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSON;
+
+import cn.com.didi.core.utils.AESUtils;
 import cn.com.didi.webBase.util.IAccountResolver;
 
 public class AccountResolverAdapter implements IAccountResolver {
+	private static final String AES_KEY="0123abcd4567efgh";
 	public String getAccountKey() {
 		return accountKey;
 	}
@@ -82,6 +86,20 @@ public class AccountResolverAdapter implements IAccountResolver {
 	public long getSessionTimepout(HttpServletRequest request) {
 		return request.getSession().getMaxInactiveInterval();
 		//request.getServletContext().getm
+	}
+
+	@Override
+	public String saveAccountAndGeneratorReflashToken(HttpServletRequest request, Long accountId, Object obj) {
+		saveAccount(request, accountId, obj);
+		String json=JSON.toJSONString(obj);
+		return AESUtils.encrypt(json, AES_KEY);
+	}
+
+	@Override
+	public <T> T pasreReflashToken(String token, Class<T> target) {
+		String jsonStr=AESUtils.decrypt(token, AES_KEY);
+		return (T)JSON.parseObject(jsonStr, target);
+		
 	}
 
 }

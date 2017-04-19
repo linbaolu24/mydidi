@@ -204,4 +204,13 @@ public class DomainMessageConstans {
 	
 	/**微信统一下单生成解析返回异常*/
 	public static final String CODE_DEAL_WECHAT_TYXD_PARSE_RESPONSE_ERROR="5004100003";
+	
+	/**微信异步通知支付结果解析异常*/
+	public static final String CODE_DEAL_WECHAT_PAY_NOTIFY_PARSE_RESPONSE_ERROR="5004100004";
+	
+	/**微信异步通知验证签名异常*/
+	public static final String CODE_DEAL_WECHAT_PAY_NOTIFY_VERIFGY_SIGN_ERROR="5004100005";
+	
+	/**微信返回异常*/
+	public static final String CODE_DEAL_WECHAT_PAY_NOTIFY_ERROR="5004100006";
 }

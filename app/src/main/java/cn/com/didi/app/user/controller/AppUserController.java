@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.com.didi.app.user.domain.AccountDomain;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
+import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.user.login2.domain.LoginDto;
 import cn.com.didi.user.login2.domain.UserExtDto;
@@ -87,11 +89,15 @@ public class AppUserController {
 		p.put(DomainConstatns.GT_CID, ext.gtCid());
 		p.put(DomainConstatns.RY_TOKEN, ext.ryToken());
 		p.put(DomainConstatns.BPN,StringUtils.defaultIfEmpty(login.getPhone(),ext.getUserDto().getBpn()));
+		
 		Long timeOut=resolver.getSessionTimepout(request);
 		Date date=new Date(now+timeOut*1000);
 		p.put(DomainConstatns.TIMEOUT,date);
-		resolver.saveAccount(request, ext.getUserDto().getAccountId(),p);
-		return ResultFactory.success(p);
+		String reflashToken=resolver.saveAccountAndGeneratorReflashToken(request, ext.getUserDto().getAccountId(),p);
+		Map pa=new HashMap(p);
+		
+		pa.put(DomainConstatns.REFLASH_TOKEN,reflashToken);
+		return ResultFactory.success(pa);
 	}
 	@RequestMapping(value = "/app/user/loginout", method = { RequestMethod.POST, RequestMethod.GET })
 	public IResult setThirdId(HttpServletRequest request) {
@@ -101,14 +107,22 @@ public class AppUserController {
 	
 	
 	@RequestMapping(value = "/app/user/reflashToken", method = { RequestMethod.POST, RequestMethod.GET })
-	public IResult reflashToken(HttpServletRequest request) {
+	public IResult reflashToken(@RequestBody Map<String,String> map,HttpServletRequest request) {
+		String reflashToken=map.get(DomainConstatns.REFLASH_TOKEN);
+		AssertUtil.assertNotNullAppend(reflashToken, DomainConstatns.REFLASH_TOKEN);
 		long now=System.currentTimeMillis();
-		resolver.reflashAccount(request);
+		AccountDomain accountDomain=resolver.pasreReflashToken(reflashToken, AccountDomain.class);
+		Map tokenMap=accountDomain.toMap();
 		Long timeOut=resolver.getSessionTimepout(request);
-		Map p = new HashMap(4);
 		Date date=new Date(now+timeOut*1000);
-		p.put(DomainConstatns.TIMEOUT,date);
-		return ResultFactory.success(p);
+		tokenMap.put(DomainConstatns.TIMEOUT,date);
+		String nReflashToken=resolver.saveAccountAndGeneratorReflashToken(request, accountDomain.getAccountId(),tokenMap);
+		
+       Map pa=new HashMap(4);
+		
+		pa.put(DomainConstatns.REFLASH_TOKEN,nReflashToken);
+		pa.put(DomainConstatns.TIMEOUT,date);
+		return ResultFactory.success(pa);
 	}
 	
 	

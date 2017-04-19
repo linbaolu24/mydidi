@@ -95,6 +95,11 @@ public class AppEnvImpl implements IAppEnv {
 	public void setAppEnviroment(IEnvironment appEnviroment) {
 		this.appEnviroment = appEnviroment;
 	}
+	@Override
+	public String getAesKey() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	
 

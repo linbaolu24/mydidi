@@ -213,4 +213,10 @@
   insert into user_link_id(account_id,gt_cid,ry_token) VALUEs(#{accountId,jdbcType=BIGINT},#{gtCid,jdbcType=VARCHAR},#{ryToken,jdbcType=VARCHAR}) 
   ON DUPLICATE KEY UPDATE gt_cid=#{gtCid,jdbcType=VARCHAR},ry_token=#{ryToken,jdbcType=VARCHAR}
   </update>
+  
+  
+   <update id="updateWechatAndAliPayLinkedId">
+  insert into user_link_id(account_id,alipay_account,wechat_account) VALUEs(#{accountId,jdbcType=BIGINT},#{alipayAccount,jdbcType=VARCHAR},#{wechatAccount,jdbcType=VARCHAR}) 
+  ON DUPLICATE KEY UPDATE alipay_account=#{alipayAccount,jdbcType=VARCHAR},wechat_account=#{wechatAccount,jdbcType=VARCHAR}
+  </update>
 </mapper>

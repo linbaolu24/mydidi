@@ -102,6 +102,15 @@ public class OrderMessageConstans {
 	
 	/**微信统一下单生成解析返回异常*/
 	public static final Message DEAL_WECHAT_TYXD_PARSE_RESPONSE_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TYXD_PARSE_RESPONSE_ERROR);
+	/**微信异步通知支付结果解析异常*/
+	public static final Message DEAL_WECHAT_PAY_NOTIFY_PARSE_RESPONSE_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_PAY_NOTIFY_PARSE_RESPONSE_ERROR);
+	/**微信异步通知验证签名异常*/
+	public static final Message DEAL_WECHAT_PAY_NOTIFY_VERIFGY_SIGN_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_PAY_NOTIFY_VERIFGY_SIGN_ERROR);
+	
+	
+	
+	/**微信支付异常*/
+	public static final Message DEAL_WECHAT_PAY_NOTIFY_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_PAY_NOTIFY_ERROR);
 	/**
 	 * @param code
 	 * @return

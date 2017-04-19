@@ -34,4 +34,8 @@ public class ResultFactory {
 	public static <T> IResult<T> error(Message message) {
 		return error(message.getCode(), message.getMessage(), null);
 	}
+	
+	public static <T> IResult<T> error(Message message,T obj) {
+		return error(message.getCode(), message.getMessage(),obj);
+	}
 }

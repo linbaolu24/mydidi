@@ -50,4 +50,8 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public String getOrderTransJson();
+	/**
+	 * @return
+	 */
+	public String getAesKey();
 }

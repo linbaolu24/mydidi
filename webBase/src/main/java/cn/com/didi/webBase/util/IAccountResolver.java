@@ -13,6 +13,12 @@ public interface IAccountResolver {
 	 * @param obj
 	 */
 	public void saveAccount(HttpServletRequest request,Long accountId,Object obj);
+	
+	/**
+	 * @param request
+	 * @param obj
+	 */
+	public String saveAccountAndGeneratorReflashToken(HttpServletRequest request,Long accountId,Object obj);
 	/**
 	 * @param key
 	 * @param key
@@ -37,6 +43,12 @@ public interface IAccountResolver {
 	 * @param request
 	 */
 	public void reflashAccount(HttpServletRequest request);
+	
+	/**
+	 * @param request
+	 */
+	public <T> T pasreReflashToken(String token,Class<T> target);
+	
 	
 	/**
 	 * @param request

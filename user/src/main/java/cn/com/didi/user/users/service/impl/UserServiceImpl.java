@@ -229,6 +229,16 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		return userLinkIdDtoMapper.updateId(dto);
 		
 	}
+	
+	@Override
+	public int updateWechatAndAliPayLinkedId(Long accountId, String alipay, String wechat) {
+		UserLinkIdDto dto=new UserLinkIdDto();
+		dto.setAlipayAccount(alipay);
+		dto.setWechatAccount(wechat);
+		dto.setAccountId(accountId);
+		return userLinkIdDtoMapper.updateWechatAndAliPayLinkedId(dto);
+		
+	}
 
 	@Override
 	public void updatePlatformUser(UserDto dto) {

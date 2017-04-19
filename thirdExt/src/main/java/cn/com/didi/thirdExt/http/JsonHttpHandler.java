@@ -16,6 +16,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
+
 /**
  * @author xlm
  *
@@ -31,6 +33,7 @@ public class JsonHttpHandler<T> implements IHttpHandler {
 	private String charset = Charsets.UTF_8.name();
 	private static final String HEADER_CONTENT_TYPE="Content-Type";
 	private static final String HEADER_CONTENT_TYPE_JSON="application/json;charset=utf-8";
+	private Exception e;
 	
 	public JsonHttpHandler(Object obj, Map<String, String> headerMap, Class<T> resultClass, String url,
 			String charset) {
@@ -64,13 +67,14 @@ public class JsonHttpHandler<T> implements IHttpHandler {
 			post.setHeader(HEADER_CONTENT_TYPE,HEADER_CONTENT_TYPE_JSON);
 		}
 		try {
-			String str =null;//TODO = JackSonUtil.toJSONString(obj);
+			String str =JSON.toJSONString(obj);//TODO = JackSonUtil.toJSONString(obj);
 			LOGGER.info("请求内容为:  {}",str);
 			post.setURI(new URI(url));
 			StringEntity entity = new StringEntity(str, charset);
 			post.setEntity(entity);
 		} catch (Exception e) {
 			LOGGER.error(""+e.getMessage(),e);
+			this.e=e;
 		} 
 		return false;
 
@@ -84,14 +88,22 @@ public class JsonHttpHandler<T> implements IHttpHandler {
 			String returnStr=new String(tempResult,charset);
 			LOGGER.info("返回结果为:  {}",returnStr);
 			if (resultClass != null) {
-				result=null;//TODO JackSonUtil.toObject(returnStr, resultClass);
+				result=JSON.parseObject(returnStr, resultClass);//TODO JackSonUtil.toObject(returnStr, resultClass);
 			}
 		} catch (Exception e) {
 			LOGGER.error(""+e.getMessage(),e);
+			this.e=e;
 		}
 	}
 
 	public T getResult() {
+		return result;
+	}
+	
+	public T getResultAndThrow()  throws Exception{
+		if(e!=null){
+			throw e;
+		}
 		return result;
 	}
 	/**

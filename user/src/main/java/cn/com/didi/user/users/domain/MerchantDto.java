@@ -127,6 +127,16 @@ public class MerchantDto implements Serializable {
     
     //add by my
     private String password;
+    /**
+     * 支付宝账号
+     */
+    private String alipayAccount;
+
+    /**
+     * 微信账号
+     */
+    private String wechatAccount;
+    
     private static final long serialVersionUID = 1L;
 
     /**
@@ -408,6 +418,17 @@ public class MerchantDto implements Serializable {
 		userDto.setCreateTime(getCreateTime());
 		return userDto;
     }
+    
+    public UserLinkIdDto toUserLinkIdDto(){
+    	if(StringUtils.isEmpty(getWechatAccount())&&StringUtils.isEmpty(getAlipayAccount())){
+    		return null;
+    	}
+    	UserLinkIdDto userDto=new UserLinkIdDto();
+    	userDto.setAccountId(accountId);
+    	userDto.setAlipayAccount(getAlipayAccount());
+    	userDto.setWechatAccount(wechatAccount);
+		return userDto;
+    }
 
 	public String getPassword() {
 		return password;
@@ -415,6 +436,22 @@ public class MerchantDto implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getAlipayAccount() {
+		return alipayAccount;
+	}
+
+	public void setAlipayAccount(String alipayAccount) {
+		this.alipayAccount = alipayAccount;
+	}
+
+	public String getWechatAccount() {
+		return wechatAccount;
+	}
+
+	public void setWechatAccount(String wechatAccount) {
+		this.wechatAccount = wechatAccount;
 	}
     
     

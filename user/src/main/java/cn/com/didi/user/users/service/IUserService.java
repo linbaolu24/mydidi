@@ -98,4 +98,11 @@ public interface IUserService {
 	 * @param ryToken
 	 */
 	public int updateLinkedId(Long accountId,String gtCid,String ryToken);
+	/**
+	 * @param accountId
+	 * @param alipay
+	 * @param wechat
+	 * @return
+	 */
+	public int updateWechatAndAliPayLinkedId(Long accountId, String alipay, String wechat);
 }

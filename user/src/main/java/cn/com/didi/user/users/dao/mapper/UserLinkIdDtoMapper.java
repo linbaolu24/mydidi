@@ -29,5 +29,5 @@ public interface UserLinkIdDtoMapper {
     int updateByPrimaryKey(UserLinkIdDto record);
     
     int updateId(UserLinkIdDto record);
-    
+    int updateWechatAndAliPayLinkedId(UserLinkIdDto record);   
 }

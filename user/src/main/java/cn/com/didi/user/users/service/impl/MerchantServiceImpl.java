@@ -143,6 +143,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		userDto.setPassword(StringUtils.isEmpty(dto.getPassword())?DigestUtils.md5Hex("123456"):DigestUtils.md5Hex(dto.getPassword()));
 		userService.addUser(userDto);
 		dto.setAccountId(userDto.getAccountId());
+		//if(!StringUtils)
 		merchantMapper.insertSelective(dto);
 	}
 

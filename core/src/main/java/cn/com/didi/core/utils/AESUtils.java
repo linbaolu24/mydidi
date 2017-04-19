@@ -13,6 +13,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.management.RuntimeErrorException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +100,7 @@ public class AESUtils {
             try {
                 decrypts = AESUtils.decrypt(AESUtils.toBytes(str), key);
             } catch (Exception e) {
-               return "";
+               throw new RuntimeException(e);
             }
             if (decrypts == null || decrypts.length == 0) {
                return "";
@@ -118,14 +119,14 @@ public class AESUtils {
      * @throws Exception 
      * @throws CodecException
      */
-    public static String encrypt(String str, String key) throws Exception {
+    public static String encrypt(String str, String key)  {
         if(str!=null)
         {
             try {
                 return AESUtils.toHex(AESUtils.encrypt(str.getBytes(DEFAULT_CHARSET), key));
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
-                throw e;
+                throw new RuntimeException(e);
             }
         }
         return "";
@@ -149,16 +150,16 @@ public class AESUtils {
     }
 
     public static String toHex(byte[] b) {
-        String hs = "";
+        StringBuilder hs = new StringBuilder();
         String stmp = "";
         for (int n = 0; n < b.length; n++) {
             stmp = (Integer.toHexString(b[n] & 0XFF));
             if (stmp.length() == 1) {
-                hs = hs + "0" + stmp;
+            	hs.append("0").append( stmp);
             } else {
-                hs = hs + stmp;
+                hs.append(stmp);
             }
         }
-        return hs.toUpperCase();
+        return hs.toString().toUpperCase();
     }
 }
