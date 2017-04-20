@@ -38,6 +38,12 @@ public interface IItemService {
 	 * @return
 	 */
 	public List<SlServiceDto> selectSls(Integer flsId);
+	
+	/**
+	 * @param flsId
+	 * @return
+	 */
+	public List<SlServiceDto> selectSlsList(List<Integer> slsIdS);
 	/**
 	 * 选择最大一级服务
 	 * @return

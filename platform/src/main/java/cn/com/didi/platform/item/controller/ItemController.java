@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,9 @@ public class ItemController {
 			return null;
 		}
 		//dto.setServiceId(null);
+		if(dto.getDisplayOrder()==null){
+			dto.setDisplayOrder(itemServiece.selectMaxFlsDisplayOrder());
+		}
 		dto.setSlsNum(0);
 		dto.setState(ServiceState.NORMAL.getCode());
 		itemServiece.addFlService(dto);
@@ -102,6 +106,12 @@ public class ItemController {
 		}
 		//extDto.setServiceId(null);
 		extDto.setState(ServiceState.DRAFT.getCode());
+		if(extDto.getDisplayOrder()==null){
+			extDto.setDisplayOrder(itemServiece.selectMaxSlsDisplayOrder(extDto.getFlsId()));
+		}
+		if(extDto.getDisplayOrder()==null){
+			extDto.setServiceId(0);
+		}
 		itemServiece.addSlsService(extDto.dto(),extDto.getCityList());
 		return ResultFactory.success();
 	}

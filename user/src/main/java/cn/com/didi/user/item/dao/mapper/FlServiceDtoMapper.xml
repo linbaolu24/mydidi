@@ -237,7 +237,7 @@
  <select id="selectAllStateFlService" resultMap="BaseResultMap">
 	select
 	<include refid="Base_Column_List" />
-	from fl_service where state=#{state,jdbcType=CHAR}
+	from fl_service where state=#{state,jdbcType=CHAR} ORDER BY display_Order asc ,create_Time DESC
 </select>
 
 

@@ -82,7 +82,7 @@ public class ItemServiceImpl implements IItemService {
 	}
 	
 	public List<FlServiceDto> selectAllFlService(String state) {
-		return flsMapper.selectAllFlService();
+		return flsMapper.selectAllStateFlService(state);
 	}
 	
 	
@@ -193,6 +193,7 @@ public class ItemServiceImpl implements IItemService {
 		if(!StringUtils.isEmpty(state)){
 			cri.andStateEqualTo(state);
 		}
+		example.setOrderByClause("display_Order asc ,create_Time DESC");
 		return slsMapper.selectByExample(example);
 	}
 
@@ -277,6 +278,14 @@ public class ItemServiceImpl implements IItemService {
 			lists.add(list.get(i).getServiceId());
 		}
 		return lists;
+	}
+
+	@Override
+	public List<SlServiceDto> selectSlsList(List<Integer> slsIdS) {
+		SlServiceDtoExample example = new SlServiceDtoExample();
+		SlServiceDtoExample.Criteria cri = example.createCriteria();
+		cri.andServiceIdIn(slsIdS);
+		return slsMapper.selectByExample(example);
 	}
 
 }
