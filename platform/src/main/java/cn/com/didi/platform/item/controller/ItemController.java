@@ -46,7 +46,7 @@ public class ItemController {
 		}
 		//dto.setServiceId(null);
 		if(dto.getDisplayOrder()==null){
-			dto.setDisplayOrder(itemServiece.selectMaxFlsDisplayOrder());
+			dto.setDisplayOrder(itemServiece.selectMaxFlsDisplayOrder()+1);
 		}
 		dto.setSlsNum(0);
 		dto.setState(ServiceState.NORMAL.getCode());
@@ -107,7 +107,7 @@ public class ItemController {
 		//extDto.setServiceId(null);
 		extDto.setState(ServiceState.DRAFT.getCode());
 		if(extDto.getDisplayOrder()==null){
-			extDto.setDisplayOrder(itemServiece.selectMaxSlsDisplayOrder(extDto.getFlsId()));
+			extDto.setDisplayOrder(itemServiece.selectMaxSlsDisplayOrder(extDto.getFlsId())+1);
 		}
 		if(extDto.getDisplayOrder()==null){
 			extDto.setServiceId(0);
