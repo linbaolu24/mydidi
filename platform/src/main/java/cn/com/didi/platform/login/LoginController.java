@@ -44,9 +44,9 @@ public class LoginController {
 		AssertUtil.assertNotNullAppend(dto.getUserName(), USER_NAME);
 		AssertUtil.assertNotNullAppend(dto.getVc(), VC);
 		String ver=resolver.getAttr(request, DomainConstatns.VER_CODE);
-		/*if(ver==null||dto.getVc()==null||!dto.getVc().equalsIgnoreCase(ver)){
+		if(ver==null||dto.getVc()==null||!dto.getVc().equalsIgnoreCase(ver)){
 			return ResultFactory.error(DomainMessageConstans.CODE_USER_VC_NOT_EQUAL,"验证码不相等");
-		}*/
+		}
 		String passWord=DigestUtils.md5Hex(dto.getPassword());
 		LoginDto login=new LoginDto();
 		login.setPassword(passWord);
