@@ -85,4 +85,27 @@ public class OrderListBaseDto {
 	private String businessCategory; 
 	private String businessCharge;
 	private Integer cost;
+	  /**
+     * 客户账户id
+     */
+    private Long consumerAccountId;
+
+    /**
+     * 商户账户id
+     */
+    private Long merchantAccountId;
+
+	public Long getConsumerAccountId() {
+		return consumerAccountId;
+	}
+	public void setConsumerAccountId(Long consumerAccountId) {
+		this.consumerAccountId = consumerAccountId;
+	}
+	public Long getMerchantAccountId() {
+		return merchantAccountId;
+	}
+	public void setMerchantAccountId(Long merchantAccountId) {
+		this.merchantAccountId = merchantAccountId;
+	}
+    
 }

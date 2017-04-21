@@ -775,7 +775,9 @@ td.mci,
 td.mlat lat,
 td.mlng lng,
 td.business_Category, 
-td.business_Charge
+td.business_Charge,
+td.consumer_account_id,
+td.merchant_account_id
 from t_order td where td.consumer_account_id=#{time.accountId,jdbcType=BIGINT} and not (state='2' and ort is null) ORDER BY ort DESC
   </select>
   
@@ -794,7 +796,9 @@ td.lat ,
 td.consumer_address,
 td.lng ,
 td.business_Category, 
-td.business_Charge
+td.business_Charge,
+td.consumer_account_id,
+td.merchant_account_id
 from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} and not (state='2' and ort is null) ORDER BY ort DESC
   </select>
  

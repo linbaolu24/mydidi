@@ -1,7 +1,6 @@
 package cn.com.didi.user.users.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 public class MerchantHolderDto implements Serializable {

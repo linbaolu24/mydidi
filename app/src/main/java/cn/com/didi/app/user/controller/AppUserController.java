@@ -17,13 +17,18 @@ import cn.com.didi.app.user.domain.AccountDomain;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.utils.AssertUtil;
+import cn.com.didi.domain.util.BusinessCategory;
+import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.DomainConstatns;
+import cn.com.didi.domain.util.State;
 import cn.com.didi.user.login2.domain.LoginDto;
 import cn.com.didi.user.login2.domain.UserExtDto;
 import cn.com.didi.user.login2.service.ILoginService;
 import cn.com.didi.user.register.domain.RegisterDto;
 import cn.com.didi.user.register.service.IRegisterService;
+import cn.com.didi.user.users.domain.MerchantExtDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
+import cn.com.didi.user.users.service.IMerchantService;
 import cn.com.didi.user.users.service.IUserService;
 import cn.com.didi.webBase.util.IAccountResolver;
 
@@ -38,6 +43,10 @@ public class AppUserController {
 	@Resource
 	protected IUserService tUserService;
 
+	@Resource
+	protected IMerchantService merchantService;
+	
+	
 	@RequestMapping(value = "/app/user/register", method = RequestMethod.POST)
 	public IResult register(@RequestBody RegisterDto dto) {
 		Long accountId = registerService.register(dto);
@@ -131,6 +140,17 @@ public class AppUserController {
 	public IResult setThirdId(@RequestBody  UserLinkIdDto linkedDto,HttpServletRequest request) {
 		Long accountId=resolver.resolve(request);
 		tUserService.updateLinkedId(accountId, linkedDto.getGtCid(), linkedDto.getRyToken());
+		return ResultFactory.success();
+	}
+	
+	@RequestMapping(value = "/app/user/enterMerchant", method = { RequestMethod.POST })
+	public IResult enterMerchant(@RequestBody  MerchantExtDto merchantExtDto,HttpServletRequest request) {
+		Long accountId=resolver.resolve(request);
+		//tUserService.updateLinkedId(accountId, linkedDto.getGtCid(), linkedDto.getRyToken());
+		merchantExtDto.setCr(CrEnum.WATTING.getCode());
+		merchantExtDto.setState(State.VALID.getState());
+		merchantExtDto.setBusinessCategory(BusinessCategory.THIRD.getCode());
+		merchantService.enterMerchant(merchantExtDto.dto(), merchantExtDto.getServiceList(), null);
 		return ResultFactory.success();
 	}
 

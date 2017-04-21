@@ -1,11 +1,9 @@
 package cn.com.didi.user.users.service.impl;
 
-import java.awt.Shape;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.Resource;
 
@@ -32,6 +30,7 @@ import cn.com.didi.domain.util.LatLngUtiil;
 import cn.com.didi.domain.util.State;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.area.service.IAreaService;
+import cn.com.didi.user.item.service.IItemService;
 import cn.com.didi.user.users.dao.mapper.MerchantAreaDtoMapper;
 import cn.com.didi.user.users.dao.mapper.MerchantDtoMapper;
 import cn.com.didi.user.users.dao.mapper.MerchantServiceDtoMapper;
@@ -42,6 +41,7 @@ import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.MerchantExtDto;
 import cn.com.didi.user.users.domain.MerchantHolderDto;
 import cn.com.didi.user.users.domain.MerchantServiceDto;
+import cn.com.didi.user.users.domain.MerchantServiceDtoExample;
 import cn.com.didi.user.users.domain.MerchantServiceDtoKey;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.service.IMerchantService;
@@ -66,6 +66,8 @@ public class MerchantServiceImpl implements IMerchantService {
 	protected IAreaService areaService;
 	@Resource
 	protected IShapeGenerator shapeGenerator;
+	//@Resource
+	//protected IItemService itemService;
 
 	@Override
 	public IPage<MerchantDto> selectMerchants(TimeInterval interval) {
@@ -139,11 +141,14 @@ public class MerchantServiceImpl implements IMerchantService {
 		if (StringUtils.isEmpty(dto.getState())) {
 			dto.setState(State.VALID.getState());
 		}
-		UserDto userDto = dto.toUserDto();
-		userDto.setPassword(StringUtils.isEmpty(dto.getPassword())?DigestUtils.md5Hex("123456"):DigestUtils.md5Hex(dto.getPassword()));
-		userService.addUser(userDto);
-		dto.setAccountId(userDto.getAccountId());
-		//if(!StringUtils)
+		if (dto.getAccountId() == null) {
+			UserDto userDto = dto.toUserDto();
+			userDto.setPassword(StringUtils.isEmpty(dto.getPassword()) ? DigestUtils.md5Hex("123456")
+					: DigestUtils.md5Hex(dto.getPassword()));
+			userService.addUser(userDto);
+			dto.setAccountId(userDto.getAccountId());
+		}
+		// if(!StringUtils)
 		merchantMapper.insertSelective(dto);
 	}
 
@@ -159,8 +164,8 @@ public class MerchantServiceImpl implements IMerchantService {
 			dto.setLat(points[0].getY());
 			dto.setRlng(points[1].getX());
 			dto.setRlat(points[1].getY());
-			if(StringUtils.isEmpty(dto.getAreaCode())){
-				dto.setAreaCode("F"+System.currentTimeMillis()+(10000+RandomUtils.nextInt(90000)));
+			if (StringUtils.isEmpty(dto.getAreaCode())) {
+				dto.setAreaCode("F" + System.currentTimeMillis() + (10000 + RandomUtils.nextInt(90000)));
 			}
 		}
 		merchantAreaDtoMapper.insertSelective(dto);
@@ -222,7 +227,7 @@ public class MerchantServiceImpl implements IMerchantService {
 	public List<MerchantAreaDto> select(Point center, int radius, Integer slsId) {
 		double dLat = Double.parseDouble(center.getLat());
 		double dLng = Double.parseDouble(center.getLng());
-		double[] points = LatLngUtiil.getAround(dLat, dLng, radius);
+		double[] points = LatLngUtiil.getAround(dLat, dLng, radius*1000);
 		MerchantAreaDto leftDown = build(points[0], points[1]);
 		MerchantAreaDto rightTop = build(points[2], points[3]);
 		return merchantAreaDtoMapper.selectPoints(leftDown, rightTop, slsId);// 查询应该存在问题应该根据商户表中的经纬度查询
@@ -235,32 +240,32 @@ public class MerchantServiceImpl implements IMerchantService {
 		return dto;
 	}
 
-	protected MerchantAreaDto matchShape(MerchantAreaDto mad, Integer slsId){
-		IPoint point=new SimplePoint(mad.getLng(), mad.getLat());
-		 List<MerchantAreaDto> areaList=merchantAreaDtoMapper.selectAreas(point, slsId);
-		 if(CollectionUtils.isEmpty(areaList)){
-			 return null;
-		 }
-		 IShape shape=null;
-		 for(MerchantAreaDto one:areaList){
-			 shape=getShape(one);
-			 if(shape!=null&&shape.contains(point)){
-				 return one;
-			 }
-		 }
-		 return null;
+	protected MerchantAreaDto matchShape(MerchantAreaDto mad, Integer slsId) {
+		IPoint point = new SimplePoint(mad.getLng(), mad.getLat());
+		List<MerchantAreaDto> areaList = merchantAreaDtoMapper.selectAreas(point, slsId);
+		if (CollectionUtils.isEmpty(areaList)) {
+			return null;
+		}
+		IShape shape = null;
+		for (MerchantAreaDto one : areaList) {
+			shape = getShape(one);
+			if (shape != null && shape.contains(point)) {
+				return one;
+			}
+		}
+		return null;
 	}
 
 	protected IShape getShape(MerchantAreaDto one) {
 		try {
 			return shapeGenerator.generatorShape(one.getShape(), one.getPoint());
 		} catch (Exception e) {
-			LOGGER.error(""+e.getMessage(), e);
+			LOGGER.error("" + e.getMessage(), e);
 			return null;
 		}
 	}
-	
-	protected MerchantAreaDto matchCircle(MerchantAreaDto mad, Integer slsId){
+
+	protected MerchantAreaDto matchCircle(MerchantAreaDto mad, Integer slsId) {
 		MerchantAreaDto minDto = null;
 		Point pt = new Point(mad.getLng(), mad.getLat());
 		List<MerchantAreaDto> areaDto = select(pt, 5, slsId);
@@ -269,7 +274,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		}
 		double min = Double.MAX_VALUE;
 		double temp;
-		
+
 		for (MerchantAreaDto one : areaDto) {
 
 			temp = LatLngUtiil.getDistance(one.getLng().doubleValue(), one.getLat().doubleValue(),
@@ -281,6 +286,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		}
 		return minDto;
 	}
+
 	@Override
 	public MerchantDto match(MerchantAreaDto mad, Integer slsId) {
 		if (!StringUtils.isEmpty(mad.getAreaCode())) {
@@ -290,10 +296,10 @@ public class MerchantServiceImpl implements IMerchantService {
 			}
 		}
 		MerchantAreaDto minDto = matchShape(mad, slsId);
-		if(minDto==null){
-			minDto=matchCircle(mad, slsId);
+		if (minDto == null) {
+			minDto = matchCircle(mad, slsId);
 		}
-		if(minDto==null){
+		if (minDto == null) {
 			return null;
 		}
 		return selectMerchant(minDto.getAccountId());
@@ -303,9 +309,10 @@ public class MerchantServiceImpl implements IMerchantService {
 	@Transactional
 	public void addMerchantV2(MerchantDto merchant, List<MerchantServiceDto> serviceList,
 			List<MerchantAreaDto> areaList) {
-		if (merchant == null) {
+		if (merchant == null || CollectionUtils.isEmpty(serviceList)) {
 			return;
 		}
+		verifyMerchantService(merchant, serviceList);
 		Date date = new Date();
 		merchant.setCreateTime(date);
 		addMerchant(merchant);
@@ -324,6 +331,75 @@ public class MerchantServiceImpl implements IMerchantService {
 				addMerchantService(one);
 			}
 		}
+	}
 
+	public void verifyMerchantService(MerchantDto dto, List<MerchantServiceDto> serviceList) {
+
+	}
+
+	@Override
+	public void checkMerchant(Long accountId, String cr, String cause) {
+		MerchantDto dto = new MerchantDto();
+		dto.setAccountId(accountId);
+		dto.setCause(StringUtils.defaultIfEmpty(cause, null));
+		merchantMapper.updateByPrimaryKeySelective(dto);
+	}
+
+	@Override
+	@Transactional
+	public void enterMerchant(MerchantDto merchant, List<MerchantServiceDto> serviceList,
+			List<MerchantAreaDto> areaList) {
+		addMerchantV2(merchant, serviceList, areaList);
+	}
+
+	@Override
+	@Transactional
+	public void editMerchant(MerchantDto merchant, List<MerchantServiceDto> serviceList,
+			List<MerchantAreaDto> areaList) {
+		if (merchant == null) {
+			return;
+		}
+		if (StringUtils.isEmpty(merchant.getCr()) || StringUtils.isEmpty(merchant.getState())) {
+			MerchantDto temp = merchantMapper.selectByPrimaryKey(merchant.getAccountId());
+			if (temp == null) {
+				return;
+			}
+			merchant.setCr(temp.getCr());
+			merchant.setState(temp.getState());
+		}
+		merchantMapper.updateByPrimaryKeySelective(merchant);
+
+		if (!CollectionUtils.isEmpty(areaList)) {
+			deleteArea(merchant.getAccountId());
+			for (MerchantAreaDto one : areaList) {
+				one.setAccountId(merchant.getAccountId());
+				addMerchantArea(one);
+			}
+		}
+		Date date = new Date();
+		if (!CollectionUtils.isEmpty(serviceList)) {
+			deleteService(merchant.getAccountId());
+			for (MerchantServiceDto one : serviceList) {
+				one.setAccountId(merchant.getAccountId());
+				one.setCreateTime(date);
+				one.setState(merchant.getState());
+				one.setCr(merchant.getCr());
+				addMerchantService(one);
+			}
+		}
+	}
+
+	public void deleteArea(Long merchatId) {
+		MerchantAreaDtoExample example = new MerchantAreaDtoExample();
+		MerchantAreaDtoExample.Criteria cri = example.createCriteria();
+		cri.andAccountIdEqualTo(merchatId);
+		merchantAreaDtoMapper.deleteByExample(example);
+	}
+
+	public void deleteService(Long merchatId) {
+		MerchantServiceDtoExample example = new MerchantServiceDtoExample();
+		MerchantServiceDtoExample.Criteria cri = example.createCriteria();
+		cri.andAccountIdEqualTo(merchatId);
+		merchantServiceDtoMapper.deleteByExample(example);
 	}
 }

@@ -59,6 +59,8 @@ public interface IMerchantService {
 	void addMerchant(MerchantDto Merchant, List<MerchantServiceDto> serviceList, List<MerchantAreaDto> areaList);
 	
 	void addMerchantV2(MerchantDto Merchant, List<MerchantServiceDto> serviceList, List<MerchantAreaDto> areaList);
+	/**入驻商户*/
+	void enterMerchant(MerchantDto merchant, List<MerchantServiceDto> serviceList, List<MerchantAreaDto> areaList);
 
 	// List<MerchantAreaDto> select(MerchantAreaDto leftDown,MerchantAreaDto
 	// rightTop,Integer slsId);
@@ -66,4 +68,14 @@ public interface IMerchantService {
 	List<MerchantAreaDto> select(Point center, int radius, Integer slsId);
 
 	MerchantDto match(MerchantAreaDto mad, Integer slsId);
+	
+	void checkMerchant(Long accountId,String cr,String cause);
+	
+	/**<p>编辑商户</p>
+	 * @param merchant
+	 * @param serviceList
+	 * @param areaList
+	 */
+	public void editMerchant(MerchantDto merchant, List<MerchantServiceDto> serviceList,
+			List<MerchantAreaDto> areaList) ;
 }

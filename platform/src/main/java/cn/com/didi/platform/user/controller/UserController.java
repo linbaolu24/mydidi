@@ -149,4 +149,19 @@ public class UserController {
 		userService.updatePlatformUser(dto);
 		return ResultFactory.success();
 	}
+	
+	@RequestMapping(value = "/platform/c/checkMerchant", method = RequestMethod.POST)
+	public IResult checkMerchant(@RequestBody UserDto dto) {
+		if (dto == null) {
+			return ResultFactory.success();
+		}
+		AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
+		dto.setRole(Role.PLATFORM.getCode());
+		dto.setCreateTime(null);
+		if(!StringUtils.isEmpty(dto.getPassword())){
+			dto.setPassword(DigestUtils.md5Hex(dto.getPassword()));
+		}
+		userService.updatePlatformUser(dto);
+		return ResultFactory.success();
+	}
 }
