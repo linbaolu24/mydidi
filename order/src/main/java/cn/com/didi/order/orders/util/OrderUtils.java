@@ -9,5 +9,6 @@ public class OrderUtils {
 		dto.setMasterName(merchantDto.getMasterName());
 		dto.setMlat(merchantDto.getLat());
 		dto.setMlng(merchantDto.getLng());
+		dto.setMerchantAccountId(merchantDto.getMerchantId());
 	}
 }
