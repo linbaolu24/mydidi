@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
+import cn.com.didi.domain.util.State;
 import cn.com.didi.user.login2.domain.LoginDto;
 import cn.com.didi.user.login2.domain.UserExtDto;
 import cn.com.didi.user.login2.service.ILoginService;
@@ -31,6 +32,9 @@ public class LoginServiceImpl implements ILoginService {
 		}
 		if (!dto.getPassword().equals(login.getPassword())) {
 			return ResultFactory.error(MessageConstans.USER_PASSOWRD_NOT_EQUAL);// 返回密码不正确
+		}
+		if(!State.VALID.getState().equals(dto.getState())){
+			return ResultFactory.error(MessageConstans.USER_STATE_NOT_VALID);
 		}
 		UserLinkIdDto linked = userService.selectUserLinkedId(dto.getAccountId());
 		UserExtDto ext = new UserExtDto();

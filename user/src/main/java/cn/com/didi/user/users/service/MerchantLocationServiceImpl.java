@@ -7,13 +7,17 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.druid.util.StringUtils;
+import com.alibaba.druid.sql.dialect.mysql.ast.MysqlForeignKey.Match;
 
+import cn.com.didi.core.property.Couple;
+import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.domains.ReciverDto;
+import cn.com.didi.domain.domains.SimpleMerchantDto;
 import cn.com.didi.domain.util.IReciverSearchService;
 import cn.com.didi.domain.util.Role;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
@@ -57,8 +61,8 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 	protected IReciverDto userLinkIdDtoToReciverDto(UserLinkIdDto user) {
 		return userLinkIdDtoToReciverDto(user, Role.BUSINESS);
 	}
-	
-	protected IReciverDto userLinkIdDtoToReciverDto(UserLinkIdDto user,Role role) {
+
+	protected IReciverDto userLinkIdDtoToReciverDto(UserLinkIdDto user, Role role) {
 		ReciverDto temp = null;
 		if (user != null) {
 			temp = new ReciverDto();
@@ -72,9 +76,18 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 
 	@Override
 	public IReciverDto match(String areaCode, Point poi, Integer slsId) {
-		/*if (StringUtils.isEmpty(areaCode)) {
+		/*
+		 * if (StringUtils.isEmpty(areaCode)) { return null; }
+		 */
+		MerchantDto matched = matchMerchantDto(areaCode, poi, slsId);
+		if (matched == null) {
 			return null;
-		}*/
+		}
+		UserLinkIdDto linked = userService.selectUserLinkedId(matched.getAccountId());
+		return userLinkIdDtoToReciverDto(linked);
+	}
+
+	protected MerchantDto matchMerchantDto(String areaCode, Point poi, Integer slsId) {
 		if (poi == null) {
 			return null;
 		}
@@ -86,17 +99,42 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 		mad.setLat(new BigDecimal(poi.getLat()));
 		mad.setLng(new BigDecimal(poi.getLng()));
 		MerchantDto matched = merchantService.match(mad, slsId);
-		if (matched == null) {
-			return null;
-		}
-		UserLinkIdDto linked=userService.selectUserLinkedId(matched.getAccountId());
-		return userLinkIdDtoToReciverDto(linked);
+		return matched;
 	}
 
 	@Override
-	public IReciverDto match(Long accoutId,Role role) {
-		UserLinkIdDto uLinkDto=userService.selectUserLinkedId(accoutId);
-		return userLinkIdDtoToReciverDto(uLinkDto,role);
+	public IReciverDto match(Long accoutId, Role role) {
+		UserLinkIdDto uLinkDto = userService.selectUserLinkedId(accoutId);
+		return userLinkIdDtoToReciverDto(uLinkDto, role);
+	}
+
+	@Override
+	public IMerchantDto getMerchant(Long accountId) {
+		MerchantDto mdto = merchantService.selectMerchant(accountId);
+		return convert(mdto);
+	}
+
+	protected IMerchantDto convert(MerchantDto mdto) {
+		SimpleMerchantDto smdto = new SimpleMerchantDto();
+		smdto.setMasterName(mdto.getMastername());
+		smdto.setMci(StringUtils.defaultIfEmpty(mdto.getContactInformation(), mdto.getBpn()));
+		smdto.setLat(mdto.getLat());
+		smdto.setLng(mdto.getLng());
+		smdto.setMerchantId(mdto.getAccountId());
+		return smdto;
+	}
+
+	@Override
+	public Couple<IReciverDto, IMerchantDto> matchMerchant(String areaCode, Point poi, Integer slsId) {
+		MerchantDto matched =matchMerchantDto(areaCode, poi, slsId);
+		if(matched==null){
+			return null;
+		}
+		UserLinkIdDto linked = userService.selectUserLinkedId(matched.getAccountId());
+		IReciverDto first= userLinkIdDtoToReciverDto(linked);
+		IMerchantDto second=convert(matched);
+		Couple<IReciverDto, IMerchantDto> couple=new Couple<IReciverDto, IMerchantDto>(first, second);
+		return couple;
 	}
 
 }

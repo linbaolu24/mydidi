@@ -237,4 +237,28 @@ public class MerchantExtDto implements Serializable{
 		dto.setMastername(mastername);
 	}
 
+	public String getPassword() {
+		return dto.getPassword();
+	}
+
+	public void setPassword(String password) {
+		dto.setPassword(password);
+	}
+
+	public String getAlipayAccount() {
+		return dto.getAlipayAccount();
+	}
+
+	public void setAlipayAccount(String alipayAccount) {
+		dto.setAlipayAccount(alipayAccount);
+	}
+
+	public String getWechatAccount() {
+		return dto.getWechatAccount();
+	}
+
+	public void setWechatAccount(String wechatAccount) {
+		dto.setWechatAccount(wechatAccount);
+	}
+
 }

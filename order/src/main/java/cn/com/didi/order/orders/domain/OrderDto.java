@@ -172,6 +172,9 @@ public class OrderDto implements Serializable {
      */
     private String cment;
 
+    
+    //add by my 
+    private String sourceState;
     private static final long serialVersionUID = 1L;
 
     /**
@@ -643,4 +646,15 @@ public class OrderDto implements Serializable {
     public void setCment(String cment) {
         this.cment = cment == null ? null : cment.trim();
     }
+
+	public String getSourceState() {
+		return sourceState;
+	}
+
+	public void setSourceState(String sourceState) {
+		this.sourceState = sourceState;
+	}
+
+	
+    
 }

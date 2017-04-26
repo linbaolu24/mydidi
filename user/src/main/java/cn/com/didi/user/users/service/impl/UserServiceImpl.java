@@ -261,6 +261,22 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		cri.andAccountIdIn(accountId);
 		return userLinkIdDtoMapper.selectByExample(example);
 	}
+
+	@Override
+	public boolean exists(String userName, String role) {
+		if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(role)) {
+			return false;
+		}
+		UserDtoExample example = new UserDtoExample();
+		UserDtoExample.Criteria cri = example.createCriteria();
+		cri.andUserNameEqualTo(userName);
+		cri.andRoleEqualTo(role);
+		List<UserDto> list = userDtoMapper.selectByExample(example);
+		if (CollectionUtils.isEmpty(list)) {
+			return false;
+		}
+		return true;
+	}
 	
 
 

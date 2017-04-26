@@ -43,6 +43,8 @@ public interface OrderDtoMapper {
 	OrderDto selectByPrimaryKeyAndCId(@Param("orderId") Long orderId, @Param("accountId") Long cid);
 
 	OrderDto selectByPrimaryKeyAndBId(@Param("orderId") Long orderId, @Param("accountId") Long bid);
+	
+	int updateByPrimaryKeySelectiveAndState( OrderDto record);
 
 	/**
 	 * @param interval

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.order.orders.dao.mapper.OrderDtoMapper;
@@ -298,6 +300,32 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		}
 		return count;
 
+	}
+
+	@Override
+	public int notifyOrder(OrderDto dto, List<IReciverDto> reciverList) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Transactional
+	public int orderTaking(OrderDto dto) {
+		OrderDto news=new OrderDto();
+		news.setMerchantAccountId(dto.getMerchantAccountId());
+		news.setMci(dto.getMci());
+		news.setMasterName(dto.getMasterName());
+		news.setSourceState(StringUtils.defaultIfEmpty(dto.getSourceState(),dto.getState()));
+		news.setState(OrderState.ORDER_STATE_TAKING.getCode());
+		news.setMlat(dto.getMlat());
+		news.setMlng(dto.getMlng());
+		news.setOrderId(dto.getOrderId());
+		int count=orderMapper.updateByPrimaryKeySelectiveAndState(news);
+		if(count<=0){
+			return count;
+		}
+		if (count != 0) {
+			addStateUpdate(news.getOrderId(), OrderState.ORDER_STATE_TAKING.getCode(), new Date(), news.getSourceState());
+		}
+		return count;
 	}
 
 }

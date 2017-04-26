@@ -25,6 +25,13 @@ public interface IUserService {
 	 * @return
 	 */
 	public UserDto selectUser(String userName,String role);
+	
+	/**
+	 * 判断用户是否存在
+	 * @param accountId
+	 * @return
+	 */
+	public boolean exists(String userName,String role);
 	/**
 	 * 新增用户,自动产生accountId
 	 * @param userDto

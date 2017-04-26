@@ -155,4 +155,9 @@ public class RegisterServiceImpl implements IRegisterService {
 		userService.updatePassword(accoutId, newPassword, oldPassword);
 	}
 
+	@Override
+	public boolean registered(String phone, String role) {
+		return userService.exists(phone, role);
+	}
+
 }

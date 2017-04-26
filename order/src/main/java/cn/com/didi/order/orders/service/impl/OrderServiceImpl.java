@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 
 import cn.com.didi.core.message.Message;
+import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.tx.TranscationalCallBack;
+import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.MessageDto;
 import cn.com.didi.domain.domains.PayResultDto;
@@ -38,6 +40,7 @@ import cn.com.didi.order.orders.domain.OrderStateDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderLifeListener;
 import cn.com.didi.order.orders.service.IOrderNotifyMessageFinder;
+import cn.com.didi.order.orders.util.OrderUtils;
 import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.order.result.OrderRuslt;
 import cn.com.didi.order.trade.domain.DealDto;
@@ -113,21 +116,23 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		 * if (OrderState.ORDER_STATE_PUBLISH.isLess(info.getState())) { //
 		 * 订单状态已完成分派 返回成功即可 return orderResult; }
 		 */
-		IReciverDto dto = search.match(info.getCas(), new Point( info.getLng(),info.getLat()), info.getSlsId());
+		Couple<IReciverDto, IMerchantDto> dto = search.matchMerchant(info.getCas(), new Point( info.getLng(),info.getLat()), info.getSlsId());
 		if (dto == null) {
 			// todo没有找到接单人
 			orderResult.setCode(OrderMessageConstans.ORDER_AUTO_DIS_NO_MASTER.getCode());
 			orderResult.setMessage(OrderMessageConstans.ORDER_AUTO_DIS_NO_MASTER.getMessage());
 		} else {
-			int count=orderInfoService.updateOrderState(info.getOrderId(), OrderState.ORDER_STATE_TAKING.getCode(),
-					info.getState(), dto.getAccountId());
+			popMerchant(info, dto.getSecond());
+			/*int count=orderInfoService.updateOrderState(info.getOrderId(), OrderState.ORDER_STATE_TAKING.getCode(),
+					info.getState(), dto.getAccountId());*/
+			int count=orderInfoService.orderTaking(info);
 			IOrderRuslt<Void> oResult=orderStateChange(count, info, info.getState());
 			if(oResult!=null){
 				return oResult;
 			}
 			info.setState(OrderState.ORDER_STATE_TAKING.getCode());
 			MessageDto tempMDto=orderMessageFinder.findBTakingMessage(info);
-			sendMessage(info, tempMDto, dto);
+			sendMessage(info, tempMDto, dto.getFirst());
 			tempMDto=orderMessageFinder.findCTakedMessage(info);
 			sendMessage(info,tempMDto, false);
 			// 对接单人发送消息,和订单人发送消息
@@ -176,8 +181,9 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if (isStateRepeat(OrderState.ORDER_STATE_TAKING, info.getState())) {
 			return null;
 		}
-		
-		int count=orderInfoService.updateOrderState(orderId, OrderState.ORDER_STATE_TAKING.getCode(), info.getState(), info.getMerchantAccountId());
+		popMerchant(info, bId);
+		//int count=orderInfoService.updateOrderState(orderId, OrderState.ORDER_STATE_TAKING.getCode(), info.getState(), info.getMerchantAccountId());
+		int count=orderInfoService.orderTaking(info);
 		temp=orderStateChange(count, info, info.getState());
 		if(temp!=null){
 			return temp;
@@ -187,7 +193,16 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		info.setState(OrderState.ORDER_STATE_TAKING.getCode());
 		sendMessage(info,  tempMDto, false);
 		return temp;
-
+	}
+	
+	protected void popMerchant(OrderDto orderDto,Long bid){
+		IMerchantDto dto=search.getMerchant(bid);
+		popMerchant(orderDto, dto);
+	}
+	
+	protected void popMerchant(OrderDto orderDto,IMerchantDto dto){
+		orderDto.setSourceState(orderDto.getState());
+		OrderUtils.populate(orderDto, dto);
 	}
 
 	public IOrderRuslt<OrderDto> startService(Long orderId, Long mercharId) {

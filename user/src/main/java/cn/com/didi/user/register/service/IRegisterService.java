@@ -10,4 +10,11 @@ public interface IRegisterService {
 	public Long register(RegisterDto dto);
 
 	public void changePassword(Long accoutId,String newPassword,String oldPassword);
+	/**
+	 * 判断是否已注册
+	 * @param phone
+	 * @param role
+	 * @return
+	 */
+	public boolean registered(String phone,String role);
 }

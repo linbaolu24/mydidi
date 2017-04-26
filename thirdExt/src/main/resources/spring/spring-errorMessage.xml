@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.1.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+	<util:map id="errorMessage_all">
+		<entry key="5000000000" value="${msg.5000000000:系统错误}"></entry>
+		<entry key="5000000001" value="${msg.5000000001:http请求返回异常}"></entry>
+		<entry key="5000000002" value="${msg.5000000002:http请求异常}"></entry>
+		<entry key="5000010000" value="${msg.5000010000:参数不合法}"></entry>
+		<entry key="5001000001" value="${msg.5001000001:用户密码加密错误}"></entry>
+		<entry key="5001000002" value="${msg.5001000002:用户密码解密错误}"></entry>
+		<entry key="5001000003" value="${msg.5001000003:用户不存在}"></entry>
+		<entry key="5001000004" value="${msg.5001000004:用户已存在}"></entry>
+		<entry key="5001000005" value="${msg.5001000005:密码错误}"></entry>
+		<entry key="5001000006" value="${msg.5001000006:验证码无效}"></entry>
+		<entry key="5001000007" value="${msg.5001000007:发送验证码太频繁}"></entry>
+		<entry key="5001000008" value="${msg.5001000008:验证码不相等}"></entry>
+		<entry key="5001000009" value="${msg.5001000009:用户未登录}"></entry>
+		<entry key="5001000010" value="${msg.5001000010:短信网关返回异常}"></entry>
+		<entry key="5001000011" value="${msg.5001000011:用户被禁用}"></entry>
+		<entry key="5002000001" value="${msg.5002000001:短信内容加密错误}"></entry>
+		<entry key="5002000002" value="${msg.5002000002:短信网关返回结果解析失败}"></entry>
+		<entry key="5002000003" value="${msg.5002000003:短信网关返回失败}"></entry>
+		<entry key="5002000003" value="${msg.5002000003:短信网关请求错误}"></entry>
+		<entry key="5003000001" value="${msg.5003000001:自动派单未找到无师傅}"></entry>
+		<entry key="5003000002" value="${msg.5003000002:订单已完成不能进行该操作}"></entry>
+		<entry key="5003000003" value="${msg.5003000003:不存在该订单}"></entry>
+		<entry key="5003000004" value="${msg.5003000004:不属于该用户的订单}"></entry>
+		<entry key="5003000005" value="${msg.5003000005:已完成服务的订单不能取消}"></entry>
+		<entry key="5003000006" value="${msg.5003000006:非待付款状态的订单不能付款}"></entry>
+		<entry key="5003000007" value="${msg.5003000007:已接单订单不能超时}"></entry>
+		<entry key="5003000008" value="${msg.5003000008:交易不存在对应的订单}"></entry>
+		<entry key="5003000009" value="${msg.5003000009:非待付款订单不能完成交易}"></entry>
+		<entry key="5003000010" value="${msg.5003000010:更新订单状态时状态已变更}"></entry>
+		<entry key="5003000011" value="${msg.5003000011:非待评价订单不能评价}"></entry>
+		<entry key="5003000012" value="${msg.5003000012:非待付费状态不能发起收款}"></entry>
+		<entry key="5004000001" value="${msg.5004000001:交易记录不存在}"></entry>
+		<entry key="5004000002" value="${msg.5004000002:交易记录金额不相等}"></entry>
+		<entry key="5004000003" value="${msg.5004000003:验证阿里签名失败}"></entry>
+		<entry key="5004000004" value="${msg.5004000004:阿里返回交易失败}"></entry>
+		<entry key="5004000005" value="${msg.5004000005:生成支付宝订单支付信息异常}"></entry>
+		<entry key="5004100001" value="${msg.5004100001:微信统一下单异常}"></entry>
+		<entry key="5004100002" value="${msg.5004100002:微信统一下单生成请求异常}"></entry>
+		<entry key="5004100003" value="${msg.5004100003:微信统一下单生成解析返回异常}"></entry>
+		<entry key="5004100004" value="${msg.5004100004:微信异步通知支付结果解析异常}"></entry>
+		<entry key="5004100005" value="${msg.5004100005:微信异步通知验证签名异常}"></entry>
+		<entry key="5004100006" value="${msg.5004100006:微信返回异常}"></entry>
+	</util:map>
+
+</beans>

@@ -667,6 +667,123 @@
   </update>
 
   
+  
+  
+  
+  
+  
+  
+  
+  
+  <!-- add by my -->
+  
+   <update id="updateByPrimaryKeySelectiveAndState" parameterType="cn.com.didi.order.orders.domain.OrderDto" >
+    update t_order
+    <set >
+      <if test="slsId != null" >
+        sls_id = #{slsId,jdbcType=INTEGER},
+      </if>
+      <if test="flsId != null" >
+        fls_id = #{flsId,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        cname = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="cci != null" >
+        cci = #{cci,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerAddress != null" >
+        consumer_address = #{consumerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="cas != null" >
+        cas = #{cas,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerName != null" >
+        consumer_name = #{consumerName,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=CHAR},
+      </if>
+      <if test="cause != null" >
+        cause = #{cause,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerAccountId != null" >
+        consumer_account_id = #{consumerAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="merchantAccountId != null" >
+        merchant_account_id = #{merchantAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="lng != null" >
+        Lng = #{lng,jdbcType=DECIMAL},
+      </if>
+      <if test="lat != null" >
+        lat = #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="businessCharge != null" >
+        business_charge = #{businessCharge,jdbcType=CHAR},
+      </if>
+      <if test="businessCategory != null" >
+        business_category = #{businessCategory,jdbcType=CHAR},
+      </if>
+      <if test="masterName != null" >
+        master_name = #{masterName,jdbcType=VARCHAR},
+      </if>
+      <if test="mci != null" >
+        mci = #{mci,jdbcType=VARCHAR},
+      </if>
+      <if test="cost != null" >
+        cost = #{cost,jdbcType=INTEGER},
+      </if>
+      <if test="dealId != null" >
+        deal_id = #{dealId,jdbcType=BIGINT},
+      </if>
+      <if test="ort != null" >
+        ort = #{ort,jdbcType=TIMESTAMP},
+      </if>
+      <if test="oct != null" >
+        oct = #{oct,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sst != null" >
+        sst = #{sst,jdbcType=TIMESTAMP},
+      </if>
+      <if test="oet != null" >
+        oet = #{oet,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ofst != null" >
+        ofst = #{ofst,jdbcType=TIMESTAMP},
+      </if>
+      <if test="evaluation != null" >
+        evaluation = #{evaluation,jdbcType=INTEGER},
+      </if>
+      <if test="textEvaluation != null" >
+        text_evaluation = #{textEvaluation,jdbcType=VARCHAR},
+      </if>
+      <if test="cancelFlag != null" >
+        cancel_flag = #{cancelFlag,jdbcType=CHAR},
+      </if>
+      <if test="commission != null" >
+        commission = #{commission,jdbcType=INTEGER},
+      </if>
+      <if test="poundage != null" >
+        poundage = #{poundage,jdbcType=INTEGER},
+      </if>
+      <if test="mlng != null" >
+        mlng = #{mlng,jdbcType=DECIMAL},
+      </if>
+      <if test="mlat != null" >
+        mlat = #{mlat,jdbcType=DECIMAL},
+      </if>
+      <if test="cment != null" >
+        cment = #{cment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where order_id = #{orderId,jdbcType=BIGINT} and  state = #{sourceState,jdbcType=CHAR}
+  </update>
+  
+  
    <resultMap id="BaseListResultMap" type="cn.com.didi.order.orders.domain.OrderListDto" >
     <id column="order_id" property="orderId" jdbcType="BIGINT" />
     <result column="sls_id" property="slsId" jdbcType="INTEGER" />

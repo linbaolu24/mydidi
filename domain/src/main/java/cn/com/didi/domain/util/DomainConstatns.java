@@ -80,4 +80,5 @@ public class DomainConstatns {
 	public static final String OBJ="obj";
 
 	public static final String REFLASH_TOKEN="reflashToken";
+	public static final String REGISTERED="registered";
 }

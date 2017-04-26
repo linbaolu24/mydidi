@@ -77,12 +77,15 @@ public class DomainMessageConstans {
 	 */
 	public static final String CODE_USER_NOT_LOGIN="5001000009";
 	/**
-	 * 用户未登录
+	 * 短信网关返回异常
 	 */
 	public static final String CODE_SHORTMESSAGE_NETGATE_RETURN="5001000010";
 	
 	
-	
+	/**
+	 * 用户被禁用
+	 */
+	public static final String CODE_USER_STATE_NOT_VALID="5001000011";
 	
 	
 	
@@ -99,7 +102,7 @@ public class DomainMessageConstans {
 	
 	/**
 	 * 格式 500 表示错误 100 表示表示短信错误  0001 表示具体错误
-	 * 短信网关返回结果解析失败
+	 * 短信网关返回失败
 	 */
 	public static final String CODE_SM_GATE_ERROR="5002000003";
 	

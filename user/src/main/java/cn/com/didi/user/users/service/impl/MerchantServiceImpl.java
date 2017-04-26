@@ -24,6 +24,7 @@ import cn.com.didi.core.shape.IPoint;
 import cn.com.didi.core.shape.IShape;
 import cn.com.didi.core.shape.IShapeGenerator;
 import cn.com.didi.core.shape.impl.SimplePoint;
+import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.LatLngUtiil;
@@ -31,6 +32,7 @@ import cn.com.didi.domain.util.State;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.area.service.IAreaService;
 import cn.com.didi.user.item.service.IItemService;
+import cn.com.didi.user.users.MerchantCrDto;
 import cn.com.didi.user.users.dao.mapper.MerchantAreaDtoMapper;
 import cn.com.didi.user.users.dao.mapper.MerchantDtoMapper;
 import cn.com.didi.user.users.dao.mapper.MerchantServiceDtoMapper;
@@ -339,9 +341,13 @@ public class MerchantServiceImpl implements IMerchantService {
 
 	@Override
 	public void checkMerchant(Long accountId, String cr, String cause) {
+		if(StringUtils.isEmpty(cr)||accountId==null){
+			return;
+		}
 		MerchantDto dto = new MerchantDto();
 		dto.setAccountId(accountId);
 		dto.setCause(StringUtils.defaultIfEmpty(cause, null));
+		dto.setCr(cr);
 		merchantMapper.updateByPrimaryKeySelective(dto);
 	}
 
@@ -401,5 +407,32 @@ public class MerchantServiceImpl implements IMerchantService {
 		MerchantServiceDtoExample.Criteria cri = example.createCriteria();
 		cri.andAccountIdEqualTo(merchatId);
 		merchantServiceDtoMapper.deleteByExample(example);
+	}
+
+	@Override
+	public void checkMerchant(List<MerchantCrDto> mdtoList) {
+		if(CollectionUtils.isEmpty(mdtoList)){
+			for(MerchantCrDto one:mdtoList){
+				checkMerchant(one.getAccountId(), one.getCr(), one.getCause());
+			}
+		}
+	}
+
+	@Override
+	public void onOff(List<IdStateDto> list) {
+		for(IdStateDto one:list){
+			onOff(one);
+		}
+	}
+	
+	
+	public void onOff(IdStateDto idState) {
+		if(idState==null||idState.getId()==null||StringUtils.isEmpty(idState.getState())){
+			return ;
+		}
+		MerchantDto dto = new MerchantDto();
+		dto.setAccountId(idState.getId());
+		dto.setState(idState.getState());
+		merchantMapper.updateByPrimaryKeySelective(dto);
 	}
 }

@@ -28,6 +28,8 @@ public abstract class MessageConstans {
 	 */
 	public static final Message USER_PASSOWRD_NOT_EQUAL=newMessage(CODE_USER_PASSOWRD_NOT_EQUAL);
 	
+	
+	
 	/**
 	 * 验证码无效
 	 */
@@ -39,9 +41,13 @@ public abstract class MessageConstans {
 	public static final Message USER_VC_TOO_OFEN=newMessage(CODE_USER_VC_TOO_OFEN);
 	
 	/**
-	 * 验证码无效
+	 * 验证码不相等
 	 */
 	public static final Message USER_VC_NOT_EQUAL=newMessage(CODE_USER_VC_NOT_EQUAL);
+	/**
+	 * 用户被禁用
+	 */
+	public static final Message USER_STATE_NOT_VALID=newMessage(CODE_USER_STATE_NOT_VALID);
 	/**
 	 * @param code
 	 * @return

@@ -42,7 +42,7 @@
 		<filter-class>cn.com.didi.webBase.filter.AccessFilter</filter-class>
 		<init-param>
 			<param-name>ignoreUrl</param-name>
-			<param-value>/api/app/user/register,/api/app/user/sendVc,/api/app/user/resetPassword,/api/app/user/login,/api/app/c/order/allService,/api/app/c/order/listFls,/api/app/c/order/search,/api/platform/user/vc,/api/platform/user/login,/api/app/c/order/aliAsnyNotify,/api/app/user/setThirdId</param-value>
+			<param-value>/api/app/user/register,/api/app/user/sendVc,/api/app/user/resetPassword,/api/app/user/login,/api/app/c/order/allService,/api/app/c/order/listFls,/api/app/c/order/search,/api/platform/user/vc,/api/platform/user/login,/api/app/c/order/aliAsnyNotify,/api/app/user/setThirdId,/api/app/user/judge</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>

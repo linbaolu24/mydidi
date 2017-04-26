@@ -55,7 +55,15 @@ public class AppUserController {
 		p.put(DomainConstatns.BPN,dto.getPhone());
 		return ResultFactory.success(p);
 	}
-
+	
+	@RequestMapping(value = "/app/user/judge", method = RequestMethod.POST)
+	public IResult judge(@RequestBody RegisterDto dto) {
+		boolean exists= registerService.registered(dto.getPhone(), dto.getRole());
+		Map p = new HashMap(1);
+		p.put(DomainConstatns.REGISTERED,exists?1:0);
+		return ResultFactory.success(p);
+	}
+	
 	@RequestMapping(value = "/app/user/sendVc", method = RequestMethod.POST)
 	public IResult sendVc(@RequestBody RegisterDto dto) {
 		Long vcId = registerService.sendVc(dto.getPhone());

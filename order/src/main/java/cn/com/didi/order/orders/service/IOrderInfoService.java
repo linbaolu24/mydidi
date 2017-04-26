@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.order.orders.domain.OrderBListDto;
 import cn.com.didi.order.orders.domain.OrderDto;
@@ -155,5 +156,15 @@ public interface IOrderInfoService {
 	 * @return
 	 */
 	public int updateOrderStateCharge(Long orderId,String destState,String sourceState,Integer cost,String cment);
-	
+	/**
+	 * @param dto
+	 * @param reciverList
+	 * @return
+	 */
+	public int notifyOrder(OrderDto dto,List<IReciverDto> reciverList);
+	/**
+	 * @param dto
+	 * @return
+	 */
+	public int orderTaking(OrderDto dto);
 }
