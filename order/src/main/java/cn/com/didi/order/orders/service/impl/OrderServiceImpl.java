@@ -367,23 +367,27 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
 		IOrderRuslt<OrderStateDto> orderResult = normalCousemerVerify(order, bId, false);
 		if (orderResult != null) {
-			// orderResult.setData(null);
 			return orderResult;
 		}
-
-		if (OrderState.ORDER_STATE_FINISH.isGreatEqual(order.getState())) {// 如果已经完成服务
+		orderResult=isFinishNotCancel(order.getState(), orderId);
+		if (orderResult != null) {
+			return orderResult;
+		}
+		if (OrderState.ORDER_STATE_START_SERVICE.isLess(order.getState())&&(!"1".equals(order.getCancelFlag()))) {// 如果已经完成服务
 			return new OrderRuslt<>(OrderMessageConstans.ORDER_SERVICE_FINISH_CANNOT_CANNEL);
 		}
-		OrderState state = OrderState.ORDER_STATE_CANNEL;
-		OrderStateDto stateDto = new OrderStateDto();
-		if (BusinessCharge.isCharge(order.getBusinessCharge())) {
-			stateDto.setCost(order.getCommission());
-			state = OrderState.ORDER_STATE_PENDING_CHARGE;
-		}
-		stateDto.setState(state.getCode());
 		
-		if (!OrderState.ORDER_STATE_CANNEL.getCode().equals(order.getState())) {// 如果不是
-																				// 重复取消
+		OrderStateDto stateDto = new OrderStateDto();
+		stateDto.setCost(order.getCommission());
+		stateDto.setState(order.getState());
+		if (!OrderState.ORDER_STATE_CANNEL.getCode().equals(order.getState())&&!"1".equals(order.getCancelFlag())) {// 如果不是重复取消
+			LOGGER.debug("============非重复取消顶端=========");
+			OrderState state = OrderState.ORDER_STATE_CANNEL;
+			if (BusinessCharge.isCharge(order.getBusinessCharge())) {
+				stateDto.setCost(order.getCommission());
+				state = OrderState.ORDER_STATE_PENDING_CHARGE;
+			}
+			stateDto.setState(state.getCode());											
 			int count=orderInfoService.updateOrderCannelState(orderId, state.getCode(), order.getState(), stateDto.getCost());
 			/*if (OrderState.ORDER_STATE_CANNEL.equals(state)) {
 				// TODO 通知商户订单被取消
@@ -519,6 +523,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	protected void sendMessage(OrderDto dto, String text, String title, IReciverDto reciver) {
 		if (reciver == null) {
 			LOGGER.error("订单{}推送消息,未找到接受方", dto);
+			return ;
 		}
 		MessageDto messageDto = createMessage(dto, text, title);
 		try {
@@ -587,6 +592,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	}
 
 	protected <T> IOrderRuslt<T> normalMercharVerify(OrderDto order, Long mercharId) {
+		LOGGER.debug("订单信息为{},进行客户校验",order);
 		IOrderRuslt<T> temp = orderExist(order);//
 		if (temp != null) {
 			return temp;
@@ -604,6 +610,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	}
 
 	protected <T> IOrderRuslt<T> normalCousemerVerify(OrderDto order, Long cID, boolean isFinish) {
+		LOGGER.debug("订单信息为{},进行消费者校验",order);
 		IOrderRuslt<T> temp = orderExist(order);
 		if (temp != null) {
 			return temp;
@@ -670,6 +677,22 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	 * @return
 	 */
 	protected <T> IOrderRuslt<T> isFinish(String state, Long orderId) {
+		if (OrderState.ORDER_STATE_FINISH.isGreatEqual(state)) {
+			// 订单已结束
+			return new OrderRuslt<>(OrderMessageConstans.ORDER_FINISHED.getMessage(),
+					OrderMessageConstans.ORDER_FINISHED.getCode());
+		}
+		return null;
+	}
+	
+	/**
+	 * 订单是否已完成订单且非取消订单
+	 * 
+	 * @param state
+	 * @param orderId
+	 * @return
+	 */
+	protected <T> IOrderRuslt<T> isFinishNotCancel(String state, Long orderId) {
 		if (OrderState.ORDER_STATE_FINISH.isGreatEqual(state)) {
 			// 订单已结束
 			return new OrderRuslt<>(OrderMessageConstans.ORDER_FINISHED.getMessage(),

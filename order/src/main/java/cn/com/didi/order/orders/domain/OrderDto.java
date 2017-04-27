@@ -655,6 +655,20 @@ public class OrderDto implements Serializable {
 		this.sourceState = sourceState;
 	}
 
+	@Override
+	public String toString() {
+		return "OrderDto [orderId=" + orderId + ", slsId=" + slsId + ", flsId=" + flsId + ", description=" + description
+				+ ", cname=" + cname + ", cci=" + cci + ", consumerAddress=" + consumerAddress + ", cas=" + cas
+				+ ", consumerName=" + consumerName + ", state=" + state + ", cause=" + cause + ", consumerAccountId="
+				+ consumerAccountId + ", merchantAccountId=" + merchantAccountId + ", lng=" + lng + ", lat=" + lat
+				+ ", businessCharge=" + businessCharge + ", businessCategory=" + businessCategory + ", masterName="
+				+ masterName + ", mci=" + mci + ", cost=" + cost + ", dealId=" + dealId + ", ort=" + ort + ", oct="
+				+ oct + ", sst=" + sst + ", oet=" + oet + ", ofst=" + ofst + ", evaluation=" + evaluation
+				+ ", textEvaluation=" + textEvaluation + ", cancelFlag=" + cancelFlag + ", commission=" + commission
+				+ ", poundage=" + poundage + ", mlng=" + mlng + ", mlat=" + mlat + ", cment=" + cment + ", sourceState="
+				+ sourceState + "]";
+	}
+
 	
     
 }

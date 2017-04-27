@@ -53,7 +53,7 @@ public enum OrderState {
 	public boolean isLess(String state){
 		return code.compareTo(state)<0;
 	}
-	
+	/**比state大*/
 	public boolean isGreatEqual(String state){
 		return code.compareTo(state)>=0;
 	}
