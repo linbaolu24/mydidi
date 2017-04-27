@@ -44,6 +44,9 @@ public class OrderStateTransformImpl implements IOrderStateTransform {
 		if (CollectionUtils.isEmpty(flow)) {
 			return record;
 		}
+		if(CollectionUtils.isEmpty(record)){
+			return copyFlow();
+		}
 		OrderStateRecordDto last = record.get(record.size() - 1);
 		int i = 0;
 		for (OrderStateRecordDto one : flow) {
@@ -61,6 +64,13 @@ public class OrderStateTransformImpl implements IOrderStateTransform {
 			newRecord.add(OrderStateRecordDto.newInstance(flow.get(j)));
 		}
 		return newRecord;
+	}
+	protected List<OrderStateRecordDto> copyFlow(){
+		List copyed=new ArrayList(flow.size());
+		for(OrderStateRecordDto one:flow){
+			copyed.add(OrderStateRecordDto.newInstance(one));
+		}
+		return copyed;
 	}
 
 }
