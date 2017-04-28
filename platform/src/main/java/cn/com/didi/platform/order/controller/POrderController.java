@@ -20,11 +20,15 @@ import cn.com.didi.order.orders.domain.OrderListDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.platform.order.domain.OrderDetailWrapper;
 import cn.com.didi.platform.order.domain.OrderIDJAO;
+import cn.com.didi.user.users.domain.UserDto;
+import cn.com.didi.user.users.service.IUserService;
 
 @RestController
 public class POrderController {
 	@Resource
 	protected IOrderInfoService orderInfoService;
+	@Resource
+	protected IUserService userService;
 	@RequestMapping(value = "/platform/order/list",method={RequestMethod.POST})
 	public IResult orderList(@RequestBody TimeInterval timeInterval){
 		if(!StringUtils.isEmpty(timeInterval.getKey())){
@@ -40,6 +44,11 @@ public class POrderController {
 		if(cou==null||cou.getFirst()==null){
 			return ResultFactory.success();
 		}
-		return ResultFactory.success(new OrderDetailWrapper(cou.getFirst(), cou.getSecond()));
+		String mpp=null;
+		if(cou.getFirst().getMerchantAccountId()!=null){
+			UserDto dto=userService.selectUser(cou.getFirst().getMerchantAccountId());
+			mpp=dto.getProfilePhoto();
+		}
+		return ResultFactory.success(new OrderDetailWrapper(cou.getFirst(), cou.getSecond(),mpp));
 	}
 }
