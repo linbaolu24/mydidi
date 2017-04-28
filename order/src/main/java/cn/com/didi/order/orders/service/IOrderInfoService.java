@@ -1,5 +1,6 @@
 package cn.com.didi.order.orders.service;
 
+import java.util.Date;
 import java.util.List;
 
 import cn.com.didi.core.property.Couple;
@@ -96,14 +97,14 @@ public interface IOrderInfoService {
 	 * @param sourceState
 	 * @return
 	 */
-	public int updateOrderStateSs(Long orderId,String destState,String sourceState);
+	public int updateOrderStateSs(Long orderId,String destState,String sourceState,Date date);
 	
 	/**<p>更新订单状态-完成服务</p>
 	 * @param orderId
 	 * @param sourceState
 	 * @return
 	 */
-	public int updateOrderStateFs(Long orderId,String destState,String sourceState);
+	public int updateOrderStateFs(Long orderId,String destState,String sourceState,Date date);
 	
 	/**<p>更新订单状态和接收方信息</p>
 	 * @param orderId

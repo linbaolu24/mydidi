@@ -194,6 +194,7 @@ public class AppOrderController extends AppBaseOrderController {
 		AssertUtil.assertNotNullAppend(str, "经度");
 		order.setLng(new BigDecimal(str));
 		order.setCname(body.getCname());
+		order.setDescription(body.getDescription());
 		return order;
 	}
 

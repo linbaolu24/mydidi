@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.Resource;
 
@@ -179,8 +178,8 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 
 	@Override
 	@Transactional
-	public int updateOrderStateSs(Long orderId, String destState, String sourceState) {
-		Date date = new Date();
+	public int updateOrderStateSs(Long orderId, String destState, String sourceState,Date date) {
+		 //= new Date();
 		int count = orderMapper.updateOrderStateSs(orderId, destState, sourceState, date);
 		if (count > 0) {
 			addStateUpdate(orderId, destState, date, sourceState);
@@ -190,8 +189,8 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 
 	@Override
 	@Transactional
-	public int updateOrderStateFs(Long orderId, String destState, String sourceState) {
-		Date date = new Date();
+	public int updateOrderStateFs(Long orderId, String destState, String sourceState,Date date) {
+		 //= new Date();
 		int count = orderMapper.updateOrderStateFs(orderId, destState, sourceState, date);
 		if (count > 0) {
 			if (OrderState.ORDER_STATE_Pending_EVALUATION.getCode().equals(destState)) {
@@ -325,21 +324,26 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	}
 	@Transactional
 	public int orderTaking(OrderDto dto) {
-		OrderDto news=new OrderDto();
+		OrderDto news = new OrderDto();
 		news.setMerchantAccountId(dto.getMerchantAccountId());
 		news.setMci(dto.getMci());
 		news.setMasterName(dto.getMasterName());
-		news.setSourceState(StringUtils.defaultIfEmpty(dto.getSourceState(),dto.getState()));
+		news.setSourceState(StringUtils.defaultIfEmpty(dto.getSourceState(), dto.getState()));
 		news.setState(OrderState.ORDER_STATE_TAKING.getCode());
 		news.setMlat(dto.getMlat());
 		news.setMlng(dto.getMlng());
 		news.setOrderId(dto.getOrderId());
-		int count=orderMapper.updateByPrimaryKeySelectiveAndState(news);
-		if(count<=0){
+		news.setOrt(dto.getOrt());
+		if (news.getOrt() == null) {
+			news.setOrt(new Date());
+		}
+		int count = orderMapper.updateByPrimaryKeySelectiveAndState(news);
+		if (count <= 0) {
 			return count;
 		}
 		if (count != 0) {
-			addStateUpdate(news.getOrderId(), OrderState.ORDER_STATE_TAKING.getCode(), new Date(), news.getSourceState());
+			addStateUpdate(news.getOrderId(), OrderState.ORDER_STATE_TAKING.getCode(), new Date(),
+					news.getSourceState());
 		}
 		return count;
 	}

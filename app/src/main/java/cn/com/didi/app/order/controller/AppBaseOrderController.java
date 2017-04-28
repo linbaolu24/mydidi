@@ -82,6 +82,7 @@ public class AppBaseOrderController {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Map build(OrderDto order) {
 		Map map = new HashMap(16);
 		map.put(ORDER_ID, order.getOrderId());

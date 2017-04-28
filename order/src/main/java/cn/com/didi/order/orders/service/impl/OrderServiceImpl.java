@@ -1,6 +1,7 @@
 package cn.com.didi.order.orders.service.impl;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,7 +216,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return build( order);
 		}
 		orderResult = new OrderRuslt<>(orderId);
-		int count=orderInfoService.updateOrderStateSs(orderId, OrderState.ORDER_STATE_START_SERVICE.getCode(), order.getState());
+		order.setSst(new Date());
+		int count=orderInfoService.updateOrderStateSs(orderId, OrderState.ORDER_STATE_START_SERVICE.getCode(), order.getState(),order.getSst());
 		orderResult=orderStateChange(count, order, order.getState());
 		if(orderResult!=null){
 			return orderResult;
@@ -274,8 +276,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 				(!OrderState.ORDER_STATE_FINISH.equals(destState)&&isStateRepeat(destState, order.getState()))) {
 			return build(order);//这个判断比较生硬 考虑优化
 		}
-
-		int count=orderInfoService.updateOrderStateFs(orderId, destState.getCode(), order.getState());//服务结束更新
+		order.setOfst(new Date());
+		int count=orderInfoService.updateOrderStateFs(orderId, destState.getCode(), order.getState(),order.getOfst());//服务结束更新
 		orderResult=orderStateChange(count, order, order.getState());
 		if(orderResult!=null){
 			return orderResult;
@@ -809,7 +811,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 		@Override
 		public IOrderRuslt<OrderDto> callBack(OrderDto dto, OrderState destState) {
-			int count=orderInfoService.updateOrderStateFs(dto.getOrderId(), destState.getCode(), dto.getState());
+			dto.setOfst(new Date());
+			int count=orderInfoService.updateOrderStateFs(dto.getOrderId(), destState.getCode(), dto.getState(),dto.getOfst());
 			 IOrderRuslt<OrderDto> orderResult=orderStateChange(count, dto, dto.getState());
 			if(orderResult!=null){
 				return orderResult;

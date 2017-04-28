@@ -866,7 +866,8 @@
     td.cname,
     td.oct,
     td.business_Category, 
-    td.business_Charge
+    td.business_Charge,
+    td.cost
     from t_order td
     <where>
     <if test="time.startTime != null">oct&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
@@ -927,7 +928,7 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
     select 
     <include refid="Base_Column_List" />
     from t_order td
-    where order_id = #{orderId,jdbcType=BIGINT} and td.consumer_account_id=#{accountId,jdbcType=BIGINT}
+    where order_id = #{orderId,jdbcType=BIGINT} and td.consumer_account_id=#{accountId,jdbcType=BIGINT} ORDER BY oct DESC
   </select>
  
  
@@ -935,7 +936,7 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
     select 
     <include refid="Base_Column_List" />
     from t_order td
-    where order_id = #{orderId,jdbcType=BIGINT} and td.merchant_account_id=#{accountId,jdbcType=BIGINT}
+    where order_id = #{orderId,jdbcType=BIGINT} and td.merchant_account_id=#{accountId,jdbcType=BIGINT} ORDER BY oct DESC
   </select>
  
   <select id="selectEvaluation" resultType="cn.com.didi.order.orders.domain.OrderEvaluationDto">
