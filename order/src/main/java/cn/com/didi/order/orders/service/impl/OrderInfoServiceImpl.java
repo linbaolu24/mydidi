@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
+import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.domains.IReciverDto;
@@ -31,6 +34,7 @@ import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDtoExample;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderStateTransform;
+import cn.com.didi.order.util.OrderMessageConstans;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.service.IMerchantService;
@@ -146,13 +150,25 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		if (order == null) {
 			return null;
 		}
+		int i = 0;
 		if (order.getOct() == null) {
 			order.setOct(new Date());
 		}
-		orderMapper.insertSelective(order);
-		return order.getOrderId();
+		while (i < 3) {
+			generatorOrderId(order);
+			int count =orderMapper.insertSelective(order);
+			if(count!=0){
+				return order.getOrderId();
+			}
+			i++;
+		}
+		throw new MessageObjectException(OrderMessageConstans.ORDER_ID_CONFLICT);
+		
 	}
-
+	protected void generatorOrderId(OrderDto dto){
+		
+		dto.setOrderId( System.currentTimeMillis()*(1000000)+(dto.getConsumerAccountId()%900+100)*1000+RandomUtils.nextInt(10000));
+	}
 	@Override
 	public OrderDto selectOrderSubjectInformation(Long orderId) {
 		if (orderId == null) {

@@ -60,8 +60,14 @@ public class OrderMessageConstans {
 	public static final Message ORDER_NOT_PENDING_EVE=newMessage(DomainMessageConstans.CODE_ORDER_NOT_PENDING_EVE);
 	
 	
+	/**
+	 * 非待付费状态不能发起收款
+	 */
 	public static final Message ORDER_NOT_PENDING_CHAREGE_CAN_NOT_CHARGE=newMessage(DomainMessageConstans.CODE_ORDER_NOT_PENDING_CHAREGE_CAN_NOT_CHARGE);
-	
+	/**
+	 * 订单ID冲突多次
+	 */
+	public static final Message ORDER_ID_CONFLICT=newMessage(DomainMessageConstans.CODE_ORDER_ID_CONFLICT);//="5003000013";
 	
 	/**
 	 * 交易不存在

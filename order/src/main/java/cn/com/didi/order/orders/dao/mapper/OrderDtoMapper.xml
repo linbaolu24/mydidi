@@ -156,8 +156,8 @@
       #{cancelFlag,jdbcType=CHAR}, #{commission,jdbcType=INTEGER}, #{poundage,jdbcType=INTEGER}, 
       #{mlng,jdbcType=DECIMAL}, #{mlat,jdbcType=DECIMAL}, #{cment,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="cn.com.didi.order.orders.domain.OrderDto" useGeneratedKeys="true" keyProperty="orderId">
-    insert into t_order
+  <insert id="insertSelective" parameterType="cn.com.didi.order.orders.domain.OrderDto" >
+    insert ignore into t_order
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
         order_id,

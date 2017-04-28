@@ -108,9 +108,9 @@ public class DomainMessageConstans {
 	
 	/**
 	 * 格式 500 表示错误 100 表示表示短信错误  0001 表示具体错误
-	 * 短信网关请求错误
+	 * 短信网关请求错误 http返回码非200
 	 */
-	public static final String CODE_SM_GATE_REQUEST_ERROR="5002000003";
+	public static final String CODE_SM_GATE_REQUEST_ERROR="5002000004";
 	
 	
 	/**
@@ -172,6 +172,11 @@ public class DomainMessageConstans {
 	 * 非待付费状态不能发起收款
 	 */
 	public static final String CODE_ORDER_NOT_PENDING_CHAREGE_CAN_NOT_CHARGE="5003000012";
+	
+	/**
+	 * 订单ID冲突多次
+	 */
+	public static final String CODE_ORDER_ID_CONFLICT="5003000013";
 	
 	
 	
