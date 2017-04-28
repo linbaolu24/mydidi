@@ -383,7 +383,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if (!OrderState.ORDER_STATE_CANNEL.getCode().equals(order.getState())&&!"1".equals(order.getCancelFlag())) {// 如果不是重复取消
 			LOGGER.debug("============非重复取消顶端=========");
 			OrderState state = OrderState.ORDER_STATE_CANNEL;
-			if (BusinessCharge.isCharge(order.getBusinessCharge())) {
+			if (OrderState.ORDER_STATE_START_SERVICE.isLessEqual(order.getState())&&BusinessCharge.isCharge(order.getBusinessCharge())) {
 				stateDto.setCost(order.getCommission());
 				state = OrderState.ORDER_STATE_PENDING_CHARGE;
 			}
