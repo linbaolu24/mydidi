@@ -396,7 +396,6 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			int count=orderInfoService.updateOrderCannelState(orderId, state.getCode(), order.getState(), stateDto.getCost());
 			/*if (OrderState.ORDER_STATE_CANNEL.equals(state)) {
 				// TODO 通知商户订单被取消
-				
 			}*/
 			orderResult=orderStateChange(count, order, order.getState());
 			if(orderResult!=null){

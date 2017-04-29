@@ -97,6 +97,7 @@ public class AppBaseOrderController {
 		map.put(DomainConstatns.CONSUMER_ADDRESS, order.getConsumerAddress());// 客户地址
 		map.put(DomainConstatns.CCI, order.getCci());// 客户联系方式
 		map.put(DomainConstatns.CNAME, order.getCname());
+		map.put(DomainConstatns.COMMISSION, order.getCommission());
 		return map;
 
 	}
@@ -105,6 +106,7 @@ public class AppBaseOrderController {
 		Map map = new HashMap(16);
 		map.put(ORDER_ID, order.getOrderId());
 		map.put(STATE, order.getState());
+		map.put(DomainConstatns.COMMISSION, order.getCommission());
 		// map.put(ORT, order.getOrt());
 		// map.put(OFST, order.getOfst());
 		// map.put(BUSINESS_CATEGORY, order.getBusinessCategory());
