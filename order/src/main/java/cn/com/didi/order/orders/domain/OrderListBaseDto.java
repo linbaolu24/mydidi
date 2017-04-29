@@ -21,12 +21,7 @@ public class OrderListBaseDto {
 	public void setOrt(Date ort) {
 		this.ort = ort;
 	}
-	public String getOrderId() {
-		return orderId;
-	}
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
+
 	public String getState() {
 		return state;
 	}
@@ -73,13 +68,12 @@ public class OrderListBaseDto {
 		this.businessCharge = businessCharge;
 	}
 	
-	private String orderId;
+	private Long orderId;
 	private String state;
 	private String slsId;
 	private String cname;
 	private Date ort;
 	private Date oct;
-
 	private String lat;
 	private String lng;
 	private String businessCategory; 
@@ -106,6 +100,12 @@ public class OrderListBaseDto {
 	}
 	public void setMerchantAccountId(Long merchantAccountId) {
 		this.merchantAccountId = merchantAccountId;
+	}
+	public Long getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
 	}
     
 }

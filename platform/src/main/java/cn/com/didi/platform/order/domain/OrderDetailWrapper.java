@@ -225,6 +225,8 @@ public class OrderDetailWrapper {
 	}
 	private OrderDto orderDto;
 	private OrderEvaluationDto eveDto;
+	private String mpp;
+	private String merchantName;//商户名称
 	public OrderDetailWrapper(OrderDto orderDto, OrderEvaluationDto eveDto) {
 		super();
 		this.orderDto = orderDto;
@@ -232,6 +234,29 @@ public class OrderDetailWrapper {
 			eveDto=OrderEvaluationDto.ZERO;
 		}
 		this.eveDto = eveDto;
+	}
+	
+	public OrderDetailWrapper(OrderDto orderDto, OrderEvaluationDto eveDto,String mpp,String merchantName) {
+		super();
+		this.orderDto = orderDto;
+		if(eveDto==null){
+			eveDto=OrderEvaluationDto.ZERO;
+		}
+		this.eveDto = eveDto;
+		this.mpp=mpp;
+		this.merchantName=merchantName;
+	}
+	public String getMpp() {
+		return mpp;
+	}
+	public void setMpp(String mpp) {
+		this.mpp = mpp;
+	}
+	public String getMerchantName() {
+		return merchantName;
+	}
+	public void setMerchantName(String merchantName) {
+		this.merchantName = merchantName;
 	}
 	
 }
