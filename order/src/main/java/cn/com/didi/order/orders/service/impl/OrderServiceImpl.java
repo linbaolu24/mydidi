@@ -308,8 +308,11 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if (isStateRepeat(destState, order.getState())) {
 			return build(order);
 		}
-		orderConvert(order.getState(), OrderMessageConstans.ORDER_NOT_PENDING_CHAREGE_CAN_NOT_CHARGE, OrderState.ORDER_STATE_PENDING_CHARGE);
-		int count=orderInfoService.updateOrderStateCharge(orderId, destState.getCode(), order.getState(), iCost,cment);
+		if(order.getOfst()==null){
+			order.setOfst(new Date());
+		}
+		orderConvert(order.getState(), OrderMessageConstans.ORDER_NOT_PENDING_CHAREGE_CAN_NOT_CHARGE, OrderState.ORDER_STATE_PENDING_CHARGE,OrderState.ORDER_STATE_START_SERVICE);
+		int count=orderInfoService.updateOrderStateCharge(orderId, destState.getCode(), order.getState(), iCost,cment, order.getOfst());
 		orderResult=orderStateChange(count, order, order.getState());
 		if(orderResult!=null){
 			return orderResult;
@@ -725,7 +728,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		return null;
 	}
-	/**
+	/**如果now 在array列表中返回null
 	 * @param now
 	 * @param message
 	 * @param arrays
@@ -779,7 +782,10 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 
 		@Override
 		public IOrderRuslt<OrderDto> callBack(OrderDto order, OrderState destState) {
-			int count=orderInfoService.updateOrderStateCharge(order.getOrderId(), destState.getCode(), order.getState(), order.getCost(),order.getCment());
+			if(order.getOfst()==null){
+				order.setOfst(new Date());
+			}
+			int count=orderInfoService.updateOrderStateCharge(order.getOrderId(), destState.getCode(), order.getState(), order.getCost(),order.getCment(),order.getOfst());
 			IOrderRuslt<OrderDto> orderResult=orderStateChange(count, order, order.getState());
 			if(orderResult!=null){
 				return orderResult;

@@ -1,5 +1,7 @@
 package cn.com.didi.platform.order.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +22,9 @@ import cn.com.didi.order.orders.domain.OrderListDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.platform.order.domain.OrderDetailWrapper;
 import cn.com.didi.platform.order.domain.OrderIDJAO;
+import cn.com.didi.platform.order.domain.OrderListWrapperDto;
+import cn.com.didi.platform.order.domain.OrderStringIDJAO;
+import cn.com.didi.thirdExt.select.ListPage;
 import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.service.IMerchantService;
@@ -40,12 +45,17 @@ public class POrderController {
 			timeInterval.setId(Integer.parseInt(timeInterval.getKey()));
 		}
 		IPage<OrderListDto>  page=orderInfoService.selectOrders(timeInterval);
-		return ResultExt.build(page);
+		ListPage<OrderListWrapperDto> listPage=null;
+		if(page!=null){
+			List<OrderListWrapperDto> lists=OrderListWrapperDto.wrapOrderListWrapperDto(page.getList());
+			listPage=new ListPage<>(lists, page.getCount());
+		}
+		return ResultExt.build(listPage);
 		
 	}
 	@RequestMapping(value = "/platform/order/detail",method={RequestMethod.POST})
-	public IResult detail(@RequestBody OrderIDJAO orderIdDto){
-		Couple<OrderDto, OrderEvaluationDto>  cou=orderInfoService.selectOrderDetail(orderIdDto.getOrderId());
+	public IResult detail(@RequestBody OrderStringIDJAO orderIdDto){
+		Couple<OrderDto, OrderEvaluationDto>  cou=orderInfoService.selectOrderDetail(orderIdDto.getOrderIdLong());
 		if(cou==null||cou.getFirst()==null){
 			return ResultFactory.success();
 		}

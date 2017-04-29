@@ -156,7 +156,7 @@ public interface IOrderInfoService {
 	 * @param cost 如果为空 不更新cost
 	 * @return
 	 */
-	public int updateOrderStateCharge(Long orderId,String destState,String sourceState,Integer cost,String cment);
+	public int updateOrderStateCharge(Long orderId,String destState,String sourceState,Integer cost,String cment,Date ofst);
 	/**
 	 * @param dto
 	 * @param reciverList

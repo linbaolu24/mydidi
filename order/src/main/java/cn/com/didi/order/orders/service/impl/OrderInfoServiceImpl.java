@@ -307,10 +307,10 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	}
 
 	@Override
-	public int updateOrderStateCharge(Long orderId, String destState, String sourceState, Integer cost, String cment) {
-		int count = orderMapper.updateOrderStateCharge(orderId, destState, sourceState, cost, cment);
+	public int updateOrderStateCharge(Long orderId, String destState, String sourceState, Integer cost, String cment,Date date) {
+		int count = orderMapper.updateOrderStateCharge(orderId, destState, sourceState, cost, cment,date);
 		if (count != 0 && !sourceState.equals(destState)) {
-			Date date = new Date();
+			
 			addStateUpdate(orderId, destState, date, sourceState);
 		}
 		return count;

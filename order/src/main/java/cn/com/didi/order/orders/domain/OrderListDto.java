@@ -17,5 +17,4 @@ public class OrderListDto extends OrderListBaseDto{
 		this.masterName = masterName;
 	}
 	
-	
 }

@@ -44,7 +44,7 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 			mrd.setAccountId(SYSTEM_ACCOUNT);
 			mrd.setAt(dto.getDat());
 			MerchantRemainingDto now=merchantRemainingDtoMapper.selectByPrimaryKey(mrd );
-			dto.setRemain(now.getRemaining()+dto.getAmount());
+			dto.setRemain(now.getRemaining()+(dto.getAmount()==null?0:dto.getAmount()));
 		}
 		dealDtoMapper.insert(dto);
 		if (deal != null) {

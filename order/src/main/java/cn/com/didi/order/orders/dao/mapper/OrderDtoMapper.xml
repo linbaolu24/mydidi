@@ -1034,12 +1034,12 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
  <update id="updateOrderStateCharge" >
     update t_order
    <set >
-    state = #{destState,jdbcType=CHAR} ,
+    state = #{destState,jdbcType=CHAR} ,ofst=#{date,jdbcType=TIMESTAMP}
       <if test="cost != null" >
-      cost=#{cost,jdbcType=INTEGER},
+      ,cost=#{cost,jdbcType=INTEGER}
       </if>
       <if test="cment != null" >
-        cment = #{cment,jdbcType=VARCHAR}
+        ,cment = #{cment,jdbcType=VARCHAR}
       </if>
      </set>
     where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
