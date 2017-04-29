@@ -42,7 +42,7 @@ public class POrderController {
 	@RequestMapping(value = "/platform/order/list",method={RequestMethod.POST})
 	public IResult orderList(@RequestBody TimeInterval timeInterval){
 		if(!StringUtils.isEmpty(timeInterval.getKey())){
-			timeInterval.setId(Integer.parseInt(timeInterval.getKey()));
+			timeInterval.setId(Long.parseLong(timeInterval.getKey()));
 		}
 		IPage<OrderListDto>  page=orderInfoService.selectOrders(timeInterval);
 		ListPage<OrderListWrapperDto> listPage=null;
