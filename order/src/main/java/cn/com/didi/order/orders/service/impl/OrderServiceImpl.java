@@ -681,7 +681,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	 * @return
 	 */
 	protected <T> IOrderRuslt<T> isFinish(String state, Long orderId) {
-		if (OrderState.ORDER_STATE_FINISH.isGreatEqual(state)) {
+		if (OrderState.ORDER_STATE_CANNEL.isGreatEqual(state)) {
 			// 订单已结束
 			return new OrderRuslt<>(OrderMessageConstans.ORDER_FINISHED.getMessage(),
 					OrderMessageConstans.ORDER_FINISHED.getCode());
@@ -706,7 +706,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	}
 	/** 判断是否是重复状态,如果是状态重复返回true */
 	protected boolean isStateRepeat(OrderState destState, String cState) {
-		if (destState.isLess(cState)) {
+		if (destState.isLessEqual(cState)) {
 			return true;
 		}
 		return false;
