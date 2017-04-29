@@ -23,18 +23,15 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-
 		</dependency>
 
 		<dependency>
@@ -132,9 +129,9 @@
 	<build>
 		<finalName>web</finalName>
 	</build>
-	<!-- <profiles>
+	<profiles>
 		<profile>
-		<id>app-web</id>
+			<id>app-web</id>
 			<dependencies>
 				<dependency>
 					<groupId>junit</groupId>
@@ -170,30 +167,28 @@
 				<dependency>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-orm</artifactId>
-
 				</dependency>
 
 				<dependency>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-beans</artifactId>
-
 				</dependency>
+
 				<dependency>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-webmvc</artifactId>
-
 				</dependency>
 
 				<dependency>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-context-support</artifactId>
-
 				</dependency>
+
 				<dependency>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-oxm</artifactId>
-
 				</dependency>
+
 				<dependency>
 					<groupId>org.springframework.mobile</groupId>
 					<artifactId>spring-mobile-device</artifactId>
@@ -235,6 +230,10 @@
 					<groupId>cn.com.didi</groupId>
 					<artifactId>message</artifactId>
 				</dependency>
+				<dependency>
+					<groupId>cn.com.didi</groupId>
+					<artifactId>user</artifactId>
+				</dependency>
 			</dependencies>
 			<build>
 				<plugins>
@@ -256,10 +255,144 @@
 			</build>
 			<activation>
 				<property>
-					<name>app-web</name>
+					<name>app</name>
 					<value>Y</value>
 				</property>
 			</activation>
 		</profile>
-	</profiles> -->
+		
+		
+		
+		
+		
+		<profile>
+			<id>platform-web</id>
+			<dependencies>
+				<dependency>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jdbc</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aspects</artifactId>
+
+				</dependency>
+
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-orm</artifactId>
+				</dependency>
+
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</dependency>
+
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
+				</dependency>
+
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context-support</artifactId>
+				</dependency>
+
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-oxm</artifactId>
+				</dependency>
+
+				<dependency>
+					<groupId>org.springframework.mobile</groupId>
+					<artifactId>spring-mobile-device</artifactId>
+
+				</dependency>
+
+
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-test</artifactId>
+				</dependency>
+
+
+		
+
+				<dependency>
+					<groupId>cn.com.didi</groupId>
+					<artifactId>core</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>cn.com.didi</groupId>
+					<artifactId>platform</artifactId>
+				</dependency>
+
+				<dependency>
+					<groupId>cn.com.didi</groupId>
+					<artifactId>boot</artifactId>
+				</dependency>
+
+				<dependency>
+					<groupId>cn.com.didi</groupId>
+					<artifactId>thirdExt</artifactId>
+				</dependency>
+
+				<dependency>
+					<groupId>cn.com.didi</groupId>
+					<artifactId>message</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>cn.com.didi</groupId>
+					<artifactId>user</artifactId>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>default-war</id>
+								<phase>package</phase>
+								<goals>
+									<goal>war</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+				<finalName>platform</finalName>
+			</build>
+			<activation>
+				<property>
+					<name>platform</name>
+					<value>Y</value>
+				</property>
+			</activation>
+		</profile>
+		
+		
+	</profiles>
 </project>
