@@ -20,7 +20,9 @@ import cn.com.didi.order.orders.domain.OrderListDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.platform.order.domain.OrderDetailWrapper;
 import cn.com.didi.platform.order.domain.OrderIDJAO;
+import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.UserDto;
+import cn.com.didi.user.users.service.IMerchantService;
 import cn.com.didi.user.users.service.IUserService;
 
 @RestController
@@ -29,6 +31,9 @@ public class POrderController {
 	protected IOrderInfoService orderInfoService;
 	@Resource
 	protected IUserService userService;
+	
+	@Resource
+	protected IMerchantService merchantService;
 	@RequestMapping(value = "/platform/order/list",method={RequestMethod.POST})
 	public IResult orderList(@RequestBody TimeInterval timeInterval){
 		if(!StringUtils.isEmpty(timeInterval.getKey())){
@@ -45,10 +50,13 @@ public class POrderController {
 			return ResultFactory.success();
 		}
 		String mpp=null;
+		String merchantName=null;
 		if(cou.getFirst().getMerchantAccountId()!=null){
 			UserDto dto=userService.selectUser(cou.getFirst().getMerchantAccountId());
+			MerchantDto mdto=merchantService.selectMerchant(cou.getFirst().getMerchantAccountId());
 			mpp=dto.getProfilePhoto();
+			merchantName=mdto.getMastername();
 		}
-		return ResultFactory.success(new OrderDetailWrapper(cou.getFirst(), cou.getSecond(),mpp));
+		return ResultFactory.success(new OrderDetailWrapper(cou.getFirst(), cou.getSecond(),mpp,merchantName));
 	}
 }
