@@ -154,7 +154,7 @@ public class AppOrderController extends AppBaseOrderController {
 			order.setCname(sls.getCname());
 		}
 		order.setConsumerAccountId(accountId);
-		order.setCommission(5);
+		order.setCommission(500);
 		IOrderRuslt<Void> result = orderService.publish(order);
 		if (!result.success()) {
 			return ResultFactory.error(result.getCode(), result.getMessage());
