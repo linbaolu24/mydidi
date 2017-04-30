@@ -39,13 +39,13 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		if (dto.getUpdateTime() == null) {
 			dto.setUpdateTime(dto.getCreateTime());
 		}
-		if(dto.getRemain()==null){
+		/*if(dto.getRemain()==null){
 			MerchantRemainingDto mrd = new MerchantRemainingDto();
 			mrd.setAccountId(SYSTEM_ACCOUNT);
 			mrd.setAt(dto.getDat());
 			MerchantRemainingDto now=merchantRemainingDtoMapper.selectByPrimaryKey(mrd );
 			dto.setRemain(now.getRemaining()+(dto.getAmount()==null?0:dto.getAmount()));
-		}
+		}*/
 		dealDtoMapper.insert(dto);
 		if (deal != null) {
 			deal.invoke(dto);
@@ -59,7 +59,9 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 
 	@Override
 	public int finishDeal(DealDto source, PayResultDto pay, TranscationalCallBack<PayResultDto> deal) {
-		int count = dealDtoMapper.updateDealState(pay.getDealId(), "1", source.getState(),pay.getTradeId());//
+		Integer remain=getSystemRemain(pay.getAccountEnum().getCode());
+		remain=remain==null?0+pay.getCost():remain+pay.getCost();
+		int count = dealDtoMapper.updateDealState(pay.getDealId(), "1", source.getState(),pay.getTradeId(),remain);//
 		if (count == 0) {//
 			dealDtoMapper.updatePureDealState(pay.getDealId(), "1",pay.getTradeId());
 			return count;
@@ -69,7 +71,6 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		mrd.setAt(pay.getAccountEnum().getCode());
 		mrd.setRemaining(pay.getCost());
 		merchantRemainingDtoMapper.updateAddRemaining(mrd);
-
 		mrd.setAccountId(pay.getbId());
 		merchantRemainingDtoMapper.updateAddRemaining(mrd);
 		if (deal != null) {
@@ -77,7 +78,13 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		}
 		return count;
 	}
-
+	protected Integer getSystemRemain(String dat){
+		MerchantRemainingDto mrd = new MerchantRemainingDto();
+		mrd.setAccountId(SYSTEM_ACCOUNT);
+		mrd.setAt(dat);
+		MerchantRemainingDto now=merchantRemainingDtoMapper.selectByPrimaryKey(mrd );
+		return now.getRemaining();
+	}
 	@Override
 	public Long selectOrderIdFromDeal(Long dealId) {
 		return dealDtoMapper.selectOrderIdFromDeal(dealId);

@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.util.DomainConstatns;
@@ -116,6 +117,7 @@ public class AppBaseOrderController {
 		map.put(MASTER_NAME, order.getMasterName());
 
 		map.put(MCI, order.getMci());
+		map.put(DomainConstatns.CANCEL_FLAG, StringUtils.defaultIfEmpty(order.getCancelFlag(),"0"));
 		String text="";
 		if (!CollectionUtils.isEmpty(list)) {
 			List stateList = new ArrayList(list.size());

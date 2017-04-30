@@ -38,6 +38,7 @@ public class DomainConstatns {
 	public static final String ORDER_COUNT= "orderCount";
 	public static final String MASTER_EVALUATION= "masterEvaluation";
 	public static final String CONSUMER_ADDRESS= "consumerAddress";
+	public static final String CANCEL_FLAG="cancelFlag";
 	
 	
 	public static final String OCT= "oct";
