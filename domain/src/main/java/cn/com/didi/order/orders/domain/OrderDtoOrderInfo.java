@@ -3,8 +3,6 @@ package cn.com.didi.order.orders.domain;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.github.miemiedev.mybatis.paginator.domain.Order;
-
 import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.order.IOrderInfo;
 
