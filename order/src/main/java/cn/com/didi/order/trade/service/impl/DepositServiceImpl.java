@@ -35,9 +35,9 @@ public class DepositServiceImpl implements IDepositService{
 	@Override
 	public void refound(Long depositId) {
 		DepositDto dto=new DepositDto();
-		dto.setDealId(depositId);
+		dto.setDepositId(depositId);
 		dto.setState(State.UNVALID.getState());
-		myDepositMapper.updateByPrimaryKey(dto);
+		myDepositMapper.updateByPrimaryKeySelective(dto);
 	}
 
 	@Override
