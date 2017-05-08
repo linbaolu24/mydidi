@@ -1,6 +1,9 @@
 package cn.com.didi.domain.domains;
 
+import java.awt.geom.Point2D;
 import java.math.BigDecimal;
+
+
 
 public class Point {
 	public String getLng() {
@@ -22,6 +25,9 @@ public class Point {
 		super();
 		this.lng = lng;
 		this.lat = lat;
+	}
+	public java.awt.geom.Point2D.Double  toDoublePoint(){
+		return new Point2D.Double(Double.parseDouble(lng),Double.parseDouble(lat));
 	}
 	/**
 	 * 

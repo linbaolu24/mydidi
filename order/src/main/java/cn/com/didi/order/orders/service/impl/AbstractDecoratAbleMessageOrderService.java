@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 
-import cn.com.didi.domain.domains.IReciverDto;
+import cn.com.didi.core.filter.IOperationInterceptor;
+import cn.com.didi.core.filter.IOperationListener;
 import cn.com.didi.order.IOrderInfo;
+import cn.com.didi.order.orders.domain.OrderContextDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.service.IOrderLifeListener;
 import cn.com.didi.order.orders.service.IOrderService;
+import cn.com.didi.order.orders.util.OrderMessageOperation;
 import cn.com.didi.order.result.IOrderRuslt;
 
 /**
@@ -18,8 +21,10 @@ import cn.com.didi.order.result.IOrderRuslt;
  */
 public abstract class AbstractDecoratAbleMessageOrderService implements IOrderService{
 	protected List<IOrderLifeListener> listenerList;
+	protected IOperationInterceptor<OrderMessageOperation, OrderContextDto, IOrderService> operationInterceptor;
+	protected IOperationListener<OrderMessageOperation, OrderContextDto> orderLifeListener;
 	protected IOrderService orderService;
-	protected IOrderService decoratedOrderService;
+	protected IOrderService decoratedOrderService=this;
 	public IOrderService getOrderService() {
 		return orderService;
 	}
@@ -46,101 +51,37 @@ public abstract class AbstractDecoratAbleMessageOrderService implements IOrderSe
 	public void notifyPublish(IOrderInfo info,IOrderRuslt<Void> result){
 		if(!CollectionUtils.isEmpty(listenerList)){
 			for(IOrderLifeListener lis:listenerList){
-				if(!lis.publish(this,info,result)){
+				if(!lis.publish(getDecoratedOrderService(),info,result)){
 					return;
 				}
 			}
 		}
 	}
-	
-	public void notifyAutoDispatch(IOrderInfo info,IOrderRuslt<Void> result,IReciverDto reciver){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.autoDispatch(this,info,result,reciver);
-			}
-		}
+	/**
+	 * 发出发布通知
+	 * @param info
+	 */
+	public  <T> IOrderRuslt<T> interceptor(OrderMessageOperation operation,OrderContextDto dto){
+		IOrderRuslt<T> result= (IOrderRuslt<T>) operationInterceptor.interceptor(operation, dto,getDecoratedOrderService());
+		dto.setLastSuccess(operation);
+		return result;
 	}
-	
-	public void notifyReAutoDispatch(IOrderInfo info){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.reAutoDispatch(this,info);
-			}
-		}
+	/**
+	 * 发出发布通知
+	 * @param info
+	 */
+	public void notifyListener(OrderMessageOperation operation,OrderContextDto dto){
+		orderLifeListener.operate(operation, dto);
 	}
-	
-	
-	public void notifyAccept(IOrderInfo info){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.accept(this,info);
-			}
-		}
-	}
-	
-	public void notifyStartService(IOrderInfo info){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.startService(this,info);
-			}
-		}
-	}
-	
-	public void notifyFinishService(IOrderInfo info){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.finishService(this,info);
-			}
-		}
+	/**
+	 * 发出发布通知
+	 * @param info
+	 */
+	public OrderContextDto  notifyListener(OrderMessageOperation operation,OrderDto dto){
+		OrderContextDto context=new OrderContextDto(dto);
+		notifyListener(operation, dto);
+		return context;
 	}
 	
 	
-	public void notifyCharge(IOrderInfo info){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.charge(this,info);
-			}
-		}
-	}
-	
-	public void notifyNotifyOrder(IOrderInfo info){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.notifyOrder(this,info);
-			}
-		}
-	}
-	
-	public void notifyEvaluation(IOrderInfo info){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.evaluation(this,info);
-			}
-		}
-	}
-	
-	
-	public void notifyCannel(IOrderInfo info){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.cannel(this,info);
-			}
-		}
-	}
-	
-	public void notifyNoReceiver(IOrderInfo info){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.noReceiver(this,info);
-			}
-		}
-	}
-	
-	public void notifyTimeOut(IOrderInfo info){
-		if(!CollectionUtils.isEmpty(listenerList)){
-			for(IOrderLifeListener lis:listenerList){
-				lis.timeout(this,info);
-			}
-		}
-	}
 }

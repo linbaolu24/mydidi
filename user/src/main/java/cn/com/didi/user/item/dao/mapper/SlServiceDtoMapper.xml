@@ -11,6 +11,11 @@
     <result column="business_category" property="businessCategory" jdbcType="CHAR" />
     <result column="city" property="city" jdbcType="VARCHAR" />
     <result column="business_charge" property="businessCharge" jdbcType="CHAR" />
+    <result column="poundage" property="poundage" jdbcType="INTEGER" />
+    <result column="commission" property="commission" jdbcType="INTEGER" />
+    <result column="special_type" property="specialType" jdbcType="CHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -72,7 +77,7 @@
   </sql>
   <sql id="Base_Column_List" >
     service_id, cname, display_order, state, create_time, fls_id, business_category, 
-    city, business_charge
+    city, business_charge, poundage, commission, special_type, ext1, ext2
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.item.domain.SlServiceDtoExample" >
     select
@@ -105,17 +110,19 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cn.com.didi.user.item.domain.SlServiceDto" useGeneratedKeys="true" keyProperty="serviceId">
+  <insert id="insert" parameterType="cn.com.didi.user.item.domain.SlServiceDto" useGeneratedKeys="true" keyProperty="service_Id">
     insert into sl_service (service_id, cname, display_order, 
       state, create_time, fls_id, 
-      business_category, city, business_charge
-      )
+      business_category, city, business_charge, 
+      poundage, commission, special_type, 
+      ext1, ext2)
     values (#{serviceId,jdbcType=INTEGER}, #{cname,jdbcType=VARCHAR}, #{displayOrder,jdbcType=INTEGER}, 
       #{state,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{flsId,jdbcType=INTEGER}, 
-      #{businessCategory,jdbcType=CHAR}, #{city,jdbcType=VARCHAR}, #{businessCharge,jdbcType=CHAR}
-      )
+      #{businessCategory,jdbcType=CHAR}, #{city,jdbcType=VARCHAR}, #{businessCharge,jdbcType=CHAR}, 
+      #{poundage,jdbcType=INTEGER}, #{commission,jdbcType=INTEGER}, #{specialType,jdbcType=CHAR}, 
+      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="cn.com.didi.user.item.domain.SlServiceDto" useGeneratedKeys="true" keyProperty="serviceId">
+  <insert id="insertSelective" parameterType="cn.com.didi.user.item.domain.SlServiceDto" useGeneratedKeys="true" keyProperty="service_Id">
     insert into sl_service
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="serviceId != null" >
@@ -145,6 +152,21 @@
       <if test="businessCharge != null" >
         business_charge,
       </if>
+      <if test="poundage != null" >
+        poundage,
+      </if>
+      <if test="commission != null" >
+        commission,
+      </if>
+      <if test="specialType != null" >
+        special_type,
+      </if>
+      <if test="ext1 != null" >
+        ext1,
+      </if>
+      <if test="ext2 != null" >
+        ext2,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="serviceId != null" >
@@ -173,6 +195,21 @@
       </if>
       <if test="businessCharge != null" >
         #{businessCharge,jdbcType=CHAR},
+      </if>
+      <if test="poundage != null" >
+        #{poundage,jdbcType=INTEGER},
+      </if>
+      <if test="commission != null" >
+        #{commission,jdbcType=INTEGER},
+      </if>
+      <if test="specialType != null" >
+        #{specialType,jdbcType=CHAR},
+      </if>
+      <if test="ext1 != null" >
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        #{ext2,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -212,6 +249,21 @@
       <if test="record.businessCharge != null" >
         business_charge = #{record.businessCharge,jdbcType=CHAR},
       </if>
+      <if test="record.poundage != null" >
+        poundage = #{record.poundage,jdbcType=INTEGER},
+      </if>
+      <if test="record.commission != null" >
+        commission = #{record.commission,jdbcType=INTEGER},
+      </if>
+      <if test="record.specialType != null" >
+        special_type = #{record.specialType,jdbcType=CHAR},
+      </if>
+      <if test="record.ext1 != null" >
+        ext1 = #{record.ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ext2 != null" >
+        ext2 = #{record.ext2,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -227,7 +279,12 @@
       fls_id = #{record.flsId,jdbcType=INTEGER},
       business_category = #{record.businessCategory,jdbcType=CHAR},
       city = #{record.city,jdbcType=VARCHAR},
-      business_charge = #{record.businessCharge,jdbcType=CHAR}
+      business_charge = #{record.businessCharge,jdbcType=CHAR},
+      poundage = #{record.poundage,jdbcType=INTEGER},
+      commission = #{record.commission,jdbcType=INTEGER},
+      special_type = #{record.specialType,jdbcType=CHAR},
+      ext1 = #{record.ext1,jdbcType=VARCHAR},
+      ext2 = #{record.ext2,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -259,6 +316,21 @@
       <if test="businessCharge != null" >
         business_charge = #{businessCharge,jdbcType=CHAR},
       </if>
+      <if test="poundage != null" >
+        poundage = #{poundage,jdbcType=INTEGER},
+      </if>
+      <if test="commission != null" >
+        commission = #{commission,jdbcType=INTEGER},
+      </if>
+      <if test="specialType != null" >
+        special_type = #{specialType,jdbcType=CHAR},
+      </if>
+      <if test="ext1 != null" >
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
     </set>
     where service_id = #{serviceId,jdbcType=INTEGER}
   </update>
@@ -271,9 +343,16 @@
       fls_id = #{flsId,jdbcType=INTEGER},
       business_category = #{businessCategory,jdbcType=CHAR},
       city = #{city,jdbcType=VARCHAR},
-      business_charge = #{businessCharge,jdbcType=CHAR}
+      business_charge = #{businessCharge,jdbcType=CHAR},
+      poundage = #{poundage,jdbcType=INTEGER},
+      commission = #{commission,jdbcType=INTEGER},
+      special_type = #{specialType,jdbcType=CHAR},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR}
     where service_id = #{serviceId,jdbcType=INTEGER}
   </update>
+  
+  <!-- add by myself -->
   
   
   <select id="selectMaxSlsDisplayOrder" resultType="java.lang.Integer"  >

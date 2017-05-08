@@ -2,8 +2,12 @@ package cn.com.didi.user.users.service.impl;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -17,9 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
-import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.select.IPageBound;
 import cn.com.didi.core.shape.IPoint;
 import cn.com.didi.core.shape.IShape;
 import cn.com.didi.core.shape.IShapeGenerator;
@@ -29,17 +33,18 @@ import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.LatLngUtiil;
 import cn.com.didi.domain.util.State;
-import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
+import cn.com.didi.thirdExt.select.ListPage;
 import cn.com.didi.user.area.service.IAreaService;
-import cn.com.didi.user.item.service.IItemService;
-import cn.com.didi.user.users.MerchantCrDto;
 import cn.com.didi.user.users.dao.mapper.MerchantAreaDtoMapper;
 import cn.com.didi.user.users.dao.mapper.MerchantDtoMapper;
 import cn.com.didi.user.users.dao.mapper.MerchantServiceDtoMapper;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
 import cn.com.didi.user.users.domain.MerchantAreaDtoExample;
 import cn.com.didi.user.users.domain.MerchantAreaDtoKey;
+import cn.com.didi.user.users.domain.MerchantCrDto;
+import cn.com.didi.user.users.domain.MerchantDescriptionDto;
 import cn.com.didi.user.users.domain.MerchantDto;
+import cn.com.didi.user.users.domain.MerchantDtoExample;
 import cn.com.didi.user.users.domain.MerchantExtDto;
 import cn.com.didi.user.users.domain.MerchantHolderDto;
 import cn.com.didi.user.users.domain.MerchantServiceDto;
@@ -73,9 +78,13 @@ public class MerchantServiceImpl implements IMerchantService {
 
 	@Override
 	public IPage<MerchantDto> selectMerchants(TimeInterval interval) {
-		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
-		PageList<MerchantDto> list = (PageList<MerchantDto>) merchantMapper.selectMerchants(interval, pageBounds);
-		return new MybatisPaginatorPage<>(list);
+		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), false);
+		Integer count= merchantMapper.selectMerchantCount(interval);
+		if(count==null){
+			count=0;
+		}
+		List<MerchantDto> list =  merchantMapper.selectMerchants(interval, pageBounds);
+		return new ListPage<>(list,count);
 	}
 
 	@Override
@@ -168,6 +177,9 @@ public class MerchantServiceImpl implements IMerchantService {
 			dto.setRlat(points[1].getY());
 			if (StringUtils.isEmpty(dto.getAreaCode())) {
 				dto.setAreaCode("F" + System.currentTimeMillis() + (10000 + RandomUtils.nextInt(90000)));
+			}
+			if(StringUtils.isEmpty(dto.getArea())){
+				dto.setCname(dto.getArea());
 			}
 		}
 		merchantAreaDtoMapper.insertSelective(dto);
@@ -355,6 +367,8 @@ public class MerchantServiceImpl implements IMerchantService {
 	@Transactional
 	public void enterMerchant(MerchantDto merchant, List<MerchantServiceDto> serviceList,
 			List<MerchantAreaDto> areaList) {
+		merchant.setAlipayAccount(null);//禁止更新支付宝账号
+		merchant.setWechatAccount(null);//禁止更新微信账号
 		addMerchantV2(merchant, serviceList, areaList);
 	}
 
@@ -376,7 +390,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		merchantMapper.updateByPrimaryKeySelective(merchant);
 
 		if (!CollectionUtils.isEmpty(areaList)) {
-			deleteArea(merchant.getAccountId());
+			deleteArea(merchant.getAccountId());//先删除后插入
 			for (MerchantAreaDto one : areaList) {
 				one.setAccountId(merchant.getAccountId());
 				addMerchantArea(one);
@@ -384,7 +398,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		}
 		Date date = new Date();
 		if (!CollectionUtils.isEmpty(serviceList)) {
-			deleteService(merchant.getAccountId());
+			deleteService(merchant.getAccountId());//先删除后插入
 			for (MerchantServiceDto one : serviceList) {
 				one.setAccountId(merchant.getAccountId());
 				one.setCreateTime(date);
@@ -435,4 +449,97 @@ public class MerchantServiceImpl implements IMerchantService {
 		dto.setState(idState.getState());
 		merchantMapper.updateByPrimaryKeySelective(dto);
 	}
+    protected int compare(Map<Long,Double> cached,java.awt.geom.Point2D center,MerchantAreaDto one,MerchantAreaDto two){
+    	Double oneDistance=getDistance(cached, center, one);
+    	Double twoDistance=getDistance(cached, center, two);
+    	return oneDistance.compareTo(twoDistance);
+    }
+    protected Double  getDistance(Map<Long,Double> cached,java.awt.geom.Point2D center,MerchantAreaDto one){
+    	Double oneDistance=cached.get(one.getAccountId());
+    	if(oneDistance==null){
+    		 oneDistance=LatLngUtiil.getDistance(one.getLng().doubleValue(), one.getLat().doubleValue(), center.getX(),  center.getY());
+     		cached.put(one.getAccountId(), oneDistance);
+    	}
+    	return oneDistance;
+    }
+	@Override
+	public IPage<MerchantDto> selectMerchants(Point center, int radius, Integer slsId,IPageBound bounds) {
+		
+		return selectMerchants(center,radius,slsId,bounds,new HashMap<>());
+		
+	}
+	public IPage<MerchantDto> selectMerchants(Point center, int radius, Integer slsId,IPageBound bounds,Map<Long,Double>  mapped) {
+		List<MerchantAreaDto> lists=select(center, radius, slsId);
+		if(CollectionUtils.isEmpty(lists)){
+			return null;
+		}
+		java.awt.geom.Point2D center2=center.toDoublePoint();
+		Collections.sort(lists,(one,two)->compare(mapped,center2,one,two));
+		List<MerchantAreaDto> areaDto=lists.subList(bounds.from(), bounds.end(lists.size()));
+		List<MerchantDto> mdtos= selectMerchantList(areaDto);
+		Collections.sort(mdtos,(one,two)->mapped.get(one.getAccountId()).compareTo(mapped.get(two.getAccountId())));
+		return new ListPage<>(mdtos, lists.size());
+	}
+	
+	
+	@Override
+	public IPage<MerchantDescriptionDto> selectMerchantDesc(Point center, int radius, Integer slsId,
+			IPageBound bounds) {
+		Map<Long,Double>  mapped =new HashMap<>();
+		IPage<MerchantDto> page=selectMerchants(center,radius,slsId,bounds,mapped);
+		if(page!=null&&!CollectionUtils.isEmpty(page.getList())){
+			List<MerchantDescriptionDto> pageList=new ArrayList<MerchantDescriptionDto>(page.getList().size());
+			for(MerchantDto one:page.getList()){
+				MerchantDescriptionDto desc=  toMerchantDescriptionDto(one,mapped.get(one.getAccountId()));
+		        pageList.add(desc);
+			}
+			return new ListPage<>(pageList, page.getCount());
+		}
+		return null;
+	}
+	
+	public MerchantDescriptionDto toMerchantDescriptionDto(MerchantDto one,Double distance) {
+		MerchantDescriptionDto dto = new MerchantDescriptionDto();
+		dto.setAccountId(one.getAccountId());
+		dto.setAddress(one.getDetailAddress());
+		dto.setCname(one.getCname());
+		dto.setDescription(one.getContactInformation());
+		if (one.getLat() != null) {
+			dto.setLat(one.getLat().toString());
+		}
+		if (one.getLng() != null) {
+			dto.setLng(one.getLng().toString());
+		}
+		if(distance!=null){
+		dto.setDistance(distance.intValue());
+		}
+		return dto;
+	}
+	protected List<MerchantDto> selectMerchantList(List<MerchantAreaDto> merchantAreaDtoList) {
+		if(CollectionUtils.isEmpty(merchantAreaDtoList)){
+			return null;
+		}
+		List<Long> arrayList=new ArrayList<>(merchantAreaDtoList.size());
+		merchantAreaDtoList.stream().forEach(one->arrayList.add(one.getAccountId()));
+		return selectMerchants(arrayList);
+		
+	}
+	@Override
+	public List<MerchantDto> selectMerchants(List<Long> merchantId) {
+		MerchantDtoExample example=new MerchantDtoExample();
+		MerchantDtoExample.Criteria cri= example.createCriteria();
+		cri.andAccountIdIn(merchantId);
+		return merchantMapper.selectByExample(example);
+	}
+
+	@Override
+	public String getMerchantLogo(Long accountId) {
+		MerchantDto dto=selectMerchant(accountId);
+		if(dto.getMpn()==null){
+			return null;
+		}
+		return dto.getMpn();
+	}
+
+	
 }

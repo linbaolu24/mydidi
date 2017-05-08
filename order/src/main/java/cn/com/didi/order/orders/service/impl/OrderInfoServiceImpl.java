@@ -2,11 +2,13 @@ package cn.com.didi.order.orders.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.context.annotation.Primary;
@@ -17,6 +19,7 @@ import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
 import cn.com.didi.core.excpetion.MessageObjectException;
+import cn.com.didi.core.filter.IOperationListener;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.domains.IReciverDto;
@@ -26,13 +29,18 @@ import cn.com.didi.order.orders.dao.mapper.OrderDtoMapper;
 import cn.com.didi.order.orders.dao.mapper.OrderStateRecordDtoMapper;
 import cn.com.didi.order.orders.domain.OrderBListDto;
 import cn.com.didi.order.orders.domain.OrderDto;
+import cn.com.didi.order.orders.domain.OrderDtoExample;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
+import cn.com.didi.order.orders.domain.OrderListBaseDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
 import cn.com.didi.order.orders.domain.OrderPromptDto;
+import cn.com.didi.order.orders.domain.OrderRenderDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDtoExample;
 import cn.com.didi.order.orders.service.IOrderInfoService;
+import cn.com.didi.order.orders.service.IOrderRenderService;
 import cn.com.didi.order.orders.service.IOrderStateTransform;
+import cn.com.didi.order.orders.util.OrderMessageOperation;
 import cn.com.didi.order.util.OrderMessageConstans;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.users.domain.MerchantDto;
@@ -47,9 +55,13 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	protected OrderStateRecordDtoMapper orderStateRecordDtoMapper;
 	@Resource
 	protected IMerchantService merchantService;
+	//@Resource
+	protected IOperationListener<OrderMessageOperation, OrderDto> orderOperationListener;
 	
 	@Resource
 	protected IOrderStateTransform orderStateTransform;
+	@Resource
+	protected IOrderRenderService renderService;
 
 	public IPage<OrderListDto> selectOrders(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
@@ -135,13 +147,25 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	@Override
 	public List<OrderBListDto> selectBOrderList(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), false);
-		return orderMapper.selectBOrderList(interval, pageBounds);
+		List<OrderBListDto>  lists= orderMapper.selectBOrderList(interval, pageBounds);
+		render(lists);
+		return lists;
 	}
 
 	@Override
 	public List<OrderListDto> selectCOrderList(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), false);
-		return orderMapper.selectCOrderList(interval, pageBounds);
+		List<OrderListDto>  lists =orderMapper.selectCOrderList(interval, pageBounds);
+		render(lists);
+		return lists;
+	}
+	protected  void render(List<? extends OrderListBaseDto> lists){
+		if(CollectionUtils.isEmpty(lists)){
+			return ;
+		}
+		for(OrderListBaseDto one:lists){
+			one.setStateText(renderService.renderStateText(one));
+		}
 	}
 
 	@Override
@@ -348,4 +372,37 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		return count;
 	}
 
+	@Override
+	public boolean existOrder(Long accountId, Integer slsId, String... orderStates) {
+		OrderDtoExample example=new OrderDtoExample();
+		OrderDtoExample.Criteria cri=example.createCriteria();
+		cri.andConsumerAccountIdEqualTo(accountId);
+		cri.andSlsIdEqualTo(slsId);
+		cri.andStateIn(Arrays.asList(orderStates));
+		return orderMapper.existOrder(example)!=null;
+	}
+
+	@Override
+	public OrderRenderDto selectBOrderDetail(Long orderId, Long bid, int flag) {
+		OrderDto dto=selectBOrderDetail(orderId, bid);
+		return renderOrder(dto, flag);
+	}
+
+	@Override
+	public OrderRenderDto selectCOrder(Long orderId, Long cid, int flag) {
+		OrderDto dto=selectCOrder(orderId, cid);
+		return renderOrder(dto, flag);
+	}
+	protected OrderRenderDto renderOrder(OrderDto dto,int flag){
+		if(dto==null){
+			return null;
+		}
+		OrderRenderDto render=new OrderRenderDto();
+		render.setOrder(dto);
+		if(flag>0){
+			render.setStateText(renderService.renderStateText(dto));
+		}
+		return render;
+		
+	}
 }

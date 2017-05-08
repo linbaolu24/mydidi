@@ -178,7 +178,20 @@ public class DomainMessageConstans {
 	 */
 	public static final String CODE_ORDER_ID_CONFLICT="5003000013";
 	
+	/**
+	 * 存在未完成的美容美发订单
+	 */
+	public static final String CODE_ORDER_EXIST_NOT_END_MRMF_ORDER="5003000014";
 	
+	/**
+	 * 不存在押金
+	 */
+	public static final String CODE_ORDER_NO_DEPOSITE="5003000015";
+	
+	/**
+	 * 不存在体验记录
+	 */
+	public static final String  CODE_ORDER_NO_USER_EXPERIENCE="5003000016";
 	
 	/**
 	 * 交易记录不存在

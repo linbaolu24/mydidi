@@ -19,4 +19,9 @@ public class EnvConstants {
 	 * 短信验证码模板
 	 */
 	public static final String VC_MESSAGE_TEMPLATE="10000002";
+	
+	/**
+	 * 押金金额
+	 */
+	public static final String DEPOSITE_MONEY="10000003";
 }

@@ -8,5 +8,8 @@ package cn.com.didi.core.tx;
  * @param <T>
  */
 public interface TranscationalCallBack<T> {
+	default void invoeBefore(T t){
+		
+	}
 	public void invoke(T t);
 }

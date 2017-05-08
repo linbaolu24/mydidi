@@ -1,4 +1,4 @@
-package cn.com.didi.user.users.service;
+package cn.com.didi.user.users.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -9,8 +9,6 @@ import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
-
-import com.alibaba.druid.sql.dialect.mysql.ast.MysqlForeignKey.Match;
 
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.domain.domains.IMerchantDto;
@@ -23,6 +21,8 @@ import cn.com.didi.domain.util.Role;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
 import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
+import cn.com.didi.user.users.service.IMerchantService;
+import cn.com.didi.user.users.service.IUserService;
 
 @Service
 public class MerchantLocationServiceImpl implements IReciverSearchService {
@@ -135,6 +135,24 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 		IMerchantDto second=convert(matched);
 		Couple<IReciverDto, IMerchantDto> couple=new Couple<IReciverDto, IMerchantDto>(first, second);
 		return couple;
+	}
+
+	@Override
+	public Couple<IMerchantDto,IReciverDto > getMerchantAndReciver(Long accountId) {
+		if(accountId==null){
+			return null;
+		}
+		IMerchantDto merchant=getMerchant(accountId);
+		if(merchant==null){
+			return null;
+		}
+		IReciverDto reciver=match(accountId, Role.BUSINESS);
+		return new Couple<IMerchantDto, IReciverDto>(merchant, reciver);
+	}
+
+	@Override
+	public String getPhone(Long accountId) {
+		return userService.selectPhone(accountId);
 	}
 
 }

@@ -1,7 +1,6 @@
 package cn.com.didi.domain.domains;
 
 public class IdStateDto {
-
     private Long id;
 
     private String state;
@@ -17,5 +16,11 @@ public class IdStateDto {
 	public void setState(String state) {
 		this.state = state;
 	}
+    public void setAccountId(Long accountId){
+    	setId(accountId);
+    }
     
+    public void setMessageId(Long messageId){
+    	setId(messageId);
+    }
 }

@@ -36,6 +36,12 @@ public interface MerchantDtoMapper {
      * @return
      */
     public List<MerchantDto> selectMerchants(@Param("time") TimeInterval interval,RowBounds rowBounds);
+    
+    /**
+     * @param interval
+     * @return
+     */
+    public Integer selectMerchantCount(@Param("time") TimeInterval interval);
     /**
 explain select * from  (merchant_area ma STRAIGHT_JOIN merchant_service ms on ma.account_id=ms.account_id)  STRAIGHT_JOIN merchant me on ma.account_id=me.account_Id where me.state='0'    and ma.area_code=''
 and ms.sls_Id=1*/

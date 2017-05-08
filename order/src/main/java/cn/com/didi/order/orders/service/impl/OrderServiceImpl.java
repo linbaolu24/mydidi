@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.com.didi.core.filter.IOperationInterceptor;
 import cn.com.didi.core.message.Message;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.property.IResult;
@@ -25,15 +26,18 @@ import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.MessageDto;
 import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.domains.Point;
+import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.BusinessCharge;
 import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.domain.util.IReciverSearchService;
 import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.domain.util.Role;
+import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.domain.util.TradeCategory;
 import cn.com.didi.message.push.service.IPushMessageService;
 import cn.com.didi.order.IOrderInfo;
+import cn.com.didi.order.orders.domain.OrderContextDto;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderDtoOrderInfo;
@@ -41,6 +45,8 @@ import cn.com.didi.order.orders.domain.OrderStateDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderLifeListener;
 import cn.com.didi.order.orders.service.IOrderNotifyMessageFinder;
+import cn.com.didi.order.orders.service.IOrderService;
+import cn.com.didi.order.orders.util.OrderMessageOperation;
 import cn.com.didi.order.orders.util.OrderUtils;
 import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.order.result.OrderRuslt;
@@ -92,7 +98,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 	};
 
-	public IOrderRuslt<Void> publish(OrderDto dto) {
+	/*public IOrderRuslt<Void> publishForMerchant(OrderDto dto) {
 		dto.setState(OrderState.ORDER_STATE_PUBLISH.getCode());
 		orderInfoService.addOrder(dto);
 		OrderRuslt<Void> orderResult = new OrderRuslt<Void>(dto.getOrderId());
@@ -100,7 +106,47 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		info.setDto(dto);
 		notifyPublish(info, orderResult);
 		return orderResult;
+	}*/
+	@Override
+	public void notifyMerchantOrder(OrderDto info, IReciverDto reciver) {
+		orderMessageFinder.findBTakingMessage(info);
+		MessageDto tempMDto=orderMessageFinder.findBTakingMessage(info);
+		sendMessage(info, tempMDto, reciver);
 	}
+	public IOrderRuslt<Void> publish(OrderDto dto) {
+		if(StringUtils.isEmpty(dto.getSpecialType())){
+			dto.setSpecialType(SpecialTypeEnum.NORMAL.getCode());
+		}
+		OrderRuslt<Void> orderResult = null;
+		boolean success = false;
+		OrderContextDto context = new OrderContextDto(dto);
+		try {
+
+			IOrderRuslt<Void> result = interceptor(OrderMessageOperation.BEFORE_PUBLISH, context);//
+			if (result != null && !result.success()) {
+				return result;
+			}
+			dto.setState(OrderState.ORDER_STATE_PUBLISH.getCode());
+			// notifyListener(OrderMessageOperation.BEFORE_PUBLISH, context);
+			result = interceptor(OrderMessageOperation.BEFORE_ADD, context);
+			if (result != null && !result.success()) {
+				return result;
+			}
+			orderInfoService.addOrder(dto);
+			orderResult = new OrderRuslt<Void>(dto.getOrderId());
+			OrderDtoOrderInfo info = new OrderDtoOrderInfo();
+			info.setDto(dto);
+			notifyPublish(info, orderResult);
+			success = true;
+		} finally {
+			interceptor(success ? OrderMessageOperation.ORDER_PUBLISHED : OrderMessageOperation.ORDER_PUBLISHFAIL,
+					context);
+		}
+		return orderResult;
+	}
+	
+	
+	
     /**自动分配*/
 	public IOrderRuslt<Void> autoDispatch(Long orderId, Long bId) {
 		OrderDto info = orderInfoService.selectOrderSubjectInformation(orderId);
@@ -143,7 +189,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	}
 
 	public void reAutoDispatch(IOrderInfo info) {
-		notifyReAutoDispatch(info);
+		//notifyReAutoDispatch(info);
 	}
 
 	public IOrderRuslt<Void> notifyOrder(Long orderId, Long bId) {
@@ -257,10 +303,6 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	public IOrderRuslt<OrderDto> finishServiceAndcharge(Long orderId,Long mercharId,int cost,String cment){
 		return finishServiceAndcharge(orderId,mercharId,cost,cment,pendingAndFinishCallBack);
 	}
-	
-	
-	
-	
 	public IOrderRuslt<OrderDto> finishService(Long orderId, Long mercharId) {
 		OrderDto order = orderInfoService.selectOrderSubjectInformation(orderId);
 		IOrderRuslt<OrderDto> orderResult = normalMercharVerify(order, mercharId);
@@ -402,7 +444,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 				return orderResult;
 			}
 			order.setState(state.getCode());
-			
+			interceptor(OrderMessageOperation.CANCELED, new OrderContextDto(order));
 			MessageDto tempMDto=orderMessageFinder.findCCancelMessage(order);
 			sendMessage(order,  tempMDto, true);
 		}
@@ -444,6 +486,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		deal.setOrderId(dto.getOrderId());
 		deal.setSai(dto.getConsumerAccountId());
 		deal.setCment(StringUtils.defaultIfEmpty(desc, null));
+		deal.setSpecialType(dto.getSpecialType());
 		tradeService.createTrade(deal, dealTranscationalCallBack);
 		result = new OrderRuslt<>("", OrderRuslt.SUCCESS_CODE, null, createOrderDealDescDto(deal, dto));
 		return result;
@@ -479,6 +522,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return new OrderRuslt<>(OrderMessageConstans.ORDER_NOT_PENDING_CHARGE_FINISH_DEAL);
 		}
 		dto.setbId(orderDto.getMerchantAccountId());
+		dto.setSystemOnly(!BusinessCategory.THIRD.getCode().equals(orderDto.getBusinessCategory()));
 		IResult<Void> deal = tradeService.finishDeal(dto, "0".equals(orderDto.getCancelFlag())?dealFinishTranscationalCallBack:dealFinishTranscationalCallBackCannel);
 		if (deal == null || deal.success()) {
 			MessageDto tempMDto=orderMessageFinder.findCFinishDealMessage(orderDto);
@@ -491,7 +535,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	
 	
 	public void noReceiver(IOrderInfo info) {
-		notifyNoReceiver(info);
+		//notifyNoReceiver(info);
 	}
 	protected void sendMessage(OrderDto dto, MessageDto messageDto, boolean isMerchant) {
 		if(messageDto==null||StringUtils.isEmpty(messageDto.getText())||StringUtils.isEmpty(messageDto.getTitle())){
@@ -503,18 +547,6 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	protected void sendMessage(OrderDto dto, String text, String title, boolean isMerchant) {
 		IReciverDto reciver = isMerchant ? getBReciver(dto) : getCReciver(dto);
 		sendMessage(dto, text, title, reciver);
-		/*if (reciver == null) {
-			LOGGER.error("订单{}推送消息,未找到接受方", dto);
-		}
-		MessageDto messageDto = createMessage(dto, text, title);
-		try {
-			IResult<Void> result = pushMessageService.push(reciver, messageDto);
-			if(result!=null&&!result.success()){
-				LOGGER.error("订单{}推送消息,发送消息失败 code{},message{}", dto,result.getCode(),result.getMessage());
-			}
-		} catch (Exception e) {
-			LOGGER.error("订单{}推送消息,发送消息失败", dto,e);
-		}*/
 	}
 	protected void sendMessage(OrderDto dto,MessageDto messageDto, IReciverDto reciver) {
 		if(messageDto==null||StringUtils.isEmpty(messageDto.getText())||StringUtils.isEmpty(messageDto.getTitle())){
@@ -589,7 +621,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		p.put(DomainConstatns.STATE, order.getState());
 		p.put(DomainConstatns.COST, order.getCost());
 		all.put(DomainConstatns.TYPE, "order");
-		all.put(DomainConstatns.OBJ, p);
+		all.put(DomainConstatns.SPECIALTYPE, order.getSpecialType());
 		dto.setContent(JSON.toJSONString(all));
 		return dto;
 
@@ -721,6 +753,11 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		setListenerList(Arrays.asList(lifeLisnter));
 	}
 	
+	@Resource
+	protected void setOrderInterceptor(IOperationInterceptor<OrderMessageOperation, OrderContextDto, IOrderService> lifeLisnter){
+		operationInterceptor=lifeLisnter;
+	}
+	
 	protected <T> IOrderRuslt<T> orderStateChange(int count,OrderDto dto,String sourceState){
 		if(count<=0){
 			return new OrderRuslt<T>(OrderMessageConstans.ORDER_UPDATE_STATE_CHANGE);
@@ -777,6 +814,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		OrderState[] getFromStates(OrderDto dto,OrderState destState);
 		Message getMessageStateConvert(OrderDto dto,OrderState destState);
 	}
+	
 	public IOrderCallBack<OrderDto> pendingChargeCallBack=new IOrderCallBack<OrderDto>() {
 
 		@Override
@@ -876,4 +914,12 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return null;
 		}
 	};
+
+	@Override
+	public boolean existNotFinishOrder(Long accountId, Integer slsId) {
+		return orderInfoService.existOrder(accountId, slsId, OrderState.ORDER_STATE_TAKING.getCode(),
+				OrderState.ORDER_STATE_START_SERVICE.getCode());
+	}
+
+
 }

@@ -84,4 +84,8 @@ public class DomainConstatns {
 	public static final String REGISTERED="registered";
 	
 	public static final String COMMISSION="commission";
+	public static final String SPECIALTYPE="specialType";
+	public static final String MERCHANTLOGO="merchantLogo";
+	public static final String MERCHANT_NAME="merchantName";
+	public static final String STATE_TEXT="stateText";
 }

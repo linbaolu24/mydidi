@@ -122,4 +122,20 @@ public class SlsSericeExtDto implements Serializable{
 		return dto.toString();
 	}
 
+	public Integer getPoundage() {
+		return dto.getPoundage();
+	}
+
+	public void setPoundage(Integer poundage) {
+		dto.setPoundage(poundage);
+	}
+
+	public Integer getCommission() {
+		return dto.getCommission();
+	}
+
+	public void setCommission(Integer commission) {
+		dto.setCommission(commission);
+	}
+
 }

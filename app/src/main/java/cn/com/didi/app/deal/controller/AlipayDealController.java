@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
 
+import cn.com.didi.app.deal.domain.AliPayJAO;
 import cn.com.didi.app.order.domain.OrderIDJAO;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
@@ -90,6 +92,82 @@ public class AlipayDealController extends AbstractDealController {
 			return FAIL;
 		}
 	}
+	
+	@RequestMapping(value = "/app/c/order/finishAlipay", method = RequestMethod.POST)
+	public IResult alipayResukt(@RequestBody AliSynResultDto request) {
+		IResult<Void> result = aliTradeService.synnotify(request);
+		if(result==null){
+			ResultFactory.success();
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/app/c/order/alipay", method = { RequestMethod.POST })
+	public IResult alipay(@RequestBody OrderIDJAO map, HttpServletRequest request) {
+		Long orderId = (Long) map.getOrderId();
+		assertOrderId(orderId);
+		Long accountId = resolver.resolve(request);
+		IResult<AliPAyRequestDto> or = aliTradeService.createOdrerRequest(orderId, accountId, map.getDescription());
+		if (or.success()) {
+			Map p = new HashMap(1);
+			p.put(DomainConstatns.DEALID, or.getData().getDealId());
+			p.put(DomainConstatns.ORDERINFO, or.getData().getOrderInfo());
+			return ResultFactory.success(p);
+		}
+
+		return ResultFactory.error(or.getCode(), or.getMessage());
+	}
+	/**以下为通用支付*/
+	
+	
+	@RequestMapping(value = "/app/trade/{type}/aliAsnyNotify", method = RequestMethod.POST)
+	public String alipayTypedSdkNotify(HttpServletRequest request,@PathVariable(value="type") String type) throws UnsupportedEncodingException {
+		LOGGER.debug("=================/app/trade/{type}/aliAsnyNotify阿里支付异步通知=======================");
+		logRequest(request);
+		String charSet = request.getParameter("charset");
+		Enumeration<String> names = request.getParameterNames();
+		TreeMap map = new TreeMap();
+		String name;
+		while (names.hasMoreElements()) {
+			name = names.nextElement();
+			map.put(name, request.getParameter(name));
+		}
+		LOGGER.debug("{}阿里支付异步通知结果  = 【{}】",type, map);
+		try {
+			IResult<Void> result = aliTradeService.asynnotify(map,type);
+			if (result != null && !result.success()) {
+				return FAIL;
+			}
+			return SUCESS;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return FAIL;
+		}
+	}
+	@RequestMapping(value = "/app/trade/{type}/finishAlipay", method = RequestMethod.POST)
+	public IResult alipayTypedSynnotify(@RequestBody AliSynResultDto request,@PathVariable(value="type") String type) {
+		LOGGER.debug("=================/app/trade/{type}/finishAlipay阿里支付同步结果=======================");
+		IResult<Void> result = aliTradeService.synnotify(type,request);
+		if(result==null){
+			ResultFactory.success();
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = {"/app/trade/pay/alipay","/app/c/pay/alipay"}, method = RequestMethod.POST)
+	public IResult  payAlipay(@RequestBody AliPayJAO jao, HttpServletRequest request){
+		Long accountId = resolver.resolve(request);
+		IResult<AliPAyRequestDto> or = aliTradeService.createOdrerRequest(accountId, jao.getType(),jao.getObj());
+		if (or.success()) {
+			Map p = new HashMap(1);
+			p.put(DomainConstatns.DEALID, or.getData().getDealId());
+			p.put(DomainConstatns.ORDERINFO, or.getData().getOrderInfo());
+			return ResultFactory.success(p);
+		}
+		return ResultFactory.error(or.getCode(), or.getMessage());
+	}
+	
+	
 	protected void logRequest(HttpServletRequest request){
 		if (LOGGER.isDebugEnabled()) {
 			Enumeration<String> names = request.getParameterNames();
@@ -123,27 +201,11 @@ public class AlipayDealController extends AbstractDealController {
 	 * ResultFactory.error(result.getCode(), result.getMessage()); }
 	 */
 
-	@RequestMapping(value = "/app/c/order/finishAlipay", method = RequestMethod.POST)
-	public IResult alipayResukt(@RequestBody AliSynResultDto request) {
-		IResult<Void> result = aliTradeService.synnotify(request);
-		return result;
-	}
-
-	@RequestMapping(value = "/app/c/order/alipay", method = { RequestMethod.POST })
-	public IResult alipay(@RequestBody OrderIDJAO map, HttpServletRequest request) {
-		Long orderId = (Long) map.getOrderId();
-		assertOrderId(orderId);
-		Long accountId = resolver.resolve(request);
-		IResult<AliPAyRequestDto> or = aliTradeService.createOdrerRequest(orderId, accountId, map.getDescription());
-		if (or.success()) {
-			Map p = new HashMap(1);
-			p.put(DomainConstatns.DEALID, or.getData().getDealId());
-			p.put(DomainConstatns.ORDERINFO, or.getData().getOrderInfo());
-			return ResultFactory.success(p);
-		}
-
-		return ResultFactory.error(or.getCode(), or.getMessage());
-	}
+	
+	
+	
+	
+	
 
 	protected IResult<Void> finishDeal(Map map) {
 		String dealId = (String) map.get(OUT_TRADE_NO);

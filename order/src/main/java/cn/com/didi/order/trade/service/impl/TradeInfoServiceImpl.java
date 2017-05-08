@@ -12,13 +12,15 @@ import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.core.tx.TranscationalCallBack;
+import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.DealEnum;
 import cn.com.didi.order.trade.dao.mapper.DealDtoMapper;
-import cn.com.didi.order.trade.dao.mapper.MerchantRemainingDtoMapper;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.DealListDto;
-import cn.com.didi.order.trade.domain.MerchantRemainingDto;
+import cn.com.didi.order.trade.domain.MerchantDayRemainingDto;
+import cn.com.didi.order.trade.service.IAccountAssetsService;
 import cn.com.didi.order.trade.service.ITradeInfoService;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 @Service
@@ -26,8 +28,10 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 	private static final Long SYSTEM_ACCOUNT = 0L;
 	@Resource
 	protected DealDtoMapper dealDtoMapper;
+	/*@Resource
+	protected MerchantRemainingDtoMapper merchantRemainingDtoMapper;*/
 	@Resource
-	protected MerchantRemainingDtoMapper merchantRemainingDtoMapper;
+	protected IAccountAssetsService accountAssers;
 
 	@Override
 	@Transactional
@@ -39,6 +43,10 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		if (dto.getUpdateTime() == null) {
 			dto.setUpdateTime(dto.getCreateTime());
 		}
+		if(dto.getDai()==null){
+			dto.setDai(SYSTEM_ACCOUNT);
+		}
+		deal.invoeBefore(dto);
 		/*if(dto.getRemain()==null){
 			MerchantRemainingDto mrd = new MerchantRemainingDto();
 			mrd.setAccountId(SYSTEM_ACCOUNT);
@@ -46,7 +54,7 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 			MerchantRemainingDto now=merchantRemainingDtoMapper.selectByPrimaryKey(mrd );
 			dto.setRemain(now.getRemaining()+(dto.getAmount()==null?0:dto.getAmount()));
 		}*/
-		dealDtoMapper.insert(dto);
+		dealDtoMapper.insertSelective(dto);
 		if (deal != null) {
 			deal.invoke(dto);
 		}
@@ -56,34 +64,45 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 	public DealDto selectDeal(Long dealId) {
 		return dealDtoMapper.selectByPrimaryKey(dealId);
 	}
-
+	/*MerchantRemainingDto mrd = new MerchantRemainingDto();
+	mrd.setAccountId(SYSTEM_ACCOUNT);
+	mrd.setAt(pay.getAccountEnum().getCode());
+	mrd.setRemaining(pay.getCost());
+	merchantRemainingDtoMapper.updateAddRemaining(mrd);
+	mrd.setAccountId(pay.getbId());
+	merchantRemainingDtoMapper.updateAddRemaining(mrd);*/
 	@Override
+	@Transactional
 	public int finishDeal(DealDto source, PayResultDto pay, TranscationalCallBack<PayResultDto> deal) {
-		Integer remain=getSystemRemain(pay.getAccountEnum().getCode());
-		remain=remain==null?0+pay.getCost():remain+pay.getCost();
-		int count = dealDtoMapper.updateDealState(pay.getDealId(), "1", source.getState(),pay.getTradeId(),remain);//
+		if(deal!=null){
+		    deal.invoeBefore(pay);
+		}
+		Long remain = getSystemRemain(pay.getAccountEnum().getCode());
+		remain = remain == null ? 0 + pay.getCost() : remain + pay.getCost();
+		int count = dealDtoMapper.updateDealState(pay.getDealId(), DealEnum.FINISH.getCode(), source.getState(), pay.getTradeId(), remain);//
 		if (count == 0) {//
-			dealDtoMapper.updatePureDealState(pay.getDealId(), "1",pay.getTradeId());
+			/*
+			 * dealDtoMapper.updatePureDealState(pay.getDealId(),
+			 * "1",pay.getTradeId());
+			 */
 			return count;
-		}//
-		MerchantRemainingDto mrd = new MerchantRemainingDto();
-		mrd.setAccountId(SYSTEM_ACCOUNT);
-		mrd.setAt(pay.getAccountEnum().getCode());
-		mrd.setRemaining(pay.getCost());
-		merchantRemainingDtoMapper.updateAddRemaining(mrd);
-		mrd.setAccountId(pay.getbId());
-		merchantRemainingDtoMapper.updateAddRemaining(mrd);
+		} //
+		if (pay.isAddRemaining()&&source.getAmount()!=null&&source.getAmount()!=0) {
+			MerchantDayRemainingDto dto=new MerchantDayRemainingDto();
+			dto.setAccountId(source.getDai());
+			dto.setPat(source.getDat());
+			dto.setDaytime(DateUtil.getCurrentYYYYMMDD(source.getCreateTime()));
+			dto.setRemaining((long)source.getAmount().intValue());
+			accountAssers.addMerchantDayRemainingDto(dto,pay.isSystemOnly());
+		}
 		if (deal != null) {
 			deal.invoke(pay);
 		}
 		return count;
 	}
-	protected Integer getSystemRemain(String dat){
-		MerchantRemainingDto mrd = new MerchantRemainingDto();
-		mrd.setAccountId(SYSTEM_ACCOUNT);
-		mrd.setAt(dat);
-		MerchantRemainingDto now=merchantRemainingDtoMapper.selectByPrimaryKey(mrd );
-		return now.getRemaining();
+	protected Long getSystemRemain(String dat){
+		MerchantDayRemainingDto remain=accountAssers.selectSystemRemaining();
+		return remain.getRemaining();
 	}
 	@Override
 	public Long selectOrderIdFromDeal(Long dealId) {

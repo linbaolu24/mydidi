@@ -1,6 +1,7 @@
 package cn.com.didi.domain.domains;
 
 import cn.com.didi.domain.util.PayAccountEnum;
+import cn.com.didi.order.trade.domain.DealDto;
 
 public class PayResultDto {
 	public Long getDestAccountId() {
@@ -54,6 +55,9 @@ public class PayResultDto {
 	private Long destAccountId;
 	private String payAccount;
 	private PayAccountEnum accountEnum;
+	private boolean addRemaining=true;//增加系统余额
+	private boolean systemOnly=true;
+	private DealDto deal;
 	/**
 	 * 交易系统交易ID
 	 */
@@ -63,6 +67,24 @@ public class PayResultDto {
 	}
 	public void setTradeId(String tradeId) {
 		this.tradeId = tradeId;
+	}
+	public boolean isAddRemaining() {
+		return addRemaining;
+	}
+	public void setAddRemaining(boolean addRemaining) {
+		this.addRemaining = addRemaining;
+	}
+	public DealDto getDeal() {
+		return deal;
+	}
+	public void setDeal(DealDto deal) {
+		this.deal = deal;
+	}
+	public boolean isSystemOnly() {
+		return systemOnly;
+	}
+	public void setSystemOnly(boolean systemOnly) {
+		this.systemOnly = systemOnly;
 	}
 	
 }

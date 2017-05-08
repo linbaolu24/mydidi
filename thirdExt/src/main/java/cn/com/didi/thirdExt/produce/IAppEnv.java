@@ -40,6 +40,9 @@ public interface IAppEnv {
 	 */
 	public URI getWechatAppPayURI();
 	
+	/**
+	 * @return
+	 */
 	public InputStream getWechatKeyStroe();
 	/**
 	 * @return
@@ -54,4 +57,18 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public String getAesKey();
+	/**
+	 * @return
+	 */
+	public int getDeposite();
+	/**
+	 * 获取阿里异步通知URL
+	 * @return
+	 */
+	public String getDepositeAliNotifyUrl();
+	/**
+	 * 获取系统账户ID
+	 * @return
+	 */
+	public Long getSystemAccountId();
 }

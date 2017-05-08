@@ -31,6 +31,7 @@ public class FlServiceItemDto implements Serializable{
 	public void setSlsId(Integer slsId) {
 		this.slsId = slsId;
 	}
+	
 	/**
      * 服务ID
      */
@@ -49,5 +50,27 @@ public class FlServiceItemDto implements Serializable{
      * 
      */
     private Integer slsId;
+    /**
+     * 虚拟标志 0表示正常 1表示虚拟
+     */
+    private String virtualFlag;
+    /**
+     * 特殊类型 1 表示美容美发
+     */
+    private String specialType;
+	
+	public String getSpecialType() {
+		return specialType;
+	}
+	public void setSpecialType(String specialType) {
+		this.specialType = specialType;
+	}
+	public String getVirtualFlag() {
+		return virtualFlag;
+	}
+	public void setVirtualFlag(String virtualFlag) {
+		this.virtualFlag = virtualFlag;
+	}
+    
     
 }

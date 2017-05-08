@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.didi.order.orders.dao.mapper.OrderDtoMapper" >
-<resultMap id="BaseResultMap" type="cn.com.didi.order.orders.domain.OrderDto" >
+  <resultMap id="BaseResultMap" type="cn.com.didi.order.orders.domain.OrderDto" >
     <id column="order_id" property="orderId" jdbcType="BIGINT" />
     <result column="sls_id" property="slsId" jdbcType="INTEGER" />
     <result column="fls_id" property="flsId" jdbcType="INTEGER" />
@@ -36,6 +36,11 @@
     <result column="mlng" property="mlng" jdbcType="DECIMAL" />
     <result column="mlat" property="mlat" jdbcType="DECIMAL" />
     <result column="cment" property="cment" jdbcType="VARCHAR" />
+    <result column="special_type" property="specialType" jdbcType="CHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
+    <result column="cancel_cause" property="cancelCause" jdbcType="VARCHAR" />
+    <result column="Internal_flag" property="internalFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -99,7 +104,8 @@
     order_id, sls_id, fls_id, description, cname, cci, consumer_address, cas, consumer_name, 
     state, cause, consumer_account_id, merchant_account_id, Lng, lat, business_charge, 
     business_category, master_name, mci, cost, deal_id, ort, oct, sst, oet, ofst, evaluation, 
-    text_evaluation, cancel_flag, commission, poundage, mlng, mlat, cment
+    text_evaluation, cancel_flag, commission, poundage, mlng, mlat, cment, special_type, 
+    ext1, ext2, cancel_cause, Internal_flag
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.order.orders.domain.OrderDtoExample" >
     select
@@ -132,7 +138,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cn.com.didi.order.orders.domain.OrderDto" useGeneratedKeys="true" keyProperty="orderId">
+  <insert id="insert" parameterType="cn.com.didi.order.orders.domain.OrderDto" >
     insert into t_order (order_id, sls_id, fls_id, 
       description, cname, cci, 
       consumer_address, cas, consumer_name, 
@@ -143,7 +149,9 @@
       oct, sst, oet, 
       ofst, evaluation, text_evaluation, 
       cancel_flag, commission, poundage, 
-      mlng, mlat, cment)
+      mlng, mlat, cment, 
+      special_type, ext1, ext2, 
+      cancel_cause, Internal_flag)
     values (#{orderId,jdbcType=BIGINT}, #{slsId,jdbcType=INTEGER}, #{flsId,jdbcType=INTEGER}, 
       #{description,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, #{cci,jdbcType=VARCHAR}, 
       #{consumerAddress,jdbcType=VARCHAR}, #{cas,jdbcType=VARCHAR}, #{consumerName,jdbcType=VARCHAR}, 
@@ -154,10 +162,12 @@
       #{oct,jdbcType=TIMESTAMP}, #{sst,jdbcType=TIMESTAMP}, #{oet,jdbcType=TIMESTAMP}, 
       #{ofst,jdbcType=TIMESTAMP}, #{evaluation,jdbcType=INTEGER}, #{textEvaluation,jdbcType=VARCHAR}, 
       #{cancelFlag,jdbcType=CHAR}, #{commission,jdbcType=INTEGER}, #{poundage,jdbcType=INTEGER}, 
-      #{mlng,jdbcType=DECIMAL}, #{mlat,jdbcType=DECIMAL}, #{cment,jdbcType=VARCHAR})
+      #{mlng,jdbcType=DECIMAL}, #{mlat,jdbcType=DECIMAL}, #{cment,jdbcType=VARCHAR}, 
+      #{specialType,jdbcType=CHAR}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, 
+      #{cancelCause,jdbcType=VARCHAR}, #{internalFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.didi.order.orders.domain.OrderDto" >
-    insert ignore into t_order
+    insert into t_order
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
         order_id,
@@ -260,6 +270,21 @@
       </if>
       <if test="cment != null" >
         cment,
+      </if>
+      <if test="specialType != null" >
+        special_type,
+      </if>
+      <if test="ext1 != null" >
+        ext1,
+      </if>
+      <if test="ext2 != null" >
+        ext2,
+      </if>
+      <if test="cancelCause != null" >
+        cancel_cause,
+      </if>
+      <if test="internalFlag != null" >
+        Internal_flag,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -364,6 +389,21 @@
       </if>
       <if test="cment != null" >
         #{cment,jdbcType=VARCHAR},
+      </if>
+      <if test="specialType != null" >
+        #{specialType,jdbcType=CHAR},
+      </if>
+      <if test="ext1 != null" >
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="cancelCause != null" >
+        #{cancelCause,jdbcType=VARCHAR},
+      </if>
+      <if test="internalFlag != null" >
+        #{internalFlag,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -478,6 +518,21 @@
       <if test="record.cment != null" >
         cment = #{record.cment,jdbcType=VARCHAR},
       </if>
+      <if test="record.specialType != null" >
+        special_type = #{record.specialType,jdbcType=CHAR},
+      </if>
+      <if test="record.ext1 != null" >
+        ext1 = #{record.ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ext2 != null" >
+        ext2 = #{record.ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cancelCause != null" >
+        cancel_cause = #{record.cancelCause,jdbcType=VARCHAR},
+      </if>
+      <if test="record.internalFlag != null" >
+        Internal_flag = #{record.internalFlag,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -518,7 +573,12 @@
       poundage = #{record.poundage,jdbcType=INTEGER},
       mlng = #{record.mlng,jdbcType=DECIMAL},
       mlat = #{record.mlat,jdbcType=DECIMAL},
-      cment = #{record.cment,jdbcType=VARCHAR}
+      cment = #{record.cment,jdbcType=VARCHAR},
+      special_type = #{record.specialType,jdbcType=CHAR},
+      ext1 = #{record.ext1,jdbcType=VARCHAR},
+      ext2 = #{record.ext2,jdbcType=VARCHAR},
+      cancel_cause = #{record.cancelCause,jdbcType=VARCHAR},
+      Internal_flag = #{record.internalFlag,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -625,6 +685,21 @@
       <if test="cment != null" >
         cment = #{cment,jdbcType=VARCHAR},
       </if>
+      <if test="specialType != null" >
+        special_type = #{specialType,jdbcType=CHAR},
+      </if>
+      <if test="ext1 != null" >
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="cancelCause != null" >
+        cancel_cause = #{cancelCause,jdbcType=VARCHAR},
+      </if>
+      <if test="internalFlag != null" >
+        Internal_flag = #{internalFlag,jdbcType=INTEGER},
+      </if>
     </set>
     where order_id = #{orderId,jdbcType=BIGINT}
   </update>
@@ -662,13 +737,14 @@
       poundage = #{poundage,jdbcType=INTEGER},
       mlng = #{mlng,jdbcType=DECIMAL},
       mlat = #{mlat,jdbcType=DECIMAL},
-      cment = #{cment,jdbcType=VARCHAR}
+      cment = #{cment,jdbcType=VARCHAR},
+      special_type = #{specialType,jdbcType=CHAR},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR},
+      cancel_cause = #{cancelCause,jdbcType=VARCHAR},
+      Internal_flag = #{internalFlag,jdbcType=INTEGER}
     where order_id = #{orderId,jdbcType=BIGINT}
   </update>
-
-  
-  
-  
   
   
   
@@ -779,6 +855,18 @@
       <if test="cment != null" >
         cment = #{cment,jdbcType=VARCHAR},
       </if>
+       <if test="specialType != null" >
+        special_type = #{specialType,jdbcType=CHAR},
+      </if>
+      <if test="ext1 != null" >
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="cancelCause != null" >
+        cancel_cause = #{cancelCause,jdbcType=VARCHAR},
+      </if>
     </set>
     where order_id = #{orderId,jdbcType=BIGINT} and  state = #{sourceState,jdbcType=CHAR}
   </update>
@@ -818,12 +906,18 @@
     <result column="poundage" property="poundage" jdbcType="INTEGER" />
     <result column="mlng" property="mlng" jdbcType="DECIMAL" />
     <result column="mlat" property="mlat" jdbcType="DECIMAL" />
+    <result column="cment" property="cment" jdbcType="VARCHAR" />
+    <result column="special_type" property="specialType" jdbcType="CHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
+    <result column="cancel_cause" property="cancelCause" jdbcType="VARCHAR" />
+    <result column="Internal_flag" property="internalFlag" jdbcType="INTEGER" />
   </resultMap>
   
   
   
    <resultMap id="BaseBListResultMap" type="cn.com.didi.order.orders.domain.OrderBListDto" >
-    <id column="order_id" property="orderId" jdbcType="BIGINT" />
+     <id column="order_id" property="orderId" jdbcType="BIGINT" />
     <result column="sls_id" property="slsId" jdbcType="INTEGER" />
     <result column="fls_id" property="flsId" jdbcType="INTEGER" />
     <result column="description" property="description" jdbcType="VARCHAR" />
@@ -856,6 +950,12 @@
     <result column="poundage" property="poundage" jdbcType="INTEGER" />
     <result column="mlng" property="mlng" jdbcType="DECIMAL" />
     <result column="mlat" property="mlat" jdbcType="DECIMAL" />
+    <result column="cment" property="cment" jdbcType="VARCHAR" />
+    <result column="special_type" property="specialType" jdbcType="CHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
+    <result column="cancel_cause" property="cancelCause" jdbcType="VARCHAR" />
+    <result column="Internal_flag" property="internalFlag" jdbcType="INTEGER" />
   </resultMap>
    
    
@@ -895,7 +995,8 @@ td.mlng lng,
 td.business_Category, 
 td.business_Charge,
 td.consumer_account_id,
-td.merchant_account_id
+td.merchant_account_id,
+td.special_type
 from t_order td where td.consumer_account_id=#{time.accountId,jdbcType=BIGINT} and not (state='2' and ort is null) ORDER BY ort DESC
   </select>
   
@@ -916,7 +1017,8 @@ td.lng ,
 td.business_Category, 
 td.business_Charge,
 td.consumer_account_id,
-td.merchant_account_id
+td.merchant_account_id,
+td.special_type
 from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} and not (state='2' and ort is null) ORDER BY ort DESC
   </select>
  
@@ -1010,8 +1112,9 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
   select order_id, sls_id, fls_id,  cname, cci, consumer_address, cas, consumer_name, 
     state,  consumer_account_id, merchant_account_id, Lng, lat, business_charge, 
     business_category, master_name, mci, cost, deal_id, 
-    ort,ofst,  cment,
-     cancel_flag, commission, poundage, mlng, mlat  from t_order where order_id = #{orderId,jdbcType=BIGINT}
+    ort,ofst,  cment, 
+    cancel_flag, commission, poundage, mlng, mlat,special_type, 
+    ext1, ext2, cancel_cause, Internal_flag  from t_order where order_id = #{orderId,jdbcType=BIGINT}
   </select>
   
   
@@ -1044,4 +1147,14 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
      </set>
     where order_id = #{orderId,jdbcType=BIGINT} and state=#{sourceState,jdbcType=CHAR}
   </update>
+  
+  
+  
+  <select id="existOrder" parameterType="cn.com.didi.order.orders.domain.OrderDtoExample" resultType="java.lang.Long" >
+    select order_Id from t_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    limit 1
+  </select>
 </mapper>

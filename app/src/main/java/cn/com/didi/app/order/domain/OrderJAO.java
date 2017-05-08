@@ -62,6 +62,7 @@ public class OrderJAO {
 	public void setCname(String cname) {
 		this.cname = cname;
 	}
+	
 	private Integer flsId;//	一级服务ID
 	private Integer slsId;//	二级服务ID
 	private String description;//	需求描述
@@ -72,6 +73,19 @@ public class OrderJAO {
 	private String lng;//	经度
 	private String lat;//	纬度
 	private String cname;//	服务小项的名字
-	
+	private Long merchantAccountId;//商户ID
+	private String specialType;
+	public Long getMerchantAccountId() {
+		return merchantAccountId;
+	}
+	public void setMerchantAccountId(Long merchantAccountId) {
+		this.merchantAccountId = merchantAccountId;
+	}
+	public String getSpecialType() {
+		return specialType;
+	}
+	public void setSpecialType(String specialType) {
+		this.specialType = specialType;
+	}
 
 }

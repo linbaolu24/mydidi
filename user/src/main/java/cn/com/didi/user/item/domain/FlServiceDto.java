@@ -3,13 +3,8 @@ package cn.com.didi.user.item.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-public class FlServiceDto implements Serializable{
+public class FlServiceDto implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 8528117085771664988L;
-
-	/**
      * 服务ID
      */
     private Integer serviceId;
@@ -39,9 +34,23 @@ public class FlServiceDto implements Serializable{
      */
     private Integer slsNum;
 
+    /**
+     * 虚拟标志 0表示正常 1表示虚拟
+     */
+    private String virtualFlag;
 
+    /**
+     * 1 表示美容美发
+     */
+    private String specialType;
 
-	/**
+    private String ext1;
+
+    private String ext2;
+
+    private static final long serialVersionUID = 1L;
+
+    /**
      * 服务ID
      **/
     public Integer getServiceId() {
@@ -123,5 +132,49 @@ public class FlServiceDto implements Serializable{
      **/
     public void setSlsNum(Integer slsNum) {
         this.slsNum = slsNum;
+    }
+
+    /**
+     * 虚拟标志 0表示正常 1表示虚拟
+     **/
+    public String getVirtualFlag() {
+        return virtualFlag;
+    }
+
+    /**
+     * 虚拟标志 0表示正常 1表示虚拟
+     **/
+    public void setVirtualFlag(String virtualFlag) {
+        this.virtualFlag = virtualFlag == null ? null : virtualFlag.trim();
+    }
+
+    /**
+     * 1 表示美容美发
+     **/
+    public String getSpecialType() {
+        return specialType;
+    }
+
+    /**
+     * 1 表示美容美发
+     **/
+    public void setSpecialType(String specialType) {
+        this.specialType = specialType == null ? null : specialType.trim();
+    }
+
+    public String getExt1() {
+        return ext1;
+    }
+
+    public void setExt1(String ext1) {
+        this.ext1 = ext1 == null ? null : ext1.trim();
+    }
+
+    public String getExt2() {
+        return ext2;
+    }
+
+    public void setExt2(String ext2) {
+        this.ext2 = ext2 == null ? null : ext2.trim();
     }
 }

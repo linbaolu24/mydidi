@@ -51,6 +51,6 @@ public interface IOrderInfo {
 	public BigDecimal getLng() ;
     /**纬度*/
 	public BigDecimal getLat();
-
+	public String getSpecialType();
 	
 }

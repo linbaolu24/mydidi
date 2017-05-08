@@ -1,5 +1,6 @@
 package cn.com.didi.order.orders.service;
 
+import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.IOrderInfo;
@@ -14,43 +15,14 @@ import cn.com.didi.order.result.IOrderRuslt;
  */
 public interface IOrderService {
 	/**
-	 * 失败
-	 */
-	static int ORDER_STATE_FAIL=0;
-	/**
-	 * 完成
-	 */
-	static int ORDER_STATE_FINISH=1;
-	/**
-	 * 取消
-	 */
-	static int ORDER_STATE_CANNEL=2;
-	/**
-	 * 发布
-	 */
-	static int ORDER_STATE_PUBLISH=3;
-	/**
-	 * 通知中
-	 */
-	static int ORDER_STATE_NOTIFY=4;
-	/**接单状态*/
-	static int ORDER_STATE_TAKING=5;
-	/**
-	 * 开始服务
-	 */
-	static int ORDER_STATE_START_SERVICE=6;
-	/**
-	 * 待收费
-	 */
-	static int ORDER_STATE_PENDING_CHARGE=7;
-	/**
-	 * 待评价
-	 */
-	static int ORDER_STATE_Pending_EVALUATION=8;
-	/**
 	 * 发布订单 date为订单创建时间
 	 */
 	public IOrderRuslt<Void> publish(OrderDto info);
+	
+	/**
+	 * 指定商户发布订单
+	 */
+	public void notifyMerchantOrder(OrderDto info,IReciverDto reciver);
 	/**
 	 * 自动派单,state 为{@code ORDER_STATE_PUBLISH 可以自动派单}
 	 */
@@ -124,5 +96,12 @@ public interface IOrderService {
 	 * @return
 	 */
 	public IOrderRuslt<Void> finishDeal(PayResultDto payResult);
+	
+	/**
+	 * @param accountId
+	 * @param slsId
+	 * @return
+	 */
+	public boolean existNotFinishOrder(Long accountId,Integer slsId);
 	
 }

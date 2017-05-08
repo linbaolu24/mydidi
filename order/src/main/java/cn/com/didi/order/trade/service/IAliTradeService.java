@@ -18,5 +18,25 @@ public interface IAliTradeService {
 	 * @return
 	 */
 	IResult<Void> asynnotify(Map<String,String> map);
+	/**
+	 * @param map
+	 * @return
+	 */
+	IResult<Void> asynnotify(Map<String,String> map,String type);
+	/**
+	 * @param map
+	 * @return
+	 */
 	IResult<Void> synnotify(AliSynResultDto map);
+	/**
+	 * @param map
+	 * @return
+	 */
+	IResult<Void> synnotify(String type,AliSynResultDto map);
+	/**
+	 * @param orderId
+	 * @param bId
+	 * @return
+	 */
+	IResult<AliPAyRequestDto> createOdrerRequest(Long accountId,String type,String obj);
 }

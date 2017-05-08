@@ -11,7 +11,7 @@ public class MerchantRemainingDtoKey implements Serializable {
     /**
      * 账户类型
      */
-    private String at;
+    private String pat;
 
     private static final long serialVersionUID = 1L;
 
@@ -32,14 +32,14 @@ public class MerchantRemainingDtoKey implements Serializable {
     /**
      * 账户类型
      **/
-    public String getAt() {
-        return at;
+    public String getPat() {
+        return pat;
     }
 
     /**
      * 账户类型
      **/
-    public void setAt(String at) {
-        this.at = at == null ? null : at.trim();
+    public void setPat(String pat) {
+        this.pat = pat == null ? null : pat.trim();
     }
 }

@@ -172,11 +172,30 @@ public class OrderDto implements Serializable {
      */
     private String cment;
 
-    
-    //add by my 
-    private String sourceState;
+    /**
+     *  1 表示美容美发
+     */
+    private String specialType;
+
+    private String ext1;
+
+    private String ext2;
+
+    /**
+     * 取消原因
+     */
+    private String cancelCause;
+
+    /**
+     * 内部标志
+     */
+    private Integer internalFlag;
+
     private static final long serialVersionUID = 1L;
 
+    //add by my 
+    private String sourceState;
+    
     /**
      * 订单id
      **/
@@ -647,6 +666,64 @@ public class OrderDto implements Serializable {
         this.cment = cment == null ? null : cment.trim();
     }
 
+    /**
+     *  1 表示美容美发
+     **/
+    public String getSpecialType() {
+        return specialType;
+    }
+
+    /**
+     *  1 表示美容美发
+     **/
+    public void setSpecialType(String specialType) {
+        this.specialType = specialType == null ? null : specialType.trim();
+    }
+
+    public String getExt1() {
+        return ext1;
+    }
+
+    public void setExt1(String ext1) {
+        this.ext1 = ext1 == null ? null : ext1.trim();
+    }
+
+    public String getExt2() {
+        return ext2;
+    }
+
+    public void setExt2(String ext2) {
+        this.ext2 = ext2 == null ? null : ext2.trim();
+    }
+
+    /**
+     * 取消原因
+     **/
+    public String getCancelCause() {
+        return cancelCause;
+    }
+
+    /**
+     * 取消原因
+     **/
+    public void setCancelCause(String cancelCause) {
+        this.cancelCause = cancelCause == null ? null : cancelCause.trim();
+    }
+
+    /**
+     * 内部标志
+     **/
+    public Integer getInternalFlag() {
+        return internalFlag;
+    }
+
+    /**
+     * 内部标志
+     **/
+    public void setInternalFlag(Integer internalFlag) {
+        this.internalFlag = internalFlag;
+    }
+
 	public String getSourceState() {
 		return sourceState;
 	}
@@ -654,21 +731,6 @@ public class OrderDto implements Serializable {
 	public void setSourceState(String sourceState) {
 		this.sourceState = sourceState;
 	}
-
-	@Override
-	public String toString() {
-		return "OrderDto [orderId=" + orderId + ", slsId=" + slsId + ", flsId=" + flsId + ", description=" + description
-				+ ", cname=" + cname + ", cci=" + cci + ", consumerAddress=" + consumerAddress + ", cas=" + cas
-				+ ", consumerName=" + consumerName + ", state=" + state + ", cause=" + cause + ", consumerAccountId="
-				+ consumerAccountId + ", merchantAccountId=" + merchantAccountId + ", lng=" + lng + ", lat=" + lat
-				+ ", businessCharge=" + businessCharge + ", businessCategory=" + businessCategory + ", masterName="
-				+ masterName + ", mci=" + mci + ", cost=" + cost + ", dealId=" + dealId + ", ort=" + ort + ", oct="
-				+ oct + ", sst=" + sst + ", oet=" + oet + ", ofst=" + ofst + ", evaluation=" + evaluation
-				+ ", textEvaluation=" + textEvaluation + ", cancelFlag=" + cancelFlag + ", commission=" + commission
-				+ ", poundage=" + poundage + ", mlng=" + mlng + ", mlat=" + mlat + ", cment=" + cment + ", sourceState="
-				+ sourceState + "]";
-	}
-
-	
+    
     
 }

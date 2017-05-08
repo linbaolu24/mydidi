@@ -22,14 +22,19 @@ import org.springframework.web.bind.annotation.RestController;
 import cn.com.didi.app.order.domain.OrderEveJAO;
 import cn.com.didi.app.order.domain.OrderIDJAO;
 import cn.com.didi.app.order.domain.OrderJAO;
+import cn.com.didi.app.order.domain.PagedOrderJAO;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
+import cn.com.didi.core.select.IPage;
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.domains.Point;
+import cn.com.didi.domain.query.ResultExt;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.CodeNameConstatns;
 import cn.com.didi.domain.util.DomainConstatns;
+import cn.com.didi.domain.util.ServiceState;
+import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderStateDto;
@@ -40,6 +45,8 @@ import cn.com.didi.user.item.service.IItemService;
 import cn.com.didi.user.system.domain.CodeDictionaryDto;
 import cn.com.didi.user.system.service.ICodeDicService;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
+import cn.com.didi.user.users.domain.MerchantDescriptionDto;
+import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.service.IMerchantService;
@@ -69,9 +76,15 @@ public class AppOrderController extends AppBaseOrderController {
 		if (cou == null || cou.getFirst() == null) {
 			return ResultFactory.success();
 		}
-		UserDto userDto = userService.selectUser(cou.getFirst().getMerchantAccountId());
+		UserDto userDto =null;
+		MerchantDto dto=null;
+		if(!SpecialTypeEnum.MRMF.codeEqual(cou.getFirst().getSpecialType())){
+			userDto=userService.selectUser(cou.getFirst().getMerchantAccountId());
+		}else{
+			dto=merchantService.selectMerchant(cou.getFirst().getMerchantAccountId());
+		}
 		UserLinkIdDto linkId = userService.selectUserLinkedId(cou.getFirst().getMerchantAccountId());
-		return ResultFactory.success(build(cou.getFirst(), cou.getSecond(), userDto, linkId));
+		return ResultFactory.success(build(cou.getFirst(), cou.getSecond(), userDto, linkId,dto));
 	}
 
 	@RequestMapping(value = "/app/c/order/state", method = { RequestMethod.POST })
@@ -127,6 +140,25 @@ public class AppOrderController extends AppBaseOrderController {
 		List<MerchantAreaDto> list = merchantService.select(center, 5, inter);
 		return ResultFactory.success(toMerchantAreaDto(list));
 	}
+	
+	@RequestMapping(value = "/app/c/order/searchV2", method = RequestMethod.POST)
+	public IResult orderSearchV2(@RequestBody PagedOrderJAO body) {
+		String str = body.getLat();
+		AssertUtil.assertNotNullAppend(str, "维度");
+		str = body.getLng();
+		AssertUtil.assertNotNullAppend(str, "经度");
+		Integer inter = body.getSlsId();
+		AssertUtil.assertNotNullAppend(inter, "二级服务");
+		Point center = new Point(body.getLng(), body.getLat());
+		if(body.getPageIndex()==0){
+			body.setPageIndex(1);
+		}
+		if(body.getPageSize()==0){
+			body.setPageSize(5);
+		}
+		IPage<MerchantDescriptionDto> list = merchantService.selectMerchantDesc(center, 5, inter,body.pageBounds());
+		return ResultExt.build(list);
+	}
 
 	protected List<Point> toMerchantAreaDto(List<MerchantAreaDto> lists) {
 		if (CollectionUtils.isEmpty(lists)) {
@@ -143,29 +175,54 @@ public class AppOrderController extends AppBaseOrderController {
 	@RequestMapping(value = "/app/c/order/publish", method = { RequestMethod.POST })
 	public IResult publish(@RequestBody OrderJAO body, HttpServletRequest request) {
 		Long accountId = resolver.resolve(request);
-		OrderDto order = toOrderDto(body);
-		Date date=new Date();
-		order.setOct(date);
-		SlServiceDto sls = itemService.selectSlService(body.getSlsId());
-		AssertUtil.assertNotNull(sls, "二级服务不存在");
-		order.setBusinessCategory(sls.getBusinessCategory());
-		order.setBusinessCharge(sls.getBusinessCharge());
-		if (StringUtils.isEmpty(order.getCname())) {
-			order.setCname(sls.getCname());
+		OrderDto order = toOrderDto2(body);
+		popNormal(order, accountId);
+		SlServiceDto sls=itemService.selectSlService(order.getSlsId());
+		if(StringUtils.isEmpty(order.getSpecialType())){
+			order.setSpecialType(SpecialTypeEnum.NORMAL.getCode());
 		}
-		order.setConsumerAccountId(accountId);
-		order.setCommission(500);
+		if(sls==null||!ServiceState.NORMAL.getCode().equals(sls.getState())||!sls.getSpecialType().equals(order.getSpecialType())){
+		   throw new IllegalArgumentException("服务不匹配。");	
+		}
 		IOrderRuslt<Void> result = orderService.publish(order);
 		if (!result.success()) {
 			return ResultFactory.error(result.getCode(), result.getMessage());
 		}
 		Map p = new HashMap();
 		p.put(DomainConstatns.ORDER_ID, result.getOrderId());
-		p.put(DomainConstatns.OCT, date);
+		p.put(DomainConstatns.OCT, order.getOct());
 		return ResultFactory.success(p);
 	}
+	
+	protected void popNormal(OrderDto order,Long consumerAccountId){
+		Date date=new Date();
+		order.setOct(date);
+		SlServiceDto sls = itemService.selectSlService(order.getSlsId());
+		AssertUtil.assertNotNull(sls, "二级服务不存在");
+		order.setBusinessCategory(sls.getBusinessCategory());
+		order.setBusinessCharge(sls.getBusinessCharge());
+		if (StringUtils.isEmpty(order.getCname())) {
+			order.setCname(sls.getCname());
+		}
+		order.setConsumerAccountId(consumerAccountId);
+		order.setCommission(500);
+	}
 
-	protected OrderDto toOrderDto(OrderJAO body) {
+	
+	
+	protected OrderDto toOrderDto2(OrderJAO body) {
+		OrderDto dto = toOrderDto(body, !SpecialTypeEnum.MRMF.codeEqual(body.getSpecialType()));
+		if (SpecialTypeEnum.MRMF.codeEqual(body.getSpecialType())) {
+			AssertUtil.assertNotNullAppend(body.getMerchantAccountId(), "商户");
+		}
+		dto.setMerchantAccountId(body.getMerchantAccountId());
+		dto.setSpecialType(body.getSpecialType());
+		return dto;
+	}
+	protected OrderDto toOrderDto(OrderJAO body){
+		return toOrderDto(body, true);
+	}
+	protected OrderDto toOrderDto(OrderJAO body, boolean isNeedKhdz) {
 		OrderDto order = new OrderDto();
 		Integer inter = body.getFlsId();
 		AssertUtil.assertNotNullAppend(inter, "一级服务");
@@ -177,10 +234,12 @@ public class AppOrderController extends AppBaseOrderController {
 		AssertUtil.assertNotNullAppend(str, "客户联系方式");
 		order.setCci(str);
 		str = body.getCas();
-		//AssertUtil.assertNotNullAppend(str, "客户地区代码");
+		// AssertUtil.assertNotNullAppend(str, "客户地区代码");
 		order.setCas(body.getCas());
 		str = body.getConsumerAddress();
-		AssertUtil.assertNotNullAppend(str, "客户地址");
+		if (isNeedKhdz) {
+			AssertUtil.assertNotNullAppend(str, "客户地址");
+		}
 		order.setConsumerAddress(str);
 
 		str = body.getConsumerName();

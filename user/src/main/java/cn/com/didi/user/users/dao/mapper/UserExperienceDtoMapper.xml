@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.didi.user.users.dao.mapper.UserExperienceDtoMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.didi.user.users.domain.UserExperienceDto" >
+    <id column="accoutId" property="accoutid" jdbcType="BIGINT" />
+    <id column="sls_id" property="slsId" jdbcType="INTEGER" />
+    <result column="num" property="num" jdbcType="INTEGER" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="ntl_time" property="ntlTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    accoutId, sls_id, num, last_time, ntl_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.users.domain.UserExperienceDtoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from t_user_experience
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="cn.com.didi.user.users.domain.UserExperienceDtoKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_user_experience
+    where accoutId = #{accoutid,jdbcType=BIGINT}
+      and sls_id = #{slsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="cn.com.didi.user.users.domain.UserExperienceDtoKey" >
+    delete from t_user_experience
+    where accoutId = #{accoutid,jdbcType=BIGINT}
+      and sls_id = #{slsId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.didi.user.users.domain.UserExperienceDtoExample" >
+    delete from t_user_experience
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.didi.user.users.domain.UserExperienceDto" >
+    insert into t_user_experience (accoutId, sls_id, num, 
+      last_time, ntl_time)
+    values (#{accoutid,jdbcType=BIGINT}, #{slsId,jdbcType=INTEGER}, #{num,jdbcType=INTEGER}, 
+      #{lastTime,jdbcType=TIMESTAMP}, #{ntlTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.didi.user.users.domain.UserExperienceDto" >
+    insert into t_user_experience
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="accoutid != null" >
+        accoutId,
+      </if>
+      <if test="slsId != null" >
+        sls_id,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="ntlTime != null" >
+        ntl_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="accoutid != null" >
+        #{accoutid,jdbcType=BIGINT},
+      </if>
+      <if test="slsId != null" >
+        #{slsId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ntlTime != null" >
+        #{ntlTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.didi.user.users.domain.UserExperienceDtoExample" resultType="java.lang.Integer" >
+    select count(*) from t_user_experience
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_user_experience
+    <set >
+      <if test="record.accoutid != null" >
+        accoutId = #{record.accoutid,jdbcType=BIGINT},
+      </if>
+      <if test="record.slsId != null" >
+        sls_id = #{record.slsId,jdbcType=INTEGER},
+      </if>
+      <if test="record.num != null" >
+        num = #{record.num,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastTime != null" >
+        last_time = #{record.lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.ntlTime != null" >
+        ntl_time = #{record.ntlTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_user_experience
+    set accoutId = #{record.accoutid,jdbcType=BIGINT},
+      sls_id = #{record.slsId,jdbcType=INTEGER},
+      num = #{record.num,jdbcType=INTEGER},
+      last_time = #{record.lastTime,jdbcType=TIMESTAMP},
+      ntl_time = #{record.ntlTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.didi.user.users.domain.UserExperienceDto" >
+    update t_user_experience
+    <set >
+      <if test="num != null" >
+        num = #{num,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ntlTime != null" >
+        ntl_time = #{ntlTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where accoutId = #{accoutid,jdbcType=BIGINT}
+      and sls_id = #{slsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.didi.user.users.domain.UserExperienceDto" >
+    update t_user_experience
+    set num = #{num,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      ntl_time = #{ntlTime,jdbcType=TIMESTAMP}
+    where accoutId = #{accoutid,jdbcType=BIGINT}
+      and sls_id = #{slsId,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  
+   <insert id="insertIgnoreSelective" parameterType="cn.com.didi.user.users.domain.UserExperienceDto" >
+    insert ignore into t_user_experience
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="accoutid != null" >
+        accoutId,
+      </if>
+      <if test="slsId != null" >
+        sls_id,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="ntlTime != null" >
+        ntl_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="accoutid != null" >
+        #{accoutid,jdbcType=BIGINT},
+      </if>
+      <if test="slsId != null" >
+        #{slsId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ntlTime != null" >
+        #{ntlTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

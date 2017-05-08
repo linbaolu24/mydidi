@@ -1,11 +1,17 @@
 package cn.com.didi.platform.user.controller;
 
+import static cn.com.didi.domain.util.NameConstans.ACCOUNT_ID;
+import static cn.com.didi.domain.util.NameConstans.PASSWORD;
+import static cn.com.didi.domain.util.NameConstans.STATE;
+import static cn.com.didi.domain.util.NameConstans.USER_NAME;
+
 import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,14 +22,14 @@ import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.core.utils.AssertUtil;
+import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.query.CountObject;
 import cn.com.didi.domain.query.ResultExt;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.Role;
 import cn.com.didi.domain.util.State;
-
-import static cn.com.didi.domain.util.NameConstans.*;
+import cn.com.didi.user.users.domain.MerchantCrDto;
 import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.MerchantExtDto;
 import cn.com.didi.user.users.domain.MerchantHolderDto;
@@ -44,11 +50,24 @@ public class UserController {
 		if (page == null) {
 			return new ResultExt<>(null, CountObject.ZERO);
 		}
+		List<MerchantDto> dto=page.getList();
+		if(!CollectionUtils.isEmpty(dto)){
+			dto.stream().forEach(one->modifyService(one));
+		}
 		CountObject co = new CountObject(page.getCount());
 		ResultExt<List<MerchantDto>, CountObject> result = new ResultExt<>(page.getList(), co);
 		return result;
 	}
-
+	public void modifyService(MerchantDto dto){
+		if(dto==null||StringUtils.isEmpty(dto.getService())){
+			return;
+		}
+		String[] strs=dto.getService().split(",");
+		if(strs.length<=3){
+			return;
+		}
+		dto.setService(strs[0]+strs[1]+strs[2]+",...");
+	}
 	@RequestMapping(value = "/platform/b/detail", method = RequestMethod.POST)
 	public IResult merchantDetail(@RequestBody UserDto dto) {
 		AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
@@ -164,4 +183,22 @@ public class UserController {
 		userService.updatePlatformUser(dto);
 		return ResultFactory.success();
 	}
+	@RequestMapping(value = "/platform/c/cr", method = RequestMethod.POST)
+	public IResult checkMerchant(@RequestBody List<MerchantCrDto> dto) {
+		if (dto == null) {
+			return ResultFactory.success();
+		}
+		service.checkMerchant(dto);
+		return ResultFactory.success();
+	}
+	@RequestMapping(value = "/platform/b/onOff", method = RequestMethod.POST)
+	public IResult onOffMerchant(@RequestBody List<IdStateDto> idStateList){
+		if(CollectionUtils.isEmpty(idStateList)){
+			return ResultFactory.success();
+		}
+		service.onOff(idStateList);
+		return ResultFactory.success();
+	}
+	
 }
+

@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
+import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -33,6 +34,7 @@ import com.alipay.api.internal.util.AlipaySignature;
 
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
+import cn.com.didi.core.tx.TranscationalCallBack;
 import cn.com.didi.core.utils.Constans;
 import cn.com.didi.core.utils.SignUtil;
 import cn.com.didi.domain.domains.AliPAyRequestDto;
@@ -44,8 +46,11 @@ import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.service.IOrderService;
 import cn.com.didi.order.result.IOrderRuslt;
+import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.service.IAliTradeService;
 import cn.com.didi.order.trade.service.ITradeService;
+import cn.com.didi.order.trade.service.ITradeTranscationCallBack;
+import cn.com.didi.order.trade.service.ITradeTranscationCallBackFinder;
 import cn.com.didi.order.trade.util.AliPayBuilder;
 import cn.com.didi.order.util.OrderMessageConstans;
 
@@ -60,6 +65,8 @@ public class AliTradeServiceImpl implements IAliTradeService {
 	protected IOrderService orderService;
 	@Resource
 	protected ITradeService tradeService;
+	@Resource
+	protected ITradeTranscationCallBackFinder finder;
 	@Value("${ali.pId}")
 	private String pId;
 	@Value("${ali.signType:RSA2}")
@@ -97,32 +104,54 @@ public class AliTradeServiceImpl implements IAliTradeService {
 			LOGGER.error("订单生成签名失败 = {},异常 = {}", orderResult.getData(), e);
 			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_PAY_ORDERINFO_FAIL);
 		}
-		// builder.
 
 	}
 
 	protected AliPayBuilder createBuilder(OrderDealDescDto desc) {
-		AliPayBuilder builder = new AliPayBuilder(true, false);
+		AliPayBuilder builder = createNormalBuilder();
 
 		builder.bcbody(desc.getDescription());
 		builder.bcsubject(desc.getCname());
-		builder.appid(appId);
-		builder.seller_id(pId);
-		builder.charset(Constans.CHARSET_UTF_8.toLowerCase());
+		
 		builder.bzout_trade_no(desc.getDealId());
 		builder.totalAmount(desc.getAmount());
 		builder.timestamp(desc.getDealTime());
+	/*	builder.appid(appId);
+		builder.seller_id(pId);
+		builder.charset(Constans.CHARSET_UTF_8.toLowerCase());
+		builder.notify_url(notifyUrl); */
+		return builder;
+	}
+	
+	protected AliPayBuilder createNormalBuilder() {
+		AliPayBuilder builder = new AliPayBuilder(true, false);
+
+		builder.appid(appId);
+		builder.seller_id(pId);
+		builder.charset(Constans.CHARSET_UTF_8.toLowerCase());
 		builder.notify_url(notifyUrl); 
 		return builder;
 	}
 
 	@Override
 	public IResult<Void> asynnotify(Map<String, String> map) {
+		IResult<Void> result = asynnotify(map);
+		if (result != null) {
+			return result;
+		}
+		if (TRADE_SUCCESS.equalsIgnoreCase((String) map.get(TRADE_STATUS))||AlipayConstants.TRADE_FINISHED.equalsIgnoreCase((String) map.get(TRADE_STATUS))) {
+			LOGGER.debug("=====交易完成操作====");
+			result = finishDeal(map);
+			return result;
+		}
+		return ResultFactory.success();
+	}
+	protected <T> IResult asynormalVerify(Map<String, String> map) {
 		String charset = StringUtils.defaultIfEmpty(map.get(CHARSET), Constans.CHARSET_UTF_8);
 		boolean isSuccess = false;
 		LOGGER.debug("异步通知验证签名");
 		try {
-			isSuccess = AlipaySignature.rsaCheckV1(map, aliPubkey, charset,map.get(AlipayConstants.SIGN_TYPE));
+			isSuccess = AlipaySignature.rsaCheckV1(map, aliPubkey, charset, map.get(AlipayConstants.SIGN_TYPE));
 		} catch (Exception e) {
 			LOGGER.error("阿里异步通知验证签名失败 =   {}  ", map, e);
 		}
@@ -130,28 +159,16 @@ public class AliTradeServiceImpl implements IAliTradeService {
 			LOGGER.error("======验证签名失败===");
 			return ResultFactory.error(OrderMessageConstans.DEAL_VERIFY_ALI_SIGN_FAIL);
 		}
-		if (TRADE_SUCCESS.equalsIgnoreCase((String) map.get(TRADE_STATUS))) {
-			LOGGER.debug("=====交易完成操作====");
-			IResult<Void> result = finishDeal(map);
-			return result;
-		}
-		return ResultFactory.success();
-
+		return null;
 	}
 
-	@Override
-	public IResult<Void> synnotify(AliSynResultDto synResultDto) {
+	public IResult<Map> synnotifyVerity(AliSynResultDto synResultDto){
 		String resultStatus = synResultDto.getResultStatus();
 		if (!RESULTSTATUS_SUCCESS.equals(resultStatus) && !RESULTSTATUS_REPEAT.equals(resultStatus)) {
 			LOGGER.error("阿里返回失败{},对象为", resultStatus, synResultDto);
 			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_RESULT_FAIL);
 		}
 		AlipayTradeAppPayResponseDto map=toAliResonse(synResultDto);
-		//com.alibaba.fastjson.JSONObject response = (com.alibaba.fastjson.JSONObject) map.get(ALIPAY_TRADE_APP_PAY_RESPONSE);
-		//Map resMap = response.toJavaObject(Map.class);//;
-		//String charset = StringUtils.defaultIfEmpty((String) resMap.get(CHARSET), Constans.CHARSET_UTF_8);
-	//	String sign = (String) map.get(SIGN);
-		//String signType = (String) map.get(SIGN_TYPE);
 		Map resMap =JSON.parseObject(map.getAlipay_trade_app_pay_response(), Map.class);
 		String charset = StringUtils.defaultIfEmpty((String) resMap.get(CHARSET), Constans.CHARSET_UTF_8);
 		String sign=map.getSign();
@@ -167,8 +184,19 @@ public class AliTradeServiceImpl implements IAliTradeService {
 			LOGGER.error("验证阿里签名不通过 [{}],AlipayTradeAppPayResponseDto=[]",synResultDto,map);
 			return ResultFactory.error(OrderMessageConstans.DEAL_VERIFY_ALI_SIGN_FAIL);
 		}
+		return ResultFactory.success(resMap);
+
+	}
+
+	@Override
+	public IResult<Void> synnotify(AliSynResultDto synResultDto) {
+		IResult<Map> verifyResult = synnotifyVerity(synResultDto);
+		if (verifyResult != null && !verifyResult.success()) {
+			return ResultFactory.error(verifyResult.getCode(), verifyResult.getMessage());
+		}
+		Map resMap = verifyResult.getData();
 		IResult<Void> result = finishDeal(resMap);
-		if(result==null||result.success()){
+		if (result == null || result.success()) {
 			return ResultFactory.success();
 		}
 		return result;
@@ -188,6 +216,22 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		BigDecimal dCost = new BigDecimal(cost).multiply(Constans.YB);
 		String trade_no=(String) map.get(AlipayConstants.TRADE_NO);
 		return finishOrderDeal(new Long(dealId), dCost.intValue(), trade_no);
+	}
+	/**
+	 * @param map
+	 * @return
+	 */
+	protected PayResultDto getPayResultDto(Map map){
+		String dealId = (String) map.get(OUT_TRADE_NO);
+		String cost = (String) map.get(TOTAL_AMOUNT);
+		BigDecimal dCost = new BigDecimal(cost).multiply(Constans.YB);
+		String trade_no=(String) map.get(AlipayConstants.TRADE_NO);
+		PayResultDto payResult = new PayResultDto();
+		payResult.setDealId(Long.valueOf(dealId));
+		payResult.setCost(dCost.intValue());
+		payResult.setAccountEnum(PayAccountEnum.ALIPAY);
+		payResult.setTradeId(trade_no);
+		return payResult;
 	}
 
 	protected void failDeal(Long dealId, String cause) {
@@ -271,4 +315,55 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		map.setSign_type(jo.optString(AlipayConstants.SIGN_TYPE));
 		return map;
 	}
+
+	@Override
+	public IResult<AliPAyRequestDto> createOdrerRequest(Long accountId, String type, String obj) {
+		AliPayBuilder builder = createNormalBuilder();
+		DealDto dto = new DealDto();
+		dto.setSai(accountId);
+		dto.setDat(PayAccountEnum.ALIPAY.getCode());
+		dto.setSat(PayAccountEnum.ALIPAY.getCode());
+		dto.setCreateTime(new Date());
+		ITradeTranscationCallBack<DealDto> callBack = finder.findCreateTranscationalCallBack(accountId,type, obj);
+		tradeService.createTrade(dto, callBack);
+		try {
+			builder.bzout_trade_no(dto.getDealId());
+			builder.totalAmount(dto.getAmount());
+			builder.timestamp(dto.getCreateTime());
+			callBack.popForAli(builder);
+			AliPAyRequestDto aliDto = builder.build(key);
+			return ResultFactory.success(aliDto);
+		} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | SignatureException e) {
+			LOGGER.error("阿里生成签名失败 = {},异常 = {}", dto, e);
+			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_PAY_ORDERINFO_FAIL);
+		}
+	}
+
+	@Override
+	public IResult<Void> asynnotify(Map<String, String> map, String type) {
+		IResult<Void> result = asynormalVerify(map);
+		if (result != null) {
+			return result;
+		}
+		if (TRADE_SUCCESS.equalsIgnoreCase((String) map.get(TRADE_STATUS))
+				|| AlipayConstants.TRADE_FINISHED.equalsIgnoreCase((String) map.get(TRADE_STATUS))) {
+			TranscationalCallBack<PayResultDto> payResultCallBack = finder.findFinishTranscationalCallBack(type);
+			PayResultDto payResult = getPayResultDto(map);
+			return tradeService.finishDeal(payResult, payResultCallBack);
+		}
+		return ResultFactory.success();
+	}
+
+	@Override
+	public IResult<Void> synnotify(String type, AliSynResultDto map) {
+		IResult<Map> verifyResult = synnotifyVerity(map);
+		if (verifyResult != null && !verifyResult.success()) {
+			return ResultFactory.error(verifyResult.getCode(), verifyResult.getMessage());
+		}
+		Map resMap = verifyResult.getData();
+		TranscationalCallBack<PayResultDto> payResultCallBack = finder.findFinishTranscationalCallBack(type);
+		PayResultDto payResult = getPayResultDto(resMap);
+		return tradeService.finishDeal(payResult, payResultCallBack);
+	}
+
 }

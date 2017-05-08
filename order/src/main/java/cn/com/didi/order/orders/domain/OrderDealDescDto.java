@@ -40,6 +40,10 @@ public class OrderDealDescDto implements Serializable{
      */
     private String description;
     private Date dealTime;
+    /**
+     * 
+     */
+    private String notifyUrl;
 
     public Long getDealId() {
 		return dealId;
@@ -70,6 +74,12 @@ public class OrderDealDescDto implements Serializable{
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
 	}
 	
 }

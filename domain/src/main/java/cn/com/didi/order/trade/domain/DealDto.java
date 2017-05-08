@@ -72,7 +72,7 @@ public class DealDto implements Serializable {
     /**
      * 余额
      */
-    private Integer remain;
+    private Long remain;
 
     /**
      * 源账户ID
@@ -93,6 +93,33 @@ public class DealDto implements Serializable {
      * 订单ID
      */
     private Long orderId;
+
+    /**
+     * 交易系统支付ID
+     */
+    private String tradeId;
+
+    private Integer poundage;
+
+    /**
+     * 扩展1
+     */
+    private String ext1;
+
+    /**
+     * 扩展2
+     */
+    private String ext2;
+
+    /**
+     * 特殊类型 0 表示正常 1 表示美容美发
+     */
+    private String specialType;
+
+    /**
+     * 交易系统信息
+     */
+    private String tradeinfo;
 
     private static final long serialVersionUID = 1L;
 
@@ -281,14 +308,14 @@ public class DealDto implements Serializable {
     /**
      * 余额
      **/
-    public Integer getRemain() {
+    public Long getRemain() {
         return remain;
     }
 
     /**
      * 余额
      **/
-    public void setRemain(Integer remain) {
+    public void setRemain(Long remain) {
         this.remain = remain;
     }
 
@@ -347,5 +374,82 @@ public class DealDto implements Serializable {
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
-    
+
+    /**
+     * 交易系统支付ID
+     **/
+    public String getTradeId() {
+        return tradeId;
+    }
+
+    /**
+     * 交易系统支付ID
+     **/
+    public void setTradeId(String tradeId) {
+        this.tradeId = tradeId == null ? null : tradeId.trim();
+    }
+
+    public Integer getPoundage() {
+        return poundage;
+    }
+
+    public void setPoundage(Integer poundage) {
+        this.poundage = poundage;
+    }
+
+    /**
+     * 扩展1
+     **/
+    public String getExt1() {
+        return ext1;
+    }
+
+    /**
+     * 扩展1
+     **/
+    public void setExt1(String ext1) {
+        this.ext1 = ext1 == null ? null : ext1.trim();
+    }
+
+    /**
+     * 扩展2
+     **/
+    public String getExt2() {
+        return ext2;
+    }
+
+    /**
+     * 扩展2
+     **/
+    public void setExt2(String ext2) {
+        this.ext2 = ext2 == null ? null : ext2.trim();
+    }
+
+    /**
+     * 特殊类型 0 表示正常 1 表示美容美发
+     **/
+    public String getSpecialType() {
+        return specialType;
+    }
+
+    /**
+     * 特殊类型 0 表示正常 1 表示美容美发
+     **/
+    public void setSpecialType(String specialType) {
+        this.specialType = specialType == null ? null : specialType.trim();
+    }
+
+    /**
+     * 交易系统信息
+     **/
+    public String getTradeinfo() {
+        return tradeinfo;
+    }
+
+    /**
+     * 交易系统信息
+     **/
+    public void setTradeinfo(String tradeinfo) {
+        this.tradeinfo = tradeinfo == null ? null : tradeinfo.trim();
+    }
 }

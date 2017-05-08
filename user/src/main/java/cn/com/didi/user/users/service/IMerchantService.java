@@ -3,11 +3,13 @@ package cn.com.didi.user.users.service;
 import java.util.List;
 
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.select.IPageBound;
 import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
-import cn.com.didi.user.users.MerchantCrDto;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
+import cn.com.didi.user.users.domain.MerchantCrDto;
+import cn.com.didi.user.users.domain.MerchantDescriptionDto;
 import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.MerchantHolderDto;
 import cn.com.didi.user.users.domain.MerchantServiceDto;
@@ -18,7 +20,29 @@ import cn.com.didi.user.users.domain.MerchantServiceDto;
  */
 public interface IMerchantService {
 	IPage<MerchantDto> selectMerchants(TimeInterval interval);
-
+	/**
+	 * @param center
+	 * @param radius 千米
+	 * @param slsId
+	 * @param IPageBound bounds
+	 * @return
+	 */
+	IPage<MerchantDto> selectMerchants(Point center, int radius, Integer slsId,IPageBound bounds);
+	
+	/**
+	 * @param center
+	 * @param radius 千米
+	 * @param slsId
+	 * @param IPageBound bounds
+	 * @return
+	 */
+	IPage<MerchantDescriptionDto> selectMerchantDesc(Point center, int radius, Integer slsId,IPageBound bounds);
+	/**
+	 * @param merchantId
+	 * @return
+	 */
+	List<MerchantDto> selectMerchants(List<Long> merchantId);
+ 
 	/**
 	 * @param accountId
 	 * @return
@@ -67,7 +91,14 @@ public interface IMerchantService {
 	// List<MerchantAreaDto> select(MerchantAreaDto leftDown,MerchantAreaDto
 	// rightTop,Integer slsId);
 
+	/**
+	 * @param center
+	 * @param radius km
+	 * @param slsId
+	 * @return
+	 */
 	List<MerchantAreaDto> select(Point center, int radius, Integer slsId);
+	
 
 	MerchantDto match(MerchantAreaDto mad, Integer slsId);
 	
@@ -95,4 +126,10 @@ public interface IMerchantService {
 	 */
 	public void editMerchant(MerchantDto merchant, List<MerchantServiceDto> serviceList,
 			List<MerchantAreaDto> areaList) ;
+	/**
+	 * @param accountId
+	 * @return
+	 */
+	String getMerchantLogo(Long accountId);
+	//public List<UserLinkIdDto> selectMeachant(BusinessCategory busi);
 }

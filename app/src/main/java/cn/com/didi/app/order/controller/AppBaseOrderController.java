@@ -38,8 +38,10 @@ import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
+import cn.com.didi.order.orders.service.IOrderRenderService;
 import cn.com.didi.order.orders.service.IOrderService;
 import cn.com.didi.user.system.domain.CodeDictionaryDto;
+import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.service.IUserService;
@@ -54,13 +56,15 @@ public class AppBaseOrderController {
 	protected IUserService userService;
 	@Resource
 	protected IOrderService orderService;
+	@Resource 
+	protected IOrderRenderService orderRenderService ;
 
 	protected void assertOrderId(Long orderId) {
 		AssertUtil.assertNotNull(orderId, "订单号");
 		AssertUtil.assertNotNegative(orderId, "订单号");
 	}
 
-	public Map build(OrderDto order, OrderEvaluationDto eve, UserDto userDto, UserLinkIdDto userLink) {
+	public Map build(OrderDto order, OrderEvaluationDto eve, UserDto userDto, UserLinkIdDto userLink,MerchantDto dto) {
 		Map map =build(order);
 		map.put(MCI, order.getMci());
 		if (eve != null) {
@@ -78,6 +82,10 @@ public class AppBaseOrderController {
 		if (userDto != null) {
 			map.put(MPP, userDto.getProfilePhoto());
 		}
+		if(dto!=null){
+			map.put(DomainConstatns.MERCHANTLOGO, dto.getMerchantLogo());//
+			map.put(DomainConstatns.MERCHANT_NAME,dto.getCname());
+		}
 		map.put(DomainConstatns.CONSUMER_NAME, order.getConsumerName());
 		return map;
 
@@ -88,6 +96,10 @@ public class AppBaseOrderController {
 		Map map = new HashMap(16);
 		map.put(ORDER_ID, order.getOrderId());
 		map.put(STATE, order.getState());
+		String stateText=orderRenderService.renderStateText(order);
+		if(!StringUtils.isEmpty(stateText)){
+			map.put(DomainConstatns.STATE_TEXT, stateText);
+		}
 		map.put(ORT, order.getOrt());
 		map.put(OFST, order.getOfst());
 		map.put(BUSINESS_CATEGORY, order.getBusinessCategory());
@@ -99,6 +111,7 @@ public class AppBaseOrderController {
 		map.put(DomainConstatns.CCI, order.getCci());// 客户联系方式
 		map.put(DomainConstatns.CNAME, order.getCname());
 		map.put(DomainConstatns.COMMISSION, order.getCommission());
+		map.put(DomainConstatns.SPECIALTYPE, order.getSpecialType());
 		return map;
 
 	}
@@ -113,7 +126,7 @@ public class AppBaseOrderController {
 		// map.put(BUSINESS_CATEGORY, order.getBusinessCategory());
 		map.put(COST, order.getCost());
 		map.put(BUSINESS_CHARGE, order.getBusinessCharge());
-
+		map.put(DomainConstatns.SPECIALTYPE, order.getSpecialType());//
 		map.put(MASTER_NAME, order.getMasterName());
 
 		map.put(MCI, order.getMci());

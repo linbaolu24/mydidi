@@ -1,8 +1,9 @@
 package cn.com.didi.domain.util;
 
+import cn.com.didi.core.property.ICodeAble;
 import cn.com.didi.domain.domains.PayAccountDto;
 
-public enum PayAccountEnum {
+public enum PayAccountEnum implements ICodeAble{
 	ALIPAY("0") {
 		@Override
 		public String getAccoutId(PayAccountDto payAccount) {
@@ -25,6 +26,7 @@ public enum PayAccountEnum {
 	private PayAccountEnum(String code) {
 		this.code = code;
 	}
+
 	public abstract String getAccoutId(PayAccountDto payAccount);
 	
 }

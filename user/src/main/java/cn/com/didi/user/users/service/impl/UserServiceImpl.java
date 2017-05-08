@@ -22,6 +22,7 @@ import cn.com.didi.core.property.impl.codec.ArrayCodec;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.core.utils.Constans;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.Role;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.users.dao.mapper.UserDtoMapper;
 import cn.com.didi.user.users.dao.mapper.UserLinkIdDtoMapper;
@@ -276,6 +277,18 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String selectPhone(Long accountId) {
+		UserDto user=selectUser(accountId);
+		if(user==null){
+			return null;
+		}
+		if(!Role.PLATFORM.getCode().equals(user.getRole())){
+			return user.getUserName();
+		}
+		return user.getBpn();
 	}
 	
 

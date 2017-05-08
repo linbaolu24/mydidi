@@ -6,30 +6,42 @@ import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
 import cn.com.didi.core.select.IPage;
 
-public class MybatisPaginatorPage<T> implements IPage<T>{
-	private PageList<T> pageList;
-	
+public class MybatisPaginatorPage<T> implements IPage<T> {
+	private List<T> list;
+	private Integer totalCount;
+
 	public MybatisPaginatorPage(PageList<T> pageList) {
+		this(pageList, pageList.getPaginator().getTotalCount());
+
+	}
+
+	public MybatisPaginatorPage(PageList<T> pageList, Integer totalCount) {
 		super();
-		this.pageList = pageList;
+		this.list = pageList;
+		this.totalCount = totalCount;
 	}
 
 	@Override
 	public int getCount() {
-		return pageList.getPaginator().getTotalCount();
+		if (totalCount == null) {
+			return -1;
+		}
+		return totalCount;
 	}
 
 	@Override
 	public List<T> getList() {
-		return pageList;
+		return list;
 	}
 
-	public PageList<T> getPageList() {
-		return pageList;
+	public void setCount(int count) {
+		this.totalCount = count;
 	}
 
-	public void setPageList(PageList<T> pageList) {
-		this.pageList = pageList;
+	@Override
+	public void setList(List<T> list) {
+		this.list = list;
+
 	}
-	
+
 }

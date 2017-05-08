@@ -19,6 +19,8 @@ public interface IUserService {
 	 * @return
 	 */
 	public UserDto selectUser(Long accountId);
+	
+	public String selectPhone(Long accountId);
 	/**
 	 * 根据用户名查询,会对密码解密
 	 * @param accountId

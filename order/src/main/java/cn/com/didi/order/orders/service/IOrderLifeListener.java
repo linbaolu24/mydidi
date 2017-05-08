@@ -6,8 +6,9 @@ import cn.com.didi.order.result.IOrderRuslt;
 
 /**
  * @author xlm
- *
+ * 不建议使用 
  */
+@Deprecated
 public interface IOrderLifeListener {
 	/**
 	 * 发布订单

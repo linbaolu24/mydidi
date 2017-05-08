@@ -16,7 +16,10 @@ import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.BusinessCategory;
+import cn.com.didi.domain.util.BusinessCharge;
 import cn.com.didi.domain.util.ServiceState;
+import cn.com.didi.domain.util.VisualMark;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.item.dao.mapper.FlServiceDtoMapper;
 import cn.com.didi.user.item.dao.mapper.SlServiceDtoMapper;
@@ -89,12 +92,14 @@ public class ItemServiceImpl implements IItemService {
 
 	@Override
 	public Integer selectMaxFlsDisplayOrder() {
-		return flsMapper.selectMaxFlsDisplayOrder();
+		Integer order= flsMapper.selectMaxFlsDisplayOrder();
+		return order==null?0:order;
 	}
 
 	@Override
 	public Integer selectMaxSlsDisplayOrder(Integer flsId) {
-		return slsMapper.selectMaxSlsDisplayOrder(flsId);
+		Integer order= slsMapper.selectMaxSlsDisplayOrder(flsId);
+		return order==null?0:order;
 	}
 
 	@Override
@@ -117,6 +122,9 @@ public class ItemServiceImpl implements IItemService {
 		}
 		if(dto.getDisplayOrder()==null){
 			dto.setDisplayOrder(0);
+		}
+		if(StringUtils.isEmpty(dto.getBusinessCharge())){
+			dto.setBusinessCharge(BusinessCategory.THIRD.getCode().equals(dto.getBusinessCategory())?BusinessCharge.CHARGE.getCode():BusinessCharge.Free.getCode());
 		}
 		updateFlsCount(dto.getFlsId());
 		Integer sId = dto.getServiceId();
@@ -274,8 +282,12 @@ public class ItemServiceImpl implements IItemService {
 	}
 	protected List<Integer> toServiceIdList(List<FlServiceDto> list){
 		List<Integer> lists=new ArrayList(list.size());
+		FlServiceDto one;
 		for(int i=0;i<list.size();i++){
+			one=list.get(i);
+			if(one.getSlsNum()>0||VisualMark.VISUAL.getCode().equals(one.getVirtualFlag())){
 			lists.add(list.get(i).getServiceId());
+			}
 		}
 		return lists;
 	}

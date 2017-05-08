@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.didi.user.item.dao.mapper.FlServiceDtoMapper" >
-  <resultMap id="BaseResultMap" type="cn.com.didi.user.item.domain.FlServiceDto" >
+<resultMap id="BaseResultMap" type="cn.com.didi.user.item.domain.FlServiceDto" >
     <id column="service_Id" property="serviceId" jdbcType="INTEGER" />
     <result column="cname" property="cname" jdbcType="VARCHAR" />
     <result column="display_Order" property="displayOrder" jdbcType="INTEGER" />
     <result column="state" property="state" jdbcType="CHAR" />
     <result column="create_Time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="sls_num" property="slsNum" jdbcType="INTEGER" />
+    <result column="virtual_flag" property="virtualFlag" jdbcType="CHAR" />
+    <result column="special_type" property="specialType" jdbcType="CHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -68,7 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    service_Id, cname, display_Order, state, create_Time, sls_num
+    service_Id, cname, display_Order, state, create_Time, sls_num, virtual_flag, special_type, 
+    ext1, ext2
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.item.domain.FlServiceDtoExample" >
     select
@@ -103,11 +108,13 @@
   </delete>
   <insert id="insert" parameterType="cn.com.didi.user.item.domain.FlServiceDto" >
     insert into fl_service (service_Id, cname, display_Order, 
-      state, create_Time, sls_num
-      )
+      state, create_Time, sls_num, 
+      virtual_flag, special_type, ext1, 
+      ext2)
     values (#{serviceId,jdbcType=INTEGER}, #{cname,jdbcType=VARCHAR}, #{displayOrder,jdbcType=INTEGER}, 
-      #{state,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{slsNum,jdbcType=INTEGER}
-      )
+      #{state,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{slsNum,jdbcType=INTEGER}, 
+      #{virtualFlag,jdbcType=CHAR}, #{specialType,jdbcType=CHAR}, #{ext1,jdbcType=VARCHAR}, 
+      #{ext2,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.didi.user.item.domain.FlServiceDto" >
     insert into fl_service
@@ -130,6 +137,18 @@
       <if test="slsNum != null" >
         sls_num,
       </if>
+      <if test="virtualFlag != null" >
+        virtual_flag,
+      </if>
+      <if test="specialType != null" >
+        special_type,
+      </if>
+      <if test="ext1 != null" >
+        ext1,
+      </if>
+      <if test="ext2 != null" >
+        ext2,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="serviceId != null" >
@@ -149,6 +168,18 @@
       </if>
       <if test="slsNum != null" >
         #{slsNum,jdbcType=INTEGER},
+      </if>
+      <if test="virtualFlag != null" >
+        #{virtualFlag,jdbcType=CHAR},
+      </if>
+      <if test="specialType != null" >
+        #{specialType,jdbcType=CHAR},
+      </if>
+      <if test="ext1 != null" >
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        #{ext2,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -179,6 +210,18 @@
       <if test="record.slsNum != null" >
         sls_num = #{record.slsNum,jdbcType=INTEGER},
       </if>
+      <if test="record.virtualFlag != null" >
+        virtual_flag = #{record.virtualFlag,jdbcType=CHAR},
+      </if>
+      <if test="record.specialType != null" >
+        special_type = #{record.specialType,jdbcType=CHAR},
+      </if>
+      <if test="record.ext1 != null" >
+        ext1 = #{record.ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ext2 != null" >
+        ext2 = #{record.ext2,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -191,7 +234,11 @@
       display_Order = #{record.displayOrder,jdbcType=INTEGER},
       state = #{record.state,jdbcType=CHAR},
       create_Time = #{record.createTime,jdbcType=TIMESTAMP},
-      sls_num = #{record.slsNum,jdbcType=INTEGER}
+      sls_num = #{record.slsNum,jdbcType=INTEGER},
+      virtual_flag = #{record.virtualFlag,jdbcType=CHAR},
+      special_type = #{record.specialType,jdbcType=CHAR},
+      ext1 = #{record.ext1,jdbcType=VARCHAR},
+      ext2 = #{record.ext2,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -214,6 +261,18 @@
       <if test="slsNum != null" >
         sls_num = #{slsNum,jdbcType=INTEGER},
       </if>
+      <if test="virtualFlag != null" >
+        virtual_flag = #{virtualFlag,jdbcType=CHAR},
+      </if>
+      <if test="specialType != null" >
+        special_type = #{specialType,jdbcType=CHAR},
+      </if>
+      <if test="ext1 != null" >
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
     </set>
     where service_Id = #{serviceId,jdbcType=INTEGER}
   </update>
@@ -223,11 +282,15 @@
       display_Order = #{displayOrder,jdbcType=INTEGER},
       state = #{state,jdbcType=CHAR},
       create_Time = #{createTime,jdbcType=TIMESTAMP},
-      sls_num = #{slsNum,jdbcType=INTEGER}
+      sls_num = #{slsNum,jdbcType=INTEGER},
+      virtual_flag = #{virtualFlag,jdbcType=CHAR},
+      special_type = #{specialType,jdbcType=CHAR},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR}
     where service_Id = #{serviceId,jdbcType=INTEGER}
   </update>
   
-  
+ <!-- add by my -->
   <select id="selectAllFlService" resultMap="BaseResultMap">
 	select
 	<include refid="Base_Column_List" />
@@ -266,17 +329,23 @@
 	
 	
 	
-	<resultMap id="ItemBaseResultMap" type="cn.com.didi.user.item.domain.FlServiceItemDto" >
+	 <resultMap id="ItemBaseResultMap" type="cn.com.didi.user.item.domain.FlServiceItemDto" >
     <id column="service_Id" property="serviceId" jdbcType="INTEGER" />
     <result column="cname" property="cname" jdbcType="VARCHAR" />
     <result column="display_Order" property="displayOrder" jdbcType="INTEGER" />
-    <result column="sls_id" property="slsId" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="CHAR" />
+    <result column="create_Time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="sls_num" property="slsNum" jdbcType="INTEGER" />
+    <result column="virtual_mark" property="virtualMark" jdbcType="CHAR" />
+    <result column="special_type" property="specialType" jdbcType="CHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
   </resultMap>
 	
 	<select id="selectItems" resultMap="ItemBaseResultMap">
 		select ft.service_Id ,(select st.service_id from sl_service st where ft.service_Id=st.fls_id and st.state='0' ORDER BY st.display_order DESC LIMIT 1    ) as sls_id,
-		ft.cname ,
-		ft.display_order from fl_service ft where ft.state='0' and ft.sls_num>0 ORDER BY ft.display_order DESC  
+		ft.cname ,virtual_mark,
+		ft.display_order from fl_service ft where ft.state='0' and (ft.sls_num>0 or virtualMark='1') ORDER BY ft.display_order DESC  
 	</select>
 	
 </mapper>

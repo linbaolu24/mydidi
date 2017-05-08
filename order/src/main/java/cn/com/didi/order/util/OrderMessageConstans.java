@@ -69,6 +69,24 @@ public class OrderMessageConstans {
 	 */
 	public static final Message ORDER_ID_CONFLICT=newMessage(DomainMessageConstans.CODE_ORDER_ID_CONFLICT);//="5003000013";
 	
+	
+	
+	/**
+	 * 存在未完成的美容美发订单
+	 */
+	public static final Message ORDER_EXIST_NOT_END_MRMF_ORDER =newMessage(DomainMessageConstans.CODE_ORDER_EXIST_NOT_END_MRMF_ORDER);//="5003000013";
+	
+	/**
+	 * 不存在押金
+	 */
+	public static final Message ORDER_NO_DEPOSITE =newMessage(DomainMessageConstans.CODE_ORDER_NO_DEPOSITE);//="5003000014";
+	/**
+	 * 不存在体验记录
+	 */
+	public static final Message ORDER_NO_USER_EXPERIENCE =newMessage(DomainMessageConstans.CODE_ORDER_NO_USER_EXPERIENCE);//="5003000014";
+	
+	
+	
 	/**
 	 * 交易不存在
 	 */
@@ -117,6 +135,9 @@ public class OrderMessageConstans {
 	
 	/**微信支付异常*/
 	public static final Message DEAL_WECHAT_PAY_NOTIFY_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_PAY_NOTIFY_ERROR);
+	
+	
+	
 	/**
 	 * @param code
 	 * @return

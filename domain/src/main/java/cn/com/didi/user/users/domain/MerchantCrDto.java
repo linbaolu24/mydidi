@@ -1,6 +1,12 @@
-package cn.com.didi.user.users;
+package cn.com.didi.user.users.domain;
 
-public class MerchantCrDto {
+import java.io.Serializable;
+
+public class MerchantCrDto implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long accountId;
 	private String cr;
 	private String cause;

@@ -30,4 +30,6 @@ public interface MerchantRemainingDtoMapper {
     int updateByPrimaryKey(MerchantRemainingDto record);
     
     int updateAddRemaining(MerchantRemainingDto meDto);
+    //add by myself
+    public Long countRemain(Long accountId);
 }

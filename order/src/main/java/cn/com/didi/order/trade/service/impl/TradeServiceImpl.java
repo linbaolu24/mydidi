@@ -37,7 +37,9 @@ public class TradeServiceImpl implements ITradeService {
 		if(StringUtils.isEmpty(dto.getState())){
 			dto.setState(DealEnum.WAITTING.getCode());
 		}
+		
 		tradeInfoService.createTrade(dto, deal);
+		//deal.invoke(dto);
 	}
 
 	@Override
@@ -54,20 +56,26 @@ public class TradeServiceImpl implements ITradeService {
 	@Override
 	public IResult<Void> finishDeal(PayResultDto payResult, TranscationalCallBack<PayResultDto> dealCallBack) {
 		Long dealId = payResult.getDealId();
-		DealDto deal = tradeInfoService.selectDeal(dealId);
-		IResult<Void> result = dealExist(deal);
-		if (result != null) {
-			return result;
+		for (int i = 0; i < 3; i++) {
+			DealDto deal = tradeInfoService.selectDeal(dealId);
+			IResult<Void> result = dealExist(deal);
+			if (result != null) {
+				return result;
+			}
+			result = dealVerify(payResult, deal);
+			if (result != null) {
+				return result;
+			}
+			if (DealEnum.FINISH.getCode().equals(deal.getState())) {// 如果已经是成功状态的deal
+				return null;
+			}
+			payResult.setDeal(deal);
+			int count = tradeInfoService.finishDeal(deal, payResult, dealCallBack);
+			if (count > 0) {
+				return null;
+			}
 		}
-		result = dealVerify(payResult, deal);
-		if (result != null) {
-			return result;
-		}
-		if(DealEnum.FINISH.getCode().equals(deal.getState())){//如果已经是成功状态的deal
-			return null;
-		}
-		tradeInfoService.finishDeal(deal,payResult, dealCallBack);
-		return null;
+		return null;//返回错误
 	}
 
 	protected <T> IResult<T> dealExist(DealDto deal) {
@@ -100,6 +108,24 @@ public class TradeServiceImpl implements ITradeService {
 	@Override
 	public int fail(Long dealId, String cause) {
 		return tradeInfoService.fail(dealId, cause);
+	}
+
+	@Override
+	public IResult<Void> draw(DealDto pay) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResult<Void> pendingDraw(Long dealId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResult<Void> rollBack(DealDto pay, boolean needLock) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.thread.ExecutorFactory;
+import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.order.IOrderInfo;
 import cn.com.didi.order.orders.service.IOrderService;
 import cn.com.didi.order.result.IOrderRuslt;
@@ -51,7 +52,7 @@ public class DispatchServiceImpl extends OrderLifeListenerAdapter {
 
 	@Override
 	public boolean publish(IOrderService service, IOrderInfo info, IOrderRuslt<Void> result) {
-		if ((result == null || result.success())
+		if (!SpecialTypeEnum.MRMF.equals(info.getSpecialType())&&(result == null || result.success())
 				&& (info != null && info.getOrderId() != null && info.getConsumerId() != null)) {
 			LOGGER.debug("=====进行派单======");
 			DispatchRunable run = new DispatchRunable(info.getOrderId(), info.getConsumerId(), service,

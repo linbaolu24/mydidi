@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.didi.user.ad.dao.mapper.AdDtoMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.didi.user.ad.domain.AdDto" >
+    <id column="ad_id" property="adId" jdbcType="BIGINT" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+    <result column="display_position" property="displayPosition" jdbcType="VARCHAR" />
+    <result column="lp_url" property="lpUrl" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="ads_start" property="adsStart" jdbcType="TIMESTAMP" />
+    <result column="ads_end" property="adsEnd" jdbcType="TIMESTAMP" />
+    <result column="ads_time_start" property="adsTimeStart" jdbcType="INTEGER" />
+    <result column="ads_time_end" property="adsTimeEnd" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="CHAR" />
+    <result column="exposure" property="exposure" jdbcType="INTEGER" />
+    <result column="click_rate" property="clickRate" jdbcType="INTEGER" />
+    <result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ad_id, cname, display_position, lp_url, create_time, ads_start, ads_end, ads_time_start, 
+    ads_time_end, state, exposure, click_rate, img_url
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.ad.domain.AdDtoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from t_advert
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_advert
+    where ad_id = #{adId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_advert
+    where ad_id = #{adId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.didi.user.ad.domain.AdDtoExample" >
+    delete from t_advert
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.didi.user.ad.domain.AdDto" useGeneratedKeys="true" keyProperty="adId">
+    insert into t_advert (ad_id, cname, display_position, 
+      lp_url, create_time, ads_start, 
+      ads_end, ads_time_start, ads_time_end, 
+      state, exposure, click_rate, 
+      img_url)
+    values (#{adId,jdbcType=BIGINT}, #{cname,jdbcType=VARCHAR}, #{displayPosition,jdbcType=VARCHAR}, 
+      #{lpUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{adsStart,jdbcType=TIMESTAMP}, 
+      #{adsEnd,jdbcType=TIMESTAMP}, #{adsTimeStart,jdbcType=INTEGER}, #{adsTimeEnd,jdbcType=INTEGER}, 
+      #{state,jdbcType=CHAR}, #{exposure,jdbcType=INTEGER}, #{clickRate,jdbcType=INTEGER}, 
+      #{imgUrl,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.didi.user.ad.domain.AdDto" useGeneratedKeys="true" keyProperty="adId">
+    insert into t_advert
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="adId != null" >
+        ad_id,
+      </if>
+      <if test="cname != null" >
+        cname,
+      </if>
+      <if test="displayPosition != null" >
+        display_position,
+      </if>
+      <if test="lpUrl != null" >
+        lp_url,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="adsStart != null" >
+        ads_start,
+      </if>
+      <if test="adsEnd != null" >
+        ads_end,
+      </if>
+      <if test="adsTimeStart != null" >
+        ads_time_start,
+      </if>
+      <if test="adsTimeEnd != null" >
+        ads_time_end,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="exposure != null" >
+        exposure,
+      </if>
+      <if test="clickRate != null" >
+        click_rate,
+      </if>
+      <if test="imgUrl != null" >
+        img_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="adId != null" >
+        #{adId,jdbcType=BIGINT},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="displayPosition != null" >
+        #{displayPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="lpUrl != null" >
+        #{lpUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="adsStart != null" >
+        #{adsStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="adsEnd != null" >
+        #{adsEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="adsTimeStart != null" >
+        #{adsTimeStart,jdbcType=INTEGER},
+      </if>
+      <if test="adsTimeEnd != null" >
+        #{adsTimeEnd,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=CHAR},
+      </if>
+      <if test="exposure != null" >
+        #{exposure,jdbcType=INTEGER},
+      </if>
+      <if test="clickRate != null" >
+        #{clickRate,jdbcType=INTEGER},
+      </if>
+      <if test="imgUrl != null" >
+        #{imgUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.didi.user.ad.domain.AdDtoExample" resultType="java.lang.Integer" >
+    select count(*) from t_advert
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_advert
+    <set >
+      <if test="record.adId != null" >
+        ad_id = #{record.adId,jdbcType=BIGINT},
+      </if>
+      <if test="record.cname != null" >
+        cname = #{record.cname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.displayPosition != null" >
+        display_position = #{record.displayPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lpUrl != null" >
+        lp_url = #{record.lpUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.adsStart != null" >
+        ads_start = #{record.adsStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.adsEnd != null" >
+        ads_end = #{record.adsEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.adsTimeStart != null" >
+        ads_time_start = #{record.adsTimeStart,jdbcType=INTEGER},
+      </if>
+      <if test="record.adsTimeEnd != null" >
+        ads_time_end = #{record.adsTimeEnd,jdbcType=INTEGER},
+      </if>
+      <if test="record.state != null" >
+        state = #{record.state,jdbcType=CHAR},
+      </if>
+      <if test="record.exposure != null" >
+        exposure = #{record.exposure,jdbcType=INTEGER},
+      </if>
+      <if test="record.clickRate != null" >
+        click_rate = #{record.clickRate,jdbcType=INTEGER},
+      </if>
+      <if test="record.imgUrl != null" >
+        img_url = #{record.imgUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_advert
+    set ad_id = #{record.adId,jdbcType=BIGINT},
+      cname = #{record.cname,jdbcType=VARCHAR},
+      display_position = #{record.displayPosition,jdbcType=VARCHAR},
+      lp_url = #{record.lpUrl,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      ads_start = #{record.adsStart,jdbcType=TIMESTAMP},
+      ads_end = #{record.adsEnd,jdbcType=TIMESTAMP},
+      ads_time_start = #{record.adsTimeStart,jdbcType=INTEGER},
+      ads_time_end = #{record.adsTimeEnd,jdbcType=INTEGER},
+      state = #{record.state,jdbcType=CHAR},
+      exposure = #{record.exposure,jdbcType=INTEGER},
+      click_rate = #{record.clickRate,jdbcType=INTEGER},
+      img_url = #{record.imgUrl,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.didi.user.ad.domain.AdDto" >
+    update t_advert
+    <set >
+      <if test="cname != null" >
+        cname = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="displayPosition != null" >
+        display_position = #{displayPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="lpUrl != null" >
+        lp_url = #{lpUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="adsStart != null" >
+        ads_start = #{adsStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="adsEnd != null" >
+        ads_end = #{adsEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="adsTimeStart != null" >
+        ads_time_start = #{adsTimeStart,jdbcType=INTEGER},
+      </if>
+      <if test="adsTimeEnd != null" >
+        ads_time_end = #{adsTimeEnd,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=CHAR},
+      </if>
+      <if test="exposure != null" >
+        exposure = #{exposure,jdbcType=INTEGER},
+      </if>
+      <if test="clickRate != null" >
+        click_rate = #{clickRate,jdbcType=INTEGER},
+      </if>
+      <if test="imgUrl != null" >
+        img_url = #{imgUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ad_id = #{adId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.didi.user.ad.domain.AdDto" >
+    update t_advert
+    set cname = #{cname,jdbcType=VARCHAR},
+      display_position = #{displayPosition,jdbcType=VARCHAR},
+      lp_url = #{lpUrl,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      ads_start = #{adsStart,jdbcType=TIMESTAMP},
+      ads_end = #{adsEnd,jdbcType=TIMESTAMP},
+      ads_time_start = #{adsTimeStart,jdbcType=INTEGER},
+      ads_time_end = #{adsTimeEnd,jdbcType=INTEGER},
+      state = #{state,jdbcType=CHAR},
+      exposure = #{exposure,jdbcType=INTEGER},
+      click_rate = #{clickRate,jdbcType=INTEGER},
+      img_url = #{imgUrl,jdbcType=VARCHAR}
+    where ad_id = #{adId,jdbcType=BIGINT}
+  </update>
+  
+  
+  
+  
+  <!-- add by my -->
+  
+  <update id="updateState"  >
+    update t_advert
+    set  state = #{state,jdbcType=CHAR}
+    where ad_id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateAddExposure">
+   update t_advert
+    set  exposure =exposure+ #{added,jdbcType=CHAR}
+    where ad_id = #{adId,jdbcType=BIGINT}
+  </update>
+  
+   <update id="updateAddClickRate">
+   update t_advert
+    set  click_rate =click_rate+ #{added,jdbcType=CHAR}
+    where ad_id = #{adId,jdbcType=BIGINT}
+  </update>
+  
+  
+  
+  
+   <select id="selectAdPage" resultMap="BaseResultMap">
+  select <include refid="Base_Column_List"></include> from t_advert 
+  <where>
+    <if test="time.startTime != null">and create_time&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.endTime != null">and create_time&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.state != null">and state = #{time.state,jdbcType=CHAR}</if>
+    <if test="time.key != null">and cname = #{time.key,jdbcType=VARCHAR}</if>
+    <if test="time.displayPosition != null"> and display_position = #{time.displayPosition,jdbcType=VARCHAR}</if>
+   </where>
+    order by create_time desc
+    </select>
+    
+    <select id="selectAd" resultMap="BaseResultMap">
+  select <include refid="Base_Column_List"></include> from t_advert 
+  <where>
+      ads_start &lt;= #{time,jdbcType=TIMESTAMP},
+      and ads_end &gt;= #{time,jdbcType=TIMESTAMP},
+      and ads_time_start &lt;= #{hour,jdbcType=INTEGER},
+      and ads_time_end &gt;= #{hour,jdbcType=INTEGER},
+      and displayPosition=#{display,jdbcType=VARCHAR}
+      and state='0' limit 1
+  </where>
+  </select>
+    
+  <!--   <select id="selectAdList" resultMap="BaseResultMap">
+  select <include refid="Base_Column_List"></include> from t_advert 
+  <where>
+      ads_start &lt;= #{time,jdbcType=TIMESTAMP},
+      and ads_end &gt;= #{time,jdbcType=TIMESTAMP},
+      and ads_time_start &lt;= #{hour,jdbcType=INTEGER},
+      and ads_time_end &gt;= #{hour,jdbcType=INTEGER},
+      and displayPosition=#{display,jdbcType=VARCHAR}
+      and state='0' 
+  </where>
+  </select> -->
+  
+  
+   <select id="selectAdList" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List"></include> from t_advert 
+      <where>
+      ads_start &lt;= #{time,jdbcType=TIMESTAMP},
+      and ads_end &gt;= #{time,jdbcType=TIMESTAMP},
+      and ads_time_start &lt;= #{hour,jdbcType=INTEGER},
+      and ads_time_end &gt;= #{hour,jdbcType=INTEGER},
+      and displayPosition=#{display,jdbcType=VARCHAR}
+      and state='0' 
+      </where>
+  </select>
+    
+    
+</mapper>

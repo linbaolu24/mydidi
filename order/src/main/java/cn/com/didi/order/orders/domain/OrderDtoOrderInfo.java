@@ -297,5 +297,10 @@ public class OrderDtoOrderInfo implements IOrderInfo{
 	public boolean selfBusiness() {
 		return BusinessCategory.SELF.getCode().equals(getBusinessCategory());
 	}
+
+	@Override
+	public String getSpecialType() {
+		return dto.getSpecialType();
+	}
 	
 }

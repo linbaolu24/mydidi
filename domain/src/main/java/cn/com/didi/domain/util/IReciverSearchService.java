@@ -45,4 +45,11 @@ public interface IReciverSearchService {
 	 * @return
 	 */
 	public IMerchantDto getMerchant(Long accountId);
+	public String getPhone(Long accountId);
+	/**
+	 * 获取商家信息
+	 * @param accountId
+	 * @return
+	 */
+	public Couple<IMerchantDto, IReciverDto> getMerchantAndReciver(Long accountId);
 }

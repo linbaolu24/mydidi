@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import cn.com.didi.domain.util.VisualMark;
+
 public class FlsItemDto {
 	public List<SlsItemDto> getItem() {
 		return item;
@@ -60,6 +62,10 @@ public class FlsItemDto {
 	}
 	public boolean empty(){
 		return CollectionUtils.isEmpty(item);
+	}
+	
+	public boolean visual(){
+		return VisualMark.VISUAL.getCode().equals(flsDto.getVirtualFlag());
 	}
 	private FlServiceDto flsDto;
 	private List<SlsItemDto> item;

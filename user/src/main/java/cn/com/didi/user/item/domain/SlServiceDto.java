@@ -3,13 +3,8 @@ package cn.com.didi.user.item.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-public class SlServiceDto implements Serializable{
+public class SlServiceDto implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 6068177226052269744L;
-
-	/**
      * 服务ID
      */
     private Integer serviceId;
@@ -53,6 +48,28 @@ public class SlServiceDto implements Serializable{
      * 业务费用:0代表免费 1代表收费
      */
     private String businessCharge;
+
+    /**
+     * 手续费
+     */
+    private Integer poundage;
+
+    /**
+     * 佣金用于违约 单位分
+     */
+    private Integer commission;
+
+    /**
+     * 1 表示美容美发
+     */
+    private String specialType;
+
+    private String ext1;
+
+    private String ext2;
+
+    private static final long serialVersionUID = 1L;
+
     /**
      * 服务ID
      **/
@@ -177,5 +194,63 @@ public class SlServiceDto implements Serializable{
      **/
     public void setBusinessCharge(String businessCharge) {
         this.businessCharge = businessCharge == null ? null : businessCharge.trim();
+    }
+
+    /**
+     * 手续费
+     **/
+    public Integer getPoundage() {
+        return poundage;
+    }
+
+    /**
+     * 手续费
+     **/
+    public void setPoundage(Integer poundage) {
+        this.poundage = poundage;
+    }
+
+    /**
+     * 佣金用于违约 单位分
+     **/
+    public Integer getCommission() {
+        return commission;
+    }
+
+    /**
+     * 佣金用于违约 单位分
+     **/
+    public void setCommission(Integer commission) {
+        this.commission = commission;
+    }
+
+    /**
+     * 1 表示美容美发
+     **/
+    public String getSpecialType() {
+        return specialType;
+    }
+
+    /**
+     * 1 表示美容美发
+     **/
+    public void setSpecialType(String specialType) {
+        this.specialType = specialType == null ? null : specialType.trim();
+    }
+
+    public String getExt1() {
+        return ext1;
+    }
+
+    public void setExt1(String ext1) {
+        this.ext1 = ext1 == null ? null : ext1.trim();
+    }
+
+    public String getExt2() {
+        return ext2;
+    }
+
+    public void setExt2(String ext2) {
+        this.ext2 = ext2 == null ? null : ext2.trim();
     }
 }

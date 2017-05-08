@@ -3,7 +3,8 @@ package cn.com.didi.domain.util;
 public enum TradeCategory {
 	IN("0","0"),//表示平台收入 
 	OUT("1","1"),//表示体现 
-	PENALTY("2","0");//表示违约金   
+	PENALTY("2","0"),//表示违约金   
+	DEPOSIT("3","0");//表示违约金   
 	public String getType() {
 		return type;
 	}

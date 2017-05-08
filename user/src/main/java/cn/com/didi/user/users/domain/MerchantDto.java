@@ -9,22 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import cn.com.didi.domain.util.Role;
 
 public class MerchantDto implements Serializable {
-    public String getMpn() {
-		return mpn;
-	}
-
-	public void setMpn(String mpn) {
-		this.mpn = mpn;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
 	/**
      * 用户名
      */
@@ -86,7 +70,7 @@ public class MerchantDto implements Serializable {
     private String businessCategory;
 
     /**
-     * Certification results
+     * Certification results 认证结果 0表示认证通过 1表示认证待认证 2 表示认证不通过
      */
     private String cr;
 
@@ -119,27 +103,47 @@ public class MerchantDto implements Serializable {
      * 纬度
      */
     private BigDecimal lat;
-    private String address;
-    /**
-     * 师傅头像
-     */
-    private String mpn; 
-    
-    //add by my
-    private String password;
-    /**
-     * 支付宝账号
-     */
-    private String alipayAccount;
 
     /**
-     * 微信账号
+     * 1 表示美容美发
      */
-    private String wechatAccount;
-    
+    private String specialType;
+
+    /**
+     * 描述
+     */
+    private String description;
+
+    private String ext1;
+
+    private String ext2;
+    /**
+     * 门店logog
+     */
+    private String merchantLogo;
     private static final long serialVersionUID = 1L;
 
-    /**
+	// add by my
+	/**
+	 * 师傅头像
+	 */
+	private String mpn;
+	private String address;
+	private String password;
+	/**
+	 * 支付宝账号
+	 */
+	private String alipayAccount;
+
+	/**
+	 * 微信账号
+	 */
+	private String wechatAccount;
+	// 服务内容
+	private String service;
+
+	
+	 /**
      * 用户名
      **/
     public Long getAccountId() {
@@ -308,14 +312,14 @@ public class MerchantDto implements Serializable {
     }
 
     /**
-     * Certification results
+     * Certification results 认证结果 0表示认证通过 1表示认证待认证 2 表示认证不通过
      **/
     public String getCr() {
         return cr;
     }
 
     /**
-     * Certification results
+     * Certification results 认证结果 0表示认证通过 1表示认证待认证 2 表示认证不通过
      **/
     public void setCr(String cr) {
         this.cr = cr == null ? null : cr.trim();
@@ -404,11 +408,68 @@ public class MerchantDto implements Serializable {
     public void setLat(BigDecimal lat) {
         this.lat = lat;
     }
-    public UserDto toUserDto(){
-    	UserDto userDto=new UserDto();
+
+    /**
+     * 1 表示美容美发
+     **/
+    public String getSpecialType() {
+        return specialType;
+    }
+
+    /**
+     * 1 表示美容美发
+     **/
+    public void setSpecialType(String specialType) {
+        this.specialType = specialType == null ? null : specialType.trim();
+    }
+
+    /**
+     * 描述
+     **/
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * 描述
+     **/
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
+    }
+
+    public String getExt1() {
+        return ext1;
+    }
+
+    public void setExt1(String ext1) {
+        this.ext1 = ext1 == null ? null : ext1.trim();
+    }
+
+    public String getExt2() {
+        return ext2;
+    }
+
+    public void setExt2(String ext2) {
+        this.ext2 = ext2 == null ? null : ext2.trim();
+    }
+    /**
+     * 门店logog
+     **/
+    public String getMerchantLogo() {
+        return merchantLogo;
+    }
+
+    /**
+     * 门店logog
+     **/
+    public void setMerchantLogo(String merchantLogo) {
+        this.merchantLogo = merchantLogo == null ? null : merchantLogo.trim();
+    }
+	public UserDto toUserDto() {
+		UserDto userDto = new UserDto();
 		userDto.setBpn(getBpn());
 		userDto.setUserName(getUserName());
-		if(StringUtils.isEmpty(userDto.getUserName())){
+		if (StringUtils.isEmpty(userDto.getUserName())) {
 			userDto.setUserName(getBpn());
 		}
 		userDto.setRole(Role.BUSINESS.getCode());
@@ -417,18 +478,35 @@ public class MerchantDto implements Serializable {
 		userDto.setState(getState());
 		userDto.setCreateTime(getCreateTime());
 		return userDto;
-    }
-    
-    public UserLinkIdDto toUserLinkIdDto(){
-    	if(StringUtils.isEmpty(getWechatAccount())&&StringUtils.isEmpty(getAlipayAccount())){
-    		return null;
-    	}
-    	UserLinkIdDto userDto=new UserLinkIdDto();
-    	userDto.setAccountId(accountId);
-    	userDto.setAlipayAccount(getAlipayAccount());
-    	userDto.setWechatAccount(wechatAccount);
+	}
+
+	public MerchantDescriptionDto toMerchantDescriptionDto(Double distance) {
+		MerchantDescriptionDto dto = new MerchantDescriptionDto();
+		dto.setAccountId(getAccountId());
+		dto.setAddress(getDetailAddress());
+		dto.setCname(getCname());
+		dto.setDescription(getContactInformation());
+		if (getLat() != null) {
+			dto.setLat(getLat().toString());
+		}
+		if (getLng() != null) {
+			dto.setLng(getLng().toString());
+		}
+		if(distance!=null){
+		dto.setDistance(distance.intValue());
+		}
+		return dto;
+	}
+	public UserLinkIdDto toUserLinkIdDto() {
+		if (StringUtils.isEmpty(getWechatAccount()) && StringUtils.isEmpty(getAlipayAccount())) {
+			return null;
+		}
+		UserLinkIdDto userDto = new UserLinkIdDto();
+		userDto.setAccountId(accountId);
+		userDto.setAlipayAccount(getAlipayAccount());
+		userDto.setWechatAccount(wechatAccount);
 		return userDto;
-    }
+	}
 
 	public String getPassword() {
 		return password;
@@ -453,6 +531,29 @@ public class MerchantDto implements Serializable {
 	public void setWechatAccount(String wechatAccount) {
 		this.wechatAccount = wechatAccount;
 	}
-    
-    
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public String getMpn() {
+		return mpn;
+	}
+
+	public void setMpn(String mpn) {
+		this.mpn = mpn;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 }

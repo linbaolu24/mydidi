@@ -2,6 +2,10 @@ package cn.com.didi.order.orders.domain;
 
 import java.util.Date;
 
+/**
+ * @author xlm
+ *
+ */
 public class OrderListBaseDto {
 	public Integer getCost() {
 		return cost;
@@ -79,6 +83,11 @@ public class OrderListBaseDto {
 	private String businessCategory; 
 	private String businessCharge;
 	private Integer cost;
+	
+	/**
+	 * 状态文本
+	 */
+	private String stateText;
 	  /**
      * 客户账户id
      */
@@ -88,6 +97,10 @@ public class OrderListBaseDto {
      * 商户账户id
      */
     private Long merchantAccountId;
+    /**
+     * 特殊标志
+     */
+    private String specialType;
 
 	public Long getConsumerAccountId() {
 		return consumerAccountId;
@@ -107,5 +120,17 @@ public class OrderListBaseDto {
 	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
 	}
-    
+	public String getSpecialType() {
+		return specialType;
+	}
+	public void setSpecialType(String specialType) {
+		this.specialType = specialType;
+	}
+	public String getStateText() {
+		return stateText;
+	}
+	public void setStateText(String stateText) {
+		this.stateText = stateText;
+	}
+	
 }

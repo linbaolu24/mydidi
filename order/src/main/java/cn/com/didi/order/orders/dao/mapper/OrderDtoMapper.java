@@ -104,4 +104,6 @@ public interface OrderDtoMapper {
 			@Param("sourceState")  String sourceState,@Param("cost") Integer cost,@Param("cment") String cment,@Param("date") Date date) ;
 	int updateOrderDealId(@Param("orderId") Long orderId,@Param("dealId") Long dealId );
 	OrderDto selectOrderSubjectInformation(Long orderId);
+	
+	Long existOrder(OrderDtoExample example);
 }

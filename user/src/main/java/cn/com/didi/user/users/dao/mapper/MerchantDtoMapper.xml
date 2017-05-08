@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.didi.user.users.dao.mapper.MerchantDtoMapper" >
-  <resultMap id="BaseResultMap" type="cn.com.didi.user.users.domain.MerchantDto" >
+ <resultMap id="BaseResultMap" type="cn.com.didi.user.users.domain.MerchantDto" >
     <id column="account_Id" property="accountId" jdbcType="BIGINT" />
     <result column="user_Name" property="userName" jdbcType="VARCHAR" />
     <result column="cname" property="cname" jdbcType="VARCHAR" />
@@ -21,6 +21,11 @@
     <result column="masterName" property="mastername" jdbcType="CHAR" />
     <result column="Lng" property="lng" jdbcType="DECIMAL" />
     <result column="lat" property="lat" jdbcType="DECIMAL" />
+    <result column="special_type" property="specialType" jdbcType="CHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
+    <result column="merchant_logo" property="merchantLogo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -83,7 +88,7 @@
   <sql id="Base_Column_List" >
     account_Id, user_Name, cname, detail_address, address_code, state, create_time, ic_img1, 
     ic_img2, ic_img3, licence_img, business_category, cr, cause, contact_information, 
-    bpn, masterName, Lng, lat
+    bpn, masterName, Lng, lat, special_type, description, ext1, ext2, merchant_logo
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.users.domain.MerchantDtoExample" >
     select
@@ -123,14 +128,18 @@
       ic_img3, licence_img, business_category, 
       cr, cause, contact_information, 
       bpn, masterName, Lng, 
-      lat)
+      lat, special_type, description, 
+      ext1, ext2, merchant_logo
+      )
     values (#{accountId,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, 
       #{detailAddress,jdbcType=VARCHAR}, #{addressCode,jdbcType=VARCHAR}, #{state,jdbcType=CHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{icImg1,jdbcType=VARCHAR}, #{icImg2,jdbcType=VARCHAR}, 
       #{icImg3,jdbcType=VARCHAR}, #{licenceImg,jdbcType=VARCHAR}, #{businessCategory,jdbcType=CHAR}, 
       #{cr,jdbcType=CHAR}, #{cause,jdbcType=VARCHAR}, #{contactInformation,jdbcType=VARCHAR}, 
       #{bpn,jdbcType=VARCHAR}, #{mastername,jdbcType=CHAR}, #{lng,jdbcType=DECIMAL}, 
-      #{lat,jdbcType=DECIMAL})
+      #{lat,jdbcType=DECIMAL}, #{specialType,jdbcType=CHAR}, #{description,jdbcType=VARCHAR}, 
+      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{merchantLogo,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.didi.user.users.domain.MerchantDto" >
     insert into merchant
@@ -192,6 +201,21 @@
       <if test="lat != null" >
         lat,
       </if>
+      <if test="specialType != null" >
+        special_type,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="ext1 != null" >
+        ext1,
+      </if>
+      <if test="ext2 != null" >
+        ext2,
+      </if>
+      <if test="merchantLogo != null" >
+        merchant_logo,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="accountId != null" >
@@ -250,6 +274,21 @@
       </if>
       <if test="lat != null" >
         #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="specialType != null" >
+        #{specialType,jdbcType=CHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null" >
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantLogo != null" >
+        #{merchantLogo,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -319,6 +358,21 @@
       <if test="record.lat != null" >
         lat = #{record.lat,jdbcType=DECIMAL},
       </if>
+      <if test="record.specialType != null" >
+        special_type = #{record.specialType,jdbcType=CHAR},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ext1 != null" >
+        ext1 = #{record.ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ext2 != null" >
+        ext2 = #{record.ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.merchantLogo != null" >
+        merchant_logo = #{record.merchantLogo,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -344,7 +398,12 @@
       bpn = #{record.bpn,jdbcType=VARCHAR},
       masterName = #{record.mastername,jdbcType=CHAR},
       Lng = #{record.lng,jdbcType=DECIMAL},
-      lat = #{record.lat,jdbcType=DECIMAL}
+      lat = #{record.lat,jdbcType=DECIMAL},
+      special_type = #{record.specialType,jdbcType=CHAR},
+      description = #{record.description,jdbcType=VARCHAR},
+      ext1 = #{record.ext1,jdbcType=VARCHAR},
+      ext2 = #{record.ext2,jdbcType=VARCHAR},
+      merchant_logo = #{record.merchantLogo,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -406,6 +465,21 @@
       <if test="lat != null" >
         lat = #{lat,jdbcType=DECIMAL},
       </if>
+      <if test="specialType != null" >
+        special_type = #{specialType,jdbcType=CHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null" >
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantLogo != null" >
+        merchant_logo = #{merchantLogo,jdbcType=VARCHAR},
+      </if>
     </set>
     where account_Id = #{accountId,jdbcType=BIGINT}
   </update>
@@ -428,13 +502,44 @@
       bpn = #{bpn,jdbcType=VARCHAR},
       masterName = #{mastername,jdbcType=CHAR},
       Lng = #{lng,jdbcType=DECIMAL},
-      lat = #{lat,jdbcType=DECIMAL}
+      lat = #{lat,jdbcType=DECIMAL},
+      special_type = #{specialType,jdbcType=CHAR},
+      description = #{description,jdbcType=VARCHAR},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR},
+      merchant_logo = #{merchantLogo,jdbcType=VARCHAR}
     where account_Id = #{accountId,jdbcType=BIGINT}
   </update>
+ 
+ 
+ <!--  add by my -->
   
     <select id="selectMerchants" resultMap="BaseResultMap"  >
     select 
-    <include refid="Base_Column_List" />
+    <include refid="Base_Column_List" />,
+    (select GROUP_CONCAT( sls.cname ) from merchant_service ms,sl_service sls  where ms.account_Id=me.account_Id and ms.sls_id = sls.service_id GROUP BY ms.account_Id ) service
+    from merchant me
+    <where>
+    <if test="time.startTime !=null ">
+     create_time>=#{time.startTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="time.endTime !=null ">
+    and create_time&lt;=#{time.endTime,jdbcType=TIMESTAMP}
+    </if>
+     <if test="time.state !=null "> 
+     and state=#{time.state,jdbcType=CHAR}
+     </if>
+     
+      <if test="time.key !=null ">
+      and (cname like CONCAT(#{time.key,jdbcType=VARCHAR},'%') or bpn like CONCAT(#{time.key,jdbcType=VARCHAR},'%') )
+      </if>
+      
+    </where>
+  </select>
+  
+  <select id="selectMerchantCount" resultMap="BaseResultMap"  >
+    select 
+    count(1)
     from merchant
     <where>
     <if test="time.startTime !=null ">
@@ -450,9 +555,10 @@
       <if test="time.key !=null ">
       and (cname like CONCAT(#{time.key,jdbcType=VARCHAR},'%') or bpn like CONCAT(#{time.key,jdbcType=VARCHAR},'%') )
       </if>
-      
     </where>
   </select>
+  
+  
   
   
   

@@ -6,21 +6,21 @@ public class MerchantRemainingDto extends MerchantRemainingDtoKey implements Ser
     /**
      * 余额
      */
-    private Integer remaining;
+    private Long remaining;
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 余额
      **/
-    public Integer getRemaining() {
+    public Long getRemaining() {
         return remaining;
     }
 
     /**
      * 余额
      **/
-    public void setRemaining(Integer remaining) {
+    public void setRemaining(Long remaining) {
         this.remaining = remaining;
     }
 }

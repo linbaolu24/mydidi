@@ -54,4 +54,21 @@ public interface ITradeService {
 	public Long selectOrderIdFromDeal(Long dealId);
 	
 	public IPage<DealListDto> selectTrades(TimeInterval interval);
-}
+	
+	/**
+	 * <p>提现</p>
+	 * @param pay
+	 * @return
+	 */
+	public IResult<Void> draw(DealDto pay);
+	/**
+	 * @return
+	 */
+	public IResult<Void> pendingDraw(Long dealId);
+	/**
+	 * 因为转账失败,导致的回滚
+	 * @param pay
+	 * @return
+	 */
+	public IResult<Void> rollBack(DealDto pay,boolean needLock);
+} 

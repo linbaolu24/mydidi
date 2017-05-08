@@ -12,6 +12,7 @@ import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
 import cn.com.didi.order.orders.domain.OrderPromptDto;
+import cn.com.didi.order.orders.domain.OrderRenderDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 
 /**
@@ -63,6 +64,18 @@ public interface IOrderInfoService {
 	 * @return 
 	 */
 	public OrderDto selectCOrder(Long orderId,Long cid);
+	
+	/**
+	 * @param orderId
+	 * @param bid
+	 */
+	public OrderRenderDto selectBOrderDetail(Long orderId,Long bid,int flag);
+	/**
+	 * @param orderId
+	 * @param cid
+	 * @return 
+	 */
+	public  OrderRenderDto selectCOrder(Long orderId,Long cid,int flag);
 	/**
 	 * @return
 	 */
@@ -168,4 +181,5 @@ public interface IOrderInfoService {
 	 * @return
 	 */
 	public int orderTaking(OrderDto dto);
+	public boolean existOrder(Long accountId,Integer slsId,String... orderStates);
 }
