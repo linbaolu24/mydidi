@@ -537,7 +537,7 @@
     </where>
   </select>
   
-  <select id="selectMerchantCount" resultMap="BaseResultMap"  >
+  <select id="selectMerchantCount" resultType="java.lang.Integer"  >
     select 
     count(1)
     from merchant
