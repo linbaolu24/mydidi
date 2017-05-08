@@ -8,7 +8,7 @@ import cn.com.didi.thirdExt.util.ThirdConstants;
  * @author xlm
  *
  */
-public class CacheEnvironment extends EnviromentAdapter{
+public class CacheEnvironment extends EnviromentAdapter {
 	public IHashAbleCache<String, Object, Object> getHashAble() {
 		return hashAble;
 	}

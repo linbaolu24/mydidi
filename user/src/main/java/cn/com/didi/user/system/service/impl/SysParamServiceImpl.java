@@ -23,5 +23,19 @@ public class SysParamServiceImpl implements ISysParamService{
 	public List<SystemParameterDto> selectAllParams() {
 		return mapper.selectAll();
 	}
+
+	@Override
+	public SystemParameterDto selectSysparams(String paramCode) {
+		return mapper.selectByPrimaryKey(paramCode);
+	}
+
+	@Override
+	public String selectSysparamsValue(String paramCode) {
+		SystemParameterDto  paramDto=selectSysparams(paramCode);
+		if(paramDto!=null){
+			return paramDto.getParamValue();
+		}
+		return null;
+	}
 	
 }

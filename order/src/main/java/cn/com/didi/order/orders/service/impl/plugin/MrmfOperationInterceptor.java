@@ -1,5 +1,7 @@
 package cn.com.didi.order.orders.service.impl.plugin;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -88,6 +90,7 @@ public class MrmfOperationInterceptor
 		order.setMlng(order.getMlng());
 		order.setMci(dto.getMci());
 		order.setState(OrderState.ORDER_STATE_START_SERVICE.getCode());
+		order.setOrt(new Date());
 		return null;
 	}
 	

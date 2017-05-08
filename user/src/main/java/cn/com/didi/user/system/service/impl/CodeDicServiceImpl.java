@@ -26,5 +26,12 @@ public class CodeDicServiceImpl implements ICodeDicService{
 		example.setOrderByClause("display_order ASC");
 		return codeDicMapper.selectByExample(example);
 	}
+	@Override
+	public CodeDictionaryDto selectCode(String cname, String code) {
+		CodeDictionaryDto key=new CodeDictionaryDto();
+		key.setCname(cname);
+		key.setDcode(code);
+		return codeDicMapper.selectByPrimaryKey(key);
+	}
 
 }

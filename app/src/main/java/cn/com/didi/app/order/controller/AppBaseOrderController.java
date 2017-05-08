@@ -128,7 +128,10 @@ public class AppBaseOrderController {
 		map.put(BUSINESS_CHARGE, order.getBusinessCharge());
 		map.put(DomainConstatns.SPECIALTYPE, order.getSpecialType());//
 		map.put(MASTER_NAME, order.getMasterName());
-
+		String stateText=orderRenderService.renderStateText(order);
+		if(!StringUtils.isEmpty(stateText)){
+			map.put(DomainConstatns.STATE_TEXT, stateText);
+		}
 		map.put(MCI, order.getMci());
 		map.put(DomainConstatns.CANCEL_FLAG, StringUtils.defaultIfEmpty(order.getCancelFlag(),"0"));
 		String text="";

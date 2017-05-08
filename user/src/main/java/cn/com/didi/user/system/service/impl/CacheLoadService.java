@@ -1,6 +1,8 @@
 package cn.com.didi.user.system.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -25,10 +27,19 @@ public class CacheLoadService implements InitializingBean {
 			return;
 		}
 		List<SystemParameterDto> params = sysParams.selectAllParams();
+		if(cache.get(ThirdConstants.CACHED_ENV_LIST)!=null){
+			return ;
+		}
+		cache.put(ThirdConstants.CACHED_ENV_LIST, params);
 		if (!CollectionUtils.isEmpty(params)) {
+			Map<String,String> map=new HashMap<>();
+			Map<String,Object> objMap=new HashMap<>();
 			for (int i = 0; i < params.size(); i++) {
-				cache.hput(ThirdConstants.CACHED_ENV, params.get(i).getParamCode(), params.get(i).getParamValue());
+				map.put(params.get(i).getParamCode(),params.get(i).getParamValue());
+				objMap.put(params.get(i).getParamCode(),params.get(i));
 			}
+			cache.putAll(ThirdConstants.CACHED_ENV, map);
+			cache.putAll(ThirdConstants.CACHED_ENV_OBJECT, objMap);
 		}
 	}
 
@@ -36,4 +47,5 @@ public class CacheLoadService implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		init();
 	}
+	
 }
