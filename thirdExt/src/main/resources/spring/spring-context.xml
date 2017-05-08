@@ -44,6 +44,7 @@
 	<bean id="messageApplicationContext" class="cn.com.didi.thirdExt.message.MessageApplicationContext"></bean>
 	<bean id="cacheEnvironment" class="cn.com.didi.thirdExt.property.CacheEnvironment">
 	<property name="hashAble" ref="redisCache"></property>
+	<property name="sysParamService" ref="cachedCodeAndParam"></property>
 	 </bean>
 	<bean id="redisCache" class="cn.com.didi.thirdExt.cache.RedisCache"> </bean>
 	
@@ -65,5 +66,11 @@
 	<bean id="appEnvImpl" class="cn.com.didi.thirdExt.produce.impl.AppEnvImpl" init-method="init">
 	<property name="orderTransJson" value="${appEnv.orderTransJson}"></property>
 	<property name="appEnviroment" ref="cacheEnvironment"></property>
-	</bean>
+	<property name="depositeAliNotifyUrl" value="${appEnv.deposite.depositeAliNotifyUrl}"></property>
+    </bean>
+    <bean id="cachedCodeAndParam" class="cn.com.didi.thirdExt.property.CachedDeracotorSysParamAndCodeDicService" primary="true">
+    <property name="hashAble" ref="redisCache"></property>
+    <property name="wrappedCodeDicService" ref="${cached.wrappedCodeDicService:codeDicServiceImpl}"></property>
+     <property name="wrappedSysParamService" ref="${cached.wrappedSysParamService:sysParamServiceImpl}"></property>
+    </bean>
 </beans>
