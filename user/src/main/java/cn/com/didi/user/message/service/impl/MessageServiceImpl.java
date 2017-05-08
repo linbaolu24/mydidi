@@ -1,4 +1,4 @@
-package cn.com.didi.user.message.service;
+package cn.com.didi.user.message.service.impl;
 
 import java.util.List;
 
@@ -15,6 +15,7 @@ import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.message.dao.mapper.TMessageDtoMapper;
 import cn.com.didi.user.message.domain.TMessageDto;
+import cn.com.didi.user.message.service.IMessageService;
 @Service
 public class MessageServiceImpl implements IMessageService{
 	@Resource
