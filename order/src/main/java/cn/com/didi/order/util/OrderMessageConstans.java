@@ -74,16 +74,21 @@ public class OrderMessageConstans {
 	/**
 	 * 存在未完成的美容美发订单
 	 */
-	public static final Message ORDER_EXIST_NOT_END_MRMF_ORDER =newMessage(DomainMessageConstans.CODE_ORDER_EXIST_NOT_END_MRMF_ORDER);//="5003000013";
+	public static final Message ORDER_EXIST_NOT_END_MRMF_ORDER =newMessage(DomainMessageConstans.CODE_ORDER_EXIST_NOT_END_MRMF_ORDER);//="5003000014";
 	
 	/**
 	 * 不存在押金
 	 */
-	public static final Message ORDER_NO_DEPOSITE =newMessage(DomainMessageConstans.CODE_ORDER_NO_DEPOSITE);//="5003000014";
+	public static final Message ORDER_NO_DEPOSITE =newMessage(DomainMessageConstans.CODE_ORDER_NO_DEPOSITE);//="5003000015";
 	/**
 	 * 不存在体验记录
 	 */
-	public static final Message ORDER_NO_USER_EXPERIENCE =newMessage(DomainMessageConstans.CODE_ORDER_NO_USER_EXPERIENCE);//="5003000014";
+	public static final Message ORDER_NO_USER_EXPERIENCE =newMessage(DomainMessageConstans.CODE_ORDER_NO_USER_EXPERIENCE);//="5003000016";
+	
+	/**
+	 * 美容美发间隔时间不到
+	 */
+	public static final Message ORDER_MRMF_INTERVAL_NOT_ARRIVE =newMessage(DomainMessageConstans.CODE_ORDER_MRMF_INTERVAL_NOT_ARRIVE);//="5003000017";
 	
 	
 	

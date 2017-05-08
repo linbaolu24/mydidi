@@ -405,4 +405,15 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		return render;
 		
 	}
+
+	@Override
+	public Date selectLastOfst(Long accountId, Integer slsId, String... orderStates) {
+		OrderDtoExample example=new OrderDtoExample();
+		OrderDtoExample.Criteria cri=example.createCriteria();
+		cri.andConsumerAccountIdEqualTo(accountId);
+		cri.andSlsIdEqualTo(slsId);
+		cri.andStateIn(Arrays.asList(orderStates));
+		cri.andOfstIsNotNull();
+		return orderMapper.selectLastOfst(example);
+	}
 }

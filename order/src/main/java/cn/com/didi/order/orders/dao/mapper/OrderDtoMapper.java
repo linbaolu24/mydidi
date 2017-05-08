@@ -106,4 +106,5 @@ public interface OrderDtoMapper {
 	OrderDto selectOrderSubjectInformation(Long orderId);
 	
 	Long existOrder(OrderDtoExample example);
+	Date selectLastOfst(OrderDtoExample example);
 }

@@ -124,6 +124,15 @@ public class AppEnvImpl implements IAppEnv {
 	public Long getSystemAccountId() {
 		return 0L;
 	}
+	@Override
+	public Integer getMrmfDayInterval() {
+		String property=appEnviroment.getProperty(EnvConstants.MRMF_DAY_INTERVAL);
+		if(StringUtils.isEmpty(property)){
+			return -1;
+		}
+		return Integer.parseInt(property);
+	}
+	
 
 	
 

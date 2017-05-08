@@ -1157,4 +1157,12 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
     </if>
     limit 1
   </select>
+  
+  
+   <select id="selectLastOfst" parameterType="cn.com.didi.order.orders.domain.OrderDtoExample" resultType="java.util.Date" >
+    select max(ofst) ofst from t_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
 </mapper>

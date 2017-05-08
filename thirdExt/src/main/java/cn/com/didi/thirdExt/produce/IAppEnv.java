@@ -71,4 +71,8 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public Long getSystemAccountId();
+	/**
+	 * @return
+	 */
+	public Integer getMrmfDayInterval();
 }

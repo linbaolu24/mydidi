@@ -36,4 +36,7 @@ public class DateUtil {
 	public static void main(String[] args) {
 		System.out.println(getIntervalYYYYMMDD(-3));
 	}
+	public static long getIntervalDay(Date date1,Date date2){
+		return  ((date2.getTime()-date1.getTime())/(24*60*60*1000));
+	}
 }

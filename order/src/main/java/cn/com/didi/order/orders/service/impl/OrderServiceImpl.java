@@ -117,6 +117,9 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if(StringUtils.isEmpty(dto.getSpecialType())){
 			dto.setSpecialType(SpecialTypeEnum.NORMAL.getCode());
 		}
+		if(dto.getOct()==null){
+			dto.setOct(new Date());
+		}
 		OrderRuslt<Void> orderResult = null;
 		boolean success = false;
 		OrderContextDto context = new OrderContextDto(dto);

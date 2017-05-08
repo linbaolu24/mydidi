@@ -181,5 +181,18 @@ public interface IOrderInfoService {
 	 * @return
 	 */
 	public int orderTaking(OrderDto dto);
+	/**
+	 * @param accountId
+	 * @param slsId
+	 * @param orderStates
+	 * @return
+	 */
 	public boolean existOrder(Long accountId,Integer slsId,String... orderStates);
+	/**
+	 * @param accountId
+	 * @param slsId
+	 * @param orderStates
+	 * @return
+	 */
+	public Date selectLastOfst(Long accountId,Integer slsId,String... orderStates);
 }

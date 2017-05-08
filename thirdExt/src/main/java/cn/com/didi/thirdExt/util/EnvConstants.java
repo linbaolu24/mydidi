@@ -24,4 +24,9 @@ public class EnvConstants {
 	 * 押金金额
 	 */
 	public static final String DEPOSITE_MONEY="10000003";
+	
+	/**
+	 * 美容美发天数间隔
+	 */
+	public static final String MRMF_DAY_INTERVAL="10000004";
 }

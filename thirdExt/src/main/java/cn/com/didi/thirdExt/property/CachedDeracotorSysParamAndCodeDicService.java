@@ -123,7 +123,7 @@ public class CachedDeracotorSysParamAndCodeDicService implements ICodeDicService
 			if(value==null){
 				value="";
 			}
-			 hashAble.hput(ThirdConstants.CACHED_ENV_OBJECT,paramCode, value);
+			 hashAble.hput(ThirdConstants.CACHED_ENV,paramCode, value);
 		}
 		return value;
 	}

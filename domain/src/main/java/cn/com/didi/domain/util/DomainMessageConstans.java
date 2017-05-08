@@ -194,6 +194,11 @@ public class DomainMessageConstans {
 	public static final String  CODE_ORDER_NO_USER_EXPERIENCE="5003000016";
 	
 	/**
+	 * 美容美发间隔时间不到
+	 */
+	public static final String  CODE_ORDER_MRMF_INTERVAL_NOT_ARRIVE="5003000017";
+	
+	/**
 	 * 交易记录不存在
 	 */
 	public static final String CODE_DEAL_NOT_EXIST="5004000001";

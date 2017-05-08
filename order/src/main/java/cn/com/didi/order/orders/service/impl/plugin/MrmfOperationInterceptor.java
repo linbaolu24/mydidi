@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.filter.IOperationInterceptor;
 import cn.com.didi.core.property.Couple;
+import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.core.utils.NumberUtil;
 import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
@@ -19,6 +20,7 @@ import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.order.orders.domain.OrderContextDto;
 import cn.com.didi.order.orders.domain.OrderDto;
+import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderService;
 import cn.com.didi.order.orders.util.OperationNotifyFlag;
 import cn.com.didi.order.orders.util.OrderMessageOperation;
@@ -41,7 +43,8 @@ public class MrmfOperationInterceptor
 	protected IUserExperienceService userExperienceService;
 	@Resource
 	protected IAppEnv appEnv;
-
+	@Resource
+	protected IOrderInfoService orderInfoService;
 
 	@Override
 	public <R> IOrderRuslt<R> interceptor(OrderMessageOperation operation, OrderContextDto data, IOrderService source) {
@@ -58,6 +61,10 @@ public class MrmfOperationInterceptor
 					return result;
 				}
 				result = handleDeposit(order, data);
+				if(result!=null&&!result.success()){
+					return result;
+				}
+				result=handleCountController(order, data);
 				return result;
 			} else if (OrderMessageOperation.BEFORE_ADD.equals(operation)) {
 				Couple<IMerchantDto, IReciverDto> couple = reciverSearch
@@ -163,6 +170,26 @@ public class MrmfOperationInterceptor
 		} catch (Exception e) {
 			LOGGER.error("订单 {},通知商户失败.", order, e);
 		}
-
+	}
+	public  <R> IOrderRuslt<R> handleCountController(OrderDto order, OrderContextDto data){
+		LOGGER.debug("次数控制校验");
+		long interval=appEnv.getMrmfDayInterval();
+		if(interval<=0){
+			return null;
+		}
+		Date date=orderInfoService.selectLastOfst(order.getConsumerAccountId(), order.getSlsId(),
+				OrderState.ORDER_STATE_PENDING_CHARGE.getCode(),OrderState.ORDER_STATE_Pending_EVALUATION.getCode(),OrderState.ORDER_STATE_FINISH.getCode());
+		if(date==null){
+			return null;
+		}
+	
+		long realInterval=DateUtil.getIntervalDay(date,order.getOct());
+		LOGGER.debug("上次完成服务时间{},本次时间{},间隔{},系统间隔{}",date,order.getOct(),realInterval,interval);
+		if(realInterval<interval){
+			String message=OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getMessage(interval,interval-realInterval);
+			return new OrderRuslt<>(OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getCode(),message);
+		}
+		return null;
 	}
 }
+
