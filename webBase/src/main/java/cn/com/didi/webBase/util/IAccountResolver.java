@@ -10,6 +10,11 @@ public interface IAccountResolver {
 	public Long resolve(HttpServletRequest request);
 	/**
 	 * @param request
+	 * @return
+	 */
+	public Object resolveObject(HttpServletRequest request);
+	/**
+	 * @param request
 	 * @param obj
 	 */
 	public void saveAccount(HttpServletRequest request,Long accountId,Object obj);

@@ -290,6 +290,15 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		}
 		return user.getBpn();
 	}
+
+	@Override
+	public void addUser(UserDto userDto, boolean verify) {
+		if(verify&&exists(userDto.getUserName(), userDto.getRole())){
+			throw new MessageObjectException(MessageConstans.USER_USER__EXISTS);
+		}
+		addUser(userDto);
+		
+	}
 	
 
 

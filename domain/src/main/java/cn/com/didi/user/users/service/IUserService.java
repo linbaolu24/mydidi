@@ -40,6 +40,11 @@ public interface IUserService {
 	 */
 	public void addUser(UserDto userDto);
 	/**
+	 * 新增用户,自动产生accountId
+	 * @param userDto
+	 */
+	public void addUser(UserDto userDto,boolean verify);
+	/**
 	 * 获取解码后的密码
 	 * @param userName
 	 * @return

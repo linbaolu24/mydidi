@@ -20,6 +20,7 @@ import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.DomainConstatns;
+import cn.com.didi.domain.util.Role;
 import cn.com.didi.domain.util.State;
 import cn.com.didi.user.login2.domain.LoginDto;
 import cn.com.didi.user.login2.domain.UserExtDto;
@@ -99,20 +100,20 @@ public class AppUserController {
 		}
 		Map p = new HashMap(4);
 		UserExtDto ext = result.getData();
-		p.put(DomainConstatns.ACCOUNT_ID, ext.getUserDto().getAccountId());
+		p.put(DomainConstatns.ACCOUNT_ID, String.valueOf(ext.getUserDto().getAccountId()));
 		p.put(DomainConstatns.PROFILE_PHOTO, ext.getUserDto().getProfilePhoto());
 		p.put(DomainConstatns.ALIPAY_ACCOUNT, ext.alipayAccount());
 		p.put(DomainConstatns.WECHAT_ACCOUNT, ext.wechatAccount());
 		p.put(DomainConstatns.GT_CID, ext.gtCid());
 		p.put(DomainConstatns.RY_TOKEN, ext.ryToken());
 		p.put(DomainConstatns.BPN,StringUtils.defaultIfEmpty(login.getPhone(),ext.getUserDto().getBpn()));
-		
+		p.put(DomainConstatns.ROLE, ext.getUserDto().getRole());
 		Long timeOut=resolver.getSessionTimepout(request);
 		Date date=new Date(now+timeOut*1000);
 		p.put(DomainConstatns.TIMEOUT,date);
 		String reflashToken=resolver.saveAccountAndGeneratorReflashToken(request, ext.getUserDto().getAccountId(),p);
 		Map pa=new HashMap(p);
-		
+		pa.remove(DomainConstatns.ROLE);
 		pa.put(DomainConstatns.REFLASH_TOKEN,reflashToken);
 		return ResultFactory.success(pa);
 	}
@@ -153,12 +154,21 @@ public class AppUserController {
 	
 	@RequestMapping(value = "/app/user/enterMerchant", method = { RequestMethod.POST })
 	public IResult enterMerchant(@RequestBody  MerchantExtDto merchantExtDto,HttpServletRequest request) {
-		Long accountId=resolver.resolve(request);
+		Map obj=(Map)resolver.resolveObject(request);
+		
+		String role=(String) obj.get(DomainConstatns.ROLE);
+		if(!Role.BUSINESS.getCode().equals(role)){
+			throw new IllegalArgumentException("非商户端不能入驻企业。");
+		}
+		String sAccoutId=(String) obj.get(DomainConstatns.ACCOUNT_ID);
+		Long accountId=Long.parseLong(sAccoutId);
 		//tUserService.updateLinkedId(accountId, linkedDto.getGtCid(), linkedDto.getRyToken());
 		merchantExtDto.setCr(CrEnum.WATTING.getCode());
 		merchantExtDto.setState(State.VALID.getState());
 		merchantExtDto.setBusinessCategory(BusinessCategory.THIRD.getCode());
+		merchantExtDto.setAccountId(accountId);
 		merchantService.enterMerchant(merchantExtDto.dto(), merchantExtDto.getServiceList(), null);
+		
 		return ResultFactory.success();
 	}
 

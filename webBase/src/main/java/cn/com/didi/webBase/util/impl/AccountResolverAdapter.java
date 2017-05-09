@@ -102,4 +102,9 @@ public class AccountResolverAdapter implements IAccountResolver {
 		
 	}
 
+	@Override
+	public Object resolveObject(HttpServletRequest request) {
+		return request.getSession().getAttribute(accountKey);
+	}
+
 }

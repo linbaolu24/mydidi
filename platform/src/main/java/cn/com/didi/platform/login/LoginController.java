@@ -2,6 +2,7 @@ package cn.com.didi.platform.login;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +58,10 @@ public class LoginController {
 			return ResultFactory.error(result.getCode(), result.getMessage());
 		}
 		resolver.saveAccount(request, result.getData().getUserDto().getAccountId(),new HashMap(2));
-		return ResultFactory.success();
+		result.getData().getUserDto().setPassword(null);
+		result.getData().getUserDto().setAccountId(null);
+		result.getData().getUserDto().setRole(null);
+		return ResultFactory.success(result.getData().getUserDto());
 	}
 	
 	

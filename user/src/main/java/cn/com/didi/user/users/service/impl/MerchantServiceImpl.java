@@ -156,7 +156,7 @@ public class MerchantServiceImpl implements IMerchantService {
 			UserDto userDto = dto.toUserDto();
 			userDto.setPassword(StringUtils.isEmpty(dto.getPassword()) ? DigestUtils.md5Hex("123456")
 					: DigestUtils.md5Hex(dto.getPassword()));
-			userService.addUser(userDto);
+			userService.addUser(userDto,true);
 			dto.setAccountId(userDto.getAccountId());
 		}
 		// if(!StringUtils)
@@ -178,7 +178,7 @@ public class MerchantServiceImpl implements IMerchantService {
 			if (StringUtils.isEmpty(dto.getAreaCode())) {
 				dto.setAreaCode("F" + System.currentTimeMillis() + (10000 + RandomUtils.nextInt(90000)));
 			}
-			if(StringUtils.isEmpty(dto.getArea())){
+			if(!StringUtils.isEmpty(dto.getArea())&&StringUtils.isEmpty(dto.getCname())){
 				dto.setCname(dto.getArea());
 			}
 		}
@@ -367,8 +367,10 @@ public class MerchantServiceImpl implements IMerchantService {
 	@Transactional
 	public void enterMerchant(MerchantDto merchant, List<MerchantServiceDto> serviceList,
 			List<MerchantAreaDto> areaList) {
-		merchant.setAlipayAccount(null);//禁止更新支付宝账号
-		merchant.setWechatAccount(null);//禁止更新微信账号
+		MerchantDto temp = merchantMapper.selectByPrimaryKey(merchant.getAccountId());
+		if (temp != null) {
+			return;
+		}
 		addMerchantV2(merchant, serviceList, areaList);
 	}
 
@@ -379,18 +381,19 @@ public class MerchantServiceImpl implements IMerchantService {
 		if (merchant == null) {
 			return;
 		}
-		if (StringUtils.isEmpty(merchant.getCr()) || StringUtils.isEmpty(merchant.getState())) {
-			MerchantDto temp = merchantMapper.selectByPrimaryKey(merchant.getAccountId());
-			if (temp == null) {
-				return;
-			}
-			merchant.setCr(temp.getCr());
-			merchant.setState(temp.getState());
+		merchant.setAlipayAccount(null);// 禁止更新支付宝账号
+		merchant.setWechatAccount(null);// 禁止更新微信账号
+
+		MerchantDto temp = merchantMapper.selectByPrimaryKey(merchant.getAccountId());
+		if (temp == null) {
+			return;
 		}
+		merchant.setCr(temp.getCr());
+		merchant.setState(temp.getState());
 		merchantMapper.updateByPrimaryKeySelective(merchant);
 
 		if (!CollectionUtils.isEmpty(areaList)) {
-			deleteArea(merchant.getAccountId());//先删除后插入
+			deleteArea(merchant.getAccountId());// 先删除后插入
 			for (MerchantAreaDto one : areaList) {
 				one.setAccountId(merchant.getAccountId());
 				addMerchantArea(one);
@@ -398,7 +401,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		}
 		Date date = new Date();
 		if (!CollectionUtils.isEmpty(serviceList)) {
-			deleteService(merchant.getAccountId());//先删除后插入
+			deleteService(merchant.getAccountId());// 先删除后插入
 			for (MerchantServiceDto one : serviceList) {
 				one.setAccountId(merchant.getAccountId());
 				one.setCreateTime(date);
