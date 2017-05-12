@@ -7,5 +7,6 @@ public enum OrderMessageOperation {
 	ORDER_PUBLISHED,//订单发布成功以后
 	ORDER_PUBLISHFAIL,//订单发布失败
 	BEFORE_AUTO_DISPATCH,
-	CANCELED;//订单取消
+	CANCELED,//订单取消
+	FINISH_EVALUATION;//完成评价
 }

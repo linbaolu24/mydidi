@@ -2,13 +2,8 @@ package cn.com.didi.user.users.domain;
 
 import java.io.Serializable;
 
-public class UserLinkIdDto implements Serializable{
+public class UserLinkIdDto implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -5165234476977417242L;
-
-	/**
      * 账户ID
      */
     private Long accountId;
@@ -32,6 +27,18 @@ public class UserLinkIdDto implements Serializable{
      * 融云token
      */
     private String ryToken;
+
+    /**
+     * 角色
+     */
+    private String role;
+
+    /**
+     * 业务类型只对商户有用:0表示自营 1表示第三方 
+     */
+    private String businessCategory;
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * 账户ID
@@ -101,5 +108,33 @@ public class UserLinkIdDto implements Serializable{
      **/
     public void setRyToken(String ryToken) {
         this.ryToken = ryToken == null ? null : ryToken.trim();
+    }
+
+    /**
+     * 角色
+     **/
+    public String getRole() {
+        return role;
+    }
+
+    /**
+     * 角色
+     **/
+    public void setRole(String role) {
+        this.role = role == null ? null : role.trim();
+    }
+
+    /**
+     * 业务类型只对商户有用:0表示自营 1表示第三方 
+     **/
+    public String getBusinessCategory() {
+        return businessCategory;
+    }
+
+    /**
+     * 业务类型只对商户有用:0表示自营 1表示第三方 
+     **/
+    public void setBusinessCategory(String businessCategory) {
+        this.businessCategory = businessCategory == null ? null : businessCategory.trim();
     }
 }

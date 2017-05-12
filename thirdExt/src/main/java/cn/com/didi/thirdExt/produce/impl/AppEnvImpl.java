@@ -132,6 +132,10 @@ public class AppEnvImpl implements IAppEnv {
 		}
 		return Integer.parseInt(property);
 	}
+	@Override
+	public boolean isAdRtStatistic() {
+		return true;
+	}
 	
 
 	

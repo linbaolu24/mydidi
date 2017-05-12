@@ -208,6 +208,11 @@ public class UserDto implements Serializable{
         this.createTime = createTime;
     }
 
+    
+    /**
+     * 业务类型只对商户有用:0表示自营 1表示第三方 
+     */
+    private String businessCategory;
     public String getAddressCode() {
         return addressCode;
     }
@@ -223,5 +228,19 @@ public class UserDto implements Serializable{
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
+	  /**
+     * 业务类型只对商户有用:0表示自营 1表示第三方 
+     **/
+    public String getBusinessCategory() {
+        return businessCategory;
+    }
+
+    /**
+     * 业务类型只对商户有用:0表示自营 1表示第三方 
+     **/
+    public void setBusinessCategory(String businessCategory) {
+        this.businessCategory = businessCategory == null ? null : businessCategory.trim();
+    }
     
 }

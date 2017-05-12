@@ -204,6 +204,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if(isStateRepeat(OrderState.ORDER_STATE_NOTIFY, info.getState())){
 			return null;
 		}
+		info.setSourceState(info.getState());;
 		OrderRuslt<Void> orderResult = new OrderRuslt<Void>(info.getOrderId());
 		List<IReciverDto> reciverDtos = search.list(new Point(info.getLat(), info.getLng()), info.getSlsId());
 		if (CollectionUtils.isEmpty(reciverDtos)) {
@@ -222,9 +223,9 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		return orderResult;
 	}
 
-	public IOrderRuslt<Void> accept(Long orderId, Long bId) {
+	public IOrderRuslt<OrderDto> accept(Long orderId, Long bId) {
 		OrderDto info = orderInfoService.selectOrderSubjectInformation(orderId);
-		IOrderRuslt<Void> temp = normalMercharVerify(info, bId);
+		IOrderRuslt<OrderDto> temp = normalMercharVerify(info, bId);
 		if (temp != null) {
 			return temp;
 		}

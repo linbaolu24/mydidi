@@ -26,7 +26,7 @@ public class Point {
 		this.lng = lng;
 		this.lat = lat;
 	}
-	public java.awt.geom.Point2D.Double  toDoublePoint(){
+	public java.awt.geom.Point2D.Double toDoublePoint(){
 		return new Point2D.Double(Double.parseDouble(lng),Double.parseDouble(lat));
 	}
 	/**

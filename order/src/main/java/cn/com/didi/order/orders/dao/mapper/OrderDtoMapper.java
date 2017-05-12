@@ -70,6 +70,7 @@ public interface OrderDtoMapper {
 	List<OrderBListDto> selectBOrderList(@Param("time") TimeInterval interval, RowBounds bounds);
 
 	OrderEvaluationDto selectEvaluation(@Param("accountId") Long bid);
+	List<OrderEvaluationDto> selectEvaluationList(List<Long> bid);
 
 	int updateOrderState(@Param("orderId") Long orderId, @Param("destState") String destState,
 			@Param("sourceState") String sourceState);

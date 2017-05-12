@@ -66,5 +66,21 @@ public class FlsItemWrapper {
 		}
 		return lists;
 	}
+
+	public String getVirtualFlag() {
+		return dto.getVirtualFlag();
+	}
+
+	public void setVirtualFlag(String virtualFlag) {
+		dto.setVirtualFlag(virtualFlag);
+	}
+
+	public String getSpecialType() {
+		return dto.getSpecialType();
+	}
+
+	public void setSpecialType(String specialType) {
+		dto.setSpecialType(specialType);
+	}
 	
 }

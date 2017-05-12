@@ -75,4 +75,9 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public Integer getMrmfDayInterval();
+	/**
+	 * 广告实时统计
+	 * @return
+	 */
+	public boolean isAdRtStatistic();
 }

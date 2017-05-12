@@ -11,11 +11,14 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.property.Couple;
+import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.select.IPageBound;
 import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.domains.ReciverDto;
 import cn.com.didi.domain.domains.SimpleMerchantDto;
+import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.IReciverSearchService;
 import cn.com.didi.domain.util.Role;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
@@ -153,6 +156,21 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 	@Override
 	public String getPhone(Long accountId) {
 		return userService.selectPhone(accountId);
+	}
+
+	@Override
+	public void updateEve(Long accountId, int eve) {
+		//merchantService.updateEve(accountId, eve);
+	}
+
+	@Override
+	public IPage<IReciverDto> listAllUser(Role role, IPageBound pageBounds) {
+		return userService.listAllUser(role, pageBounds);
+	}
+
+	@Override
+	public IPage<IReciverDto> listMerchats(BusinessCategory category, IPageBound pageBounds) {
+		return userService.listAllBusiness(category, pageBounds);
 	}
 
 }

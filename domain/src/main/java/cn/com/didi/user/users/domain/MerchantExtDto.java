@@ -261,4 +261,52 @@ public class MerchantExtDto implements Serializable{
 		dto.setWechatAccount(wechatAccount);
 	}
 
+	public String getSpecialType() {
+		return dto.getSpecialType();
+	}
+
+	public void setSpecialType(String specialType) {
+		dto.setSpecialType(specialType);
+	}
+
+	public String getDescription() {
+		return dto.getDescription();
+	}
+
+	public void setDescription(String description) {
+		dto.setDescription(description);
+	}
+
+	public String getExt1() {
+		return dto.getExt1();
+	}
+
+	public void setExt1(String ext1) {
+		dto.setExt1(ext1);
+	}
+
+	public String getExt2() {
+		return dto.getExt2();
+	}
+
+	public void setExt2(String ext2) {
+		dto.setExt2(ext2);
+	}
+
+	public String getMerchantLogo() {
+		return dto.getMerchantLogo();
+	}
+
+	public void setMerchantLogo(String merchantLogo) {
+		dto.setMerchantLogo(merchantLogo);
+	}
+
+	public String getService() {
+		return dto.getService();
+	}
+
+	public void setService(String service) {
+		dto.setService(service);
+	}
+
 }

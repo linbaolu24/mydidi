@@ -36,13 +36,16 @@ public interface IAdService {
 	 * @param display
 	 * @return
 	 */
-	public Couple<AdDto, List<AdPicDto>> queryAd(DisplayPositionEnum display);
+	public Couple<AdDto, List<AdPicDto>> queryAd(Long accountId,DisplayPositionEnum display);
+	
+	
+
 	
 	/**
 	 * @param display
 	 * @return
 	 */
-	public List<Couple<AdDto, AdPicDto>> queryAdList(DpDto  display);
+	public List<Couple<AdDto, AdPicDto>> queryAdList(Long accountId,DpDto  display);
 	/**
 	 * @return
 	 */
@@ -51,4 +54,9 @@ public interface IAdService {
 	 * @param adId
 	 */
 	public void addExposure(List<Long> adId);
+	
+	/**
+	 * @param adId
+	 */
+	public void addExposure(Long accountId, DpDto display,List<Long> adId);
 }

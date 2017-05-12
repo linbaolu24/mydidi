@@ -9,6 +9,8 @@ public class MerchantDescriptionDto {
 	private Long accountId;	//账户ID	Long				账户ID
 	private Integer distance;	//距离	int				单位为米
 	private String address;	//地址	String				String
+	private int orderCount;
+	private String merchantEvaluation;
 	public String getLng() {
 		return lng;
 	}
@@ -57,6 +59,18 @@ public class MerchantDescriptionDto {
 	}
 	public void setDistance(Integer distance) {
 		this.distance = distance;
+	}
+	public int getOrderCount() {
+		return orderCount;
+	}
+	public void setOrderCount(int orderCount) {
+		this.orderCount = orderCount;
+	}
+	public String getMerchantEvaluation() {
+		return merchantEvaluation;
+	}
+	public void setMerchantEvaluation(String merchantEvaluation) {
+		this.merchantEvaluation = merchantEvaluation;
 	}
 
 }

@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.com.didi.core.property.ICodeAble;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.select.IPage;
@@ -14,8 +15,11 @@ import cn.com.didi.domain.domains.PayAccountDto;
 import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.DealEnum;
+import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.DealListDto;
+import cn.com.didi.order.trade.domain.MerchantDayRemainingDto;
+import cn.com.didi.order.trade.service.IAccountAssetsService;
 import cn.com.didi.order.trade.service.ITradeInfoService;
 import cn.com.didi.order.trade.service.ITradeService;
 import cn.com.didi.order.util.OrderMessageConstans;
@@ -30,6 +34,8 @@ import cn.com.didi.order.util.OrderMessageConstans;
 public class TradeServiceImpl implements ITradeService {
 	@Resource
 	protected ITradeInfoService tradeInfoService;
+	@Resource
+	protected IAccountAssetsService accountAssetsService;
 
 	@Override
 	@Transactional
@@ -112,7 +118,11 @@ public class TradeServiceImpl implements ITradeService {
 
 	@Override
 	public IResult<Void> draw(DealDto pay) {
-		// TODO Auto-generated method stub
+		PayAccountEnum accountEnum =ICodeAble.getCode(PayAccountEnum.values(), pay.getDat());
+		MerchantDayRemainingDto dto=accountAssetsService.countRemain(pay.getDai(), accountEnum);
+		if(dto==null||dto.getRemaining()<(long)pay.getAmount().intValue()){
+			//返回账户余额不足
+		}
 		return null;
 	}
 

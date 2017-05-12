@@ -443,6 +443,146 @@ public class UserLinkIdDtoExample {
             addCriterion("ry_token not between", value1, value2, "ryToken");
             return (Criteria) this;
         }
+
+        public Criteria andRoleIsNull() {
+            addCriterion("role is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleIsNotNull() {
+            addCriterion("role is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleEqualTo(String value) {
+            addCriterion("role =", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNotEqualTo(String value) {
+            addCriterion("role <>", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleGreaterThan(String value) {
+            addCriterion("role >", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleGreaterThanOrEqualTo(String value) {
+            addCriterion("role >=", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleLessThan(String value) {
+            addCriterion("role <", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleLessThanOrEqualTo(String value) {
+            addCriterion("role <=", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleLike(String value) {
+            addCriterion("role like", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNotLike(String value) {
+            addCriterion("role not like", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleIn(List<String> values) {
+            addCriterion("role in", values, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNotIn(List<String> values) {
+            addCriterion("role not in", values, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleBetween(String value1, String value2) {
+            addCriterion("role between", value1, value2, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNotBetween(String value1, String value2) {
+            addCriterion("role not between", value1, value2, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryIsNull() {
+            addCriterion("business_category is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryIsNotNull() {
+            addCriterion("business_category is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryEqualTo(String value) {
+            addCriterion("business_category =", value, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryNotEqualTo(String value) {
+            addCriterion("business_category <>", value, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryGreaterThan(String value) {
+            addCriterion("business_category >", value, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryGreaterThanOrEqualTo(String value) {
+            addCriterion("business_category >=", value, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryLessThan(String value) {
+            addCriterion("business_category <", value, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryLessThanOrEqualTo(String value) {
+            addCriterion("business_category <=", value, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryLike(String value) {
+            addCriterion("business_category like", value, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryNotLike(String value) {
+            addCriterion("business_category not like", value, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryIn(List<String> values) {
+            addCriterion("business_category in", values, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryNotIn(List<String> values) {
+            addCriterion("business_category not in", values, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryBetween(String value1, String value2) {
+            addCriterion("business_category between", value1, value2, "businessCategory");
+            return (Criteria) this;
+        }
+
+        public Criteria andBusinessCategoryNotBetween(String value1, String value2) {
+            addCriterion("business_category not between", value1, value2, "businessCategory");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

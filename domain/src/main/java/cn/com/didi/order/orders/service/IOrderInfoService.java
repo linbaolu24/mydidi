@@ -11,6 +11,7 @@ import cn.com.didi.order.orders.domain.OrderBListDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
+import cn.com.didi.order.orders.domain.OrderNotifyDto;
 import cn.com.didi.order.orders.domain.OrderPromptDto;
 import cn.com.didi.order.orders.domain.OrderRenderDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
@@ -46,7 +47,11 @@ public interface IOrderInfoService {
 	 * @return 
 	 */
 	public Couple<OrderDto, OrderEvaluationDto> selectCOrderDetail(Long orderId,Long cid);
-	
+	/**
+	 * @param merchatId
+	 * @return
+	 */
+	public List<OrderEvaluationDto> selectEves(List<Long> merchatId);
 	/**
 	 * @param orderId
 	 * @param cid
@@ -122,6 +127,7 @@ public interface IOrderInfoService {
 	/**<p>更新订单状态和接收方信息</p>
 	 * @param orderId
 	 * @param sourceState
+	 * @deprecated orderTaking
 	 * @return
 	 */
 	public int updateOrderState(Long orderId,String destState,String sourceState,Long bId);
@@ -195,4 +201,11 @@ public interface IOrderInfoService {
 	 * @return
 	 */
 	public Date selectLastOfst(Long accountId,Integer slsId,String... orderStates);
+	
+	/**
+	 * @param merchantId
+	 * @param slsList
+	 * @return
+	 */
+	public List<OrderNotifyDto> listNotifyOrders(Long merchantId,List<Long> slsList);
 }

@@ -1045,6 +1045,18 @@ from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} a
     select COUNT(1) as orderCount,IFNULL(sum(evaluation),0) as totolEvaluation from t_order 
     where merchant_account_id=#{accountId,jdbcType=BIGINT} and state='1'
   </select>
+  
+   <select id="selectEvaluationList" resultType="cn.com.didi.order.orders.domain.OrderEvaluationDto">
+   SELECT
+  merchant_account_id AS merchantAccountId,
+	COUNT(1) AS orderCount,
+	IFNULL(sum(evaluation), 0) AS totolEvaluation
+FROM
+	t_order
+WHERE
+	merchant_account_id in <foreach collection="list" item="item" open="(" close=")" separator=",">#{item,jdbcType=BIGINT}</foreach> and state='1'
+GROUP BY merchant_account_id 
+  </select>
  
  
  

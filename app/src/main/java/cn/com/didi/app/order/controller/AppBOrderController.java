@@ -85,5 +85,22 @@ public class AppBOrderController extends AppBaseOrderController {
 		}
 		return ResultFactory.error(or.getCode(), or.getMessage());
 	}
+	@RequestMapping(value="/app/b/order/orderTaking",method={RequestMethod.POST})
+	public IResult orderTaking(@RequestBody OrderIDJAO map, HttpServletRequest request) {
+		Long orderId = (Long) map.getOrderId();
+		assertOrderId(orderId);
+		Long accountId = resolver.resolve(request);
+		IOrderRuslt<OrderDto> or = orderService.accept(orderId, accountId);
+		if (or == null || or.success()) {
+			return ResultFactory.success(buildBDetail(or.getData()));
+		}
+		return ResultFactory.error(or.getCode(), or.getMessage());
+	}
+	
+	@RequestMapping(value="/app/b/order/listNotifyOrders",method={RequestMethod.POST})
+	public IResult listNotifyOrders( HttpServletRequest request){
+		Long accountId=resolver.resolve(request);
+		return ResultFactory.success(orderInfo.listNotifyOrders(accountId,null));
+	}
 	
 }

@@ -1,12 +1,16 @@
 package cn.com.didi.user.ad.util;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
 import cn.com.didi.core.property.Couple;
+import cn.com.didi.domain.util.AdCategoryEnum;
 import cn.com.didi.user.ad.domain.AdDto;
 import cn.com.didi.user.ad.domain.AdPicDto;
+import cn.com.didi.user.ad.domain.AdvertRecordDto;
+import cn.com.didi.user.ad.domain.DpDto;
 
 public class AdUtils {
 	/**
@@ -31,7 +35,13 @@ public class AdUtils {
 
 	}
 
-
+   
+	/**
+	 * @param adDto
+	 * @param adPic
+	 * @param consumer
+	 * @return
+	 */
 	public static List<Couple<AdDto, AdPicDto>> combine(List<AdDto> adDto, List<AdPicDto> adPic,
 			Consumer<AdDto> consumer) {
 		List<Couple<AdDto, AdPicDto>> arrayList = new ArrayList<Couple<AdDto, AdPicDto>>(adDto.size());
@@ -48,5 +58,21 @@ public class AdUtils {
 		}
 		return arrayList;
 
+	}
+	public static void copyProperty(DpDto dp,AdvertRecordDto record){
+		record.setDisplayPosition(record.getDisplayPosition());
+		record.setPhoneType(dp.getPhoneType());
+	}
+	
+	public static void popProperty(Long adId,Long accountId,AdCategoryEnum cat, DpDto dp,AdvertRecordDto record){
+		record.setDisplayPosition(record.getDisplayPosition());
+		record.setPhoneType(dp.getPhoneType());
+		record.setCategory(cat.getCode());
+		record.setAccountId(accountId);
+		record.setAdId(adId);
+		if(record.getCreateTime()==null){
+			record.setCreateTime(new Date());
+		}
+		
 	}
 }

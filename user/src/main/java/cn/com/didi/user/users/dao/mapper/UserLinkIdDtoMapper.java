@@ -1,9 +1,13 @@
 package cn.com.didi.user.users.dao.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
+import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.domain.UserLinkIdDtoExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface UserLinkIdDtoMapper {
     int countByExample(UserLinkIdDtoExample example);
@@ -28,6 +32,14 @@ public interface UserLinkIdDtoMapper {
 
     int updateByPrimaryKey(UserLinkIdDto record);
     
+    // add by my
     int updateId(UserLinkIdDto record);
     int updateWechatAndAliPayLinkedId(UserLinkIdDto record);   
+    
+    /**
+     * @param role
+     * @param pageBouns
+     * @return
+     */
+    List<IReciverDto> selectRecivers(@Param("role") String role,@Param("businessCategory") String businessCategory,RowBounds pageBouns);
 }

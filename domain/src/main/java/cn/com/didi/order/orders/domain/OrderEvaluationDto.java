@@ -2,6 +2,7 @@ package cn.com.didi.order.orders.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class OrderEvaluationDto implements Serializable{
 	public static final OrderEvaluationDto ZERO=new OrderEvaluationDto();
@@ -23,6 +24,7 @@ public class OrderEvaluationDto implements Serializable{
 	private int orderCount;
 	private BigDecimal masterEvaluation;
 	private int totolEvaluation;
+	private Long merchantAccountId;
 	public int getOrderCount() {
 		return orderCount;
 	}
@@ -35,6 +37,19 @@ public class OrderEvaluationDto implements Serializable{
 	public void setMasterEvaluation(BigDecimal masterEvaluation) {
 		this.masterEvaluation = masterEvaluation;
 	}
+	public Long getMerchantAccountId() {
+		return merchantAccountId;
+	}
+	public void setMerchantAccountId(Long merchantAccountId) {
+		this.merchantAccountId = merchantAccountId;
+	}
 
+	public String cal() {
+		if (getMasterEvaluation() == null) {
+			setMasterEvaluation(new BigDecimal(getTotolEvaluation()).divide(new BigDecimal(getOrderCount()), 1,
+					RoundingMode.HALF_UP));
+		}
+		return getMasterEvaluation().toString();
+	}
 	
 }

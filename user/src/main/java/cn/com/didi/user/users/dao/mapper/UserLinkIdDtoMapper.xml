@@ -7,6 +7,8 @@
     <result column="wechat_account" property="wechatAccount" jdbcType="VARCHAR" />
     <result column="gt_cid" property="gtCid" jdbcType="VARCHAR" />
     <result column="ry_token" property="ryToken" jdbcType="VARCHAR" />
+    <result column="role" property="role" jdbcType="VARCHAR" />
+    <result column="business_category" property="businessCategory" jdbcType="CHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -67,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    account_Id, alipay_account, wechat_account, gt_cid, ry_token
+    account_Id, alipay_account, wechat_account, gt_cid, ry_token, role, business_category
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.users.domain.UserLinkIdDtoExample" >
     select
@@ -102,9 +104,11 @@
   </delete>
   <insert id="insert" parameterType="cn.com.didi.user.users.domain.UserLinkIdDto" >
     insert into user_link_id (account_Id, alipay_account, wechat_account, 
-      gt_cid, ry_token)
+      gt_cid, ry_token, role, 
+      business_category)
     values (#{accountId,jdbcType=BIGINT}, #{alipayAccount,jdbcType=VARCHAR}, #{wechatAccount,jdbcType=VARCHAR}, 
-      #{gtCid,jdbcType=VARCHAR}, #{ryToken,jdbcType=VARCHAR})
+      #{gtCid,jdbcType=VARCHAR}, #{ryToken,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, 
+      #{businessCategory,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.didi.user.users.domain.UserLinkIdDto" >
     insert into user_link_id
@@ -124,6 +128,12 @@
       <if test="ryToken != null" >
         ry_token,
       </if>
+      <if test="role != null" >
+        role,
+      </if>
+      <if test="businessCategory != null" >
+        business_category,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="accountId != null" >
@@ -140,6 +150,12 @@
       </if>
       <if test="ryToken != null" >
         #{ryToken,jdbcType=VARCHAR},
+      </if>
+      <if test="role != null" >
+        #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="businessCategory != null" >
+        #{businessCategory,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -167,6 +183,12 @@
       <if test="record.ryToken != null" >
         ry_token = #{record.ryToken,jdbcType=VARCHAR},
       </if>
+      <if test="record.role != null" >
+        role = #{record.role,jdbcType=VARCHAR},
+      </if>
+      <if test="record.businessCategory != null" >
+        business_category = #{record.businessCategory,jdbcType=CHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -178,7 +200,9 @@
       alipay_account = #{record.alipayAccount,jdbcType=VARCHAR},
       wechat_account = #{record.wechatAccount,jdbcType=VARCHAR},
       gt_cid = #{record.gtCid,jdbcType=VARCHAR},
-      ry_token = #{record.ryToken,jdbcType=VARCHAR}
+      ry_token = #{record.ryToken,jdbcType=VARCHAR},
+      role = #{record.role,jdbcType=VARCHAR},
+      business_category = #{record.businessCategory,jdbcType=CHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -198,6 +222,12 @@
       <if test="ryToken != null" >
         ry_token = #{ryToken,jdbcType=VARCHAR},
       </if>
+      <if test="role != null" >
+        role = #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="businessCategory != null" >
+        business_category = #{businessCategory,jdbcType=CHAR},
+      </if>
     </set>
     where account_Id = #{accountId,jdbcType=BIGINT}
   </update>
@@ -206,9 +236,14 @@
     set alipay_account = #{alipayAccount,jdbcType=VARCHAR},
       wechat_account = #{wechatAccount,jdbcType=VARCHAR},
       gt_cid = #{gtCid,jdbcType=VARCHAR},
-      ry_token = #{ryToken,jdbcType=VARCHAR}
+      ry_token = #{ryToken,jdbcType=VARCHAR},
+      role = #{role,jdbcType=VARCHAR},
+      business_category = #{businessCategory,jdbcType=CHAR}
     where account_Id = #{accountId,jdbcType=BIGINT}
   </update>
+  
+  
+  <!--  add by my -->
   <update id="updateId">
   insert into user_link_id(account_id,gt_cid,ry_token) VALUEs(#{accountId,jdbcType=BIGINT},#{gtCid,jdbcType=VARCHAR},#{ryToken,jdbcType=VARCHAR}) 
   ON DUPLICATE KEY UPDATE gt_cid=#{gtCid,jdbcType=VARCHAR},ry_token=#{ryToken,jdbcType=VARCHAR}
@@ -219,4 +254,18 @@
   insert into user_link_id(account_id,alipay_account,wechat_account) VALUEs(#{accountId,jdbcType=BIGINT},#{alipayAccount,jdbcType=VARCHAR},#{wechatAccount,jdbcType=VARCHAR}) 
   ON DUPLICATE KEY UPDATE alipay_account=#{alipayAccount,jdbcType=VARCHAR},wechat_account=#{wechatAccount,jdbcType=VARCHAR}
   </update>
+  
+  <resultMap id="BaseReciverResultMap" type="cn.com.didi.domain.domains.ReciverDto" >
+    <id column="account_Id" property="accountId" jdbcType="BIGINT" />
+    <result column="alipay_account" property="alipayAccount" jdbcType="VARCHAR" />
+    <result column="wechat_account" property="wechatAccount" jdbcType="VARCHAR" />
+    <result column="gt_cid" property="reciveId" jdbcType="VARCHAR" />
+    <result column="ry_token" property="ryToken" jdbcType="VARCHAR" />
+    <result column="role" property="ryToken" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectRecivers" resultMap="BaseReciverResultMap">
+  select ui.account_id,ui.gt_cid from  user_link_id ui where  us.role=#{role,jdbcType=VARCHAR}
+  <if test=" businessCategory !=null "> and  business_category = #{businessCategory,jdbcType=CHAR}</if>
+  </select>
+  
 </mapper>

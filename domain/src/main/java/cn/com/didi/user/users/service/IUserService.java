@@ -3,7 +3,11 @@ package cn.com.didi.user.users.service;
 import java.util.List;
 
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.select.IPageBound;
+import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.BusinessCategory;
+import cn.com.didi.domain.util.Role;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 
@@ -96,6 +100,14 @@ public interface IUserService {
 	public void updateUserState(Long accountId,String state);
 	
 	/**
+	 * 更新用户状态
+	 * @param accountId
+	 * @param state
+	 */
+	public void updateUserState(List<UserDto> lists);
+	//publ
+	
+	/**
 	 * h
 	 * @param accountId
 	 */
@@ -119,4 +131,13 @@ public interface IUserService {
 	 * @return
 	 */
 	public int updateWechatAndAliPayLinkedId(Long accountId, String alipay, String wechat);
+	
+	public IPage<IReciverDto> listAllUser(Role role, IPageBound pageBounds);
+
+	IPage<IReciverDto> listAllBusiness(BusinessCategory cat, IPageBound pageBounds);
+	/**
+	 * @param accountId
+	 * @param businessCategory
+	 */
+	public void updateBusinessCategory(Long accountId,String businessCategory);
 }

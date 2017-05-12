@@ -130,6 +130,14 @@ public class UserController {
 		userService.updateUserState(dto.getAccountId(), dto.getState());
 		return ResultFactory.success();
 	}
+	@RequestMapping(value ="/platform/c/batchOnOff", method = RequestMethod.POST)
+	public IResult batchOnOff(@RequestBody List<UserDto> dto) {
+		if (dto == null) {
+			return ResultFactory.success();
+		}
+		userService.updateUserState(dto);
+		return ResultFactory.success();
+	}
 
 	@RequestMapping(value = "/platform/account/list", method = RequestMethod.POST)
 	public IResult accountList(@RequestBody TimeInterval interval) {
@@ -156,21 +164,6 @@ public class UserController {
 	}
 	@RequestMapping(value = "/platform/account/update", method = RequestMethod.POST)
 	public IResult accountUpdate(@RequestBody UserDto dto) {
-		if (dto == null) {
-			return ResultFactory.success();
-		}
-		AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
-		dto.setRole(Role.PLATFORM.getCode());
-		dto.setCreateTime(null);
-		if(!StringUtils.isEmpty(dto.getPassword())){
-			dto.setPassword(DigestUtils.md5Hex(dto.getPassword()));
-		}
-		userService.updatePlatformUser(dto);
-		return ResultFactory.success();
-	}
-	
-	@RequestMapping(value = "/platform/c/checkMerchant", method = RequestMethod.POST)
-	public IResult checkMerchant(@RequestBody UserDto dto) {
 		if (dto == null) {
 			return ResultFactory.success();
 		}

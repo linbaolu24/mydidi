@@ -3,6 +3,7 @@ package cn.com.didi.order.orders.service.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,8 @@ import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +27,11 @@ import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.OrderState;
+import cn.com.didi.domain.util.State;
 import cn.com.didi.order.orders.dao.mapper.OrderDtoMapper;
+import cn.com.didi.order.orders.dao.mapper.OrderNotifyDtoMapper;
 import cn.com.didi.order.orders.dao.mapper.OrderStateRecordDtoMapper;
 import cn.com.didi.order.orders.domain.OrderBListDto;
 import cn.com.didi.order.orders.domain.OrderDto;
@@ -33,6 +39,8 @@ import cn.com.didi.order.orders.domain.OrderDtoExample;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderListBaseDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
+import cn.com.didi.order.orders.domain.OrderNotifyDto;
+import cn.com.didi.order.orders.domain.OrderNotifyDtoExample;
 import cn.com.didi.order.orders.domain.OrderPromptDto;
 import cn.com.didi.order.orders.domain.OrderRenderDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
@@ -41,20 +49,18 @@ import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderRenderService;
 import cn.com.didi.order.orders.service.IOrderStateTransform;
 import cn.com.didi.order.orders.util.OrderMessageOperation;
+import cn.com.didi.order.orders.util.OrderUtils;
 import cn.com.didi.order.util.OrderMessageConstans;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
-import cn.com.didi.user.users.domain.MerchantDto;
-import cn.com.didi.user.users.service.IMerchantService;
 
 @Service
 @Primary
 public class OrderInfoServiceImpl implements IOrderInfoService {
+	private static final Logger LOGGER=LoggerFactory.getLogger(OrderInfoServiceImpl.class);
 	@Resource
 	protected OrderDtoMapper orderMapper;
 	@Resource
 	protected OrderStateRecordDtoMapper orderStateRecordDtoMapper;
-	@Resource
-	protected IMerchantService merchantService;
 	//@Resource
 	protected IOperationListener<OrderMessageOperation, OrderDto> orderOperationListener;
 	
@@ -62,6 +68,8 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	protected IOrderStateTransform orderStateTransform;
 	@Resource
 	protected IOrderRenderService renderService;
+	@Resource
+	protected OrderNotifyDtoMapper orderNotifyMapper;
 
 	public IPage<OrderListDto> selectOrders(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
@@ -239,14 +247,15 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 
 	@Override
 	@Transactional
+	@Deprecated
 	public int updateOrderState(Long orderId, String destState, String sourceState, Long bId) {
-		int count = 0;
-		Date date = new Date();
+		int count = 0; 
+		/*Date date = new Date();
 		MerchantDto md = merchantService.selectMerchant(bId);
 		count = orderMapper.updateOrderStateAndBId(orderId, destState, sourceState, md, date);
 		if (count != 0) {
 			addStateUpdate(orderId, destState, date, sourceState);
-		}
+		}*/
 		return count;
 	}
 
@@ -342,9 +351,16 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	}
 
 	@Override
+	@Transactional
 	public int notifyOrder(OrderDto dto, List<IReciverDto> reciverList) {
-		// TODO Auto-generated method stub
-		return 0;
+		int count=updateOrderState(dto.getOrderId(), OrderState.ORDER_STATE_NOTIFY.getCode(), dto.getSourceState(),(Integer) null);
+		if(count>0&&!CollectionUtils.isEmpty(reciverList)){
+			OrderNotifyDto notifyDto=new OrderNotifyDto();
+			OrderUtils.toOrderNotifyDto(dto, notifyDto);
+			notifyDto.setMerchantAccountId(null);
+			orderNotifyMapper.insertNotifyList(notifyDto, reciverList);
+		}
+		return count;
 	}
 	@Transactional
 	public int orderTaking(OrderDto dto) {
@@ -368,6 +384,16 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		if (count != 0) {
 			addStateUpdate(news.getOrderId(), OrderState.ORDER_STATE_TAKING.getCode(), new Date(),
 					news.getSourceState());
+		}
+		if(BusinessCategory.THIRD.getCode().equals(dto.getBusinessCategory())){
+			try{
+				OrderNotifyDtoExample example=new OrderNotifyDtoExample();
+				OrderNotifyDtoExample.Criteria cri= example.createCriteria();
+				cri.andOrderIdEqualTo(news.getOrderId());
+				orderNotifyMapper.deleteByExample(example);
+			}catch(Exception e){
+				LOGGER.error(e.getMessage(),e);
+			}
 		}
 		return count;
 	}
@@ -415,5 +441,23 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		cri.andStateIn(Arrays.asList(orderStates));
 		cri.andOfstIsNotNull();
 		return orderMapper.selectLastOfst(example);
+	}
+
+	@Override
+	public List<OrderEvaluationDto> selectEves(List<Long> merchatId) {
+		return orderMapper.selectEvaluationList(merchatId);
+	}
+
+	@Override
+	public List<OrderNotifyDto> listNotifyOrders(Long merchantId,List<Long> slsList) {
+		Long startTime=System.currentTimeMillis()-5*60*1000L; 
+		Date from=new Date(startTime);
+		OrderNotifyDtoExample example=new OrderNotifyDtoExample();
+		OrderNotifyDtoExample.Criteria cri=example.createCriteria();
+		cri.andMerchantAccountIdEqualTo(merchantId);
+		cri.andCreateTimeGreaterThanOrEqualTo(from);
+		cri.andValidFlagEqualTo(State.VALID.getState());
+		//cri.andSlsIdIn(slsList);
+		return orderNotifyMapper.selectByExample(example);
 	}
 }

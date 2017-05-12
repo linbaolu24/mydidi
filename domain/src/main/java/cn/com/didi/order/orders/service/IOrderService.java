@@ -29,6 +29,7 @@ public interface IOrderService {
 	public IOrderRuslt<Void> autoDispatch(Long orderId,Long bId);
 	/**
 	 * 尝试重新派单,状态位通知或发布中的可以可
+	 * @deprecated
 	 */
 	public void reAutoDispatch(IOrderInfo info);
 	/**
@@ -38,7 +39,7 @@ public interface IOrderService {
 	/**
 	 * 接受订单
 	 */
-	public IOrderRuslt<Void> accept(Long orderId,Long bId);
+	public IOrderRuslt<OrderDto> accept(Long orderId,Long bId);
 	/**
 	 * 开始服务
 	 */

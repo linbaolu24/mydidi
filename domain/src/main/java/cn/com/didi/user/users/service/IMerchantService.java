@@ -4,9 +4,12 @@ import java.util.List;
 
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.core.select.IPageBound;
+import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.domains.Point;
+import cn.com.didi.domain.query.PageBounds;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
 import cn.com.didi.user.users.domain.MerchantCrDto;
 import cn.com.didi.user.users.domain.MerchantDescriptionDto;
@@ -131,5 +134,11 @@ public interface IMerchantService {
 	 * @return
 	 */
 	String getMerchantLogo(Long accountId);
+	/**
+	 * 更新评价,暂不支持
+	 * @param accountId
+	 * @param eve
+	 */
+	void updateEve(Long accountId,int eve);
 	//public List<UserLinkIdDto> selectMeachant(BusinessCategory busi);
 }

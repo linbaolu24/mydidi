@@ -82,6 +82,9 @@ public class MrmfOperationInterceptor
 				return handleCancel(order,data);
 			}
 		}
+		/*if(OrderMessageOperation.FINISH_EVALUATION.equals(operation)&&order.getEvaluation()!=null){
+			reciverSearch.updateEve(order.getMerchantAccountId(), eve);
+		}*/
 		return null;
 	}
 

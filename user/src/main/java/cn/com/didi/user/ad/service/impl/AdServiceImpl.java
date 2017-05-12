@@ -28,19 +28,23 @@ import com.github.miemiedev.mybatis.paginator.domain.PageList;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.domains.IdStateDto;
-import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.AdCategoryEnum;
+import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.DisplayPositionEnum;
 import cn.com.didi.domain.util.State;
+import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.ad.dao.mapper.AdDtoMapper;
 import cn.com.didi.user.ad.dao.mapper.AdPicDtoMapper;
 import cn.com.didi.user.ad.dao.mapper.AdReportDtoMapper;
+import cn.com.didi.user.ad.dao.mapper.AdvertRecordDtoMapper;
 import cn.com.didi.user.ad.dao.mapper.DpDtoMapper;
 import cn.com.didi.user.ad.domain.AdDto;
 import cn.com.didi.user.ad.domain.AdPicDto;
 import cn.com.didi.user.ad.domain.AdPicDtoExample;
 import cn.com.didi.user.ad.domain.AdReportDto;
 import cn.com.didi.user.ad.domain.AdTimeInterval;
+import cn.com.didi.user.ad.domain.AdvertRecordDto;
 import cn.com.didi.user.ad.domain.DpDto;
 import cn.com.didi.user.ad.domain.DpDtoExample;
 import cn.com.didi.user.ad.service.IAdListener;
@@ -60,7 +64,10 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 	
 	protected ApplicationContext context;
 	protected IAdListener listener;
-	
+	@Resource
+	protected IAppEnv appEnv;
+	@Resource
+	protected AdvertRecordDtoMapper adRecordMapper;
 	
 	protected DpDtoExample stateExample;
 	public AdServiceImpl(){
@@ -112,7 +119,7 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 	}
 
 	@Override
-	public Couple<AdDto, List<AdPicDto>> queryAd(DisplayPositionEnum display) {
+	public Couple<AdDto, List<AdPicDto>> queryAd(Long accountId,DisplayPositionEnum display) {
 		 Couple<AdDto, List<AdPicDto>> couple=queryAdReal(display);
 		 if(couple!=null){
 			 try{
@@ -162,19 +169,24 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 	public List<DpDto> selectAllDp() {
 		return dpMapper.selectByExample(stateExample);
 	}
+
 	@Transactional
-	public void addExposure(Long adId){
+	public void addExposure(Long adId) {
 		adMapper.updateAddExposure(adId, 1);
-		AdReportDto reportDto=getReportDto(adId, true);
-		reportMapper.insertOrupdateExposure(reportDto);
+		if (appEnv.isAdRtStatistic()) {
+			AdReportDto reportDto = getReportDto(adId, true);
+			reportMapper.insertOrupdateExposure(reportDto);
+		}
 	}
 	
 	
 	@Transactional
-	public void addClickRate(Long adId){
+	public void addClickRate(Long adId) {
 		adMapper.updateAddClickRate(adId, 1);
-		AdReportDto reportDto=getReportDto(adId, false);
-		reportMapper.updateClickRate(reportDto);
+		if (appEnv.isAdRtStatistic()) {
+			AdReportDto reportDto = getReportDto(adId, false);
+			reportMapper.updateClickRate(reportDto);
+		}
 	}
 
 	public AdReportDto getReportDto(Long adId, boolean exporse) {
@@ -191,7 +203,7 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 		return report;
 	}
 	@Override
-	public List<Couple<AdDto, AdPicDto>> queryAdList(DpDto display) {
+	public List<Couple<AdDto, AdPicDto>> queryAdList(Long accountId,DpDto display) {
 		if(display==null||StringUtils.isEmpty(display.getDisplayPosition())){
 			return null;
 		}
@@ -205,10 +217,11 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 		List<AdPicDto> adPic=queryAdPicList(adList,display);
 		List<Couple<AdDto, AdPicDto>> couple= AdUtils.combine(adDto, adPic, null);
 		if(listener!=null){
-			listener.fireQueryAdList(couple);
+			listener.fireQueryAdList(accountId,display,couple);
 		}
 		return couple;
 	}
+	
 	
 	
 	
@@ -234,5 +247,51 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.context=applicationContext;
+	}
+	@Override
+	public void addExposure(Long accountId, DpDto display, List<Long> adId) {
+		if(adId!=null){
+			AdvertRecordDto dto=new AdvertRecordDto();
+			for(Long one:adId){
+				AdUtils.popProperty(one, accountId, AdCategoryEnum.EXPOSURE, display, dto);
+				addRecord(dto);
+			}
+		}
+	}
+	/**
+	 * @param accountId
+	 * @param display
+	 * @param adId
+	 */
+	public void addExposure(Long accountId, DpDto display, Long adId){
+		AdvertRecordDto dto=new AdvertRecordDto();
+		AdUtils.popProperty(adId, accountId, AdCategoryEnum.EXPOSURE, display, dto);
+		addRecord(dto);
+	}
+
+	public void addRecord(AdvertRecordDto dto) {
+		if (dto == null || dto.getAdId() == null) {
+			return;
+		}
+		boolean isClick = AdCategoryEnum.CLICK_RATE.codeEqual(dto.getCategory());
+		if (isClick) {
+			adMapper.updateAddClickRate(dto.getAdId(), 1);
+		} else {
+			adMapper.updateAddExposure(dto.getAdId(), 1);
+		}
+		if (appEnv.isAdRtStatistic()) {
+			AdReportDto reportDto = getReportDto(dto.getAdId(), isClick);
+			reportMapper.insertOrupdateExposure(reportDto);
+		}
+		adRecordMapper.insertSelective(dto);
+	}
+
+	public void addRecord(List<AdvertRecordDto> dto) {
+		if (dto == null) {
+			return;
+		}
+		for (int i = 0; i < dto.size(); i++) {
+			addRecord(dto);
+		}
 	}
 }

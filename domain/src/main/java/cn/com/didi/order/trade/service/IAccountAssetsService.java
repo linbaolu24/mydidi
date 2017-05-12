@@ -37,10 +37,16 @@ public interface IAccountAssetsService {
 	 */
 	public MerchantDayRemainingDto selectSystemRemaining();
 	/**
+	 *
 	 * @param accountId
 	 * @return
 	 */
 	public List<MerchantDayRemainingDto> countRemain(Long accountId);
+	/**
+	 * 冻结余额
+	 * @return
+	 */
+	public Long countFrozeRemain(Long accountId);
 	/**
 	 * @param accountId
 	 * @param payAccountEnum

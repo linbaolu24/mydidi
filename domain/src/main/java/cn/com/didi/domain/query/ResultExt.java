@@ -29,7 +29,9 @@ public class ResultExt<T, E> extends Result<T> {
 	}
 	public static <TT> ResultExt<List<TT>, CountObject> build(IPage<TT> page){
 		if(page==null){
-			return null;
+			CountObject countObject=new CountObject(0);
+			ResultExt<List<TT>,CountObject> result=new ResultExt<>(null, countObject);
+			return result;
 		}
 		CountObject count=new CountObject(page.getCount());
 		return new  ResultExt<List<TT>, CountObject>(page.getList(),count);

@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.didi.order.orders.dao.mapper.OrderNotifyDtoMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.didi.order.orders.domain.OrderNotifyDto" >
+    <id column="order_id" property="orderId" jdbcType="BIGINT" />
+    <id column="merchant_account_id" property="merchantAccountId" jdbcType="BIGINT" />
+    <result column="sls_id" property="slsId" jdbcType="INTEGER" />
+    <result column="fls_id" property="flsId" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+    <result column="cci" property="cci" jdbcType="VARCHAR" />
+    <result column="consumer_address" property="consumerAddress" jdbcType="VARCHAR" />
+    <result column="cas" property="cas" jdbcType="VARCHAR" />
+    <result column="consumer_name" property="consumerName" jdbcType="VARCHAR" />
+    <result column="consumer_account_id" property="consumerAccountId" jdbcType="BIGINT" />
+    <result column="Lng" property="lng" jdbcType="DECIMAL" />
+    <result column="lat" property="lat" jdbcType="DECIMAL" />
+    <result column="valid_flag" property="validFlag" jdbcType="CHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    order_id, merchant_account_id, sls_id, fls_id, description, cname, cci, consumer_address, 
+    cas, consumer_name, consumer_account_id, Lng, lat, valid_flag, create_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.order.orders.domain.OrderNotifyDtoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from t_order_notify
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="cn.com.didi.order.orders.domain.OrderNotifyDtoKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_notify
+    where order_id = #{orderId,jdbcType=BIGINT}
+      and merchant_account_id = #{merchantAccountId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="cn.com.didi.order.orders.domain.OrderNotifyDtoKey" >
+    delete from t_order_notify
+    where order_id = #{orderId,jdbcType=BIGINT}
+      and merchant_account_id = #{merchantAccountId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.didi.order.orders.domain.OrderNotifyDtoExample" >
+    delete from t_order_notify
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.didi.order.orders.domain.OrderNotifyDto" >
+    insert into t_order_notify (order_id, merchant_account_id, sls_id, 
+      fls_id, description, cname, 
+      cci, consumer_address, cas, 
+      consumer_name, consumer_account_id, Lng, 
+      lat, valid_flag, create_time
+      )
+    values (#{orderId,jdbcType=BIGINT}, #{merchantAccountId,jdbcType=BIGINT}, #{slsId,jdbcType=INTEGER}, 
+      #{flsId,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, 
+      #{cci,jdbcType=VARCHAR}, #{consumerAddress,jdbcType=VARCHAR}, #{cas,jdbcType=VARCHAR}, 
+      #{consumerName,jdbcType=VARCHAR}, #{consumerAccountId,jdbcType=BIGINT}, #{lng,jdbcType=DECIMAL}, 
+      #{lat,jdbcType=DECIMAL}, #{validFlag,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.didi.order.orders.domain.OrderNotifyDto" >
+    insert into t_order_notify
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="merchantAccountId != null" >
+        merchant_account_id,
+      </if>
+      <if test="slsId != null" >
+        sls_id,
+      </if>
+      <if test="flsId != null" >
+        fls_id,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="cname != null" >
+        cname,
+      </if>
+      <if test="cci != null" >
+        cci,
+      </if>
+      <if test="consumerAddress != null" >
+        consumer_address,
+      </if>
+      <if test="cas != null" >
+        cas,
+      </if>
+      <if test="consumerName != null" >
+        consumer_name,
+      </if>
+      <if test="consumerAccountId != null" >
+        consumer_account_id,
+      </if>
+      <if test="lng != null" >
+        Lng,
+      </if>
+      <if test="lat != null" >
+        lat,
+      </if>
+      <if test="validFlag != null" >
+        valid_flag,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="merchantAccountId != null" >
+        #{merchantAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="slsId != null" >
+        #{slsId,jdbcType=INTEGER},
+      </if>
+      <if test="flsId != null" >
+        #{flsId,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="cci != null" >
+        #{cci,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerAddress != null" >
+        #{consumerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="cas != null" >
+        #{cas,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerName != null" >
+        #{consumerName,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerAccountId != null" >
+        #{consumerAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="lng != null" >
+        #{lng,jdbcType=DECIMAL},
+      </if>
+      <if test="lat != null" >
+        #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="validFlag != null" >
+        #{validFlag,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.didi.order.orders.domain.OrderNotifyDtoExample" resultType="java.lang.Integer" >
+    select count(*) from t_order_notify
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_order_notify
+    <set >
+      <if test="record.orderId != null" >
+        order_id = #{record.orderId,jdbcType=BIGINT},
+      </if>
+      <if test="record.merchantAccountId != null" >
+        merchant_account_id = #{record.merchantAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="record.slsId != null" >
+        sls_id = #{record.slsId,jdbcType=INTEGER},
+      </if>
+      <if test="record.flsId != null" >
+        fls_id = #{record.flsId,jdbcType=INTEGER},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cname != null" >
+        cname = #{record.cname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cci != null" >
+        cci = #{record.cci,jdbcType=VARCHAR},
+      </if>
+      <if test="record.consumerAddress != null" >
+        consumer_address = #{record.consumerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cas != null" >
+        cas = #{record.cas,jdbcType=VARCHAR},
+      </if>
+      <if test="record.consumerName != null" >
+        consumer_name = #{record.consumerName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.consumerAccountId != null" >
+        consumer_account_id = #{record.consumerAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="record.lng != null" >
+        Lng = #{record.lng,jdbcType=DECIMAL},
+      </if>
+      <if test="record.lat != null" >
+        lat = #{record.lat,jdbcType=DECIMAL},
+      </if>
+      <if test="record.validFlag != null" >
+        valid_flag = #{record.validFlag,jdbcType=CHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_order_notify
+    set order_id = #{record.orderId,jdbcType=BIGINT},
+      merchant_account_id = #{record.merchantAccountId,jdbcType=BIGINT},
+      sls_id = #{record.slsId,jdbcType=INTEGER},
+      fls_id = #{record.flsId,jdbcType=INTEGER},
+      description = #{record.description,jdbcType=VARCHAR},
+      cname = #{record.cname,jdbcType=VARCHAR},
+      cci = #{record.cci,jdbcType=VARCHAR},
+      consumer_address = #{record.consumerAddress,jdbcType=VARCHAR},
+      cas = #{record.cas,jdbcType=VARCHAR},
+      consumer_name = #{record.consumerName,jdbcType=VARCHAR},
+      consumer_account_id = #{record.consumerAccountId,jdbcType=BIGINT},
+      Lng = #{record.lng,jdbcType=DECIMAL},
+      lat = #{record.lat,jdbcType=DECIMAL},
+      valid_flag = #{record.validFlag,jdbcType=CHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.didi.order.orders.domain.OrderNotifyDto" >
+    update t_order_notify
+    <set >
+      <if test="slsId != null" >
+        sls_id = #{slsId,jdbcType=INTEGER},
+      </if>
+      <if test="flsId != null" >
+        fls_id = #{flsId,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        cname = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="cci != null" >
+        cci = #{cci,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerAddress != null" >
+        consumer_address = #{consumerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="cas != null" >
+        cas = #{cas,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerName != null" >
+        consumer_name = #{consumerName,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerAccountId != null" >
+        consumer_account_id = #{consumerAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="lng != null" >
+        Lng = #{lng,jdbcType=DECIMAL},
+      </if>
+      <if test="lat != null" >
+        lat = #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="validFlag != null" >
+        valid_flag = #{validFlag,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where order_id = #{orderId,jdbcType=BIGINT}
+      and merchant_account_id = #{merchantAccountId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.didi.order.orders.domain.OrderNotifyDto" >
+    update t_order_notify
+    set sls_id = #{slsId,jdbcType=INTEGER},
+      fls_id = #{flsId,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      cname = #{cname,jdbcType=VARCHAR},
+      cci = #{cci,jdbcType=VARCHAR},
+      consumer_address = #{consumerAddress,jdbcType=VARCHAR},
+      cas = #{cas,jdbcType=VARCHAR},
+      consumer_name = #{consumerName,jdbcType=VARCHAR},
+      consumer_account_id = #{consumerAccountId,jdbcType=BIGINT},
+      Lng = #{lng,jdbcType=DECIMAL},
+      lat = #{lat,jdbcType=DECIMAL},
+      valid_flag = #{validFlag,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where order_id = #{orderId,jdbcType=BIGINT}
+      and merchant_account_id = #{merchantAccountId,jdbcType=BIGINT}
+  </update>
+  
+  
+  
+  
+  <!--  add by myself -->
+  <insert id="insertNotifyList">
+  insert ignore into (order_id, merchant_account_id, sls_id, 
+      fls_id, description, cname, 
+      cci, consumer_address, cas, 
+      consumer_name, consumer_account_id, Lng, 
+      lat, valid_flag,create_time)
+      <foreach collection="rlist" item="item" open=" values (" separator="),(" close=")"></foreach>
+    #{orderId,jdbcType=BIGINT}, #{item.accountId,jdbcType=BIGINT}, #{slsId,jdbcType=INTEGER}, 
+      #{flsId,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, 
+      #{cci,jdbcType=VARCHAR}, #{consumerAddress,jdbcType=VARCHAR}, #{cas,jdbcType=VARCHAR}, 
+      #{consumerName,jdbcType=VARCHAR}, #{consumerAccountId,jdbcType=BIGINT}, #{lng,jdbcType=DECIMAL}, 
+      #{lat,jdbcType=DECIMAL}, #{validFlag,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}
+  </insert>
+</mapper>

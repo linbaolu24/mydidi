@@ -23,7 +23,7 @@ public class ReciverDto implements IReciverDto{
 	}
 	private Long accountId;
 	private String reciveId;
-	private String reciveType;
+	private String reciveType="gt";
 	private Role accountType;
 	public Role getAccountType() {
 		return accountType;

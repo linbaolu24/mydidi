@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.didi.user.ad.dao.mapper.AdvertRecordDtoMapper" >
+  <resultMap id="BaseResultMap" type="cn.com.didi.user.ad.domain.AdvertRecordDto" >
+    <id column="record_id" property="recordId" jdbcType="BIGINT" />
+    <result column="ad_id" property="adId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="category" property="category" jdbcType="CHAR" />
+    <result column="phone_type" property="phoneType" jdbcType="VARCHAR" />
+    <result column="account_id" property="accountId" jdbcType="BIGINT" />
+    <result column="display_position" property="displayPosition" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    record_id, ad_id, create_time, category, phone_type, account_id, display_position
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.ad.domain.AdvertRecordDtoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from t_advert_record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_advert_record
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_advert_record
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.com.didi.user.ad.domain.AdvertRecordDtoExample" >
+    delete from t_advert_record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.com.didi.user.ad.domain.AdvertRecordDto" >
+    insert into t_advert_record (record_id, ad_id, create_time, 
+      category, phone_type, account_id, 
+      display_position)
+    values (#{recordId,jdbcType=BIGINT}, #{adId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{category,jdbcType=CHAR}, #{phoneType,jdbcType=VARCHAR}, #{accountId,jdbcType=BIGINT}, 
+      #{displayPosition,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.com.didi.user.ad.domain.AdvertRecordDto" >
+    insert into t_advert_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recordId != null" >
+        record_id,
+      </if>
+      <if test="adId != null" >
+        ad_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="category != null" >
+        category,
+      </if>
+      <if test="phoneType != null" >
+        phone_type,
+      </if>
+      <if test="accountId != null" >
+        account_id,
+      </if>
+      <if test="displayPosition != null" >
+        display_position,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordId != null" >
+        #{recordId,jdbcType=BIGINT},
+      </if>
+      <if test="adId != null" >
+        #{adId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=CHAR},
+      </if>
+      <if test="phoneType != null" >
+        #{phoneType,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null" >
+        #{accountId,jdbcType=BIGINT},
+      </if>
+      <if test="displayPosition != null" >
+        #{displayPosition,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.com.didi.user.ad.domain.AdvertRecordDtoExample" resultType="java.lang.Integer" >
+    select count(*) from t_advert_record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_advert_record
+    <set >
+      <if test="record.recordId != null" >
+        record_id = #{record.recordId,jdbcType=BIGINT},
+      </if>
+      <if test="record.adId != null" >
+        ad_id = #{record.adId,jdbcType=BIGINT},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.category != null" >
+        category = #{record.category,jdbcType=CHAR},
+      </if>
+      <if test="record.phoneType != null" >
+        phone_type = #{record.phoneType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accountId != null" >
+        account_id = #{record.accountId,jdbcType=BIGINT},
+      </if>
+      <if test="record.displayPosition != null" >
+        display_position = #{record.displayPosition,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_advert_record
+    set record_id = #{record.recordId,jdbcType=BIGINT},
+      ad_id = #{record.adId,jdbcType=BIGINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      category = #{record.category,jdbcType=CHAR},
+      phone_type = #{record.phoneType,jdbcType=VARCHAR},
+      account_id = #{record.accountId,jdbcType=BIGINT},
+      display_position = #{record.displayPosition,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.com.didi.user.ad.domain.AdvertRecordDto" >
+    update t_advert_record
+    <set >
+      <if test="adId != null" >
+        ad_id = #{adId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="category != null" >
+        category = #{category,jdbcType=CHAR},
+      </if>
+      <if test="phoneType != null" >
+        phone_type = #{phoneType,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null" >
+        account_id = #{accountId,jdbcType=BIGINT},
+      </if>
+      <if test="displayPosition != null" >
+        display_position = #{displayPosition,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.com.didi.user.ad.domain.AdvertRecordDto" >
+    update t_advert_record
+    set ad_id = #{adId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      category = #{category,jdbcType=CHAR},
+      phone_type = #{phoneType,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=BIGINT},
+      display_position = #{displayPosition,jdbcType=VARCHAR}
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </update>
+</mapper>

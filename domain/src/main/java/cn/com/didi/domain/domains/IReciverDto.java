@@ -7,4 +7,5 @@ public interface IReciverDto {
 	String getReciveId();
 	String getReciveType();
 	Role getAccountType();
+	void setAccountType(Role accountType);
 }

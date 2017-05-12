@@ -3,6 +3,8 @@ package cn.com.didi.domain.util;
 import java.util.List;
 
 import cn.com.didi.core.property.Couple;
+import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.select.IPageBound;
 import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.Point;
@@ -45,6 +47,10 @@ public interface IReciverSearchService {
 	 * @return
 	 */
 	public IMerchantDto getMerchant(Long accountId);
+	/**
+	 * @param accountId
+	 * @return
+	 */
 	public String getPhone(Long accountId);
 	/**
 	 * 获取商家信息
@@ -52,4 +58,22 @@ public interface IReciverSearchService {
 	 * @return
 	 */
 	public Couple<IMerchantDto, IReciverDto> getMerchantAndReciver(Long accountId);
+	/**
+	 * 更新评价
+	 * @param accountId
+	 * @param eve
+	 */
+	public void updateEve(Long accountId,int eve);
+	
+	/**
+	 * 所有用户列表
+	 * @return
+	 */
+	public IPage<IReciverDto> listAllUser(Role role,IPageBound pageBounds);
+	/**
+	 * 所有商户列表
+	 * @param category
+	 * @return
+	 */
+	public IPage<IReciverDto> listMerchats(BusinessCategory category,IPageBound pageBounds);
 }

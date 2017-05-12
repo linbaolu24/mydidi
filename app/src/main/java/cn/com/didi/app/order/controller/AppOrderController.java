@@ -40,6 +40,7 @@ import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderStateDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.result.IOrderRuslt;
+import cn.com.didi.thirdExt.select.ListPage;
 import cn.com.didi.user.item.domain.SlServiceDto;
 import cn.com.didi.user.item.service.IItemService;
 import cn.com.didi.user.system.domain.CodeDictionaryDto;
@@ -157,7 +158,12 @@ public class AppOrderController extends AppBaseOrderController {
 			body.setPageSize(5);
 		}
 		IPage<MerchantDescriptionDto> list = merchantService.selectMerchantDesc(center, 5, inter,body.pageBounds());
-		return ResultExt.build(list);
+		if(list==null){
+			return ResultFactory.success();
+		}
+		ListPage<MerchantDescriptionDto> listPage=new ListPage<>(list.getList(), list.getCount());
+		return ResultFactory.success(listPage);
+		//return ResultExt.build(list);
 	}
 
 	protected List<Point> toMerchantAreaDto(List<MerchantAreaDto> lists) {
@@ -294,6 +300,8 @@ public class AppOrderController extends AppBaseOrderController {
 		}
 		return ResultFactory.error(or.getCode(), or.getMessage());
 	}
+	
+	
 	/*@RequestMapping(value = "/app/c/order/alipay",method={RequestMethod.POST})
 	public IResult alipay(@RequestBody OrderIDJAO map,HttpServletRequest request){
 		Long orderId = (Long) map.getOrderId();

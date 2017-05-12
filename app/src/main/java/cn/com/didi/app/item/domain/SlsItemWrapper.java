@@ -53,9 +53,19 @@ public class SlsItemWrapper {
 	public String getBusinessCharge() {
 		return dto.getDto().getBusinessCharge();
 	}
-	public void setBusinessCharge(String businessCharge) {
-		dto.getDto().setBusinessCharge(businessCharge);
-	}
+	 /**
+     * 1 表示美容美发
+     **/
+    public String getSpecialType() {
+        return dto.getDto().getSpecialType();
+    }
+
+    /**
+     * 1 表示美容美发
+     **/
+    public void setSpecialType(String specialType) {
+        dto.getDto().setSpecialType(specialType);
+    }
 	public static List<SlsItemWrapper> wrap(List<SlsItemDto> slsDto) {
 		if (CollectionUtils.isEmpty(slsDto)) {
 			return null;

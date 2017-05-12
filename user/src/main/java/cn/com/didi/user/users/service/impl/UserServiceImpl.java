@@ -1,6 +1,7 @@
 package cn.com.didi.user.users.service.impl;
 
 import java.util.List;
+import java.util.Locale.Category;
 
 import javax.annotation.Resource;
 
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
@@ -20,9 +22,13 @@ import cn.com.didi.core.property.ICodec;
 import cn.com.didi.core.property.ICodecManager;
 import cn.com.didi.core.property.impl.codec.ArrayCodec;
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.select.IPageBound;
 import cn.com.didi.core.utils.Constans;
+import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.Role;
+import cn.com.didi.thirdExt.select.ListPage;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.users.dao.mapper.UserDtoMapper;
 import cn.com.didi.user.users.dao.mapper.UserLinkIdDtoMapper;
@@ -62,12 +68,22 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 	}
 
 	@Override
+	@Transactional
 	public void addUser(UserDto userDto) {
 		if (userDto == null) {
 			return;
 		}
 		codePassword(userDto);
+		if(StringUtils.isEmpty(userDto.getBusinessCategory())){
+			userDto.setBusinessCategory(BusinessCategory.SELF.getCode());
+		}
 		userDtoMapper.insertSelective(userDto);
+		UserLinkIdDto linked=new UserLinkIdDto();
+		linked.setAccountId(userDto.getAccountId());
+		linked.setRole(userDto.getRole());
+		linked.setBusinessCategory(userDto.getBusinessCategory());
+		userLinkIdDtoMapper.insertSelective(linked);
+		
 	}
 
 	protected void codePassword(UserDto userDto) {
@@ -299,6 +315,53 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		addUser(userDto);
 		
 	}
+
+	@Override
+	public void updateUserState(List<UserDto> lists) {
+		if(CollectionUtils.isEmpty(lists)){
+			for(UserDto one:lists){
+				updateUserState(one.getAccountId(), one.getState());
+			}
+		}
+		
+	}
+	
+	@Override
+	public IPage<IReciverDto> listAllUser(Role role, IPageBound pageBounds) {
+		return list(role, null, pageBounds);
+	}
+	
+	protected IPage<IReciverDto>  list(Role role,BusinessCategory category, IPageBound pageBounds){
+		PageBounds rpageBounds = new PageBounds(pageBounds.getPageIndex(), pageBounds.getPageSize(), false);
+		List<IReciverDto> dtos=userLinkIdDtoMapper.selectRecivers(role.getCode(),category==null?null:category.getCode(), rpageBounds);
+		if(!CollectionUtils.isEmpty(dtos)){
+			for(IReciverDto one:dtos){
+				one.setAccountType(role);
+			}
+		}
+		return new ListPage<>(dtos, -1);
+	}
+	
+	@Override
+	public IPage<IReciverDto> listAllBusiness(BusinessCategory cat, IPageBound pageBounds) {
+		return list(Role.BUSINESS, cat, pageBounds);
+	}
+
+	@Override
+	@Transactional
+	public void updateBusinessCategory(Long accountId, String businessCategory) {
+		UserDto dto=new UserDto();
+		dto.setAccountId(accountId);
+		dto.setBusinessCategory(businessCategory);
+		UserLinkIdDto linkedDto=new UserLinkIdDto();
+		linkedDto.setAccountId(accountId);
+		linkedDto.setBusinessCategory(businessCategory);
+		userDtoMapper.updateByPrimaryKey(dto);
+		userLinkIdDtoMapper.updateByPrimaryKeySelective(linkedDto);
+		
+	}
+
+
 	
 
 

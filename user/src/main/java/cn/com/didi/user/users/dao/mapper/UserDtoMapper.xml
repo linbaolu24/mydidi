@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.didi.user.users.dao.mapper.UserDtoMapper" >
-  <resultMap id="BaseResultMap" type="cn.com.didi.user.users.domain.UserDto" >
+
+ <resultMap id="BaseResultMap" type="cn.com.didi.user.users.domain.UserDto" >
     <id column="account_Id" property="accountId" jdbcType="BIGINT" />
     <result column="user_name" property="userName" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
@@ -13,6 +14,7 @@
     <result column="role" property="role" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="address_code" property="addressCode" jdbcType="VARCHAR" />
+    <result column="business_category" property="businessCategory" jdbcType="CHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List" >
     account_Id, user_name, password, pcode, cname, bpn, state, profile_photo, role, create_time, 
-    address_code
+    address_code, business_category
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.users.domain.UserDtoExample" >
     select
@@ -111,11 +113,13 @@
     insert into users (account_Id, user_name, password, 
       pcode, cname, bpn, 
       state, profile_photo, role, 
-      create_time, address_code)
+      create_time, address_code, business_category
+      )
     values (#{accountId,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{pcode,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, #{bpn,jdbcType=VARCHAR}, 
       #{state,jdbcType=CHAR}, #{profilePhoto,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{addressCode,jdbcType=VARCHAR})
+      #{createTime,jdbcType=TIMESTAMP}, #{addressCode,jdbcType=VARCHAR}, #{businessCategory,jdbcType=CHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.didi.user.users.domain.UserDto" useGeneratedKeys="true" keyProperty="accountId">
     insert into users
@@ -153,6 +157,9 @@
       <if test="addressCode != null" >
         address_code,
       </if>
+      <if test="businessCategory != null" >
+        business_category,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="accountId != null" >
@@ -187,6 +194,9 @@
       </if>
       <if test="addressCode != null" >
         #{addressCode,jdbcType=VARCHAR},
+      </if>
+      <if test="businessCategory != null" >
+        #{businessCategory,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -232,6 +242,9 @@
       <if test="record.addressCode != null" >
         address_code = #{record.addressCode,jdbcType=VARCHAR},
       </if>
+      <if test="record.businessCategory != null" >
+        business_category = #{record.businessCategory,jdbcType=CHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -249,7 +262,8 @@
       profile_photo = #{record.profilePhoto,jdbcType=VARCHAR},
       role = #{record.role,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      address_code = #{record.addressCode,jdbcType=VARCHAR}
+      address_code = #{record.addressCode,jdbcType=VARCHAR},
+      business_category = #{record.businessCategory,jdbcType=CHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -287,6 +301,9 @@
       <if test="addressCode != null" >
         address_code = #{addressCode,jdbcType=VARCHAR},
       </if>
+      <if test="businessCategory != null" >
+        business_category = #{businessCategory,jdbcType=CHAR},
+      </if>
     </set>
     where account_Id = #{accountId,jdbcType=BIGINT}
   </update>
@@ -301,9 +318,18 @@
       profile_photo = #{profilePhoto,jdbcType=VARCHAR},
       role = #{role,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      address_code = #{addressCode,jdbcType=VARCHAR}
+      address_code = #{addressCode,jdbcType=VARCHAR},
+      business_category = #{businessCategory,jdbcType=CHAR}
     where account_Id = #{accountId,jdbcType=BIGINT}
   </update>
+
+
+
+
+
+
+
+ <!-- add by my -->
   <select id="selectUsers" resultMap="BaseResultMap">
   select  account_Id, user_name, cname, bpn, state, role, create_time, 
     address_code from users where role='B' 

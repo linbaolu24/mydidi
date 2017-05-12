@@ -33,6 +33,8 @@ import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.LatLngUtiil;
 import cn.com.didi.domain.util.State;
+import cn.com.didi.order.orders.domain.OrderEvaluationDto;
+import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.thirdExt.select.ListPage;
 import cn.com.didi.user.area.service.IAreaService;
 import cn.com.didi.user.users.dao.mapper.MerchantAreaDtoMapper;
@@ -53,6 +55,7 @@ import cn.com.didi.user.users.domain.MerchantServiceDtoKey;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.service.IMerchantService;
 import cn.com.didi.user.users.service.IUserService;
+import cn.com.didi.user.users.util.MerchantUtils;
 
 /**
  * @author xlm
@@ -73,6 +76,8 @@ public class MerchantServiceImpl implements IMerchantService {
 	protected IAreaService areaService;
 	@Resource
 	protected IShapeGenerator shapeGenerator;
+	@Resource
+	protected IOrderInfoService orderInfoService;
 	//@Resource
 	//protected IItemService itemService;
 
@@ -352,6 +357,7 @@ public class MerchantServiceImpl implements IMerchantService {
 	}
 
 	@Override
+	@Transactional
 	public void checkMerchant(Long accountId, String cr, String cause) {
 		if(StringUtils.isEmpty(cr)||accountId==null){
 			return;
@@ -360,7 +366,15 @@ public class MerchantServiceImpl implements IMerchantService {
 		dto.setAccountId(accountId);
 		dto.setCause(StringUtils.defaultIfEmpty(cause, null));
 		dto.setCr(cr);
+		//dto.setState(State.VALID.getState());
 		merchantMapper.updateByPrimaryKeySelective(dto);
+		MerchantServiceDto serviceDto=new MerchantServiceDto();
+		serviceDto.setCr(cr);
+		MerchantServiceDtoExample example=new MerchantServiceDtoExample();
+		MerchantServiceDtoExample.Criteria cri= example.createCriteria();
+		cri.andAccountIdEqualTo(accountId);
+		merchantServiceDtoMapper.updateByExampleSelective(serviceDto, example);
+		
 	}
 
 	@Override
@@ -383,6 +397,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		}
 		merchant.setAlipayAccount(null);// 禁止更新支付宝账号
 		merchant.setWechatAccount(null);// 禁止更新微信账号
+		//merchant.setBusinessCategory(null);//禁止更新业务类型
 
 		MerchantDto temp = merchantMapper.selectByPrimaryKey(merchant.getAccountId());
 		if (temp == null) {
@@ -409,6 +424,9 @@ public class MerchantServiceImpl implements IMerchantService {
 				one.setCr(merchant.getCr());
 				addMerchantService(one);
 			}
+		}
+		if(!StringUtils.isEmpty(merchant.getBusinessCategory())){
+			userService.updateBusinessCategory(merchant.getAccountId(), merchant.getBusinessCategory());
 		}
 	}
 
@@ -492,8 +510,9 @@ public class MerchantServiceImpl implements IMerchantService {
 		IPage<MerchantDto> page=selectMerchants(center,radius,slsId,bounds,mapped);
 		if(page!=null&&!CollectionUtils.isEmpty(page.getList())){
 			List<MerchantDescriptionDto> pageList=new ArrayList<MerchantDescriptionDto>(page.getList().size());
+			List<OrderEvaluationDto> list=orderInfoService.selectEves(MerchantUtils.toAccoutIdList(page.getList()));
 			for(MerchantDto one:page.getList()){
-				MerchantDescriptionDto desc=  toMerchantDescriptionDto(one,mapped.get(one.getAccountId()));
+				MerchantDescriptionDto desc=  toMerchantDescriptionDto(one,mapped.get(one.getAccountId()),list);
 		        pageList.add(desc);
 			}
 			return new ListPage<>(pageList, page.getCount());
@@ -501,7 +520,8 @@ public class MerchantServiceImpl implements IMerchantService {
 		return null;
 	}
 	
-	public MerchantDescriptionDto toMerchantDescriptionDto(MerchantDto one,Double distance) {
+	public MerchantDescriptionDto toMerchantDescriptionDto(MerchantDto one, Double distance,
+			List<OrderEvaluationDto> list) {
 		MerchantDescriptionDto dto = new MerchantDescriptionDto();
 		dto.setAccountId(one.getAccountId());
 		dto.setAddress(one.getDetailAddress());
@@ -513,8 +533,18 @@ public class MerchantServiceImpl implements IMerchantService {
 		if (one.getLng() != null) {
 			dto.setLng(one.getLng().toString());
 		}
-		if(distance!=null){
-		dto.setDistance(distance.intValue());
+		if (distance != null) {
+			dto.setDistance(distance.intValue());
+		}
+		dto.setOrderCount(0);
+		dto.setMerchantEvaluation("0");
+		if (!CollectionUtils.isEmpty(list)) {
+			for (OrderEvaluationDto oneEve : list) {
+				if (one.getAccountId().equals(oneEve.getMerchantAccountId())) {
+					dto.setOrderCount(oneEve.getOrderCount());
+					dto.setMerchantEvaluation(oneEve.cal());
+				}
+			}
 		}
 		return dto;
 	}
@@ -542,6 +572,12 @@ public class MerchantServiceImpl implements IMerchantService {
 			return null;
 		}
 		return dto.getMpn();
+	}
+
+	@Override
+	public void updateEve(Long accountId, int eve) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

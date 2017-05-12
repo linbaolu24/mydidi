@@ -48,6 +48,7 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		int maxed=getMaxDay();
 		return myMerchantDayRemainingDtoMapper.selectByAccountId(accountId,maxed);
 	}
+	/**包含该天*/
 	protected int getMaxDay(){
 		return DateUtil.getIntervalYYYYMMDD(LOCKED);
 	}
@@ -116,6 +117,12 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		int maxDay=getMaxDay();
 		MerchantDayRemainingDto dto=myMerchantDayRemainingDtoMapper.countByAccountIdAndAt(accountId, maxDay,payAccountEnum.getCode());
 		return dto;
+	}
+
+	@Override
+	public Long countFrozeRemain(Long accountId) {
+		int maxDay=getMaxDay();
+		return null;
 	}
 
 }
