@@ -1,6 +1,7 @@
 package cn.com.didi.order.orders.util;
 
 public enum OrderMessageOperation {
+	AUTH,//鉴权
 	BEFORE_PUBLISH,//在发布之前
 	BEFORE_ADD,// 在增加之前 
 	ADD_NEW_ORDER,//增加了新的订单

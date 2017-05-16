@@ -2,7 +2,6 @@ package cn.com.didi.app.deal.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,9 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
-import com.alipay.api.internal.util.AlipaySignature;
-
 import cn.com.didi.app.deal.domain.AliPayJAO;
 import cn.com.didi.app.order.domain.OrderIDJAO;
 import cn.com.didi.core.property.IResult;
@@ -29,10 +25,6 @@ import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.domain.domains.AliPAyRequestDto;
 import cn.com.didi.domain.domains.AliSynResultDto;
 import cn.com.didi.domain.util.DomainConstatns;
-import cn.com.didi.domain.util.DomainMessageConstans;
-import cn.com.didi.domain.util.PayAccountEnum;
-import cn.com.didi.order.orders.domain.OrderDealDescDto;
-import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.order.trade.service.IAliTradeService;
 
 @RestController
@@ -149,7 +141,7 @@ public class AlipayDealController extends AbstractDealController {
 		LOGGER.debug("=================/app/trade/{type}/finishAlipay阿里支付同步结果=======================");
 		IResult<Void> result = aliTradeService.synnotify(type,request);
 		if(result==null){
-			ResultFactory.success();
+			result=ResultFactory.success();
 		}
 		return result;
 	}

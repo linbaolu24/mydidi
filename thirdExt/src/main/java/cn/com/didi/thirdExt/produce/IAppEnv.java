@@ -2,6 +2,10 @@ package cn.com.didi.thirdExt.produce;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.List;
+
+import cn.com.didi.user.ad.domain.AdDescDto;
+import cn.com.didi.user.users.domain.VipDescrptionDto;
 
 public interface IAppEnv {
 	public String getAppName();
@@ -80,4 +84,20 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public boolean isAdRtStatistic();
+	/**
+	 * @return
+	 */
+	public VipDescrptionDto getVipDesc(Integer slsId);
+	/**
+	 * 注册VIP描述
+	 * @param slsId
+	 * @return
+	 */
+	public String getRegVipDesc(Integer slsId);
+	/**
+	 * 获取免费洗发slsID
+	 * @return
+	 */
+	public Integer getMfxfSlsId();
+	public List<AdDescDto> listMrmfAds();
 }

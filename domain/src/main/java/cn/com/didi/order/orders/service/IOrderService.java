@@ -8,6 +8,7 @@ import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderStateDto;
 import cn.com.didi.order.result.IOrderRuslt;
+import cn.com.didi.user.users.domain.VipDto;
 
 /**
  * @author xlm
@@ -18,7 +19,11 @@ public interface IOrderService {
 	 * 发布订单 date为订单创建时间
 	 */
 	public IOrderRuslt<Void> publish(OrderDto info);
-	
+	/**
+	 * @param dto
+	 * @return
+	 */
+	public IOrderRuslt<VipDto> auth(OrderDto dto);
 	/**
 	 * 指定商户发布订单
 	 */

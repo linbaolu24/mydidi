@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.com.didi.app.order.domain.AdListPageExt;
 import cn.com.didi.app.order.domain.OrderEveJAO;
 import cn.com.didi.app.order.domain.OrderIDJAO;
 import cn.com.didi.app.order.domain.OrderJAO;
@@ -29,7 +30,6 @@ import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.domains.Point;
-import cn.com.didi.domain.query.ResultExt;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.CodeNameConstatns;
 import cn.com.didi.domain.util.DomainConstatns;
@@ -41,6 +41,8 @@ import cn.com.didi.order.orders.domain.OrderStateDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.thirdExt.select.ListPage;
+import cn.com.didi.user.ad.domain.AdDescDto;
+import cn.com.didi.user.ad.domain.AdDto;
 import cn.com.didi.user.item.domain.SlServiceDto;
 import cn.com.didi.user.item.service.IItemService;
 import cn.com.didi.user.system.domain.CodeDictionaryDto;
@@ -50,6 +52,7 @@ import cn.com.didi.user.users.domain.MerchantDescriptionDto;
 import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
+import cn.com.didi.user.users.domain.VipDto;
 import cn.com.didi.user.users.service.IMerchantService;
 
 @RestController
@@ -61,6 +64,7 @@ public class AppOrderController extends AppBaseOrderController {
 	protected IMerchantService merchantService;
 	@Resource
 	protected ICodeDicService codeDicService;
+	
 
 	@RequestMapping(value = "/app/c/order/prompt", method = { RequestMethod.POST, RequestMethod.GET })
 	public IResult prompt(HttpServletRequest request) {
@@ -162,7 +166,10 @@ public class AppOrderController extends AppBaseOrderController {
 			return ResultFactory.success();
 		}
 		ListPage<MerchantDescriptionDto> listPage=new ListPage<>(list.getList(), list.getCount());
-		return ResultFactory.success(listPage);
+		 List<AdDescDto> adList=appEnv.listMrmfAds();
+		 AdListPageExt< MerchantDescriptionDto, AdDescDto> ext=new AdListPageExt<MerchantDescriptionDto,AdDescDto>(listPage,adList);
+
+		return ResultFactory.success(ext);
 		//return ResultExt.build(list);
 	}
 
@@ -182,8 +189,9 @@ public class AppOrderController extends AppBaseOrderController {
 	public IResult publish(@RequestBody OrderJAO body, HttpServletRequest request) {
 		Long accountId = resolver.resolve(request);
 		OrderDto order = toOrderDto2(body);
-		popNormal(order, accountId);
 		SlServiceDto sls=itemService.selectSlService(order.getSlsId());
+		popNormal(order, accountId,sls);
+		
 		if(StringUtils.isEmpty(order.getSpecialType())){
 			order.setSpecialType(SpecialTypeEnum.NORMAL.getCode());
 		}
@@ -200,10 +208,12 @@ public class AppOrderController extends AppBaseOrderController {
 		return ResultFactory.success(p);
 	}
 	
-	protected void popNormal(OrderDto order,Long consumerAccountId){
-		Date date=new Date();
+	protected void popNormal(OrderDto order, Long consumerAccountId, SlServiceDto sls) {
+		Date date = new Date();
 		order.setOct(date);
-		SlServiceDto sls = itemService.selectSlService(order.getSlsId());
+		if (sls == null) {
+			sls = itemService.selectSlService(order.getSlsId());
+		}
 		AssertUtil.assertNotNull(sls, "二级服务不存在");
 		order.setBusinessCategory(sls.getBusinessCategory());
 		order.setBusinessCharge(sls.getBusinessCharge());
@@ -300,7 +310,16 @@ public class AppOrderController extends AppBaseOrderController {
 		}
 		return ResultFactory.error(or.getCode(), or.getMessage());
 	}
-	
+	@RequestMapping(value = "/app/c/order/auth", method = { RequestMethod.POST })
+	public IResult auth(@RequestBody OrderDto body,HttpServletRequest request){
+		Long accountId = resolver.resolve(request);
+		body.setConsumerAccountId(accountId);
+		IOrderRuslt<VipDto> result=orderService.auth(body);
+		if(result.success()){
+			return ResultFactory.success(result.getData());
+		}
+		return ResultFactory.error(result.getCode(),result.getMessage());
+	}
 	
 	/*@RequestMapping(value = "/app/c/order/alipay",method={RequestMethod.POST})
 	public IResult alipay(@RequestBody OrderIDJAO map,HttpServletRequest request){

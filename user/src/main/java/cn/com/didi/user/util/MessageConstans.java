@@ -48,6 +48,13 @@ public abstract class MessageConstans {
 	 * 用户被禁用
 	 */
 	public static final Message USER_STATE_NOT_VALID=newMessage(CODE_USER_STATE_NOT_VALID);
+	
+	/**未付款不能升级为VIP*/
+	public static final Message VIP_NOT_PAY=newMessage(CODE_VIP_NOT_PAY);
+	/**
+	 * 支付未到账不能升级为VIP
+	 */
+	public static final Message VIP_PAY_NOT_ARRIVE=newMessage(CODE_VIP_PAY_NOT_ARRIVE);
 	/**
 	 * @param code
 	 * @return

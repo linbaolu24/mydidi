@@ -12,7 +12,9 @@ import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.DealEnum;
 import cn.com.didi.domain.util.IReciverSearchService;
 import cn.com.didi.domain.util.State;
 import cn.com.didi.order.trade.dao.mapper.DepositDtoMapper;
@@ -69,10 +71,13 @@ public class DepositServiceImpl implements IDepositService{
 			dto.setBpn(reciverSearchService.getPhone(dto.getSai()));
 		}
 		if(dto.getEndTime()==null){
-			dto.setEndTime(endTime);
+			dto.setEndTime(getEndTime(dto));
 		}
 		myDepositMapper.insertSelective(dto);
 		
+	}
+	protected Date getEndTime(DepositDto dto){
+		return DateUtil.getDateIntervalYear(dto.getCreateTime(),1);
 	}
 
 	@Override
@@ -89,6 +94,21 @@ public class DepositServiceImpl implements IDepositService{
 		dto.setDepositId(depositId);
 		dto.setPayState(tradeState);
 		myDepositMapper.updateByPrimaryKeySelective(dto);
+	}
+
+	@Override
+	public boolean existDeposit(Long accountId, Long depositId) {
+		DepositDto dto=myDepositMapper.selectByPrimaryKey(depositId);
+		if(dto==null){
+			return false;
+		}
+		if(dto.getSai()==null||!dto.getSai().equals(accountId)){
+			return false;
+		}
+		if(!State.VALID.getState().equals(dto.getState())||!DealEnum.FINISH.getCode().equals(dto.getPayState())){
+			return false;
+		}
+		return true;
 	}
 	
 }

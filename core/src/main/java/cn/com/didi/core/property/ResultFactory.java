@@ -1,5 +1,8 @@
 package cn.com.didi.core.property;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import cn.com.didi.core.message.Message;
 import cn.com.didi.core.property.impl.result.Result;
 
@@ -16,6 +19,12 @@ public class ResultFactory {
 
 	public static <T> IResult<T> success(Message message, T obj) {
 		return new Result<T>( message.getMessage(),message.getCode(), null, obj);
+	}
+	
+	public static <T> IResult<Map<String,T>> success(String key,T obj) {
+		Map<String,T> map=new HashMap<>(1);
+		map.put(key, obj);
+		return success(map);
 	}
 
 	@SuppressWarnings("unchecked")

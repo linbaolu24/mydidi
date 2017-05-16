@@ -40,6 +40,7 @@ import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderRenderService;
 import cn.com.didi.order.orders.service.IOrderService;
+import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.user.system.domain.CodeDictionaryDto;
 import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.UserDto;
@@ -58,6 +59,8 @@ public class AppBaseOrderController {
 	protected IOrderService orderService;
 	@Resource 
 	protected IOrderRenderService orderRenderService ;
+	@Resource
+	protected IAppEnv appEnv;
 
 	protected void assertOrderId(Long orderId) {
 		AssertUtil.assertNotNull(orderId, "订单号");
@@ -85,6 +88,7 @@ public class AppBaseOrderController {
 		if(dto!=null){
 			map.put(DomainConstatns.MERCHANTLOGO, dto.getMerchantLogo());//
 			map.put(DomainConstatns.MERCHANT_NAME,dto.getCname());
+			map.put(DomainConstatns.MERCHANT_ADDRESS,dto.getDetailAddress());
 		}
 		map.put(DomainConstatns.CONSUMER_NAME, order.getConsumerName());
 		return map;

@@ -495,7 +495,11 @@ public class MerchantServiceImpl implements IMerchantService {
 			return null;
 		}
 		java.awt.geom.Point2D center2=center.toDoublePoint();
-		Collections.sort(lists,(one,two)->compare(mapped,center2,one,two));
+		if(lists.size()>=2){
+		    Collections.sort(lists,(one,two)->compare(mapped,center2,one,two));
+		}else{
+			getDistance(mapped, center2, lists.get(0));
+		}
 		List<MerchantAreaDto> areaDto=lists.subList(bounds.from(), bounds.end(lists.size()));
 		List<MerchantDto> mdtos= selectMerchantList(areaDto);
 		Collections.sort(mdtos,(one,two)->mapped.get(one.getAccountId()).compareTo(mapped.get(two.getAccountId())));
@@ -523,10 +527,12 @@ public class MerchantServiceImpl implements IMerchantService {
 	public MerchantDescriptionDto toMerchantDescriptionDto(MerchantDto one, Double distance,
 			List<OrderEvaluationDto> list) {
 		MerchantDescriptionDto dto = new MerchantDescriptionDto();
-		dto.setAccountId(one.getAccountId());
+		dto.setMerchantAccountId(one.getAccountId());
 		dto.setAddress(one.getDetailAddress());
 		dto.setCname(one.getCname());
-		dto.setDescription(one.getContactInformation());
+		dto.setDescription(one.getDescription());
+		dto.setContactInformation(one.getContactInformation());
+		dto.setMerchantLogo(one.getMerchantLogo());
 		if (one.getLat() != null) {
 			dto.setLat(one.getLat().toString());
 		}

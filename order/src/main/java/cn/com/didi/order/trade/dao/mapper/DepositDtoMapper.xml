@@ -354,7 +354,7 @@
     sum(amount)
     from t_deposit td
     where
-     sai = #{sai,jdbcType=BIGINT} and create_time=#{time,jdbcType=TIMESTAMP}
+     sai = #{sai,jdbcType=BIGINT} and create_time&lt;=#{time,jdbcType=TIMESTAMP} and end_time &gt;=#{time,jdbcType=TIMESTAMP}
      and state=#{state,jdbcType=VARCHAR} and pay_state='1'
    </select>
 </mapper>

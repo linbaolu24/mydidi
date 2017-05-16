@@ -31,7 +31,7 @@ import cn.com.didi.order.util.OrderMessageConstans;
 import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.user.users.service.IUserExperienceService;
 
-@Service
+
 public class MrmfOperationInterceptor
 		implements IOperationInterceptor<OrderMessageOperation, OrderContextDto, IOrderService> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MrmfOperationInterceptor.class);

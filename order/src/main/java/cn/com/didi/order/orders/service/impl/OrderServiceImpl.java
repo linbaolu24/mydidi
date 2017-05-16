@@ -53,6 +53,8 @@ import cn.com.didi.order.result.OrderRuslt;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.service.ITradeService;
 import cn.com.didi.order.util.OrderMessageConstans;
+import cn.com.didi.user.users.domain.VipDto;
+import cn.com.didi.user.users.service.IVipService;
 
 /**
  * 订单服务接口
@@ -73,6 +75,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	protected IPushMessageService pushMessageService;
 	@Resource
 	protected IOrderNotifyMessageFinder orderMessageFinder;
+	@Resource
+	protected IVipService vipService;
 	protected TranscationalCallBack<DealDto> dealTranscationalCallBack = new TranscationalCallBack<DealDto>() {
 
 		@Override
@@ -147,6 +151,26 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		return orderResult;
 	}
+	@Override
+	public IOrderRuslt<VipDto> auth(OrderDto dto) {
+		if(StringUtils.isEmpty(dto.getSpecialType())){
+			dto.setSpecialType(SpecialTypeEnum.NORMAL.getCode());
+		}
+		if(dto.getOct()==null){
+			dto.setOct(new Date());
+		}
+		OrderRuslt<Void> orderResult = null;
+		OrderContextDto context = new OrderContextDto(dto);
+		IOrderRuslt<VipDto> result= interceptor(OrderMessageOperation.AUTH,context);
+		if(result!=null&&!result.success()){
+			return result;
+		}
+		VipDto vipDto=vipService.getDto(dto.getConsumerAccountId(), dto.getSlsId());
+		return new OrderRuslt<VipDto>(vipDto);
+	}
+
+	
+	
 	
 	
 	

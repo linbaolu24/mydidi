@@ -16,7 +16,8 @@ public interface IAccountAssetsService {
 	 */
 	public void addMerchantDayRemainingDto(MerchantDayRemainingDto dto,boolean systemOnly);
 	
-	/**如果账户余额足够就发生修改
+	/**
+	 * <p>如果账户余额足够就发生修改</p>
 	 * @param dto
 	 */
 	public boolean decreMerchantDayRemainingIfCan(MerchantDayRemainingDto dto);

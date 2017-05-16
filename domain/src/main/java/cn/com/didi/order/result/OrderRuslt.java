@@ -34,6 +34,10 @@ public class OrderRuslt<T> extends Result<T> implements IOrderRuslt<T>{
 		this(null,SUCCESS_CODE,null,null);
 		this.orderId=orderId;
 	}
+	public OrderRuslt(T data) {
+		this(null,SUCCESS_CODE,null,data);
+	}
+	
 	public OrderRuslt(String message, String code) {
 		super(message, code, null, null);
 		// TODO Auto-generated constructor stub

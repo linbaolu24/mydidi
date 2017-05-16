@@ -90,7 +90,10 @@ public class OrderMessageConstans {
 	 */
 	public static final Message ORDER_MRMF_INTERVAL_NOT_ARRIVE =newMessage(DomainMessageConstans.CODE_ORDER_MRMF_INTERVAL_NOT_ARRIVE);//="5003000017";
 	
-	
+	/**
+	 *  您还未注册会员
+	 */
+	public static final Message ORDER_MRMF_NOT_VIP =newMessage(DomainMessageConstans.CODE_ORDER_MRMF_NOT_VIP);//="5003000018"; 
 	
 	/**
 	 * 交易不存在

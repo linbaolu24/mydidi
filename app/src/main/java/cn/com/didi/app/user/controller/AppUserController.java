@@ -14,14 +14,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.com.didi.app.user.domain.AccountDomain;
+import cn.com.didi.app.user.domain.VipDealJAO;
+import cn.com.didi.app.user.domain.VipDescriptionJAO;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.DomainConstatns;
+import cn.com.didi.domain.util.FlagEnum;
 import cn.com.didi.domain.util.Role;
 import cn.com.didi.domain.util.State;
+import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.user.login2.domain.LoginDto;
 import cn.com.didi.user.login2.domain.UserExtDto;
 import cn.com.didi.user.login2.service.ILoginService;
@@ -29,8 +33,10 @@ import cn.com.didi.user.register.domain.RegisterDto;
 import cn.com.didi.user.register.service.IRegisterService;
 import cn.com.didi.user.users.domain.MerchantExtDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
+import cn.com.didi.user.users.domain.VipDescrptionDto;
 import cn.com.didi.user.users.service.IMerchantService;
 import cn.com.didi.user.users.service.IUserService;
+import cn.com.didi.user.users.service.IVipService;
 import cn.com.didi.webBase.util.IAccountResolver;
 
 @RestController
@@ -46,7 +52,10 @@ public class AppUserController {
 
 	@Resource
 	protected IMerchantService merchantService;
-	
+	@Resource
+	protected IVipService vipService;
+	@Resource 
+	protected IAppEnv appEnv;
 	
 	@RequestMapping(value = "/app/user/register", method = RequestMethod.POST)
 	public IResult register(@RequestBody RegisterDto dto) {
@@ -90,7 +99,14 @@ public class AppUserController {
 		return ResultFactory.success();
 
 	}
-
+	protected String vipValue(LoginDto login,Long accountId){
+		boolean hasVip=false;
+		if(Role.COUSMER.getCode().equals(login.getRole())){
+			Integer slsId=appEnv.getMfxfSlsId();
+			hasVip=vipService.hasVip(accountId, slsId);
+		}
+		return hasVip?FlagEnum.FLAG_SET.getCode():FlagEnum.FLAG_NOT_SET.getCode();
+	}
 	@RequestMapping(value = "/app/user/login", method = RequestMethod.POST)
 	public IResult login(@RequestBody LoginDto login, HttpServletRequest request) {
 		long now=System.currentTimeMillis();
@@ -108,6 +124,8 @@ public class AppUserController {
 		p.put(DomainConstatns.RY_TOKEN, ext.ryToken());
 		p.put(DomainConstatns.BPN,StringUtils.defaultIfEmpty(login.getPhone(),ext.getUserDto().getBpn()));
 		p.put(DomainConstatns.ROLE, ext.getUserDto().getRole());
+		p.put(DomainConstatns.VIP_FLAG,vipValue(login, ext.getUserDto().getAccountId()));
+		
 		Long timeOut=resolver.getSessionTimepout(request);
 		Date date=new Date(now+timeOut*1000);
 		p.put(DomainConstatns.TIMEOUT,date);
@@ -115,6 +133,7 @@ public class AppUserController {
 		Map pa=new HashMap(p);
 		pa.remove(DomainConstatns.ROLE);
 		pa.put(DomainConstatns.REFLASH_TOKEN,reflashToken);
+		
 		return ResultFactory.success(pa);
 	}
 	@RequestMapping(value = "/app/user/loginout", method = { RequestMethod.POST, RequestMethod.GET })
@@ -171,5 +190,6 @@ public class AppUserController {
 		
 		return ResultFactory.success();
 	}
+	
 
 }

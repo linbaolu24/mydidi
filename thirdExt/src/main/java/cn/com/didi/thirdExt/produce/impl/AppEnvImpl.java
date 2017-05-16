@@ -2,12 +2,18 @@ package cn.com.didi.thirdExt.produce.impl;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.alibaba.fastjson.JSON;
 
 import cn.com.didi.core.property.IEnvironment;
 import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.thirdExt.util.EnvConstants;
+import cn.com.didi.user.ad.domain.AdDescDto;
+import cn.com.didi.user.ad.domain.AdDto;
+import cn.com.didi.user.users.domain.VipDescrptionDto;
 
 public class AppEnvImpl implements IAppEnv {
 	private IEnvironment appEnviroment;
@@ -135,6 +141,31 @@ public class AppEnvImpl implements IAppEnv {
 	@Override
 	public boolean isAdRtStatistic() {
 		return true;
+	}
+	@Override
+	public VipDescrptionDto getVipDesc(Integer slsId) {
+		VipDescrptionDto desc=new VipDescrptionDto();
+		desc.setVipName("美容美发会员");
+		desc.setTitle("免费洗发");
+		desc.setCondition("两次免费洗发，需间隔3天以上");
+		desc.setUsable("一年以内");
+		return desc;
+	}
+	@Override
+	public String getRegVipDesc(Integer slsId) {
+		return appEnviroment.getProperty(EnvConstants.VIP_DESC);
+	}
+	@Override
+	public Integer getMfxfSlsId() {
+		return Integer.parseInt(appEnviroment.getProperty(EnvConstants.MRMF_SLS_ID));
+	}
+	@Override
+	public List<AdDescDto> listMrmfAds() {
+		String str=appEnviroment.getProperty(EnvConstants.MRMF_ADV);
+		if(StringUtils.isEmpty(str)){
+			return null;
+		}
+		return JSON.parseArray(str, AdDescDto.class);
 	}
 	
 

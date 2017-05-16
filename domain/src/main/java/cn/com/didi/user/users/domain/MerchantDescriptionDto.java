@@ -6,11 +6,12 @@ public class MerchantDescriptionDto {
 	private String description;	//描述	String				
 	private String contactInformation;	//联系方式	String				
 	private String cname;	//商户名称	String				
-	private Long accountId;	//账户ID	Long				账户ID
+	private Long merchantAccountId;	//账户ID	Long				账户ID
 	private Integer distance;	//距离	int				单位为米
 	private String address;	//地址	String				String
 	private int orderCount;
 	private String merchantEvaluation;
+	private String merchantLogo; 
 	public String getLng() {
 		return lng;
 	}
@@ -41,12 +42,7 @@ public class MerchantDescriptionDto {
 	public void setCname(String cname) {
 		this.cname = cname;
 	}
-	public Long getAccountId() {
-		return accountId;
-	}
-	public void setAccountId(Long accountId) {
-		this.accountId = accountId;
-	}
+	
 	
 	public String getAddress() {
 		return address;
@@ -72,5 +68,19 @@ public class MerchantDescriptionDto {
 	public void setMerchantEvaluation(String merchantEvaluation) {
 		this.merchantEvaluation = merchantEvaluation;
 	}
-
+	public String getMerchantLogo() {
+		return merchantLogo;
+	}
+	public void setMerchantLogo(String merchantLogo) {
+		this.merchantLogo = merchantLogo;
+	}
+	public Long getMerchantAccountId() {
+		return merchantAccountId;
+	}
+	public void setMerchantAccountId(Long merchantAccountId) {
+		this.merchantAccountId = merchantAccountId;
+	}
+	public String getMerchantName(){
+		return getCname();
+	}
 }

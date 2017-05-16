@@ -199,6 +199,13 @@ public class DomainMessageConstans {
 	public static final String  CODE_ORDER_MRMF_INTERVAL_NOT_ARRIVE="5003000017";
 	
 	/**
+	 *您还未注册会员
+	 */
+	public static final String  CODE_ORDER_MRMF_NOT_VIP="5003000018";
+	
+	
+	
+	/**
 	 * 交易记录不存在
 	 */
 	public static final String CODE_DEAL_NOT_EXIST="5004000001";
@@ -239,4 +246,13 @@ public class DomainMessageConstans {
 	
 	/**微信返回异常*/
 	public static final String CODE_DEAL_WECHAT_PAY_NOTIFY_ERROR="5004100006";
+	
+	
+	/**未付款不能升级为VIP*/
+	public static final String CODE_VIP_NOT_PAY="5005000001";
+	
+	/**
+	 * 支付未到账不能升级为VIP
+	 */
+	public static final String CODE_VIP_PAY_NOT_ARRIVE="5005000002";
 }

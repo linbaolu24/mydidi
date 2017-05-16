@@ -1,5 +1,7 @@
 package cn.com.didi.order.trade.util;
 
+import cn.com.didi.core.utils.DateUtil;
+import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.MerchantDayRemainingDto;
 
 public class MerchantRemainingUtil {
@@ -10,5 +12,13 @@ public class MerchantRemainingUtil {
 		dest.setDaytime(source.getDaytime());
 		dest.setRemaining(source.getRemaining());
 	}
-	
+	public static MerchantDayRemainingDto convertFromDeal(DealDto dto){
+		MerchantDayRemainingDto mdto=new MerchantDayRemainingDto();
+		mdto.setCategory(dto.getDealType());
+		mdto.setPat(dto.getDat());
+		mdto.setAccountId(dto.getDai());
+		mdto.setDaytime(DateUtil.getCurrentYYYYMMDD(dto.getCreateTime()));
+		mdto.setRemaining(dto.getRemain());
+		return mdto;
+	}
 }

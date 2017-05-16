@@ -482,7 +482,7 @@ public class MerchantDto implements Serializable {
 
 	public MerchantDescriptionDto toMerchantDescriptionDto(Double distance) {
 		MerchantDescriptionDto dto = new MerchantDescriptionDto();
-		dto.setAccountId(getAccountId());
+		dto.setMerchantAccountId(getAccountId());
 		dto.setAddress(getDetailAddress());
 		dto.setCname(getCname());
 		dto.setDescription(getContactInformation());

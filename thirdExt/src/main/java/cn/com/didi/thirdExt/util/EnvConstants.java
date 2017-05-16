@@ -29,4 +29,14 @@ public class EnvConstants {
 	 * 美容美发天数间隔
 	 */
 	public static final String MRMF_DAY_INTERVAL="10000004";
+	
+	/**
+	 * 美容美发二级服务ID
+	 */
+	public static final String MRMF_SLS_ID="10000006";
+	/**
+	 * VIP 描述
+	 */
+	public static final String VIP_DESC="10000007";
+	public static final String MRMF_ADV="10000008";
 }

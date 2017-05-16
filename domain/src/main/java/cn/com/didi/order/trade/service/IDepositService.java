@@ -20,6 +20,8 @@ public interface IDepositService {
 	 * @return
 	 */
 	boolean existDeposit(Long accountId);
+	
+	boolean existDeposit(Long accountId,Long depositId);
 	/**
 	 * 计算押金
 	 * @param accountId
