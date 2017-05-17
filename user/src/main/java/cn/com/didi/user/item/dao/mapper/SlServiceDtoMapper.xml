@@ -372,7 +372,12 @@
     <result column="business_category" property="businessCategory" jdbcType="CHAR" />
     <result column="city" property="city" jdbcType="VARCHAR" />
     <result column="business_charge" property="businessCharge" jdbcType="CHAR" />
+     <result column="poundage" property="poundage" jdbcType="INTEGER" />
+    <result column="commission" property="commission" jdbcType="INTEGER" />
     <result column="fls_name" property="flsName" jdbcType="VARCHAR" />
+     <result column="special_type" property="specialType" jdbcType="CHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
   </resultMap>
   <select id="selectSls" resultMap="BaseResultMap_flsName"  >
     select 
