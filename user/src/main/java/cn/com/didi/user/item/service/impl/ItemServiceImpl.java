@@ -114,8 +114,12 @@ public class ItemServiceImpl implements IItemService {
 	@Override
 	@Transactional
 	public void addSlsService(SlServiceDto dto, List<SlsCityDto> cityList) {
+		
 		if (dto == null) {
 			return;
+		}
+		if(StringUtils.isEmpty(dto.getBusinessCategory())){
+			dto.setBusinessCategory(BusinessCategory.SELF.getCode());
 		}
 		if (dto.getCreateTime() == null) {
 			dto.setCreateTime(new Date());
