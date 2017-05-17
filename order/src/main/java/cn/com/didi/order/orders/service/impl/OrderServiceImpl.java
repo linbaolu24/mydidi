@@ -648,8 +648,9 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		p.put(DomainConstatns.ORDER_ID, order.getOrderId());
 		p.put(DomainConstatns.STATE, order.getState());
 		p.put(DomainConstatns.COST, order.getCost());
+		p.put(DomainConstatns.SPECIALTYPE, order.getSpecialType());
 		all.put(DomainConstatns.TYPE, "order");
-		all.put(DomainConstatns.SPECIALTYPE, order.getSpecialType());
+		all.put(DomainConstatns.OBJ, p);
 		dto.setContent(JSON.toJSONString(all));
 		return dto;
 
