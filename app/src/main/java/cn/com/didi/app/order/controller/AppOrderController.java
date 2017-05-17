@@ -156,22 +156,25 @@ public class AppOrderController extends AppBaseOrderController {
 		Integer inter = body.getSlsId();
 		AssertUtil.assertNotNullAppend(inter, "二级服务");
 		Point center = new Point(body.getLng(), body.getLat());
-		if(body.getPageIndex()==0){
+		if (body.getPageIndex() == 0) {
 			body.setPageIndex(1);
 		}
-		if(body.getPageSize()==0){
+		if (body.getPageSize() == 0) {
 			body.setPageSize(5);
 		}
-		IPage<MerchantDescriptionDto> list = merchantService.selectMerchantDesc(center, 5, inter,body.pageBounds());
-		if(list==null){
-			return ResultFactory.success();
+		IPage<MerchantDescriptionDto> list = merchantService.selectMerchantDesc(center, 5, inter, body.pageBounds());
+		ListPage<MerchantDescriptionDto> listPage = null;
+		if (list == null) {
+			listPage = new ListPage<>(new ArrayList<>(0), 0);
+		} else {
+			listPage = new ListPage<>(list.getList(), list.getCount());
 		}
-		ListPage<MerchantDescriptionDto> listPage=new ListPage<>(list.getList(), list.getCount());
-		 List<AdDescDto> adList=appEnv.listMrmfAds();
-		 AdListPageExt< MerchantDescriptionDto, AdDescDto> ext=new AdListPageExt<MerchantDescriptionDto,AdDescDto>(listPage,adList);
+		List<AdDescDto> adList = appEnv.listMrmfAds();
+		AdListPageExt<MerchantDescriptionDto, AdDescDto> ext = new AdListPageExt<MerchantDescriptionDto, AdDescDto>(
+				listPage, adList);
 
 		return ResultFactory.success(ext);
-		//return ResultExt.build(list);
+		// return ResultExt.build(list);
 	}
 
 	protected List<Point> toMerchantAreaDto(List<MerchantAreaDto> lists) {

@@ -138,4 +138,28 @@ public class SlsSericeExtDto implements Serializable{
 		dto.setCommission(commission);
 	}
 
+	public String getSpecialType() {
+		return dto.getSpecialType();
+	}
+
+	public void setSpecialType(String specialType) {
+		dto.setSpecialType(specialType);
+	}
+
+	public String getExt1() {
+		return dto.getExt1();
+	}
+
+	public void setExt1(String ext1) {
+		dto.setExt1(ext1);
+	}
+
+	public String getExt2() {
+		return dto.getExt2();
+	}
+
+	public void setExt2(String ext2) {
+		dto.setExt2(ext2);
+	}
+
 }
