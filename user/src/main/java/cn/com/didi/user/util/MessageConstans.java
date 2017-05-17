@@ -22,7 +22,7 @@ public abstract class MessageConstans {
 	/**
 	 * 用户已存在
 	 */
-	public static final Message USER_USER__EXISTS=newMessage(CODE_USER_USER_NOT_EXISTS);
+	public static final Message USER_USER__EXISTS=newMessage(CODE_USER_USER__EXISTS);
 	/**
 	 * 密码不相等
 	 */
