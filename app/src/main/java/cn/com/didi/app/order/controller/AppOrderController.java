@@ -54,6 +54,7 @@ import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.domain.VipDto;
 import cn.com.didi.user.users.service.IMerchantService;
+import cn.com.didi.user.users.util.VipUtil;
 
 @RestController
 public class AppOrderController extends AppBaseOrderController {
@@ -316,7 +317,7 @@ public class AppOrderController extends AppBaseOrderController {
 		body.setConsumerAccountId(accountId);
 		IOrderRuslt<VipDto> result=orderService.auth(body);
 		if(result.success()){
-			return ResultFactory.success(result.getData());
+			return ResultFactory.success(VipUtil.toMap(result.getData()));
 		}
 		return ResultFactory.error(result.getCode(),result.getMessage());
 	}
