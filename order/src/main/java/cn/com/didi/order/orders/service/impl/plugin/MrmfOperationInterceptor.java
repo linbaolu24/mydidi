@@ -137,7 +137,7 @@ public class MrmfOperationInterceptor
 		LOGGER.debug("佣金存在? {}", isExists);
 		if(!isExists){
 			String message=OrderMessageConstans.ORDER_NO_DEPOSITE.getMessage(NumberUtil.intToDecimal2(appEnv.getDeposite()));
-			return new OrderRuslt<>(OrderMessageConstans.ORDER_NO_DEPOSITE.getCode(),message);
+			return new OrderRuslt<>(message,OrderMessageConstans.ORDER_NO_DEPOSITE.getCode());
 		}
 		return null;
 
@@ -189,7 +189,7 @@ public class MrmfOperationInterceptor
 		LOGGER.debug("上次完成服务时间{},本次时间{},间隔{},系统间隔{}",date,order.getOct(),realInterval,interval);
 		if(realInterval<interval){
 			String message=OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getMessage(interval,interval-realInterval);
-			return new OrderRuslt<>(OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getCode(),message);
+			return new OrderRuslt<>(message,OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getCode());
 		}
 		return null;
 	}
