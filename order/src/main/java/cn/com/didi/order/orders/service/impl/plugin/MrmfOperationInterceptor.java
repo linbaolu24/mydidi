@@ -100,7 +100,6 @@ public class MrmfOperationInterceptor
 		order.setMlng(order.getMlng());
 		order.setMci(dto.getMci());
 		order.setState(OrderState.ORDER_STATE_START_SERVICE.getCode());
-		order.setOrt(new Date());
 		return null;
 	}
 	

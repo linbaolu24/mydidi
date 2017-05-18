@@ -1,5 +1,7 @@
 package cn.com.didi.order.orders.service.impl.plugin;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -47,7 +49,7 @@ public class MrmfV2OperationInterceptor extends MrmfOperationInterceptor{
 	protected <T> IOrderRuslt<T> vipHandle(OrderDto order, OrderContextDto data, IOrderService source){
 		LOGGER.debug("开始VIP校验");
 		boolean hasVip=vipService.hasVip(order.getConsumerAccountId(), order.getSlsId());
-		LOGGER.debug("订单 {} VIP校验结果",order,hasVip);
+		LOGGER.debug("订单 {} VIP校验结果{}",order,hasVip);
 		if(hasVip){
 			return null;
 		}
@@ -64,6 +66,16 @@ public class MrmfV2OperationInterceptor extends MrmfOperationInterceptor{
 		}
 		IOrderRuslt<T> result= merchantVerify(data);
 		order.setState(OrderState.ORDER_STATE_FINISH.getCode());
+		Date  date=order.getOct();
+		if(date==null){
+			date=new Date();
+			order.setOct(date);
+		}
+		order.setOrt(date);
+		order.setOfst(date);
+		order.setOfst(date);
+		order.setOet(date);
+		order.setSst(date);
 		return result;
 	}
 }
