@@ -180,7 +180,7 @@ public class AppUserController {
 		if(!Role.BUSINESS.getCode().equals(role)){
 			throw new IllegalArgumentException("非商户端不能入驻企业。");
 		}
-		String sAccoutId=(String) obj.get(DomainConstatns.ACCOUNT_ID);
+		String sAccoutId=String.valueOf(obj.get(DomainConstatns.ACCOUNT_ID));
 		Long accountId=Long.parseLong(sAccoutId);
 		//tUserService.updateLinkedId(accountId, linkedDto.getGtCid(), linkedDto.getRyToken());
 		merchantExtDto.setCr(CrEnum.WATTING.getCode());

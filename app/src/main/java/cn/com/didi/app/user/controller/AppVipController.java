@@ -46,7 +46,7 @@ public class AppVipController {
 		Integer slsId=getDefaultSlsId();
 		VipDescrptionDto descDto=vipService.desc(accountId, slsId);
 		if(descDto==null){
-			ResultFactory.success();
+			return ResultFactory.success();
 		}
 		return ResultFactory.success(new VipDescriptionJAO(descDto));
 	}
@@ -57,6 +57,9 @@ public class AppVipController {
 		vip.setSlsId(getDefaultSlsId());
 		vipService.reg(vip, vip.getDealId());
 		VipDescrptionDto descDto=vipService.desc(accountId, vip.getSlsId());
+		if(descDto==null){
+			return ResultFactory.success();
+		}
 		return ResultFactory.success(new VipDescriptionJAO(descDto));
 		
 	}
