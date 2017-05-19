@@ -14,6 +14,8 @@ public class AccountDomain {
 	private  String gtCid;
 	private  String bpn;
 	private String ryToken;
+	private String vipFlag;
+	private String role;
 	
 	public String getVcId() {
 		return vcId;
@@ -57,6 +59,8 @@ public class AccountDomain {
 		p.put(DomainConstatns.GT_CID, getGtCid());
 		p.put(DomainConstatns.RY_TOKEN, getRyToken());
 		p.put(DomainConstatns.BPN,getBpn());
+		//p.put(DomainConstatns.ROLE,getRole());
+		p.put(DomainConstatns.VIP_FLAG,getVipFlag());
 		return p;
 	}
 	public void setBpn(String bpn) {
@@ -73,6 +77,18 @@ public class AccountDomain {
 	}
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
+	}
+	public String getVipFlag() {
+		return vipFlag;
+	}
+	public void setVipFlag(String vipFlag) {
+		this.vipFlag = vipFlag;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
 	}
 	
 }
