@@ -145,7 +145,7 @@ public class AppEnvImpl implements IAppEnv {
 	@Override
 	public VipDescrptionDto getVipDesc(Integer slsId) {
 		VipDescrptionDto desc=new VipDescrptionDto();
-		desc.setVipName("美容美发会员");
+		desc.setVipName("嘀嘀洗发会员");
 		desc.setTitle("免费洗发");
 		desc.setCondition("两次免费洗发，需间隔3天以上");
 		desc.setUsable("一年以内");

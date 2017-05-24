@@ -332,7 +332,7 @@
  <!-- add by my -->
   <select id="selectUsers" resultMap="BaseResultMap">
   select  account_Id, user_name, cname, bpn, state, role, create_time, 
-    address_code from users where role='B' 
+    address_code from users where role='C' 
     <if test="time.startTime != null">and create_time&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
     <if test="time.endTime != null">and create_time&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>
     <if test="time.state != null">and state = #{time.state,jdbcType=CHAR}</if>

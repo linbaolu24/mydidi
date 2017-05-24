@@ -41,7 +41,7 @@ public class TradeTranscationCallBackFinderImpl implements ITradeTranscationCall
 		private OrderDealDescDto builder;
 	public void invoeBefore(DealDto t){ 
 		   t.setAmount(appEnv.getDeposite());
-		   t.setCment("押金");
+		   t.setCment("年费");
 		   t.setSpecialType(SpecialTypeEnum.NORMAL.getCode());
 		   t.setDai(appEnv.getSystemAccountId());
 		   DepositDto dto=new DepositDto();
@@ -63,8 +63,8 @@ public class TradeTranscationCallBackFinderImpl implements ITradeTranscationCall
 		}
 		@Override
 		public void popForAli(AliPayBuilder builder) {
-			builder.bcsubject("押金");
-			builder.bcbody("押金");
+			builder.bcsubject("年费");
+			builder.bcbody("年费");
 			builder.notify_url(appEnv.getDepositeAliNotifyUrl());
 		}
 	
