@@ -6,6 +6,7 @@ import static cn.com.didi.domain.util.NameConstans.STATE;
 import static cn.com.didi.domain.util.NameConstans.USER_NAME;
 
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -192,6 +193,13 @@ public class UserController {
 		service.onOff(idStateList);
 		return ResultFactory.success();
 	}
-	
+	@RequestMapping(value = "/platform/b/sendSmsToUsers", method = RequestMethod.POST)
+	public IResult sendTx(@RequestBody Map<String,String> map){
+		String role=map.get("role");
+		String sms=map.get("sms");
+		AssertUtil.assertNotNullAppend(sms, "内容不能为空。");
+		userService.sendSmToUser(role,sms);
+		return ResultFactory.success();
+	}
 }
 
