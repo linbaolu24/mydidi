@@ -198,8 +198,8 @@ public class UserController {
 		String role=map.get("role");
 		String sms=map.get("sms");
 		AssertUtil.assertNotNullAppend(sms, "内容不能为空。");
-		userService.sendSmToUser(role,sms);
-		return ResultFactory.success();
+		String result=userService.sendSmToUser(role,sms);
+		return ResultFactory.success(result);
 	}
 }
 

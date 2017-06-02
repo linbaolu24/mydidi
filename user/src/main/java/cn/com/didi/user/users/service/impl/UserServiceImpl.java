@@ -1,5 +1,6 @@
 package cn.com.didi.user.users.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -368,15 +369,24 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 
 	@Override
 	public String sendSmToUser(String role, String message) {
-		if(!appEnv.canSendSmsToAllUser()){
+		if (!appEnv.canSendSmsToAllUser()) {
 			throw new IllegalArgumentException("禁止发送消息");
 		}
-		List<String> users=userDtoMapper.selectUserPhone(StringUtils.defaultIfBlank(role,null));
-		if(CollectionUtils.isEmpty(users)){
+		List<String> users = userDtoMapper.selectUserPhone(StringUtils.defaultIfBlank(role, null));
+		if (CollectionUtils.isEmpty(users)) {
 			return null;
 		}
-		sendVcService.send(users.toArray(new String[0]), message);
-		return null;
+		ArrayList<String> array=new ArrayList<>();
+		for (String one : users) {
+			try {
+				sendVcService.send(new String[] { one }, message);
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(),e);
+				array.add(one);
+			}
+		}
+
+		return array.toString();
 	}
 
 

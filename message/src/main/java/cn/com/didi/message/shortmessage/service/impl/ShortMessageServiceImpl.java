@@ -178,7 +178,9 @@ public class ShortMessageServiceImpl implements IShortMessageService {
 				sBuilder.append("&Msg=").append(dto.getContent());
 				sBuilder.append("&Channel=").append(channel);
 				String encryptStr;
-				encryptStr = DESEncrypt(sBuilder.toString());
+				String source=sBuilder.toString();
+				LOGGER.debug("请求参数为{}",source);
+				encryptStr = DESEncrypt(source);
 				LOGGER.debug("加密串为{}", encryptStr);
 				NameValuePair[] pair = new NameValuePair[2];
 				pair[0] = new BasicNameValuePair("userCode", userCode);
