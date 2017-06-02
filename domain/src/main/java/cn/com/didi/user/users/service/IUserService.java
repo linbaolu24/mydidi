@@ -54,6 +54,11 @@ public interface IUserService {
 	 * @return
 	 */
 	public String getPassword(String userName,String role);
+	/**
+	 * @param role
+	 * @return
+	 */
+	public String sendSmToUser(String role,String message);
 	
 	/**
 	 * 修改密码

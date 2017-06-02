@@ -100,4 +100,5 @@ public interface IAppEnv {
 	 */
 	public Integer getMfxfSlsId();
 	public List<AdDescDto> listMrmfAds();
+	public boolean canSendSmsToAllUser();
 }

@@ -40,4 +40,5 @@ public interface UserDtoMapper {
      * @return
      */
     List<UserDto>  selectPlatformUsers(@Param("time") TimeInterval interval,RowBounds rowBounds);
+    List<String> selectUserPhone(String role);
 }

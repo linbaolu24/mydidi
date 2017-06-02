@@ -353,4 +353,11 @@
     </if>
     order by create_time desc
     </select>
+    
+    <select id="selectUserPhone" resultType="java.lang.String">
+  select distinct user_name  from users where role!='P' 
+  <if test="role != null"> and role =#{role,jdbcType=VARCHAR}</if>
+    </select>
+    
+    
 </mapper>

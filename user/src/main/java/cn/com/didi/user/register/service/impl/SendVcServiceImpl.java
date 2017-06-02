@@ -40,4 +40,16 @@ public class SendVcServiceImpl implements ISendVcService {
 
 	}
 
+	@Override
+	public void send(String[] phone, String message) {
+		ShortMessgaeDto dto = new ShortMessgaeDto();
+		dto.setContent(message);
+		dto.setPhones( phone );
+		IResult<Void> result=shortMessage.sendMessage(dto);
+		if(!result.success()){
+			throw new MessageObjectException(result.getCode(),result.getMessage());
+		}
+
+	}
+
 }

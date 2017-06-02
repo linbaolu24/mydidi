@@ -39,4 +39,8 @@ public class EnvConstants {
 	 */
 	public static final String VIP_DESC="10000007";
 	public static final String MRMF_ADV="10000008";
+	/**
+	 * 是否可以发送消息
+	 */
+	public static final String CAN_SEND_SMS="10000009";
 }

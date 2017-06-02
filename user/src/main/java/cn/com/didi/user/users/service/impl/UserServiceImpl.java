@@ -27,8 +27,10 @@ import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.Role;
+import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.thirdExt.select.ListPage;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
+import cn.com.didi.user.register.service.ISendVcService;
 import cn.com.didi.user.users.dao.mapper.UserDtoMapper;
 import cn.com.didi.user.users.dao.mapper.UserLinkIdDtoMapper;
 import cn.com.didi.user.users.domain.UserDto;
@@ -51,6 +53,10 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 	protected ICodecManager codeManager;
 	@Resource
 	protected UserLinkIdDtoMapper userLinkIdDtoMapper;
+	@Resource
+	protected ISendVcService sendVcService;
+	@Resource
+	protected IAppEnv appEnv;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -358,6 +364,19 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		userDtoMapper.updateByPrimaryKey(dto);
 		userLinkIdDtoMapper.updateByPrimaryKeySelective(linkedDto);
 		
+	}
+
+	@Override
+	public String sendSmToUser(String role, String message) {
+		if(!appEnv.canSendSmsToAllUser()){
+			throw new IllegalArgumentException("禁止发送消息");
+		}
+		List<String> users=userDtoMapper.selectUserPhone(StringUtils.defaultIfBlank(role,null));
+		if(CollectionUtils.isEmpty(users)){
+			return null;
+		}
+		sendVcService.send(users.toArray(new String[0]), message);
+		return null;
 	}
 
 

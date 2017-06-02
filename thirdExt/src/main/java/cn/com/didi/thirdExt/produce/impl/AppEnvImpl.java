@@ -12,7 +12,6 @@ import cn.com.didi.core.property.IEnvironment;
 import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.thirdExt.util.EnvConstants;
 import cn.com.didi.user.ad.domain.AdDescDto;
-import cn.com.didi.user.ad.domain.AdDto;
 import cn.com.didi.user.users.domain.VipDescrptionDto;
 
 public class AppEnvImpl implements IAppEnv {
@@ -166,6 +165,11 @@ public class AppEnvImpl implements IAppEnv {
 			return null;
 		}
 		return JSON.parseArray(str, AdDescDto.class);
+	}
+	@Override
+	public boolean canSendSmsToAllUser() {
+		String value=appEnviroment.getProperty(EnvConstants.CAN_SEND_SMS);
+		return StringUtils.isEmpty(value)||"Y".equalsIgnoreCase(value);
 	}
 	
 
