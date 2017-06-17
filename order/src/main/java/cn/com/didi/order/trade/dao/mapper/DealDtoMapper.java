@@ -1,10 +1,13 @@
 package cn.com.didi.order.trade.dao.mapper;
 
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.DealEnum;
+import cn.com.didi.order.trade.domain.DealDrawListDto;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.DealDtoExample;
 import cn.com.didi.order.trade.domain.DealListDto;
 
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
@@ -31,6 +34,8 @@ public interface DealDtoMapper {
     int updateByPrimaryKeySelective(DealDto record);
 
     int updateByPrimaryKey(DealDto record);
+    
+    //add by my
     /**将交易状态改为成功*/
     public int updateDealState(@Param("dealId") Long dealId, @Param("destState") String destState, @Param("sourceState") String sourceState,@Param("tradeId") String tradeId,@Param("remain") Long remain);
     
@@ -49,5 +54,10 @@ public interface DealDtoMapper {
     Long selectOrderIdFromDeal(Long dealId);
     
     List<DealListDto> selectTrades(@Param("time") TimeInterval time,RowBounds rows);
+    List<DealListDto> selectDraws(@Param("time") TimeInterval time,RowBounds rows);
     int updateFail(@Param("dealId") Long dealId,@Param("cause") String cause);
+    
+    List<DealDrawListDto> selectDrawList(@Param("time") TimeInterval time,RowBounds rows);
+    Long countSum(@Param("dai") Long dai,@Param("fromDate") Date fromDate,@Param("cat") String category);
+    int updateDealState(@Param("dealId") Long dealId, @Param("destState") String dest,@Param("cat") String cat,@Param("sourceState") String... source);
 }

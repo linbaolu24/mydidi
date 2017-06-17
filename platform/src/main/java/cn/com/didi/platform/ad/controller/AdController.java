@@ -55,10 +55,10 @@ public class AdController {
 		adService.updateState(lists);
 		return ResultFactory.success();
 	}
-	@RequestMapping(value = "/platform/ad/report", method = { RequestMethod.POST })
+/*	@RequestMapping(value = "/platform/ad/report", method = { RequestMethod.POST })
 	public IResult updateState(AdTimeInterval report) {
 		List<AdReportDto> reports=adService.report(report);
 		return ResultFactory.success(reports);
-	}
+	}*/
 	
 }

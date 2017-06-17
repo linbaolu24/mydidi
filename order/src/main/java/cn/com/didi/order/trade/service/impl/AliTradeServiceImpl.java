@@ -30,17 +30,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.AlipayFundTransToaccountTransferModel;
 import com.alipay.api.internal.util.AlipaySignature;
+import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
+import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
 
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.tx.TranscationalCallBack;
 import cn.com.didi.core.utils.Constans;
+import cn.com.didi.core.utils.NumberUtil;
 import cn.com.didi.core.utils.SignUtil;
 import cn.com.didi.domain.domains.AliPAyRequestDto;
 import cn.com.didi.domain.domains.AliSynResultDto;
 import cn.com.didi.domain.domains.AlipayTradeAppPayResponseDto;
 import cn.com.didi.domain.domains.PayResultDto;
+import cn.com.didi.domain.domains.ali.AlipayTransToAccountResponse;
 import cn.com.didi.domain.util.AlipayConstants;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
@@ -81,13 +88,16 @@ public class AliTradeServiceImpl implements IAliTradeService {
 	@Value("${ali.aliPublicKey}")
 	private String aliPubkey;
 	private PublicKey aliPublicKey;
-
+	private AlipayClient alipayClient ;
 	@PostConstruct
 	public void init() throws Exception {
 		byte[] bkey = Base64.decodeBase64(priKey);
 		key = SignUtil.getPrivateKeyFromPKCS8(Constans.RSA_ALG, bkey);
 		byte[] bPubkey = Base64.decodeBase64(aliPubkey);
 		aliPublicKey = SignUtil.getPublickKeyFromX509(Constans.RSA_ALG, bPubkey);
+		alipayClient= new DefaultAlipayClient("https://openapi.alipay.com/gateway.do",appId
+				,priKey,"json","UTF-8",aliPubkey,"RSA2");
+
 	}
 
 	@Override
@@ -364,6 +374,40 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		TranscationalCallBack<PayResultDto> payResultCallBack = finder.findFinishTranscationalCallBack(type);
 		PayResultDto payResult = getPayResultDto(resMap);
 		return tradeService.finishDeal(payResult, payResultCallBack);
+	}
+	
+
+	@Override
+	public IResult<AlipayTransToAccountResponse> sendTransForm(DealDto dto) {
+		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
+		AlipayFundTransToaccountTransferModel model = new AlipayFundTransToaccountTransferModel();
+		model.setAmount(NumberUtil.intToDecimal2(dto.getAmount()));
+		model.setOutBizNo(dto.getTradeId());
+		model.setPayeeType("ALIPAY_LOGONID");
+		model.setPayeeAccount(dto.getDa());
+		model.setPayerShowName("嘀嘀服务");
+		model.setRemark("提现");
+		request.setBizModel(model);
+		try {
+			AlipayFundTransToaccountTransferResponse response = alipayClient.execute(request);
+			AlipayTransToAccountResponse newResponse=new AlipayTransToAccountResponse();
+			pop(response, newResponse);
+			return ResultFactory.success(newResponse);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION);
+		}
+	}
+	protected void pop(AlipayFundTransToaccountTransferResponse response,AlipayTransToAccountResponse newResponse){
+		newResponse.setBody(response.getBody());
+		newResponse.setCode(response.getCode());
+		newResponse.setMsg(response.getMsg());
+		newResponse.setOrder_id(response.getOrderId());
+		newResponse.setOut_biz_no(response.getOutBizNo());
+		newResponse.setParams(response.getParams());
+		newResponse.setPay_date(response.getPayDate());
+		newResponse.setSub_code(response.getSubCode());
+		newResponse.setSub_msg(response.getSubMsg());
 	}
 
 }

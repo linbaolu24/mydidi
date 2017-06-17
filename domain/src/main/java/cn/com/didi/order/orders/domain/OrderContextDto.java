@@ -2,7 +2,9 @@ package cn.com.didi.order.orders.domain;
 
 import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
+import cn.com.didi.domain.domains.UseAbleDto;
 import cn.com.didi.order.orders.util.OrderMessageOperation;
+import cn.com.didi.user.users.domain.VipDto;
 
 /**
  * 状态变更DTO
@@ -15,6 +17,7 @@ public class OrderContextDto {
 	private IReciverDto reciverDto;
 	private OrderMessageOperation lastSuccess;
 	private int flag;
+	private UseAbleDto<VipDto> used;
 	
 	public OrderDto getOrderDto() {
 		return orderDto;
@@ -69,6 +72,14 @@ public class OrderContextDto {
 
 	public void setFlag(int flag) {
 		this.flag = flag;
+	}
+
+	public UseAbleDto<VipDto> getUsed() {
+		return used;
+	}
+
+	public void setUsed(UseAbleDto<VipDto> used) {
+		this.used = used;
 	}
 	
 }

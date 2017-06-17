@@ -127,5 +127,12 @@ public class CachedDeracotorSysParamAndCodeDicService implements ICodeDicService
 		}
 		return value;
 	}
+	@Override
+	public void updateSystemValue(String paramCode, String value) {
+		 wrappedSysParamService.updateSystemValue(paramCode, value);
+		 hashAble.remove(ThirdConstants.CACHED_ENV_LIST);
+		 hashAble.delete(ThirdConstants.CACHED_ENV, paramCode);
+		 hashAble.delete(ThirdConstants.CACHED_ENV_OBJECT, paramCode);
+	}
 
 }

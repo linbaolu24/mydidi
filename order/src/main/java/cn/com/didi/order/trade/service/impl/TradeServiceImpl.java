@@ -1,12 +1,18 @@
 package cn.com.didi.order.trade.service.impl;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import cn.com.didi.core.property.ICodeAble;
+import cn.com.didi.core.lock.ILock;
+import cn.com.didi.core.lock.LockManager;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.select.IPage;
@@ -15,7 +21,8 @@ import cn.com.didi.domain.domains.PayAccountDto;
 import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.DealEnum;
-import cn.com.didi.domain.util.PayAccountEnum;
+import cn.com.didi.domain.util.DomainConstatns;
+import cn.com.didi.domain.util.TradeCategory;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.DealListDto;
 import cn.com.didi.order.trade.domain.MerchantDayRemainingDto;
@@ -23,6 +30,7 @@ import cn.com.didi.order.trade.service.IAccountAssetsService;
 import cn.com.didi.order.trade.service.ITradeInfoService;
 import cn.com.didi.order.trade.service.ITradeService;
 import cn.com.didi.order.util.OrderMessageConstans;
+import cn.com.didi.thirdExt.produce.IAppEnv;
 
 /**
  * 交易服务实现
@@ -32,18 +40,23 @@ import cn.com.didi.order.util.OrderMessageConstans;
  */
 @Service
 public class TradeServiceImpl implements ITradeService {
+	private static final Logger LOGGER =LoggerFactory.getLogger(TradeServiceImpl.class);
 	@Resource
 	protected ITradeInfoService tradeInfoService;
 	@Resource
 	protected IAccountAssetsService accountAssetsService;
-
+	@Resource
+	protected LockManager myLockManager;
+	@Resource
+	protected IAppEnv appEnv;
+	protected String drawLockManagerPrefix="tradeDraw";
+	
 	@Override
 	@Transactional
 	public void createTrade(DealDto dto, TranscationalCallBack<DealDto> deal) {
 		if(StringUtils.isEmpty(dto.getState())){
 			dto.setState(DealEnum.WAITTING.getCode());
 		}
-		
 		tradeInfoService.createTrade(dto, deal);
 		//deal.invoke(dto);
 	}
@@ -117,25 +130,103 @@ public class TradeServiceImpl implements ITradeService {
 	}
 
 	@Override
-	public IResult<Void> draw(DealDto pay) {
-		PayAccountEnum accountEnum =ICodeAble.getCode(PayAccountEnum.values(), pay.getDat());
-		MerchantDayRemainingDto dto=accountAssetsService.countRemain(pay.getDai(), accountEnum);
-		if(dto==null||dto.getRemaining()<(long)pay.getAmount().intValue()){
-			//返回账户余额不足
+	@Transactional
+	public void draw(DealDto pay) {
+		if (pay == null || pay.getDai() == null) {
+			return;
 		}
+		String lockName = DomainConstatns.LOCK_DRAW_PREFIX + "_" + pay.getDai();
+		ILock lock = myLockManager.accquireLock(lockName);
+		boolean locked=false;
+		try {
+			locked = lock.lock((long) appEnv.getLockedWait(), TimeUnit.MICROSECONDS);
+			LOGGER.debug("获取锁{},结果{}", lockName, locked);
+			if (locked) {
+				drawInternal(pay);
+			}
+		} finally {
+			if (lock != null&&locked) {
+				try {
+					lock.unlock();
+				} catch (Exception e) {
+					LOGGER.error("释放锁失败{},异常{}",lockName,e);
+				}
+			}
+		}
+	}
+	protected void drawInternal(DealDto pay){
+		popNormalDraw(pay);
+		MerchantDayRemainingDto mat = getMerchantDayDto(pay);
+		boolean ifCan = accountAssetsService.decreMerchantDayRemainingIfCan(mat);
+		if (!ifCan) {
+			//TODO 抛出异常
+		}
+		tradeInfoService.createTrade(pay, null);
+	}
+	protected MerchantDayRemainingDto getMerchantDayDto(DealDto pay){
 		return null;
 	}
 
-	@Override
-	public IResult<Void> pendingDraw(Long dealId) {
-		// TODO Auto-generated method stub
-		return null;
+	protected void popNormalDraw(DealDto pay) {
+		pay.setCategory(TradeCategory.OUT.getCode());
+		pay.setDealType(TradeCategory.OUT.getType());
+		pay.setSai(accountAssetsService.getSystemAccount());
+		pay.setSat(pay.getDat());
+		if (pay.getCreateTime() == null) {
+			pay.setCreateTime(new Date());
+		}
+		if (pay.getUpdateTime() == null) {
+			pay.setUpdateTime(pay.getCreateTime());
+		}
+		pay.setState(DealEnum.WAITTING.getCode());
+		pay.setCommission(0);
 	}
 
 	@Override
-	public IResult<Void> rollBack(DealDto pay, boolean needLock) {
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional
+	public void rollBack(DealDto pay, boolean needLock) {
+		if (needLock) {
+			String lockName = DomainConstatns.LOCK_DRAW_PREFIX + "_" + pay.getDai();
+			ILock lock = myLockManager.accquireLock(lockName);
+			boolean locked=false;
+			try {
+				locked = lock.lock((long) appEnv.getLockedWait(), TimeUnit.MICROSECONDS);
+				LOGGER.debug("回滚获取锁{},结果{}", lockName, locked);
+				if (locked) {
+					rollBackInternal(pay);
+				}
+			} finally {
+				if (lock != null&&locked) {
+					try {
+						lock.unlock();
+					} catch (Exception e) {
+						LOGGER.error("释放锁失败{},异常{}", lockName, e);
+					}
+				}
+			}
+		} else {
+			rollBackInternal(pay);
+		}
+	}
+	public void rollBackInternal(DealDto pay){
+		tradeInfoService.rollBack(pay);
+	}
+	@Override
+	public int auditing(DealDto dealId) {
+		return tradeInfoService.auditing(dealId);
+	}
+
+	@Override
+	public int preAuditing(Long dealId) {
+		return tradeInfoService.updateTradeState(dealId, DealEnum.PRE_AUDIT.getCode(), TradeCategory.OUT.getCode(),
+				DealEnum.WAITTING.getCode(), DealEnum.FAIL.getCode());
+	}
+
+
+
+	@Override
+	public int recoverAuditing(Long dealId) {
+		return tradeInfoService.updateTradeState(dealId, DealEnum.WAITTING.getCode(), TradeCategory.OUT.getCode(), DealEnum.PRE_AUDIT.getCode());
 	}
 
 }

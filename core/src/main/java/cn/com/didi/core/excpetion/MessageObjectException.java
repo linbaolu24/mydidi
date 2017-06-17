@@ -22,6 +22,10 @@ public class MessageObjectException extends BaseRuntimeException {
         super(msg.getCode(), msg.getMessage(arg), e);
         //this.msg = msg;
     }
+    
+    public MessageObjectException(Message msg, Object... arg) {
+        this(msg, null,arg);
+    }
 
 	public MessageObjectException(String code, String message) {
 		 super(code, message);

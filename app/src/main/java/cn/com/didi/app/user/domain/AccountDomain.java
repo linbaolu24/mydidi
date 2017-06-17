@@ -3,6 +3,8 @@ package cn.com.didi.app.user.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import cn.com.didi.domain.util.DomainConstatns;
 
 public class AccountDomain {
@@ -16,7 +18,8 @@ public class AccountDomain {
 	private String ryToken;
 	private String vipFlag;
 	private String role;
-	
+	private String arrivalStatus;
+	private String businessCategory;
 	public String getVcId() {
 		return vcId;
 	}
@@ -59,8 +62,10 @@ public class AccountDomain {
 		p.put(DomainConstatns.GT_CID, getGtCid());
 		p.put(DomainConstatns.RY_TOKEN, getRyToken());
 		p.put(DomainConstatns.BPN,getBpn());
-		//p.put(DomainConstatns.ROLE,getRole());
+		p.put(DomainConstatns.ROLE,getRole());
 		p.put(DomainConstatns.VIP_FLAG,getVipFlag());
+		p.put(DomainConstatns.BUSINESS_CATEGORY,getBusinessCategory());
+		p.put(DomainConstatns.ARRIVAL_STATUS,getArrivalStatus());
 		return p;
 	}
 	public void setBpn(String bpn) {
@@ -89,6 +94,18 @@ public class AccountDomain {
 	}
 	public void setRole(String role) {
 		this.role = role;
+	}
+	public String getArrivalStatus() {
+		return arrivalStatus;
+	}
+	public void setArrivalStatus(String arrivalStatus) {
+		this.arrivalStatus = arrivalStatus;
+	}
+	public String getBusinessCategory() {
+		return businessCategory;
+	}
+	public void setBusinessCategory(String businessCategory) {
+		this.businessCategory = businessCategory;
 	}
 	
 }

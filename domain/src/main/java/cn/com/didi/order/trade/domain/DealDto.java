@@ -85,7 +85,7 @@ public class DealDto implements Serializable {
     private Long dai;
 
     /**
-     * 佣金
+     * 佣金,用于违约
      */
     private Integer commission;
 
@@ -99,6 +99,9 @@ public class DealDto implements Serializable {
      */
     private String tradeId;
 
+    /**
+     * 用于手续费
+     */
     private Integer poundage;
 
     /**

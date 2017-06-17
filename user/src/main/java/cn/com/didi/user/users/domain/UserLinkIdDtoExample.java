@@ -583,6 +583,216 @@ public class UserLinkIdDtoExample {
             addCriterion("business_category not between", value1, value2, "businessCategory");
             return (Criteria) this;
         }
+
+        public Criteria andWechatNameIsNull() {
+            addCriterion("wechat_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameIsNotNull() {
+            addCriterion("wechat_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameEqualTo(String value) {
+            addCriterion("wechat_name =", value, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameNotEqualTo(String value) {
+            addCriterion("wechat_name <>", value, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameGreaterThan(String value) {
+            addCriterion("wechat_name >", value, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameGreaterThanOrEqualTo(String value) {
+            addCriterion("wechat_name >=", value, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameLessThan(String value) {
+            addCriterion("wechat_name <", value, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameLessThanOrEqualTo(String value) {
+            addCriterion("wechat_name <=", value, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameLike(String value) {
+            addCriterion("wechat_name like", value, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameNotLike(String value) {
+            addCriterion("wechat_name not like", value, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameIn(List<String> values) {
+            addCriterion("wechat_name in", values, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameNotIn(List<String> values) {
+            addCriterion("wechat_name not in", values, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameBetween(String value1, String value2) {
+            addCriterion("wechat_name between", value1, value2, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andWechatNameNotBetween(String value1, String value2) {
+            addCriterion("wechat_name not between", value1, value2, "wechatName");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1IsNull() {
+            addCriterion("ext1 is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1IsNotNull() {
+            addCriterion("ext1 is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1EqualTo(String value) {
+            addCriterion("ext1 =", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1NotEqualTo(String value) {
+            addCriterion("ext1 <>", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1GreaterThan(String value) {
+            addCriterion("ext1 >", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1GreaterThanOrEqualTo(String value) {
+            addCriterion("ext1 >=", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1LessThan(String value) {
+            addCriterion("ext1 <", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1LessThanOrEqualTo(String value) {
+            addCriterion("ext1 <=", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1Like(String value) {
+            addCriterion("ext1 like", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1NotLike(String value) {
+            addCriterion("ext1 not like", value, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1In(List<String> values) {
+            addCriterion("ext1 in", values, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1NotIn(List<String> values) {
+            addCriterion("ext1 not in", values, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1Between(String value1, String value2) {
+            addCriterion("ext1 between", value1, value2, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt1NotBetween(String value1, String value2) {
+            addCriterion("ext1 not between", value1, value2, "ext1");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2IsNull() {
+            addCriterion("ext2 is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2IsNotNull() {
+            addCriterion("ext2 is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2EqualTo(String value) {
+            addCriterion("ext2 =", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2NotEqualTo(String value) {
+            addCriterion("ext2 <>", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2GreaterThan(String value) {
+            addCriterion("ext2 >", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2GreaterThanOrEqualTo(String value) {
+            addCriterion("ext2 >=", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2LessThan(String value) {
+            addCriterion("ext2 <", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2LessThanOrEqualTo(String value) {
+            addCriterion("ext2 <=", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2Like(String value) {
+            addCriterion("ext2 like", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2NotLike(String value) {
+            addCriterion("ext2 not like", value, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2In(List<String> values) {
+            addCriterion("ext2 in", values, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2NotIn(List<String> values) {
+            addCriterion("ext2 not in", values, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2Between(String value1, String value2) {
+            addCriterion("ext2 between", value1, value2, "ext2");
+            return (Criteria) this;
+        }
+
+        public Criteria andExt2NotBetween(String value1, String value2) {
+            addCriterion("ext2 not between", value1, value2, "ext2");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

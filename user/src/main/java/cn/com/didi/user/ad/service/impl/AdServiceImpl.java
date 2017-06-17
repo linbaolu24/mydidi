@@ -29,7 +29,6 @@ import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.util.AdCategoryEnum;
-import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.DisplayPositionEnum;
 import cn.com.didi.domain.util.State;
 import cn.com.didi.thirdExt.produce.IAppEnv;
@@ -75,19 +74,22 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 		DpDtoExample.Criteria cri= stateExample.createCriteria();
 		cri.andStateEqualTo(State.VALID.getState());
 	}
+
 	@Override
 	@Transactional
 	public void add(AdDto adDto, List<AdPicDto> picList) {
-		if(adDto==null){
+		if (adDto == null || CollectionUtils.isEmpty(picList)) {
 			return;
 		}
-		adMapper.insertSelective(adDto);
-		if(!CollectionUtils.isEmpty(picList)){
-			for(int i=0;i<picList.size();i++){
-				picList.get(i).setAdId(adDto.getAdId());
-				adPicMapper.insertSelective(picList.get(i));
-			}
+		if (StringUtils.isEmpty(adDto.getImgUrl())) {
+			adDto.setImgUrl(picList.get(0).getImgUrl());
 		}
+		adMapper.insertSelective(adDto);
+		for (int i = 0; i < picList.size(); i++) {
+			picList.get(i).setAdId(adDto.getAdId());
+			adPicMapper.insertSelective(picList.get(i));
+		}
+
 	}
 
 	@Override
@@ -154,11 +156,11 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 		AdPicDtoExample.Criteria cri = example.createCriteria();
 		cri.andAdIdIn(adList);
 
-		if (org.apache.commons.lang.StringUtils.isEmpty(dp.getPhoneType()) && dp.getWidth() != null
+		/*if (org.apache.commons.lang.StringUtils.isEmpty(dp.getPhoneType()) && dp.getWidth() != null
 				&& dp.getHeight() != null) {
 			cri.andWidthEqualTo(dp.getWidth());
 			cri.andHeightEqualTo(dp.getHeight());
-		}
+		}*/
 		if (!StringUtils.isEmpty(dp.getPhoneType())) {
 			cri.andPhoneTypeLike("%" + dp.getPhoneType().toUpperCase() + "%");
 		}
@@ -172,21 +174,21 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 
 	@Transactional
 	public void addExposure(Long adId) {
-		adMapper.updateAddExposure(adId, 1);
+		/*adMapper.updateAddExposure(adId, 1);
 		if (appEnv.isAdRtStatistic()) {
 			AdReportDto reportDto = getReportDto(adId, true);
 			reportMapper.insertOrupdateExposure(reportDto);
-		}
+		}*/
 	}
 	
 	
 	@Transactional
 	public void addClickRate(Long adId) {
-		adMapper.updateAddClickRate(adId, 1);
+	/*	adMapper.updateAddClickRate(adId, 1);
 		if (appEnv.isAdRtStatistic()) {
 			AdReportDto reportDto = getReportDto(adId, false);
 			reportMapper.updateClickRate(reportDto);
-		}
+		}*/
 	}
 
 	public AdReportDto getReportDto(Long adId, boolean exporse) {
@@ -209,7 +211,7 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 		}
 		Calendar cal=Calendar.getInstance();
 		int hour=cal.get(Calendar.HOUR_OF_DAY);
-		List<AdDto> adDto=adMapper.selectAdList(display.getDisplayPosition(), cal.getTime(), hour);
+		List<AdDto> adDto=adMapper.selectAdList(org.apache.commons.lang.StringUtils.defaultIfBlank( display.getDisplayPosition(),null), cal.getTime(), hour);
 		if(!CollectionUtils.isEmpty(adDto)){
 			return null;
 		}

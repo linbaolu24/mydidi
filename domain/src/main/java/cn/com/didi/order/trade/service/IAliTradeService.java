@@ -5,6 +5,8 @@ import java.util.Map;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.domain.domains.AliPAyRequestDto;
 import cn.com.didi.domain.domains.AliSynResultDto;
+import cn.com.didi.domain.domains.ali.AlipayTransToAccountResponse;
+import cn.com.didi.order.trade.domain.DealDto;
 
 public interface IAliTradeService {
 	/**
@@ -39,4 +41,10 @@ public interface IAliTradeService {
 	 * @return
 	 */
 	IResult<AliPAyRequestDto> createOdrerRequest(Long accountId,String type,String obj);
+	/**
+	 * 发送转账到支付宝
+	 * @param dto
+	 * @return
+	 */
+	public IResult<AlipayTransToAccountResponse> sendTransForm(DealDto dto);
 }

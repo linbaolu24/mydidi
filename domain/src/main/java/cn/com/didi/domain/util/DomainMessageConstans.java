@@ -113,6 +113,15 @@ public class DomainMessageConstans {
 	public static final String CODE_SM_GATE_REQUEST_ERROR="5002000004";
 	
 	
+	/*以下为微信异常*/
+	/**
+	 * 微信获取access code异常
+	 */
+	public static final String CODE_WECHAT_GET_ACCESS_CODE_ERROR="5002100001";
+	/**
+	 * 获取微信用户信息异常
+	 */
+	public static final String CODE_WECHAT_GET_USER_INFO_ERROR="5002100002";
 	/**
 	 * 订单自动派单无师傅
 	 */
@@ -203,8 +212,24 @@ public class DomainMessageConstans {
 	 */
 	public static final String  CODE_ORDER_MRMF_NOT_VIP="5003000018";
 	
+	/**
+	 * 每月美容美发数量控制
+	 */
+	public static final String  CODE_ORDER_MRMF_MONTH_NUM_CONTROLLER="5003000019";
+	
+	/**
+	 * 非待服务订单不能改派
+	 */
+	public static final String  CODE_ORDER_STATE_NOT_PENDING_SERIVCE="5003000020";
+	
+	/**
+	 * 非自营订单不能改派
+	 */
+	public static final String  CODE_ORDER_NOT_SELF="5003000021";
 	
 	
+	
+	/*以下位交易*/
 	/**
 	 * 交易记录不存在
 	 */
@@ -228,6 +253,20 @@ public class DomainMessageConstans {
 	 */
 	public static final String CODE_DEAL_ALI_PAY_ORDERINFO_FAIL="5004000005";
 	
+	/**
+	 * 阿里转账到用户异常
+	 */
+	public static final String CODE_DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION="5004000006";
+	
+	/**
+	 * 阿里转账到用户异常,并且恢复审核状态失败
+	 */
+	public static final String CODE_DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION_AND_RECOVER_ERROR="5004000007";
+	
+	/**
+	 * 转账成功更新完成提取状态失败
+	 */
+	public static final String CODE_DEAL_ALI_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR="5004000008";
 	
 	/**微信统一下单异常*/
 	public static final String CODE_DEAL_WECHAT_TYXD_ERROR="5004100001";
@@ -247,6 +286,27 @@ public class DomainMessageConstans {
 	/**微信返回异常*/
 	public static final String CODE_DEAL_WECHAT_PAY_NOTIFY_ERROR="5004100006";
 	
+	/**
+	 * 微信转账到用户异常,并且恢复审核状态失败
+	 */
+	public static final String CODE_DEAL_WECHAT_TRANSFER_TO_ACCOUNT_EXCEPTION_AND_RECOVER_ERROR="5004100007";
+	
+	/**
+	 * 转账成功更新完成提取状态失败
+	 */
+	public static final String CODE_DEAL_WECHAT_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR="5004100008";
+	
+	/**
+	 * 微信转账到用户异常
+	 */
+	public static final String CODE_DEAL_WECHAT_TRANSFER_TO_ACCOUNT_EXCEPTION="5004100009";
+	
+	
+	/**微信转账生成请求异常*/
+	public static final String CODE_DEAL_WECHAT_TRANSFER_BUILD_REQUEST_ERROR="5004100010";
+	/**微信转账解析返回结果异常*/
+	public static final String CODE_DEAL_WECHAT_TRANSFER_PARSE_RESPONSE_ERROR="5004100011";
+	
 	
 	/**未付款不能升级为VIP*/
 	public static final String CODE_VIP_NOT_PAY="5005000001";
@@ -255,4 +315,9 @@ public class DomainMessageConstans {
 	 * 支付未到账不能升级为VIP
 	 */
 	public static final String CODE_VIP_PAY_NOT_ARRIVE="5005000002";
+	
+	
+	
+	
+	
 }

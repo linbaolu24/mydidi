@@ -1,5 +1,6 @@
 package cn.com.didi.order.trade.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -9,8 +10,11 @@ import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.util.PayAccountEnum;
+import cn.com.didi.domain.util.TradeCategory;
+import cn.com.didi.order.trade.dao.mapper.DealDtoMapper;
 import cn.com.didi.order.trade.dao.mapper.MerchantDayRemainingDtoMapper;
 import cn.com.didi.order.trade.dao.mapper.MerchantRemainingDtoMapper;
+import cn.com.didi.order.trade.domain.DrawInfoDto;
 import cn.com.didi.order.trade.domain.MerchantDayRemainingDto;
 import cn.com.didi.order.trade.domain.MerchantRemainingDto;
 import cn.com.didi.order.trade.service.IAccountAssetsService;
@@ -18,20 +22,27 @@ import cn.com.didi.order.trade.util.MerchantRemainingUtil;
 @Service
 public class AccountAssertServiceImpl implements IAccountAssetsService{
 	private static int DEAULT_DAY=19900101;
-	private static final int LOCKED=3;
+	private int LOCKED=-1;
+	private int selectLocked=7;
 	private static final Long SYSTEM_ACCOUNT_ID=0L;
 	@Resource
 	private MerchantDayRemainingDtoMapper myMerchantDayRemainingDtoMapper;
 	@Resource
 	private MerchantRemainingDtoMapper systemMerchantRemainDtoMapper;
+	@Resource
+	private DealDtoMapper myDealDtoMapper;
 	@Override
 	public void addMerchantDayRemainingDto(MerchantDayRemainingDto dto,boolean systemOnly) {
+		addMerchantDayRemainingDto(dto, systemOnly, dto.getRemaining());
+	}
+	@Override
+	public void addMerchantDayRemainingDto(MerchantDayRemainingDto dto, boolean systemOnly, Long systemRemain) {
 		PayAccountEnum payEnum=cn.com.didi.core.property.ICodeAble.getCode(PayAccountEnum.values(), dto.getPat());
 		if(payEnum==null){
 			return ;
 		}
 		if(dto.getDaytime()==null){
-			dto.setDaytime(DateUtil.getCurrentYYYYMMDD());
+			dto.setDaytime(getDayTime());
 		}
 		if(StringUtils.isEmpty(dto.getCategory())){
 			dto.setCategory("0");
@@ -39,10 +50,9 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		if (!systemOnly) {
 			myMerchantDayRemainingDtoMapper.saveMerchantDayRemainingDto(dto);
 		}
-		updateSystemRemain(payEnum, dto.getRemaining());
-		//增加系统余额
+		updateSystemRemain(payEnum, systemRemain);//增加系统余额
+		
 	}
-
 	@Override
 	public List<MerchantDayRemainingDto> listMerchantDay(Long accountId) {
 		int maxed=getMaxDay();
@@ -50,15 +60,23 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 	}
 	/**包含该天*/
 	protected int getMaxDay(){
+		if(LOCKED<=0){
+			return 209001;
+		}
 		return DateUtil.getIntervalYYYYMMDD(LOCKED);
 	}
+	protected Integer getDayTime(){
+		if(LOCKED<=0){
+			return DEAULT_DAY;
+		}
+		return DateUtil.getCurrentYYYYMMDD();
+	}
 	@Override
-	public void rollBackMerchantDayRemainingDto(MerchantDayRemainingDto dto) {
+	public void rollBackMerchantDayRemainingDto(MerchantDayRemainingDto dto,boolean systemOnly) {
 		if(dto==null||dto.getRemaining()==null){
 			return;
 		}
-		dto.setDaytime(DEAULT_DAY);
-		myMerchantDayRemainingDtoMapper.updateByPrimaryKeySelective(dto);
+		addMerchantDayRemainingDto(dto, systemOnly);
 	}
 
 	@Override
@@ -100,10 +118,13 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 
 	@Override
 	public List<MerchantDayRemainingDto> countRemain(Long accountId) {
-		int maxDay=getMaxDay();
-		List<MerchantDayRemainingDto> lists=myMerchantDayRemainingDtoMapper.countByAccountId(accountId, maxDay);
+		int maxDay = getMaxDay();
+		return countRemain(accountId,maxDay);
+	}
+
+	public List<MerchantDayRemainingDto> countRemain(Long accountId, int maxDay) {
+		List<MerchantDayRemainingDto> lists = myMerchantDayRemainingDtoMapper.countByAccountId(accountId, maxDay);
 		return lists;
-		
 	}
 	public static void copyProperty(MerchantRemainingDto source,MerchantDayRemainingDto dest){
 		dest.setAccountId(source.getAccountId());
@@ -122,7 +143,42 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 	@Override
 	public Long countFrozeRemain(Long accountId) {
 		int maxDay=getMaxDay();
-		return null;
+		return countFrozeRemain(accountId, maxDay);
 	}
+
+	public Long countFrozeRemain(Long accountId, int maxDay) {
+
+		Long sum = 0L;
+		if (lockedSupport()) {
+			sum = myMerchantDayRemainingDtoMapper.countFrozeRemain(accountId, maxDay);
+		} else {
+			Date fromDate=DateUtil.getInterval(selectLocked);
+			sum=myDealDtoMapper.countSum(accountId, fromDate, TradeCategory.OUT.getCode());
+		}
+		return sum == null ? 0 : sum;
+	}
+	protected boolean lockedSupport(){
+		return LOCKED>0;
+	}
+	@Override
+	public DrawInfoDto drawInfo(Long accountId) {
+		int maxDay= getMaxDay();
+		Long countFrozeRemain=countFrozeRemain(accountId, maxDay);
+		List<MerchantDayRemainingDto> lists=countRemain(accountId, maxDay);
+		DrawInfoDto infoDto=new DrawInfoDto();
+		infoDto.setPending(countFrozeRemain);
+		infoDto.setTotal(countFrozeRemain);
+		infoDto.setRemainDto(lists);
+		if(lists!=null){
+			lists.forEach(one->infoDto.setTotal(infoDto.getTotal()+one.getRemaining()));
+		}
+		return infoDto;
+	}
+	@Override
+	public Long getSystemAccount() {
+		return SYSTEM_ACCOUNT_ID;
+	}
+
+	
 
 }

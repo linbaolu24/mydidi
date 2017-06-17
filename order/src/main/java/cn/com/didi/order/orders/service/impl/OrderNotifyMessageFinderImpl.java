@@ -13,6 +13,7 @@ import cn.com.didi.order.orders.service.IOrderNotifyMessageFinder;
 public class OrderNotifyMessageFinderImpl implements IOrderNotifyMessageFinder{
 	private MessageDto bTakingMessage;
 	private MessageDto cCancelMessage;
+	private MessageDto bOrderReassignment;
 	@PostConstruct
 	public void init(){
 		bTakingMessage=new MessageDto();
@@ -21,6 +22,7 @@ public class OrderNotifyMessageFinderImpl implements IOrderNotifyMessageFinder{
 		cCancelMessage=new MessageDto();
 		cCancelMessage.setText("您有一个订单被取消，请及时处理。");
 		cCancelMessage.setTitle("订单取消提醒");
+		bOrderReassignment=sendMessage(null, "订单改派提醒", "您的订单被改派。", false);
 	}
 	@Override
 	public MessageDto findBTakingMessage(OrderDto dto) {
@@ -74,6 +76,10 @@ public class OrderNotifyMessageFinderImpl implements IOrderNotifyMessageFinder{
 		messageDto.setText("师傅开始服务");
 		messageDto.setTitle("师傅已上门处理您的"+StringUtils.defaultIfEmpty(dto.getCname(),"")+"订单");
 		return messageDto;
+	}
+	@Override
+	public MessageDto findBOrderReassignment(OrderDto dto) {
+		return bOrderReassignment;
 	}
 
 }

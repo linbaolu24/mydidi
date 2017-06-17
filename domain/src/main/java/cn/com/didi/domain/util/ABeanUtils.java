@@ -11,8 +11,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import cn.com.didi.core.property.IConverter;
 
 public abstract class ABeanUtils {
 
@@ -64,7 +67,9 @@ public abstract class ABeanUtils {
 		}
 		return map;
 	}
-
+	public static String transBean2Xml(Object obj) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException{
+		return transBean2Xml(obj,null);
+	}
 	/**
 	 * bean转xml
 	 * 
@@ -75,7 +80,7 @@ public abstract class ABeanUtils {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static String transBean2Xml(Object obj)
+	public static String transBean2Xml(Object obj,IConverter<String, String> nameConvert)
 			throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		StringBuffer buf = new StringBuffer();
 		if (obj == null) {
@@ -88,11 +93,14 @@ public abstract class ABeanUtils {
 		for (PropertyDescriptor property : propertyDescriptors) {
 			String key = property.getName();
 			// 过滤class属性
-			if (!key.equals("class")) {
+			if (nameConvert != null) {
+				key = nameConvert.convert(key);
+			}
+			if (!StringUtils.isEmpty(key)&&!key.equals("class")) {
 				// 得到property对应的getter方法
 				Method getter = property.getReadMethod();
 				Object value = getter.invoke(obj);
-				if (null == value)
+				if (value==null)
 					continue;
 				buf.append(startXml(key)).append(xmlCDATA(value)).append(endXml(key));
 			}

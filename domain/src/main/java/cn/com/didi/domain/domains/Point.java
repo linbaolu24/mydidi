@@ -1,11 +1,16 @@
 package cn.com.didi.domain.domains;
 
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 
 
-public class Point {
+public class Point implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public String getLng() {
 		return lng;
 	}

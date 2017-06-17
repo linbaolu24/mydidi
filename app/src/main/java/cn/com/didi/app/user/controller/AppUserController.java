@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.com.didi.app.user.domain.AccountDomain;
-import cn.com.didi.app.user.domain.VipDealJAO;
-import cn.com.didi.app.user.domain.VipDescriptionJAO;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.utils.AssertUtil;
+import cn.com.didi.domain.util.ArrivalStatusEnum;
 import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.DomainConstatns;
@@ -32,8 +31,8 @@ import cn.com.didi.user.login2.service.ILoginService;
 import cn.com.didi.user.register.domain.RegisterDto;
 import cn.com.didi.user.register.service.IRegisterService;
 import cn.com.didi.user.users.domain.MerchantExtDto;
+import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
-import cn.com.didi.user.users.domain.VipDescrptionDto;
 import cn.com.didi.user.users.service.IMerchantService;
 import cn.com.didi.user.users.service.IUserService;
 import cn.com.didi.user.users.service.IVipService;
@@ -100,8 +99,17 @@ public class AppUserController {
 
 	}
 	protected String vipValue(LoginDto login,Long accountId){
-		boolean hasVip=false;
+		/*boolean hasVip=false;
 		if(Role.COUSMER.getCode().equals(login.getRole())){
+			Integer slsId=appEnv.getMfxfSlsId();
+			hasVip=vipService.hasVip(accountId, slsId);
+		}
+		return hasVip?FlagEnum.FLAG_SET.getCode():FlagEnum.FLAG_NOT_SET.getCode();*/
+		return vipValue(login.getRole(), accountId);
+	}
+	protected String vipValue(String role,Long accountId){
+		boolean hasVip=false;
+		if(Role.COUSMER.getCode().equals(role)){
 			Integer slsId=appEnv.getMfxfSlsId();
 			hasVip=vipService.hasVip(accountId, slsId);
 		}
@@ -114,10 +122,21 @@ public class AppUserController {
 		if (!result.success()) {
 			return ResultFactory.error(result.getCode(), result.getMessage());
 		}
-		Map p = new HashMap(4);
 		UserExtDto ext = result.getData();
+		Map p=toMap(ext,login);
+		Long timeOut=resolver.getSessionTimepout(request);
+		Date date=new Date(now+timeOut*1000);
+		p.put(DomainConstatns.TIMEOUT,date);
+		String reflashToken=resolver.saveAccountAndGeneratorReflashToken(request, ext.getUserDto().getAccountId(),p);
+		Map pa=new HashMap(p);
+		pa.put(DomainConstatns.REFLASH_TOKEN,reflashToken);
+		
+		return ResultFactory.success(pa);
+	}
+	
+	protected Map toMap(UserExtDto ext,LoginDto login){
+		Map p = new HashMap(4);
 		p.put(DomainConstatns.ACCOUNT_ID, ext.getUserDto().getAccountId());
-		//p.put(DomainConstatns.ACCOUNT_ID, ext.getUserDto().getAccountId());
 		p.put(DomainConstatns.PROFILE_PHOTO, ext.getUserDto().getProfilePhoto());
 		p.put(DomainConstatns.ALIPAY_ACCOUNT, ext.alipayAccount());
 		p.put(DomainConstatns.WECHAT_ACCOUNT, ext.wechatAccount());
@@ -126,16 +145,9 @@ public class AppUserController {
 		p.put(DomainConstatns.BPN,StringUtils.defaultIfEmpty(login.getPhone(),ext.getUserDto().getBpn()));
 		p.put(DomainConstatns.ROLE, ext.getUserDto().getRole());
 		p.put(DomainConstatns.VIP_FLAG,vipValue(login, ext.getUserDto().getAccountId()));
-		
-		Long timeOut=resolver.getSessionTimepout(request);
-		Date date=new Date(now+timeOut*1000);
-		p.put(DomainConstatns.TIMEOUT,date);
-		String reflashToken=resolver.saveAccountAndGeneratorReflashToken(request, ext.getUserDto().getAccountId(),p);
-		Map pa=new HashMap(p);
-		pa.remove(DomainConstatns.ROLE);
-		pa.put(DomainConstatns.REFLASH_TOKEN,reflashToken);
-		
-		return ResultFactory.success(pa);
+		p.put(DomainConstatns.BUSINESS_CATEGORY, ext.getUserDto().getBusinessCategory());
+		p.put(DomainConstatns.ARRIVAL_STATUS,arrivalStatus(ext.getUserDto().getAccountId(), ext.getUserDto().getRole(),  ext.getUserDto().getBusinessCategory(), null) );
+		return p;
 	}
 	@RequestMapping(value = "/app/user/loginout", method = { RequestMethod.POST, RequestMethod.GET })
 	public IResult setThirdId(HttpServletRequest request) {
@@ -162,7 +174,25 @@ public class AppUserController {
 		pa.put(DomainConstatns.TIMEOUT,date);
 		return ResultFactory.success(pa);
 	}
-	
+	protected void reflashProperties(AccountDomain accountDomains){
+		UserDto dto=null;
+		if(StringUtils.isEmpty(accountDomains.getRole())||StringUtils.isEmpty(accountDomains.getBusinessCategory())){
+			dto=tUserService.selectUser(accountDomains.getAccountId());
+			accountDomains.setRole(dto.getRole());
+			accountDomains.setBusinessCategory(dto.getBusinessCategory());
+		}
+		accountDomains.setArrivalStatus(arrivalStatus(accountDomains.getAccountId(), accountDomains.getRole(), 
+				accountDomains.getBusinessCategory(), accountDomains.getArrivalStatus()));
+		
+		vipValue(accountDomains.getRole(), accountDomains.getAccountId());
+	}
+	protected String arrivalStatus(Long accountId,String role,String businessCategory,String nowStatus){
+		if(Role.BUSINESS.codeEqual(role)&&BusinessCategory.THIRD.equals(businessCategory)&&
+				!ArrivalStatusEnum.NORMAL.codeEqual(nowStatus)){
+			return merchantService.selectArrivalStatus(accountId).getCode();
+		}
+		return ArrivalStatusEnum.NORMAL.getCode();
+	}
 	
 	
 	@RequestMapping(value = "/app/user/setThirdId", method = { RequestMethod.POST })
@@ -172,25 +202,24 @@ public class AppUserController {
 		return ResultFactory.success();
 	}
 	
-	@RequestMapping(value = "/app/user/enterMerchant", method = { RequestMethod.POST })
-	public IResult enterMerchant(@RequestBody  MerchantExtDto merchantExtDto,HttpServletRequest request) {
-		Map obj=(Map)resolver.resolveObject(request);
-		
-		String role=(String) obj.get(DomainConstatns.ROLE);
-		if(!Role.BUSINESS.getCode().equals(role)){
-			throw new IllegalArgumentException("非商户端不能入驻企业。");
-		}
-		String sAccoutId=String.valueOf(obj.get(DomainConstatns.ACCOUNT_ID));
-		Long accountId=Long.parseLong(sAccoutId);
-		//tUserService.updateLinkedId(accountId, linkedDto.getGtCid(), linkedDto.getRyToken());
-		merchantExtDto.setCr(CrEnum.WATTING.getCode());
-		merchantExtDto.setState(State.VALID.getState());
-		merchantExtDto.setBusinessCategory(BusinessCategory.THIRD.getCode());
-		merchantExtDto.setAccountId(accountId);
-		merchantService.enterMerchant(merchantExtDto.dto(), merchantExtDto.getServiceList(), null);
-		
+	
+	@RequestMapping(value = "/app/user/setProfilePhoto", method = { RequestMethod.POST })
+	public IResult setProfilePhoto(@RequestBody Map<String,String> map,HttpServletRequest request){
+		Long accountId=resolver.resolve(request);
+		String pp=map.get(DomainConstatns.PROFILE_PHOTO);
+		tUserService.updateProfilePhoto(accountId, pp);
 		return ResultFactory.success();
 	}
-	
-
+	@RequestMapping(value = "/app/user/getProfilePhoto", method = { RequestMethod.POST })
+	public IResult getProfilePhoto(HttpServletRequest request){
+		Long accountId=resolver.resolve(request);
+		String value=tUserService.getProfilePhoto(accountId);
+		if(StringUtils.isEmpty(value)){
+			return ResultFactory.success();
+		}
+		Map map=new HashMap(1);
+		map.put(DomainConstatns.PROFILE_PHOTO, StringUtils.defaultIfBlank(value, null));
+		return ResultFactory.success(map);
+	}
+ 
 }

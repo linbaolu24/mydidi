@@ -27,9 +27,11 @@ import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.query.CountObject;
 import cn.com.didi.domain.query.ResultExt;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.Role;
 import cn.com.didi.domain.util.State;
+import cn.com.didi.platform.user.domain.UserSimpleJAO;
 import cn.com.didi.user.users.domain.MerchantCrDto;
 import cn.com.didi.user.users.domain.MerchantDto;
 import cn.com.didi.user.users.domain.MerchantExtDto;
@@ -93,13 +95,37 @@ public class UserController {
 	public IResult addMerchantV2(@RequestBody MerchantExtDto dto) {
 		//AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
 		dto.setAccountId(null);
+		if(BusinessCategory.SELF.equals(dto.getBusinessCategory())){
 		dto.setCr(CrEnum.PASSING.getCode());
+		}else{
+			dto.setCr(CrEnum.NOT_PASSING.getCode());
+			dto.setCause("未绑定微信账号。");
+		}
 		dto.setState(State.VALID.getState());
 		service.addMerchantV2(dto.dto(), dto.getServiceList(), dto.getAreaList());
 		return ResultFactory.success();
 
 	}
-
+	
+	@RequestMapping(value = "/platform/b/cr", method = RequestMethod.POST)
+	public IResult checkMerchant(@RequestBody List<MerchantCrDto> dto) {
+		if (dto == null) {
+			return ResultFactory.success();
+		}
+		service.checkMerchant(dto);
+		return ResultFactory.success();
+	}
+	@RequestMapping(value = "/platform/b/onOff", method = RequestMethod.POST)
+	public IResult onOffMerchant(@RequestBody List<IdStateDto> idStateList){
+		if(CollectionUtils.isEmpty(idStateList)){
+			return ResultFactory.success();
+		}
+		service.onOff(idStateList);
+		return ResultFactory.success();
+	}
+	
+	
+	/**用户管理*/
 	@RequestMapping(value = "/platform/c/list", method = RequestMethod.POST)
 	public IResult selectUsers(@RequestBody TimeInterval interval) {
 
@@ -120,7 +146,7 @@ public class UserController {
 		return result;
 	}
 
-	/***/
+	
 	@RequestMapping(value = { "/platform/c/onOff", "/platform/account/onOff" }, method = RequestMethod.POST)
 	public IResult onOff(@RequestBody UserDto dto) {
 		if (dto == null) {
@@ -139,7 +165,17 @@ public class UserController {
 		userService.updateUserState(dto);
 		return ResultFactory.success();
 	}
-
+	@RequestMapping(value ="/platform/c/remark", method = RequestMethod.POST)
+	public IResult remark(@RequestBody UserSimpleJAO simpleJAO){
+		if(simpleJAO.getAccountId()==null){
+			return null;
+		}
+		userService.updateRemark(simpleJAO.getAccountId(), simpleJAO.getRemark());
+		return ResultFactory.success();
+	}
+	
+	
+    /**账户管理*/
 	@RequestMapping(value = "/platform/account/list", method = RequestMethod.POST)
 	public IResult accountList(@RequestBody TimeInterval interval) {
 		IPage<UserDto> page = userService.selectPlatformUsers(interval);
@@ -177,22 +213,7 @@ public class UserController {
 		userService.updatePlatformUser(dto);
 		return ResultFactory.success();
 	}
-	@RequestMapping(value = "/platform/c/cr", method = RequestMethod.POST)
-	public IResult checkMerchant(@RequestBody List<MerchantCrDto> dto) {
-		if (dto == null) {
-			return ResultFactory.success();
-		}
-		service.checkMerchant(dto);
-		return ResultFactory.success();
-	}
-	@RequestMapping(value = "/platform/b/onOff", method = RequestMethod.POST)
-	public IResult onOffMerchant(@RequestBody List<IdStateDto> idStateList){
-		if(CollectionUtils.isEmpty(idStateList)){
-			return ResultFactory.success();
-		}
-		service.onOff(idStateList);
-		return ResultFactory.success();
-	}
+	
 	@RequestMapping(value = "/platform/b/sendSmsToUsers", method = RequestMethod.POST)
 	public IResult sendTx(@RequestBody Map<String,String> map){
 		String role=map.get("role");

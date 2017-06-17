@@ -55,8 +55,8 @@ public class PayResultDto {
 	private Long destAccountId;
 	private String payAccount;
 	private PayAccountEnum accountEnum;
-	private boolean addRemaining=true;//增加系统余额
-	private boolean systemOnly=true;
+	private boolean addRemaining=true;//增加余额
+	private boolean systemOnly=true;//是否只增加系统余额
 	private DealDto deal;
 	/**
 	 * 交易系统交易ID

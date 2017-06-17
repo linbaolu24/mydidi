@@ -1,6 +1,8 @@
 package cn.com.didi.domain.util;
 
-public enum OrderState {
+import cn.com.didi.core.property.ICodeAble;
+
+public enum OrderState implements ICodeAble{
 	
 
 	/**

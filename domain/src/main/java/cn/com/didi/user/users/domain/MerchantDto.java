@@ -139,8 +139,13 @@ public class MerchantDto implements Serializable {
 	 * 微信账号
 	 */
 	private String wechatAccount;
-	// 服务内容
+	/**
+	 * 微信名
+	 */
+	private String wechatName;
+	/***/
 	private String service;
+
 
 	
 	 /**
@@ -554,6 +559,14 @@ public class MerchantDto implements Serializable {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getWechatName() {
+		return wechatName;
+	}
+
+	public void setWechatName(String wechatName) {
+		this.wechatName = wechatName;
 	}
 
 }

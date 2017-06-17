@@ -20,6 +20,7 @@ import cn.com.didi.order.orders.util.OrderMessageOperation;
 import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.order.result.OrderRuslt;
 import cn.com.didi.order.util.OrderMessageConstans;
+import cn.com.didi.user.users.domain.VipDto;
 import cn.com.didi.user.users.service.IVipService;
 @Service
 public class MrmfV2OperationInterceptor extends MrmfOperationInterceptor{
@@ -29,8 +30,9 @@ public class MrmfV2OperationInterceptor extends MrmfOperationInterceptor{
 	public <R> IOrderRuslt<R> interceptor(OrderMessageOperation operation, OrderContextDto data, IOrderService source){
 		OrderDto order = data.getOrderDto();
 		if (SpecialTypeEnum.MRMF.codeEqual(order.getSpecialType())){
-			if (OrderMessageOperation.AUTH.equals(operation)||OrderMessageOperation.BEFORE_PUBLISH.equals(operation)){
-				IOrderRuslt<R> result= vipHandle(order, data, source);
+			if (OrderMessageOperation.BEFORE_PUBLISH.equals(operation)){
+				VipDto dto=getVipDto(order, data);
+				IOrderRuslt<R> result= vipHandle(order, data, source,dto);
 				if(result!=null&&!result.success()){
 					return result;
 				}
@@ -38,22 +40,39 @@ public class MrmfV2OperationInterceptor extends MrmfOperationInterceptor{
 				if(result!=null&&!result.success()){
 					return result;
 				}
-				result=handleCountController(order, data);
+				result = handleCountController(order, data);
 				return result;
+			}else if (OrderMessageOperation.AUTH.equals(operation)){
+				VipDto dto=getVipDto(order, data);
+			    return handleAuthCountControllerByMonth(order, data, dto);
 			} else if (OrderMessageOperation.BEFORE_ADD.equals(operation)) {
 				return popBeforeAdd(order, data, source);
 			}
 		}
 		return null;
 	}
+	protected VipDto getVipDto(OrderDto order, OrderContextDto data){
+		return vipService.getDto(order.getConsumerAccountId(), order.getSlsId());
+	}
 	protected <T> IOrderRuslt<T> vipHandle(OrderDto order, OrderContextDto data, IOrderService source){
+		return vipHandle(order, data, source,null,false);
+	}
+	protected <T> IOrderRuslt<T> vipHandle(OrderDto order, OrderContextDto data, IOrderService source, VipDto dto) {
+		return vipHandle(order, data, source, dto,true);
+	}
+	protected <T> IOrderRuslt<T> vipHandle(OrderDto order, OrderContextDto data, IOrderService source, VipDto dto,boolean vipPassed) {
 		LOGGER.debug("开始VIP校验");
-		boolean hasVip=vipService.hasVip(order.getConsumerAccountId(), order.getSlsId());
-		LOGGER.debug("订单 {} VIP校验结果{}",order,hasVip);
-		if(hasVip){
+		boolean hasVip = false;
+		if (!vipPassed) {
+			hasVip = vipService.hasVip(order.getConsumerAccountId(), order.getSlsId());
+		} else {
+			hasVip = vipService.hasVip(dto);
+		}
+		LOGGER.debug("订单 {} VIP校验结果{}", order, hasVip);
+		if (hasVip) {
 			return null;
 		}
-		return new OrderRuslt<>(OrderMessageConstans.ORDER_MRMF_NOT_VIP);	
+		return new OrderRuslt<>(OrderMessageConstans.ORDER_MRMF_NOT_VIP);
 	}
 	protected  <T> IOrderRuslt<T> popBeforeAdd(OrderDto order, OrderContextDto data, IOrderService source){
 		Couple<IMerchantDto, IReciverDto> couple = reciverSearch

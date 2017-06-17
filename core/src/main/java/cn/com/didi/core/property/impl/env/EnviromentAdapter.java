@@ -10,4 +10,10 @@ public class EnviromentAdapter implements IEnvironment{
 		return null;
 	}
 
+	@Override
+	public void changePropertyValue(String key, String value) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

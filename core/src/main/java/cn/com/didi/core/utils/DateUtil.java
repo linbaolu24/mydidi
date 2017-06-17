@@ -35,6 +35,12 @@ public class DateUtil {
 		cal.add(Calendar.DAY_OF_MONTH, interval);
 		return getCurrentYYYYMMDD(cal);
 	}
+	
+	public static Date getInterval(int interval){
+		Calendar cal=Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_YEAR, interval);
+		return cal.getTime();
+	}
 	public static void main(String[] args) {
 		System.out.println(getIntervalYYYYMMDD(-3));
 	}
@@ -43,5 +49,12 @@ public class DateUtil {
 	}
 	public static Date getDateIntervalYear(Date time,int intervalYear){
 		return DateUtils.addYears(time, intervalYear);
+	}
+	public static Date getFirstDayOfMonth(Calendar cal){
+		cal.set(Calendar.HOUR_OF_DAY,0);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.SECOND,0);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		return cal.getTime();
 	}
 }

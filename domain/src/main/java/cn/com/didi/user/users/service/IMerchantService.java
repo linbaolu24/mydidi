@@ -4,12 +4,10 @@ import java.util.List;
 
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.core.select.IPageBound;
-import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.domains.Point;
-import cn.com.didi.domain.query.PageBounds;
 import cn.com.didi.domain.query.TimeInterval;
-import cn.com.didi.domain.util.BusinessCategory;
+import cn.com.didi.domain.util.ArrivalStatusEnum;
 import cn.com.didi.user.users.domain.MerchantAreaDto;
 import cn.com.didi.user.users.domain.MerchantCrDto;
 import cn.com.didi.user.users.domain.MerchantDescriptionDto;
@@ -51,6 +49,12 @@ public interface IMerchantService {
 	 * @return
 	 */
 	MerchantDto selectMerchant(Long accountId);
+	/**
+	 * 查询入驻进程
+	 * @param accountId
+	 * @return
+	 */
+	ArrivalStatusEnum selectArrivalStatus(Long accountId);
 
 	/**
 	 * @param accountId
@@ -129,6 +133,13 @@ public interface IMerchantService {
 	 */
 	public void editMerchant(MerchantDto merchant, List<MerchantServiceDto> serviceList,
 			List<MerchantAreaDto> areaList) ;
+	/**
+	 * @param merchant
+	 * @param serviceList
+	 * @param areaList
+	 */
+	public void editMerchantWithCheck(MerchantDto merchant, List<MerchantServiceDto> serviceList,
+			List<MerchantAreaDto> areaList);
 	/**
 	 * @param accountId
 	 * @return

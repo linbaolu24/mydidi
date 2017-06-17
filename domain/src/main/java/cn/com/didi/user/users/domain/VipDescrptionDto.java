@@ -1,6 +1,12 @@
 package cn.com.didi.user.users.domain;
 
-public class VipDescrptionDto {
+import java.io.Serializable;
+
+public class VipDescrptionDto implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String condition;
 	private String usable;
 	private String vipName;

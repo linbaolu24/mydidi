@@ -540,6 +540,31 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="cment" property="comments" jdbcType="VARCHAR" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+    <result column="remain" property="remain" jdbcType="BIGINT" />
+    <result column="sai" property="sai" jdbcType="BIGINT" />
+    <result column="dai" property="dai" jdbcType="BIGINT" />
+    <result column="commission" property="commission" jdbcType="INTEGER" />
+    <result column="order_id" property="orderId" jdbcType="BIGINT" />
+  </resultMap>
+  
+  
+  <resultMap id="BaseListResultMap2" type="cn.com.didi.order.trade.domain.DealDrawListDto" >
+    <id column="deal_id" property="dealId" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="CHAR" />
+    <result column="cause" property="cause" jdbcType="VARCHAR" />
+    <result column="deal_type" property="dealType" jdbcType="CHAR" />
+    <result column="sat" property="sat" jdbcType="VARCHAR" />
+    <result column="pat" property="pat" jdbcType="VARCHAR" />
+    <result column="sa" property="sa" jdbcType="VARCHAR" />
+    <result column="dat" property="dat" jdbcType="VARCHAR" />
+    <result column="da" property="da" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="INTEGER" />
+    <result column="category" property="category" jdbcType="CHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="cment" property="comments" jdbcType="VARCHAR" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
     <result column="remain" property="remain" jdbcType="BIGINT" />
     <result column="sai" property="sai" jdbcType="BIGINT" />
     <result column="dai" property="dai" jdbcType="BIGINT" />
@@ -558,4 +583,41 @@
     <if test="time.key !=null "> and category=#{time.key,jdbcType=VARCHAR}</if>
     </where>
   </select>
+  <select id="selectDraws" resultMap="BaseListResultMap"> 
+  select
+    deal_id, state, deal_type,  amount, category, create_time, 
+   cment,remain,ext1 as cname from deal
+    <where>
+    category='1'
+    <if test="time.startTime != null">and create_time&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.endTime != null">and create_time&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.key !=null "> and deal_id=#{time.id,jdbcType=BIGINT}</if>
+    <if test="time.state !=null "> and state=#{time.state,jdbcType=BIGINT}</if>
+    </where>
+  </select>
+  
+  <select id="selectDrawList" resultMap="BaseListResultMap2"> 
+  select
+    deal_id, state, cause,  amount, sat as pat, create_time
+    from deal where 
+    category='1' and dai=#{time.accountId,jdbcType=BIGINT}
+  </select>
+  
+   <select id="countSum" resultMap="java.lang.Long"> 
+  select
+    sum( amount)
+    from deal where 
+    category=#{cat,jdbcType=CHAR} and dai=#{accountId,jdbcType=BIGINT} 
+    and create_time&gt;#{fromDate,jdbcType=TIMESTAMP}
+  </select>
+  
+  <update id="updateDealState">
+	update deal set state= #{destState,jdbcType=CHAR} where deal_id =
+	#{dealId,jdbcType=BIGINT} and category=#{cat,jdbcType=CHAR}
+	<if test="sourceState != null">
+		and state in
+		<foreach collection="sourceState" open="(" item="item" close=")"
+			separator=",">  #{item,jdbcType=CHAR}  </foreach>
+	</if>
+   </update>
 </mapper>

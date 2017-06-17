@@ -55,5 +55,11 @@ public interface IOrderNotifyMessageFinder {
 	 * @return
 	 */
 	public MessageDto findCFinishDealMessage(OrderDto dto);
+	/**
+	 * 查找商户订单被改派
+	 * @param dto
+	 * @return
+	 */
+	public MessageDto findBOrderReassignment(OrderDto dto);
 	
 }

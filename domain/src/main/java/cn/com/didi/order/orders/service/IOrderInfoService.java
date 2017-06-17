@@ -5,6 +5,7 @@ import java.util.List;
 
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.order.orders.domain.OrderBListDto;
@@ -188,6 +189,12 @@ public interface IOrderInfoService {
 	 */
 	public int orderTaking(OrderDto dto);
 	/**
+	 * @param dto
+	 * @param reciver
+	 * @return
+	 */
+	public int orderReassignment(Long orderId,IMerchantDto reciver);
+	/**
 	 * @param accountId
 	 * @param slsId
 	 * @param orderStates
@@ -201,11 +208,20 @@ public interface IOrderInfoService {
 	 * @return
 	 */
 	public Date selectLastOfst(Long accountId,Integer slsId,String... orderStates);
+	/**
+	 * @param acLong
+	 * @param slsId
+	 * @param startData
+	 * @param endDate
+	 * @param orderStates
+	 * @return
+	 */
+	public int count(Long acLong,Integer slsId,Date startData,Date endDate,String... orderStates);
 	
 	/**
 	 * @param merchantId
 	 * @param slsList
 	 * @return
 	 */
-	public List<OrderNotifyDto> listNotifyOrders(Long merchantId,List<Long> slsList);
+	public List<OrderNotifyDto> listNotifyOrders(Long merchantId,List<Integer> slsList);
 }

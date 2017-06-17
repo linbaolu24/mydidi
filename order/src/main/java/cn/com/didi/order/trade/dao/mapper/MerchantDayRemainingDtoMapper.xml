@@ -210,11 +210,39 @@
       and category = #{category,jdbcType=CHAR}
   </update>
   
-  <insert id="saveMerchantDayRemainingDto">
-  insert into merchant_day_remaining (daytime, account_Id, pat, 
-      category, remaining)
-    values (#{daytime,jdbcType=INTEGER}, #{accountId,jdbcType=BIGINT}, #{pat,jdbcType=VARCHAR}, 
-      #{category,jdbcType=CHAR}, #{remaining,jdbcType=BIGINT}) ON DUPLICATE KEY UPDATE remaining=remaining+#{remaining,jdbcType=BIGINT}
-   </insert>
+  
+  <!--  add by my -->
+	<insert id="saveMerchantDayRemainingDto">
+		insert into merchant_day_remaining (daytime, account_Id, pat,
+		category, remaining)
+		values (#{daytime,jdbcType=INTEGER}, #{accountId,jdbcType=BIGINT},
+		#{pat,jdbcType=VARCHAR},
+		#{category,jdbcType=CHAR}, #{remaining,jdbcType=BIGINT}) ON DUPLICATE KEY UPDATE
+		remaining=remaining+#{remaining,jdbcType=BIGINT}
+	</insert>
+
+	<select id="countByAccountId" resultMap="BaseResultMap">
+		select pat,sum(remaining) remaining from merchant_day_remaining where
+		account_Id= #{accountId,jdbcType=BIGINT} and
+		daytime&lt;#{maxDay,jdbcType=INTEGER}
+		GROUP BY pat
+	</select>
+	<select id="countByAccountIdAndAt" resultMap="BaseResultMap">
+		select pat,sum(remaining) remaining from merchant_day_remaining where
+		account_Id= #{accountId,jdbcType=BIGINT} and
+		daytime&lt;#{maxDay,jdbcType=INTEGER}
+		and pat =#{at,jdbcType=VARCHAR}
+	</select>
+	<select id="selectByAccountIdAndPayType" resultMap="BaseResultMap">
+		select pat,remaining from merchant_day_remaining where account_Id=
+		#{accountId,jdbcType=BIGINT} and daytime&lt;#{maxDay,jdbcType=INTEGER}
+		and pat =#{at,jdbcType=VARCHAR}
+	</select>
+	
+		<select id="countFrozeRemain" resultMap="java.lang.Long">
+		select sum(remaining) remaining  from merchant_day_remaining where account_Id=
+		#{accountId,jdbcType=BIGINT} and daytime&gt;=#{maxDay,jdbcType=INTEGER}
+	</select>
+  
   
 </mapper>

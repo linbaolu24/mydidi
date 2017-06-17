@@ -88,6 +88,7 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		linked.setAccountId(userDto.getAccountId());
 		linked.setRole(userDto.getRole());
 		linked.setBusinessCategory(userDto.getBusinessCategory());
+		linked.setExt1(userDto.getUserName());
 		userLinkIdDtoMapper.insertSelective(linked);
 		
 	}
@@ -387,6 +388,46 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		}
 
 		return array.toString();
+	}
+
+	@Override
+	public void updateProfilePhoto(Long accountId, String pp) {
+		UserDto user=new UserDto();
+		user.setAccountId(accountId);
+		user.setProfilePhoto(pp);
+		userDtoMapper.updateByPrimaryKey(user);
+		
+	}
+
+	@Override
+	public String getProfilePhoto(Long accountId) {
+		UserDto user=selectUser(accountId);
+		if(user!=null){
+			return user.getProfilePhoto();
+		}
+		return null;
+	}
+
+
+	@Override
+	public void updateUserLinked(UserLinkIdDto userLinked) {
+		if (!StringUtils.isEmpty(userLinked.getBusinessCategory())) {
+			UserDto dto = new UserDto();
+			dto.setAccountId(userLinked.getAccountId());
+			dto.setBusinessCategory(userLinked.getBusinessCategory());
+			userDtoMapper.updateByPrimaryKey(dto);
+		}
+		userLinkIdDtoMapper.updateByPrimaryKeySelective(userLinked);
+
+	}
+
+	@Override
+	public void updateRemark(Long accountId, String remark) {
+		UserDto dto=new UserDto();
+		dto.setAccountId(accountId);
+		dto.setRemark(remark);
+		userDtoMapper.updateByPrimaryKeySelective(dto);
+		
 	}
 
 

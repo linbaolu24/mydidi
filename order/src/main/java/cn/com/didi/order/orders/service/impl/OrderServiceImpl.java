@@ -9,12 +9,14 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.google.protobuf.Internal;
 
 import cn.com.didi.core.filter.IOperationInterceptor;
 import cn.com.didi.core.message.Message;
@@ -26,10 +28,13 @@ import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.MessageDto;
 import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.domains.Point;
+import cn.com.didi.domain.domains.UseAbleDto;
 import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.BusinessCharge;
 import cn.com.didi.domain.util.DomainConstatns;
+import cn.com.didi.domain.util.DomainMessageConstans;
 import cn.com.didi.domain.util.IReciverSearchService;
+import cn.com.didi.domain.util.InternalFlagEnum;
 import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.domain.util.Role;
@@ -152,21 +157,20 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		return orderResult;
 	}
 	@Override
-	public IOrderRuslt<VipDto> auth(OrderDto dto) {
+	public IOrderRuslt<UseAbleDto<VipDto>> auth(OrderDto dto) {
 		if(StringUtils.isEmpty(dto.getSpecialType())){
 			dto.setSpecialType(SpecialTypeEnum.NORMAL.getCode());
 		}
 		if(dto.getOct()==null){
 			dto.setOct(new Date());
 		}
-		OrderRuslt<Void> orderResult = null;
 		OrderContextDto context = new OrderContextDto(dto);
-		IOrderRuslt<VipDto> result= interceptor(OrderMessageOperation.AUTH,context);
+		IOrderRuslt<UseAbleDto<VipDto>> result= interceptor(OrderMessageOperation.AUTH,context);
 		if(result!=null&&!result.success()){
 			return result;
 		}
-		VipDto vipDto=vipService.getDto(dto.getConsumerAccountId(), dto.getSlsId());
-		return new OrderRuslt<VipDto>(vipDto);
+		IOrderRuslt<UseAbleDto<VipDto>> newResult=new OrderRuslt<>(context.getUsed());
+		return newResult;
 	}
 
 	
@@ -515,6 +519,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		deal.setSai(dto.getConsumerAccountId());
 		deal.setCment(StringUtils.defaultIfEmpty(desc, null));
 		deal.setSpecialType(dto.getSpecialType());
+		deal.setPoundage(dto.getPoundage());
 		tradeService.createTrade(deal, dealTranscationalCallBack);
 		result = new OrderRuslt<>("", OrderRuslt.SUCCESS_CODE, null, createOrderDealDescDto(deal, dto));
 		return result;
@@ -649,6 +654,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		p.put(DomainConstatns.STATE, order.getState());
 		p.put(DomainConstatns.COST, order.getCost());
 		p.put(DomainConstatns.SPECIALTYPE, order.getSpecialType());
+		p.put(DomainConstatns.REASSIGNMENT_FLAG, InternalFlagEnum.REASSIGNMENT.isFlagSetInteger(order.getInternalFlag())?"1":"0");//表示是否是重新派送的消息
 		all.put(DomainConstatns.TYPE, "order");
 		all.put(DomainConstatns.OBJ, p);
 		dto.setContent(JSON.toJSONString(all));
@@ -827,6 +833,70 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	}
 	
 	
+	@Override
+	public boolean existNotFinishOrder(Long accountId, Integer slsId) {
+		return orderInfoService.existOrder(accountId, slsId, OrderState.ORDER_STATE_TAKING.getCode(),
+				OrderState.ORDER_STATE_START_SERVICE.getCode());
+	}
+	@Override
+	public IOrderRuslt<OrderDto> getOrderWithCheckChangeDispatch(Long orderId) {
+		OrderDto dto=orderInfoService.selectOrderSubjectInformation(orderId);
+		IOrderRuslt<OrderDto> result= orderExist(dto);
+		if(result!=null&&!result.success()){
+			return result;
+		}
+		if(!OrderState.ORDER_STATE_TAKING.codeEqual(dto.getState())){
+			return new OrderRuslt<OrderDto>(OrderMessageConstans.ORDER_STATE_NOT_PENDING_SERIVCE);
+		}
+		if(BusinessCategory.SELF.codeEqual(dto.getBusinessCategory())){
+			return new OrderRuslt<OrderDto>(OrderMessageConstans.ORDER_NOT_SELF);
+		}
+		return new OrderRuslt<OrderDto>(dto);
+	}
+	
+	@Override
+	public IOrderRuslt<Void> reassignment(Long orderId, Long bId) {
+		 IOrderRuslt<OrderDto> result=getOrderWithCheckChangeDispatch(orderId);
+		 if(result!=null){
+			 return IOrderRuslt.error(result);
+		 }
+		 Couple<IMerchantDto, IReciverDto>  couple= search.getMerchantAndReciver(bId);
+		 if(couple==null){
+			 return new OrderRuslt<>(DomainMessageConstans.CODE_PARAM_ILLEGAL_ERROR,"指定商户不存在。");
+		 }
+		 OrderDto dto=result.getData();
+		 int count= orderInfoService.orderReassignment(orderId, couple.getFirst());
+		 IOrderRuslt<Void> tempResult= orderStateChange(count, result.getData(), result.getData().getState());
+		 if(tempResult!=null&&!tempResult.success()){
+			 return tempResult;
+		 }
+		 MessageDto messageDto=orderMessageFinder.findBOrderReassignment(dto);
+		 int internalFlag=dto.getInternalFlag()==null?0:dto.getInternalFlag();
+		 internalFlag=InternalFlagEnum.REASSIGNMENT.flagSet(internalFlag);
+		 dto.setInternalFlag(internalFlag);
+		 sendMessage(dto, messageDto, couple.getSecond());
+		 return OrderRuslt.successResult();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -944,11 +1014,9 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 	};
 
-	@Override
-	public boolean existNotFinishOrder(Long accountId, Integer slsId) {
-		return orderInfoService.existOrder(accountId, slsId, OrderState.ORDER_STATE_TAKING.getCode(),
-				OrderState.ORDER_STATE_START_SERVICE.getCode());
-	}
+	
+
+	
 
 
 }

@@ -31,6 +31,8 @@ import cn.com.didi.core.shape.impl.SimplePoint;
 import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.ArrivalStatusEnum;
+import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.LatLngUtiil;
 import cn.com.didi.domain.util.State;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
@@ -53,6 +55,7 @@ import cn.com.didi.user.users.domain.MerchantServiceDto;
 import cn.com.didi.user.users.domain.MerchantServiceDtoExample;
 import cn.com.didi.user.users.domain.MerchantServiceDtoKey;
 import cn.com.didi.user.users.domain.UserDto;
+import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.service.IMerchantService;
 import cn.com.didi.user.users.service.IUserService;
 import cn.com.didi.user.users.util.MerchantUtils;
@@ -364,7 +367,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		}
 		MerchantDto dto = new MerchantDto();
 		dto.setAccountId(accountId);
-		dto.setCause(StringUtils.defaultIfEmpty(cause, null));
+		dto.setCause(StringUtils.defaultIfEmpty(cause, CrEnum.PASSING.codeEqual(cr)?"":null));//如果是认证通过将原因更新为空白字符串
 		dto.setCr(cr);
 		//dto.setState(State.VALID.getState());
 		merchantMapper.updateByPrimaryKeySelective(dto);
@@ -395,11 +398,22 @@ public class MerchantServiceImpl implements IMerchantService {
 		if (merchant == null) {
 			return;
 		}
-		merchant.setAlipayAccount(null);// 禁止更新支付宝账号
-		merchant.setWechatAccount(null);// 禁止更新微信账号
+		//merchant.setAlipayAccount(null);// 禁止更新支付宝账号
+		//merchant.setWechatAccount(null);// 禁止更新微信账号
 		//merchant.setBusinessCategory(null);//禁止更新业务类型
-
 		MerchantDto temp = merchantMapper.selectByPrimaryKey(merchant.getAccountId());
+		editMerchant(merchant, serviceList, areaList);
+		
+	}
+	/**
+	 * @param merchant
+	 * @param serviceList
+	 * @param areaList
+	 * @param temp
+	 */
+	protected void editMerchant(MerchantDto merchant, List<MerchantServiceDto> serviceList,
+			List<MerchantAreaDto> areaList,MerchantDto temp){
+	
 		if (temp == null) {
 			return;
 		}
@@ -425,11 +439,18 @@ public class MerchantServiceImpl implements IMerchantService {
 				addMerchantService(one);
 			}
 		}
-		if(!StringUtils.isEmpty(merchant.getBusinessCategory())){
-			userService.updateBusinessCategory(merchant.getAccountId(), merchant.getBusinessCategory());
+		if(!StringUtils.isEmpty(merchant.getBusinessCategory())||!StringUtils.isEmpty(merchant.getAlipayAccount())||
+				!StringUtils.isEmpty(merchant.getWechatAccount())){//如果更新了业务类型,微信账号等
+			UserLinkIdDto linkedDto=new UserLinkIdDto();
+			linkedDto.setAccountId(merchant.getAccountId());
+			linkedDto.setWechatAccount(StringUtils.defaultIfBlank(merchant.getWechatAccount(), null));
+			linkedDto.setAlipayAccount(StringUtils.defaultIfBlank(merchant.getAlipayAccount(), null));
+			linkedDto.setWechatName(StringUtils.defaultIfBlank(merchant.getWechatName(), null));
+			linkedDto.setBusinessCategory(StringUtils.defaultIfBlank(merchant.getBusinessCategory(), null));
+			userService.updateUserLinked(linkedDto);
 		}
 	}
-
+	
 	public void deleteArea(Long merchatId) {
 		MerchantAreaDtoExample example = new MerchantAreaDtoExample();
 		MerchantAreaDtoExample.Criteria cri = example.createCriteria();
@@ -485,7 +506,9 @@ public class MerchantServiceImpl implements IMerchantService {
     }
 	@Override
 	public IPage<MerchantDto> selectMerchants(Point center, int radius, Integer slsId,IPageBound bounds) {
-		
+		if(radius<0){
+			radius=5;
+		}
 		return selectMerchants(center,radius,slsId,bounds,new HashMap<>());
 		
 	}
@@ -584,6 +607,28 @@ public class MerchantServiceImpl implements IMerchantService {
 	public void updateEve(Long accountId, int eve) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ArrivalStatusEnum selectArrivalStatus(Long accountId) {
+		MerchantDto dto=selectMerchant(accountId);
+		if(dto==null){
+			return ArrivalStatusEnum.NOT_ARRIVAL;
+		}
+		return CrEnum.PASSING.codeEqual(dto.getCr())?ArrivalStatusEnum.NORMAL:ArrivalStatusEnum.NOT_AUDIT;
+	}
+
+	@Override
+	public void editMerchantWithCheck(MerchantDto merchant, List<MerchantServiceDto> serviceList,
+			List<MerchantAreaDto> areaList) {
+		MerchantDto dto=selectMerchant(merchant.getAccountId());
+		if(dto==null){
+			throw new IllegalArgumentException("商户不存在。");
+		}
+		if(CrEnum.PASSING.codeEqual(dto.getCr())){
+			throw new IllegalArgumentException("已审核通过,不能编辑。");
+		}
+		editMerchant(merchant, serviceList, areaList,dto);
 	}
 
 	

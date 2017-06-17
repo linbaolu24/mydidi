@@ -46,12 +46,17 @@ public class AdUtils {
 			Consumer<AdDto> consumer) {
 		List<Couple<AdDto, AdPicDto>> arrayList = new ArrayList<Couple<AdDto, AdPicDto>>(adDto.size());
 		allLoop: for (AdDto one : adDto) {
+			double minDis = Double.MAX_VALUE;
 			for (AdPicDto two : adPic) {
 				if (one.getAdId().equals(two.getAdId())) {
-					arrayList.add(new Couple<>(one, two));
-					break allLoop;
+					double distance = 1.0 * two.getHeight() / two.getWidth();
+					if (distance < minDis) {
+						minDis=distance;
+						arrayList.add(new Couple<>(one, two));
+						break allLoop;
+					}
 				}
-				if(consumer!=null){
+				if (consumer != null) {
 					consumer.accept(one);
 				}
 			}

@@ -8,6 +8,7 @@ package cn.com.didi.domain.util;
 public class DomainConstatns {
 	public static final String DISPLAY_ORDER = "displayOrder";
 	public static final String ACCOUNT_ID = "accountId";
+	public static final String STR_ACCOUNT_ID = "strAccountId";
 	public static final String VC_ID = "vcId";
 	public static final String PASSWORD = "password";
 	public static final String OLD_PASSWORD = "opassword";
@@ -77,6 +78,11 @@ public class DomainConstatns {
 	public static final String CMENT="cment";
 	public static final String TIMEOUT="timeout";
 	public static final String TYPE="type";
+	public static final String COUNT="count";
+	/**
+	 * 已使用次数
+	 */
+	public static final String USED="used";
 	
 	public static final String OBJ="obj";
 
@@ -92,4 +98,13 @@ public class DomainConstatns {
 	public static final String ROLE="role";
 	public static final String AMOUNT= "amount";
 	public static final String VIP_FLAG="vipFlag";
+	/**
+	 * 入驻状态
+	 */
+	public static final String ARRIVAL_STATUS="arrivalStatus";
+	public static final String PREPAY_ID="prepayId";
+	
+	
+	public static final String LOCK_DRAW_PREFIX="";
+	public static final String REASSIGNMENT_FLAG ="reassignmentFlag";
 }

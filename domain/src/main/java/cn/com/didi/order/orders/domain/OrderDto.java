@@ -746,6 +746,6 @@ public class OrderDto implements Serializable {
 				+ specialType + ", ext1=" + ext1 + ", ext2=" + ext2 + ", cancelCause=" + cancelCause + ", internalFlag="
 				+ internalFlag + ", sourceState=" + sourceState + "]";
 	}
-    
+   
     
 }

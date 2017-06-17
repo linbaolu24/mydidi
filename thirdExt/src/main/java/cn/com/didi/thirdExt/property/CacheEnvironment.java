@@ -32,5 +32,9 @@ public class CacheEnvironment extends EnviromentAdapter {
 	public void setSysParamService(ISysParamService sysParamService) {
 		this.sysParamService = sysParamService;
 	}
-	
+	@Override
+	public void changePropertyValue(String key, String value) {
+		sysParamService.updateSystemValue(key, value);
+	}
+
 }

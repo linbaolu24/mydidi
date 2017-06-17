@@ -1,6 +1,8 @@
 package cn.com.didi.domain.util;
 
-public enum BusinessCategory {
+import cn.com.didi.core.property.ICodeAble;
+
+public enum BusinessCategory implements ICodeAble{
 	/**
 	 * 自营
 	 */

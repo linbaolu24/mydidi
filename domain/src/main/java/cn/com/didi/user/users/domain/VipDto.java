@@ -43,7 +43,26 @@ public class VipDto extends VipDtoKey implements Serializable {
      * 更新时间
      */
     private Date updateTime;
-    
+
+    /**
+     * 会员手机
+     */
+    private String phone;
+
+    /**
+     * 账户类型 0 表示支付宝1 微信
+     */
+    private String pat;
+
+    /**
+     * 推荐人
+     */
+    private String referee;
+
+    /**
+     * 订单ID
+     */
+    private Long dealId;
 
     private static final long serialVersionUID = 1L;
 
@@ -157,5 +176,61 @@ public class VipDto extends VipDtoKey implements Serializable {
      **/
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    /**
+     * 会员手机
+     **/
+    public String getPhone() {
+        return phone;
+    }
+
+    /**
+     * 会员手机
+     **/
+    public void setPhone(String phone) {
+        this.phone = phone == null ? null : phone.trim();
+    }
+
+    /**
+     * 账户类型 0 表示支付宝1 微信
+     **/
+    public String getPat() {
+        return pat;
+    }
+
+    /**
+     * 账户类型 0 表示支付宝1 微信
+     **/
+    public void setPat(String pat) {
+        this.pat = pat == null ? null : pat.trim();
+    }
+
+    /**
+     * 推荐人
+     **/
+    public String getReferee() {
+        return referee;
+    }
+
+    /**
+     * 推荐人
+     **/
+    public void setReferee(String referee) {
+        this.referee = referee == null ? null : referee.trim();
+    }
+
+    /**
+     * 订单ID
+     **/
+    public Long getDealId() {
+        return dealId;
+    }
+
+    /**
+     * 订单ID
+     **/
+    public void setDealId(Long dealId) {
+        this.dealId = dealId;
     }
 }

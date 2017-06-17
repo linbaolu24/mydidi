@@ -20,4 +20,8 @@ public class CodeNameConstatns {
 	 * 
 	 */
 	public static final String ORDER_SPECIAL_NORMAL_STATE_TEXT_CODE_NAME="orderNormalText";
+	/**
+	 * 
+	 */
+	public static final String DRAW_STATE_TEXT_CDOE_NAME="drawText";
 }

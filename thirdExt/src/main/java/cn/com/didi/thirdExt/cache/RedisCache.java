@@ -2,6 +2,7 @@ package cn.com.didi.thirdExt.cache;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -149,6 +150,16 @@ public class RedisCache implements IRedisCache {
 	@Override
 	public void putAll(String key, Map<? extends Object, ? extends Object> value) {
 		hashOps.putAll(key,value);
+	}
+
+	@Override
+	public void delete(String key, Object haskKey) {
+		hashOps.delete(key, haskKey);
+	}
+
+	@Override
+	public List<Object> multiGet(String key, Collection<Object> hashKeys) {
+		return hashOps.multiGet(key, hashKeys);
 	}
 
 }

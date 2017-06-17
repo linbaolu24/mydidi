@@ -1,11 +1,13 @@
 package cn.com.didi.domain.util;
 
+import cn.com.didi.core.property.ICodeAble;
+
 /**
  * 审批结果
  * @author xlm
  *
  */
-public enum CrEnum {
+public enum CrEnum implements ICodeAble{
 	PASSING ("0"),//表示认证通过
 	WATTING("1"),//表示认证待认证
 	NOT_PASSING("2");//表示认证不通过

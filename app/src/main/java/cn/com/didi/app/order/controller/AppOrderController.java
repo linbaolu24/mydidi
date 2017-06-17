@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import cn.com.didi.app.order.domain.AdListPageExt;
 import cn.com.didi.app.order.domain.OrderEveJAO;
 import cn.com.didi.app.order.domain.OrderIDJAO;
 import cn.com.didi.app.order.domain.OrderJAO;
+import cn.com.didi.app.order.domain.OrderNotifyWrapper;
 import cn.com.didi.app.order.domain.PagedOrderJAO;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.property.IResult;
@@ -30,6 +32,7 @@ import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.domains.Point;
+import cn.com.didi.domain.domains.UseAbleDto;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.CodeNameConstatns;
 import cn.com.didi.domain.util.DomainConstatns;
@@ -37,6 +40,7 @@ import cn.com.didi.domain.util.ServiceState;
 import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
+import cn.com.didi.order.orders.domain.OrderNotifyDto;
 import cn.com.didi.order.orders.domain.OrderStateDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.result.IOrderRuslt;
@@ -225,7 +229,8 @@ public class AppOrderController extends AppBaseOrderController {
 			order.setCname(sls.getCname());
 		}
 		order.setConsumerAccountId(consumerAccountId);
-		order.setCommission(500);
+		order.setCommission(sls.getCommission()==null?500:sls.getCommission());
+		order.setPoundage(sls.getPoundage());
 	}
 
 	
@@ -318,12 +323,24 @@ public class AppOrderController extends AppBaseOrderController {
 	public IResult auth(@RequestBody OrderDto body,HttpServletRequest request){
 		Long accountId = resolver.resolve(request);
 		body.setConsumerAccountId(accountId);
-		IOrderRuslt<VipDto> result=orderService.auth(body);
+		IOrderRuslt<UseAbleDto<VipDto>> result=orderService.auth(body);
 		if(result.success()){
 			return ResultFactory.success(VipUtil.toMap(result.getData()));
 		}
 		return ResultFactory.error(result.getCode(),result.getMessage());
 	}
+	
+	
+	@RequestMapping(value = "/app/b/order/grabList", method = { RequestMethod.POST })
+	public IResult grabList(HttpServletRequest request){
+		Long accountId = resolver.resolve(request);
+		List<OrderNotifyDto> lists=orderInfo.listNotifyOrders(accountId, null);
+		if(CollectionUtils.isEmpty(lists)){
+			return ResultFactory.success();
+		}
+		return ResultFactory.success(lists.stream().map(OrderNotifyWrapper::new).collect(Collectors.toList()));
+	}
+	
 	
 	/*@RequestMapping(value = "/app/c/order/alipay",method={RequestMethod.POST})
 	public IResult alipay(@RequestBody OrderIDJAO map,HttpServletRequest request){

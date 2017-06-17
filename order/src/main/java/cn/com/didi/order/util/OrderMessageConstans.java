@@ -6,6 +6,25 @@ import cn.com.didi.domain.util.DomainMessageConstans;
 
 public class OrderMessageConstans {
 	
+	/**/
+	
+	/*以下为微信异常*/
+	/**
+	 * 微信获取access code异常
+	 */
+	public static final Message WECHAT_GET_ACCESS_CODE_ERROR=newMessage(DomainMessageConstans.CODE_WECHAT_GET_ACCESS_CODE_ERROR);//"5002100001";
+	/**
+	 * 获取微信用户信息异常
+	 */
+	public static final Message WECHAT_GET_USER_INFO_ERROR=newMessage(DomainMessageConstans.CODE_WECHAT_GET_USER_INFO_ERROR);//"5002100002";
+	
+	
+	
+	
+	
+	
+	
+   /* 以下为订单*/	
 	/**
 	 * 订单自动派单无师傅
 	 */
@@ -90,11 +109,32 @@ public class OrderMessageConstans {
 	 */
 	public static final Message ORDER_MRMF_INTERVAL_NOT_ARRIVE =newMessage(DomainMessageConstans.CODE_ORDER_MRMF_INTERVAL_NOT_ARRIVE);//="5003000017";
 	
+	
 	/**
 	 *  您还未注册会员
 	 */
 	public static final Message ORDER_MRMF_NOT_VIP =newMessage(DomainMessageConstans.CODE_ORDER_MRMF_NOT_VIP);//="5003000018"; 
 	
+	/**
+	 * 每月美容美发数量控制
+	 */
+	public static final Message ORDER_MRMF_MONTH_NUM_CONTROLLER =newMessage(DomainMessageConstans.CODE_ORDER_MRMF_MONTH_NUM_CONTROLLER);
+	
+	
+	
+
+	/**
+	 * 非待服务订单不能改派
+	 */
+	public static final Message  ORDER_STATE_NOT_PENDING_SERIVCE=newMessage(DomainMessageConstans.CODE_ORDER_STATE_NOT_PENDING_SERIVCE);//"5003000020";
+	
+	/**
+	 * 非自营订单不能改派
+	 */
+	public static final Message  ORDER_NOT_SELF=newMessage(DomainMessageConstans.CODE_ORDER_NOT_SELF);;//"5003000021";
+	
+	
+	/*以下为交易*/
 	/**
 	 * 交易不存在
 	 */
@@ -120,7 +160,21 @@ public class OrderMessageConstans {
 	 */
 	public static final Message DEAL_ALI_PAY_ORDERINFO_FAIL= newMessage(DomainMessageConstans.CODE_DEAL_ALI_PAY_ORDERINFO_FAIL);
 	
+	/**
+	 * 阿里转账到用户异常
+	 */
+	public static final Message DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION=newMessage(DomainMessageConstans.CODE_DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION);
 	
+	
+	/**
+	 * 阿里转账到用户异常
+	 */
+	public static final Message DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION_AND_RECOVER_ERROR=newMessage(DomainMessageConstans.CODE_DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION_AND_RECOVER_ERROR);
+	
+	/**
+	 * 转账成功更新完成提取状态失败
+	 */
+	public static final Message DEAL_ALI_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR=newMessage(DomainMessageConstans.CODE_DEAL_ALI_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR);
 	
 	/**
 	 * 微信统一下单异常
@@ -143,6 +197,33 @@ public class OrderMessageConstans {
 	
 	/**微信支付异常*/
 	public static final Message DEAL_WECHAT_PAY_NOTIFY_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_PAY_NOTIFY_ERROR);
+	
+	
+	
+	/**
+	 * 微信转账到用户异常,并且恢复审核状态失败
+	 */
+	public static final Message DEAL_WECHAT_TRANSFER_TO_ACCOUNT_EXCEPTION_AND_RECOVER_ERROR=newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TRANSFER_TO_ACCOUNT_EXCEPTION_AND_RECOVER_ERROR);
+	
+	/**
+	 * 转账成功更新完成提取状态失败
+	 */
+	public static final Message DEAL_WECHAT_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR=newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR);
+	
+	/**
+	 * 微信转账到用户异常
+	 */
+	public static final Message DEAL_WECHAT_TRANSFER_TO_ACCOUNT_EXCEPTION=newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TRANSFER_TO_ACCOUNT_EXCEPTION);
+	
+	
+	/**微信转账生成请求异常*/
+	public static final Message DEAL_WECHAT_TRANSFER_BUILD_REQUEST_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TRANSFER_BUILD_REQUEST_ERROR);
+	/**
+	 * 微信转账解析返回结果异常
+	 */
+	public static final Message DEAL_WECHAT_TRANSFER_PARSE_RESPONSE_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TRANSFER_PARSE_RESPONSE_ERROR);
+	
+	
 	
 	
 	

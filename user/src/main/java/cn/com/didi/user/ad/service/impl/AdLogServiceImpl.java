@@ -18,7 +18,7 @@ import cn.com.didi.user.ad.domain.DpDto;
 import cn.com.didi.user.ad.service.IAdService;
 import cn.com.didi.user.ad.util.AdUtils;
 
-@Service
+//@Service
 public class AdLogServiceImpl extends AdListenerAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdLogServiceImpl.class);
 	@Resource

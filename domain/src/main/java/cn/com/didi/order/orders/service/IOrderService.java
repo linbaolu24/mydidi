@@ -2,6 +2,7 @@ package cn.com.didi.order.orders.service;
 
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.PayResultDto;
+import cn.com.didi.domain.domains.UseAbleDto;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.order.IOrderInfo;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
@@ -23,7 +24,7 @@ public interface IOrderService {
 	 * @param dto
 	 * @return
 	 */
-	public IOrderRuslt<VipDto> auth(OrderDto dto);
+	public IOrderRuslt<UseAbleDto<VipDto>> auth(OrderDto dto);
 	/**
 	 * 指定商户发布订单
 	 */
@@ -32,6 +33,13 @@ public interface IOrderService {
 	 * 自动派单,state 为{@code ORDER_STATE_PUBLISH 可以自动派单}
 	 */
 	public IOrderRuslt<Void> autoDispatch(Long orderId,Long bId);
+	/**
+	 * 订单改派
+	 * @param orderId
+	 * @param bId
+	 * @return
+	 */
+	public IOrderRuslt<Void> reassignment(Long orderId,Long bId);
 	/**
 	 * 尝试重新派单,状态位通知或发布中的可以可
 	 * @deprecated
@@ -109,5 +117,11 @@ public interface IOrderService {
 	 * @return
 	 */
 	public boolean existNotFinishOrder(Long accountId,Integer slsId);
+	/**
+	 * 在检查的前提下获取改派订单
+	 * @param orderId
+	 * @return
+	 */
+	IOrderRuslt<OrderDto> getOrderWithCheckChangeDispatch(Long orderId);
 	
 }

@@ -1,12 +1,16 @@
 package cn.com.didi.order.orders.service.impl.plugin;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.function.Consumer;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 
 import cn.com.didi.core.filter.IOperationInterceptor;
 import cn.com.didi.core.property.Couple;
@@ -14,6 +18,7 @@ import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.core.utils.NumberUtil;
 import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
+import cn.com.didi.domain.domains.UseAbleDto;
 import cn.com.didi.domain.util.IReciverSearchService;
 import cn.com.didi.domain.util.InternalFlagEnum;
 import cn.com.didi.domain.util.OrderState;
@@ -29,6 +34,7 @@ import cn.com.didi.order.result.OrderRuslt;
 import cn.com.didi.order.trade.service.IDepositService;
 import cn.com.didi.order.util.OrderMessageConstans;
 import cn.com.didi.thirdExt.produce.IAppEnv;
+import cn.com.didi.user.users.domain.VipDto;
 import cn.com.didi.user.users.service.IUserExperienceService;
 
 
@@ -192,6 +198,42 @@ public class MrmfOperationInterceptor
 			return new OrderRuslt<>(message,OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getCode());
 		}
 		return null;
+	}
+	public <R> UseAbleDto<R> getCountControllerByMonth(OrderDto order,OrderContextDto data,Consumer<UseAbleDto> consumer){
+		LOGGER.debug("对每月数量控制");
+		int numOfMonth=appEnv.getMrmfCountByMonth();
+		Calendar cal=Calendar.getInstance();
+		Date startDate=DateUtil.getFirstDayOfMonth(cal);
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		Date endTime=cal.getTime();
+		int used=orderInfoService.count(order.getConsumerAccountId(), order.getSlsId(), startDate, endTime, OrderState.ORDER_STATE_PENDING_CHARGE.getCode(),OrderState.ORDER_STATE_Pending_EVALUATION.getCode(),OrderState.ORDER_STATE_FINISH.getCode());
+		LOGGER.debug("时间起{},时间止{},每月免费洗发数量{},本月已使用{}",startDate,endTime,order.getOct(),numOfMonth,used);
+		UseAbleDto<R> userable=new UseAbleDto<>(used, numOfMonth, null);
+		if(consumer!=null){
+			consumer.accept(userable);
+		}
+		return userable;
+	}
+
+	public <R> IOrderRuslt<R> handleCountControllerByMonth(OrderDto order, OrderContextDto data) {
+		UseAbleDto<Void> userd= getCountControllerByMonth(order, data, null);
+		int numOfMonth=userd.getCount();
+		int used=userd.getUsed();
+		if (numOfMonth < used) {
+			String message=OrderMessageConstans.ORDER_MRMF_MONTH_NUM_CONTROLLER.getMessage(used,numOfMonth,numOfMonth-used);
+			return new OrderRuslt<>(message, OrderMessageConstans.ORDER_MRMF_MONTH_NUM_CONTROLLER.getCode());
+		}
+		return null;
+	}
+	public <R> IOrderRuslt<R>  handleAuthCountControllerByMonth(OrderDto order, OrderContextDto data,VipDto vipDto) {
+		UseAbleDto<VipDto> userd= getCountControllerByMonth(order, data, null);
+		int numOfMonth=userd.getCount();
+		int used=userd.getUsed();
+		String message=OrderMessageConstans.ORDER_MRMF_MONTH_NUM_CONTROLLER.getMessage(used,numOfMonth,numOfMonth-used);
+		userd.setDescription(message);
+		userd.setData(vipDto);
+		data.setUsed(userd);
+		return new OrderRuslt<R>((Long)null);
 	}
 }
 

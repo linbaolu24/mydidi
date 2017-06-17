@@ -1,6 +1,8 @@
 package cn.com.didi.domain.util;
 
-public enum Role {
+import cn.com.didi.core.property.ICodeAble;
+
+public enum Role implements ICodeAble{
 	COUSMER("C"), BUSINESS("B"), PLATFORM("P");
 	public String getCode() {
 		return code;

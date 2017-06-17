@@ -25,6 +25,11 @@ public interface IAppEnv {
 	 */
 	public String getWechatPayNotifyUrl();
 	/**
+	 * 获取微信通知URL
+	 * @return
+	 */
+	public String getDepositeWechatNotifyUrl();
+	/**
 	 * @return
 	 */
 	public String getWechatTradeType();
@@ -40,9 +45,15 @@ public interface IAppEnv {
 	public String getWechatAppkey();
 	
 	/**
+	 * 微信统一下单URL
 	 * @return
 	 */
 	public URI getWechatAppPayURI();
+	/**
+	 * 微信转账URI
+	 * @return
+	 */
+	public URI getWechatTransferURI();
 	
 	/**
 	 * @return
@@ -52,6 +63,20 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public String getWechatPassword();
+	/** 获取微信校验token
+	 * @return
+	 */
+	public String getWechatValidatorToken();
+	
+	
+	/**
+	 * 微信商户号
+	 * @return
+	 */
+	public String getWechatShh();
+	
+	
+	
 	
 	/**
 	 * @return
@@ -66,6 +91,11 @@ public interface IAppEnv {
 	 */
 	public int getDeposite();
 	/**
+	 * 修改押金值
+	 * @param newDeposite
+	 */
+	public void changeDeposite(int newDeposite);
+	/**
 	 * 获取阿里异步通知URL
 	 * @return
 	 */
@@ -79,6 +109,10 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public Integer getMrmfDayInterval();
+	/**
+	 * @return
+	 */
+	public Integer getMrmfCountByMonth();
 	/**
 	 * 广告实时统计
 	 * @return
@@ -99,6 +133,16 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public Integer getMfxfSlsId();
+	/**
+	 * @return
+	 */
 	public List<AdDescDto> listMrmfAds();
+	/**
+	 * @return
+	 */
 	public boolean canSendSmsToAllUser();
+	/**
+	 * @return
+	 */
+	public int getLockedWait();
 }

@@ -8,6 +8,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
  *
  */
 public interface IHttpBuilderInitalize {
-	public void init(HttpClientBuilder builder);
+	public void initalize(HttpClientBuilder builder);
 }
 

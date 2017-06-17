@@ -3,6 +3,7 @@ package cn.com.didi.order.trade.service;
 import java.util.List;
 
 import cn.com.didi.domain.util.PayAccountEnum;
+import cn.com.didi.order.trade.domain.DrawInfoDto;
 import cn.com.didi.order.trade.domain.MerchantDayRemainingDto;
 
 /**
@@ -15,6 +16,13 @@ public interface IAccountAssetsService {
 	 * @param dto
 	 */
 	public void addMerchantDayRemainingDto(MerchantDayRemainingDto dto,boolean systemOnly);
+	
+	/**
+	 * @param dto
+	 * @param systemOnly
+	 * @param systemRemain 系统余额
+	 */
+	public void addMerchantDayRemainingDto(MerchantDayRemainingDto dto,boolean systemOnly,Long systemRemain);
 	
 	/**
 	 * <p>如果账户余额足够就发生修改</p>
@@ -31,7 +39,7 @@ public interface IAccountAssetsService {
 	 * 回滚账户余额
 	 * @param dto
 	 */
-	public void rollBackMerchantDayRemainingDto(MerchantDayRemainingDto dto);
+	public void rollBackMerchantDayRemainingDto(MerchantDayRemainingDto dto,boolean systemOnly);
 	/**
 	 * 查询系统余额
 	 * @return
@@ -54,5 +62,11 @@ public interface IAccountAssetsService {
 	 * @return
 	 */
 	public MerchantDayRemainingDto countRemain(Long accountId,PayAccountEnum payAccountEnum);
+	/**
+	 * @param accountId
+	 * @return
+	 */
+	public DrawInfoDto drawInfo(Long accountId);
+	public Long getSystemAccount();
 	
 }

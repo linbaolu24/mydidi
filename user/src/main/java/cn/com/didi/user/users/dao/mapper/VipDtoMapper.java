@@ -1,10 +1,12 @@
 package cn.com.didi.user.users.dao.mapper;
 
+import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.user.users.domain.VipDto;
 import cn.com.didi.user.users.domain.VipDtoExample;
 import cn.com.didi.user.users.domain.VipDtoKey;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 public interface VipDtoMapper {
     int countByExample(VipDtoExample example);
@@ -28,4 +30,8 @@ public interface VipDtoMapper {
     int updateByPrimaryKeySelective(VipDto record);
 
     int updateByPrimaryKey(VipDto record);
+    
+    
+    //add by my
+    public List<VipDto> selectVips(@Param("time")TimeInterval interval,RowBounds rows);
 }

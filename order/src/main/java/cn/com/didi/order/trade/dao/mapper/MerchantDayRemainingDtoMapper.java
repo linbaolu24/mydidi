@@ -39,6 +39,7 @@ public interface MerchantDayRemainingDtoMapper {
      */
     List<MerchantDayRemainingDto> selectByAccountId(@Param("accountId") Long accountId,@Param("maxDay") Integer maxDay);//TODO sql 未写
     /**
+     * 查询该账户id下的 支付类型分组统计
      * @param accountId
      * @param maxDay
      * @return
@@ -58,6 +59,12 @@ public interface MerchantDayRemainingDtoMapper {
      * @return
      */
     List<MerchantDayRemainingDto> selectByAccountIdAndPayType(@Param("accountId") Long accountId,@Param("maxDay") Integer maxDay,@Param("at") String at);
+    /**
+     * 计算固定的总金额
+     * @param accountId
+     * @return
+     */
+    Long countFrozeRemain(@Param("accountId") Long accountId,@Param("maxDay") Integer maxDay);
     /**
      * @param record
      * @return

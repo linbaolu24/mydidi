@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.tx.TranscationalCallBack;
 import cn.com.didi.domain.domains.PayResultDto;
+import cn.com.didi.domain.domains.WechatPayCustomerReqVo;
 import cn.com.didi.domain.util.DealEnum;
 import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.domain.util.TradeCategory;
@@ -66,6 +67,11 @@ public class TradeTranscationCallBackFinderImpl implements ITradeTranscationCall
 			builder.bcsubject("年费");
 			builder.bcbody("年费");
 			builder.notify_url(appEnv.getDepositeAliNotifyUrl());
+		}
+		@Override
+		public void popForWechat(WechatPayCustomerReqVo payRequstDto) {
+			payRequstDto.setNotify_url(appEnv.getDepositeWechatNotifyUrl());
+			
 		}
 	
 		

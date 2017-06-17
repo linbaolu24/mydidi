@@ -145,4 +145,27 @@ public interface IUserService {
 	 * @param businessCategory
 	 */
 	public void updateBusinessCategory(Long accountId,String businessCategory);
+	/**
+	 * @param accountId
+	 * @param businessCategory
+	 */
+	public void updateUserLinked(UserLinkIdDto userLinked);
+	/**
+	 * 设置个人头像
+	 * @param accountId
+	 * @param pp
+	 */
+	public void updateProfilePhoto(Long accountId,String pp);
+	/**
+	 * @param accountId
+	 * @param pp
+	 * @return
+	 */
+	public String getProfilePhoto(Long accountId);
+
+	/**
+	 * @param accountId
+	 * @param remark
+	 */
+	public void updateRemark(Long accountId,String remark);
 }

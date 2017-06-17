@@ -12,4 +12,7 @@ public interface TranscationalCallBack<T> {
 		
 	}
 	public void invoke(T t);
+	public default boolean callAfterTranscational(T t){
+		return true;
+	}
 }

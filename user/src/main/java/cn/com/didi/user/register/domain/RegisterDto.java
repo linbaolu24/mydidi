@@ -3,6 +3,8 @@ package cn.com.didi.user.register.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import cn.com.didi.domain.util.BusinessCategory;
+import cn.com.didi.domain.util.Role;
 import cn.com.didi.domain.util.State;
 import cn.com.didi.user.users.domain.UserDto;
 
@@ -79,6 +81,11 @@ public class RegisterDto implements Serializable{
 		users.setState(state);
 		users.setPassword(getPassword());
 		users.setRole(role);
+		if(Role.BUSINESS.codeEqual(role)){
+			users.setBusinessCategory(BusinessCategory.THIRD.getCode());
+		}else{
+			users.setBusinessCategory(BusinessCategory.SELF.getCode());
+		}
 		return users;
 	}
 

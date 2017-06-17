@@ -61,7 +61,7 @@ public class SimpleHttpExeService implements IHttpExeService {
 			}
 			if(initalize!=null){
 				LOGGER.debug("初始化器不为空,进行初始化.");
-				initalize.init(builder);
+				initalize.initalize(builder);
 			}
 			client = builder.build();
 		}

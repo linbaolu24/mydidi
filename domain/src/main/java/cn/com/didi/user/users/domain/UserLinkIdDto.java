@@ -38,6 +38,21 @@ public class UserLinkIdDto implements Serializable {
      */
     private String businessCategory;
 
+    /**
+     * 微信nickName
+     */
+    private String wechatName;
+
+    /**
+     * 扩展1
+     */
+    private String ext1;
+
+    /**
+     * 扩展2
+     */
+    private String ext2;
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -136,5 +151,50 @@ public class UserLinkIdDto implements Serializable {
      **/
     public void setBusinessCategory(String businessCategory) {
         this.businessCategory = businessCategory == null ? null : businessCategory.trim();
+    }
+
+    /**
+     * 微信nickName
+     **/
+    public String getWechatName() {
+        return wechatName;
+    }
+
+    /**
+     * 微信nickName
+     **/
+    public void setWechatName(String wechatName) {
+        this.wechatName = wechatName == null ? null : wechatName.trim();
+    }
+
+    /**
+     * 扩展1
+     **/
+    public String getExt1() {
+        return ext1;
+    }
+
+    /**
+     * 扩展1
+     **/
+    public void setExt1(String ext1) {
+        this.ext1 = ext1 == null ? null : ext1.trim();
+    }
+
+    /**
+     * 扩展2
+     **/
+    public String getExt2() {
+        return ext2;
+    }
+
+    /**
+     * 扩展2
+     **/
+    public void setExt2(String ext2) {
+        this.ext2 = ext2 == null ? null : ext2.trim();
+    }
+    public String userName(){
+    	return ext1;
     }
 }

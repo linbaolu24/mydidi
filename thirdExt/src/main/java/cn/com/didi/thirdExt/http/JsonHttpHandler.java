@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.com.didi.core.filter.IFilter;
+import cn.com.didi.core.property.IConverter;
+
 /**
  * @author xlm
  *
@@ -25,15 +28,16 @@ import com.alibaba.fastjson.JSON;
  */
 public class JsonHttpHandler<T> implements IHttpHandler {
 	private static Logger LOGGER=LoggerFactory.getLogger(JsonHttpHandler.class);
-	private Object obj;
-	private Map<String, String> headerMap;
-	private Class<T> resultClass;
-	private T result;
-	private String url;
-	private String charset = Charsets.UTF_8.name();
-	private static final String HEADER_CONTENT_TYPE="Content-Type";
-	private static final String HEADER_CONTENT_TYPE_JSON="application/json;charset=utf-8";
-	private Exception e;
+	protected Object obj;
+	protected Map<String, String> headerMap;
+	protected Class<T> resultClass;
+	protected T result;
+	protected String url;
+	protected String charset = Charsets.UTF_8.name();
+	public static final String HEADER_CONTENT_TYPE="Content-Type";
+	public static final String HEADER_CONTENT_TYPE_JSON="application/json;charset=utf-8";
+	protected Exception e;
+	protected IConverter<String, String> convert;
 	
 	public JsonHttpHandler(Object obj, Map<String, String> headerMap, Class<T> resultClass, String url,
 			String charset) {
@@ -87,6 +91,10 @@ public class JsonHttpHandler<T> implements IHttpHandler {
 			byte[] tempResult = EntityUtils.toByteArray(entity);
 			String returnStr=new String(tempResult,charset);
 			LOGGER.info("返回结果为:  {}",returnStr);
+			if(convert!=null){
+				returnStr=convert.convert(returnStr);
+				LOGGER.info("转换结果为:  {}",returnStr);
+			}
 			if (resultClass != null) {
 				result=JSON.parseObject(returnStr, resultClass);//TODO JackSonUtil.toObject(returnStr, resultClass);
 			}
@@ -115,6 +123,14 @@ public class JsonHttpHandler<T> implements IHttpHandler {
 			headerMap=new HashMap<String, String>();
 		}
 		headerMap.put(header, value);
+	}
+
+	public IConverter<String, String> getConvert() {
+		return convert;
+	}
+
+	public void setConvert(IConverter<String, String> convert) {
+		this.convert = convert;
 	}
 
 }

@@ -60,15 +60,26 @@ public interface ITradeService {
 	 * @param pay
 	 * @return
 	 */
-	public IResult<Void> draw(DealDto pay);
+	public void draw(DealDto pay);
 	/**
+	 * 审核提现
+	 * @param dealId
 	 * @return
 	 */
-	public IResult<Void> pendingDraw(Long dealId);
+	public int auditing(DealDto dealId);
 	/**
 	 * 因为转账失败,导致的回滚
 	 * @param pay
 	 * @return
 	 */
-	public IResult<Void> rollBack(DealDto pay,boolean needLock);
+	public void rollBack(DealDto pay,boolean needLock);
+	/**
+	 * @param dealId
+	 */
+	public int preAuditing(Long dealId);
+	/**
+	 * @param dealId
+	 * @return
+	 */
+	public int recoverAuditing(Long dealId);
 } 

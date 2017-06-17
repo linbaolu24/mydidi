@@ -52,6 +52,7 @@ public class AppVipController {
 	}
 	@RequestMapping(value="/app/c/vip/reg",method=RequestMethod.POST)
 	public IResult reg(@RequestBody VipDealJAO vip,HttpServletRequest request){
+		vip.setCreateTime(null);
 		Long accountId=resolver.resolve(request);
 		vip.setAccountId(accountId);
 		vip.setSlsId(getDefaultSlsId());

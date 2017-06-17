@@ -9,4 +9,11 @@ public interface IOrderRuslt<T> extends IResult<T>{
 	public void setOrderId(Long orderId);
 	public boolean isFinish();
 	public void setFinish(boolean finish);
+	public  static <T> IOrderRuslt<T>  error(@SuppressWarnings("rawtypes") IOrderRuslt result){
+		return new OrderRuslt<>(result.getMessage(),result.getCode());
+	}
+	@SuppressWarnings("unchecked")
+	public  static <T> IOrderRuslt<T>  successResult(){
+		return OrderRuslt.SUCCESS_ORDER_RESULT;
+	}
 }

@@ -17,6 +17,10 @@ public class MerchantExtDto implements Serializable{
 	private MerchantDto dto;
 	private List<MerchantServiceDto> serviceList;
 	private List<MerchantAreaDto> areaList;
+	/**
+	 * 微信code
+	 */
+	private String code;
 
 	public MerchantExtDto() {
 		this(true);
@@ -307,6 +311,14 @@ public class MerchantExtDto implements Serializable{
 
 	public void setService(String service) {
 		dto.setService(service);
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }

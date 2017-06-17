@@ -3,7 +3,6 @@ package cn.com.didi.order.orders.service.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +24,7 @@ import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.core.filter.IOperationListener;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.BusinessCategory;
@@ -385,17 +385,30 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 			addStateUpdate(news.getOrderId(), OrderState.ORDER_STATE_TAKING.getCode(), new Date(),
 					news.getSourceState());
 		}
-		if(BusinessCategory.THIRD.getCode().equals(dto.getBusinessCategory())){
-			try{
-				OrderNotifyDtoExample example=new OrderNotifyDtoExample();
-				OrderNotifyDtoExample.Criteria cri= example.createCriteria();
+		try {
+			if (BusinessCategory.THIRD.getCode().equals(dto.getBusinessCategory())) {
+				OrderNotifyDtoExample example = new OrderNotifyDtoExample();
+				OrderNotifyDtoExample.Criteria cri = example.createCriteria();
 				cri.andOrderIdEqualTo(news.getOrderId());
 				orderNotifyMapper.deleteByExample(example);
-			}catch(Exception e){
-				LOGGER.error(e.getMessage(),e);
 			}
+		} catch (Exception e) {
+			LOGGER.error("删除通知列表异常====" + e.getMessage(), e);
 		}
 		return count;
+	}
+
+	@Override
+	public int orderReassignment(Long orderId, IMerchantDto reciver) {
+		OrderDto news = new OrderDto();
+		news.setMasterName(reciver.getMasterName());
+		news.setMci(reciver.getMci());
+		news.setMlat(reciver.getLat());
+		news.setMlng(reciver.getLng());
+		news.setMerchantAccountId(reciver.getMerchantId());
+		news.setSourceState(OrderState.ORDER_STATE_TAKING.getCode());
+		news.setOrderId(orderId);
+		return orderMapper.updateByPrimaryKeySelectiveAndState(news);
 	}
 
 	@Override
@@ -442,22 +455,34 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		cri.andOfstIsNotNull();
 		return orderMapper.selectLastOfst(example);
 	}
-
+	@Override
+	public int count(Long acLong, Integer slsId, Date startData, Date endDate, String... orderStates) {
+		OrderDtoExample example=new OrderDtoExample();
+		OrderDtoExample.Criteria cri=example.createCriteria();
+		cri.andConsumerAccountIdEqualTo(acLong);
+		cri.andSlsIdEqualTo(slsId);
+		cri.andStateIn(Arrays.asList(orderStates));
+		cri.andOfstBetween(startData, endDate);
+		return orderMapper.countByExample(example);
+	}
 	@Override
 	public List<OrderEvaluationDto> selectEves(List<Long> merchatId) {
 		return orderMapper.selectEvaluationList(merchatId);
 	}
 
 	@Override
-	public List<OrderNotifyDto> listNotifyOrders(Long merchantId,List<Long> slsList) {
-		Long startTime=System.currentTimeMillis()-5*60*1000L; 
-		Date from=new Date(startTime);
-		OrderNotifyDtoExample example=new OrderNotifyDtoExample();
-		OrderNotifyDtoExample.Criteria cri=example.createCriteria();
+	public List<OrderNotifyDto> listNotifyOrders(Long merchantId, List<Integer> slsList) {
+		Long startTime = System.currentTimeMillis() - 5 * 60 * 1000L; // 最近5分钟的
+		Date from = new Date(startTime);
+		OrderNotifyDtoExample example = new OrderNotifyDtoExample();
+		OrderNotifyDtoExample.Criteria cri = example.createCriteria();
 		cri.andMerchantAccountIdEqualTo(merchantId);
 		cri.andCreateTimeGreaterThanOrEqualTo(from);
 		cri.andValidFlagEqualTo(State.VALID.getState());
-		//cri.andSlsIdIn(slsList);
+		if (!CollectionUtils.isEmpty(slsList)) {
+			cri.andSlsIdIn(slsList);
+		}
 		return orderNotifyMapper.selectByExample(example);
 	}
+
 }

@@ -18,4 +18,9 @@ public interface ISysParamService {
 	 * @return
 	 */
 	String selectSysparamsValue(String paramCode);
+	/**
+	 * @param paramCode
+	 * @param value
+	 */
+	public void updateSystemValue(String paramCode,String value);
 }
