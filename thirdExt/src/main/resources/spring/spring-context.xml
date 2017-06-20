@@ -38,6 +38,29 @@
 			<value type="java.lang.Boolean">${http.logRequestTime:true}</value>
 		</property>
 	</bean>
+	<bean id="mappedHttpExe" class="cn.com.didi.thirdExt.http.MappedHttpExeService">
+	<property name="normal" ref="simpleHttpExe"></property>
+	<property name="wechatHttpExeService" ref="simpleHttpExeForWechat"></property>
+	<property name="appEnv" ref="appEnvImpl"></property>
+	</bean>
+	<bean id="simpleHttpExeForWechat" class="cn.com.didi.thirdExt.http.SimpleHttpExeService">
+	<property name="maxPerRoute">
+		<value type="java.lang.Integer">${http.wechat.maxPerRoute:-1}</value>
+	</property>
+	<property name="maxTotal">
+		<value type="java.lang.Integer">${http.wechat.maxTotal:-1}</value>
+	</property>
+	<property name="logRequestTime">
+		<value type="java.lang.Boolean">${http.logRequestTime:true}</value>
+	</property>
+	<property name="initalize" ref="wechatHttpsInitalize"></property>
+</bean>
+
+	<bean id="wechatHttpsInitalize" class="cn.com.didi.thirdExt.http.WechatHttpsInitalize">
+		<property name="env" ref="appEnvImpl"></property>
+	</bean>
+
+	 
 	<bean id="simpleHttpService" class="cn.com.didi.thirdExt.http.SimpleHttpService">
 		<property name="httpExe" ref="simpleHttpExe"></property>
 	</bean>
@@ -73,4 +96,15 @@
     <property name="wrappedCodeDicService" ref="${cached.wrappedCodeDicService:codeDicServiceImpl}"></property>
      <property name="wrappedSysParamService" ref="${cached.wrappedSysParamService:sysParamServiceImpl}"></property>
     </bean>
+    
+      <bean id="stateTextResolverImpl" class="cn.com.didi.thirdExt.property.StateTextResolverImpl" primary="true">
+    <property name="codeDicService" ref="${stateText.codeDicService:cachedCodeAndParam}"></property>
+    </bean>
+    
+    <bean id="myLockManagerFacotyBean"
+	class="cn.com.didi.thirdExt.lock.RedissoonLockManagerFactory">
+	<property name="mock" value="${lock.mock:false}"></property>
+	<property name="url" value="${lock.redis.url}"></property>
+	<property name="password" value="${lock.redis.password}"></property>
+   </bean>
 </beans>
