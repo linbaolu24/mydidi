@@ -47,7 +47,7 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		if(StringUtils.isEmpty(dto.getCategory())){
 			dto.setCategory("0");
 		}
-		if (!systemOnly) {
+		if (!systemOnly&&!getSystemAccount().equals(dto.getAccountId())) {
 			myMerchantDayRemainingDtoMapper.saveMerchantDayRemainingDto(dto);
 		}
 		updateSystemRemain(payEnum, systemRemain);//增加系统余额

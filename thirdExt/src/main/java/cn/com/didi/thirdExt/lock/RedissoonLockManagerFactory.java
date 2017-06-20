@@ -11,6 +11,7 @@ public class RedissoonLockManagerFactory implements FactoryBean<LockManager>, In
 	protected LockManager object;
 	private int dataBase = 4;
 	private String url;
+	private String password;
 
 	@Override
 	public LockManager getObject() throws Exception {
@@ -33,7 +34,7 @@ public class RedissoonLockManagerFactory implements FactoryBean<LockManager>, In
 			object = LockManager.NULL_LOCKMANAGER;
 		} else {
 			Config config = new Config();
-			config.useSingleServer().setAddress(url).setDatabase(dataBase);
+			config.useSingleServer().setAddress(url).setDatabase(dataBase).setPassword(password);
 			RedissonLockManager manaer = new RedissonLockManager();
 			manaer.setConfig(config);
 			manaer.init();
@@ -63,6 +64,14 @@ public class RedissoonLockManagerFactory implements FactoryBean<LockManager>, In
 
 	public void setMock(boolean mock) {
 		this.mock = mock;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }

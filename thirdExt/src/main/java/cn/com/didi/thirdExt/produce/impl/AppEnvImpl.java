@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import com.alibaba.fastjson.JSON;
 
 import cn.com.didi.core.property.IEnvironment;
+import cn.com.didi.core.utils.NumberUtil;
 import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.thirdExt.util.EnvConstants;
 import cn.com.didi.user.ad.domain.AdDescDto;
@@ -93,9 +94,9 @@ public class AppEnvImpl implements IAppEnv {
 	public VipDescrptionDto getVipDesc(Integer slsId) {
 		VipDescrptionDto desc=new VipDescrptionDto();
 		desc.setVipName("嘀嘀洗发会员");
-		desc.setTitle("免费洗发");
-		desc.setCondition("两次免费洗发，需间隔3天以上");
-		desc.setUsable("一年以内");
+		desc.setTitle("免费洗吹");
+		desc.setCondition("每月可免费洗吹10次");
+		desc.setUsable("会员权利截至#{endTime}");
 		return desc;
 	}
 	@Override
@@ -103,7 +104,7 @@ public class AppEnvImpl implements IAppEnv {
 		String desc= appEnviroment.getProperty(EnvConstants.VIP_DESC);
 		if(desc!=null&&desc.indexOf("#{vipFee}")!=-1){
 			int getDeposite=getDeposite();
-			desc=desc.replaceAll("#{vipFee}", String.valueOf(getDeposite));
+			desc=desc.replace("#{vipFee}", NumberUtil.intToDecimal2(getDeposite));
 		}
 		return desc;
 		
@@ -150,14 +151,12 @@ public class AppEnvImpl implements IAppEnv {
 	}
 	@Override
 	public String getAppName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "嘀嘀服务";
 	}
 
 	@Override
 	public String getWechatAppId() {
-		// TODO Auto-generated method stub
-		return null;
+		return "wxe29a2f519cf39295";
 	}
 
 	@Override
@@ -169,19 +168,17 @@ public class AppEnvImpl implements IAppEnv {
 	@Override
 	public String getIpAdress() {
 		// TODO Auto-generated method stub
-		return null;
+		return "9b7b4ee13fd9e9ee82f3ad55f585db47";
 	}
 
 	@Override
 	public String getWechatPayNotifyUrl() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getWechatTradeType() {
-		// TODO Auto-generated method stub
-		return null;
+		return "APP";
 	}
 
 	@Override
@@ -221,6 +218,11 @@ public class AppEnvImpl implements IAppEnv {
 	@Override
 	public URI getWechatTransferURI() {
 		return wechatTransFer;
+	}
+
+	@Override
+	public String getWechatAppSecret() {
+		return "9b7b4ee13fd9e9ee82f3ad55f585db47";
 	}
 	
 

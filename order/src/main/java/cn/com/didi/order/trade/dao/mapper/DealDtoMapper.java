@@ -1,16 +1,16 @@
 package cn.com.didi.order.trade.dao.mapper;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
 import cn.com.didi.domain.query.TimeInterval;
-import cn.com.didi.domain.util.DealEnum;
 import cn.com.didi.order.trade.domain.DealDrawListDto;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.DealDtoExample;
 import cn.com.didi.order.trade.domain.DealListDto;
-
-import java.util.Date;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 public interface DealDtoMapper {
     int countByExample(DealDtoExample example);
@@ -59,5 +59,5 @@ public interface DealDtoMapper {
     
     List<DealDrawListDto> selectDrawList(@Param("time") TimeInterval time,RowBounds rows);
     Long countSum(@Param("dai") Long dai,@Param("fromDate") Date fromDate,@Param("cat") String category);
-    int updateDealState(@Param("dealId") Long dealId, @Param("destState") String dest,@Param("cat") String cat,@Param("sourceState") String... source);
+    int updateDealStateAndSourceArray(@Param("dealId") Long dealId, @Param("destState") String dest,@Param("cat") String cat,@Param("sourceState") String... source);
 }

@@ -120,6 +120,9 @@ public class MerchantServiceImpl implements IMerchantService {
 		if (dto == null) {
 			return null;
 		}
+		UserLinkIdDto linkedDto=userService.selectUserLinkedId(accountId);
+		dto.setWechatName(linkedDto.getWechatName());
+		dto.setAlipayAccount(linkedDto.getAlipayAccount());
 		MerchantHolderDto dtoExt = new MerchantHolderDto();
 		dtoExt.setDto(dto);
 		List<MerchantAreaDto> list = selectMerchantArea(accountId);

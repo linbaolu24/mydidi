@@ -47,14 +47,16 @@ public class AdDispalyJO {
 
 	public static List<AdDispalyJO> wrapper(List<DpDto> dpdto) {
 		if (CollectionUtils.isEmpty(dpdto)) {
-			
+
 			return null;
 		}
-		Map<String,AdDispalyJO> map = new HashMap<>();
-		for(DpDto one:dpdto){
-			AdDispalyJO jo=map.get(one.getDisplayPosition());
-			if(jo==null){
-				jo=new AdDispalyJO();
+		Map<String, AdDispalyJO> map = new HashMap<>();
+		for (DpDto one : dpdto) {
+			AdDispalyJO jo = map.get(one.getDisplayPosition());
+			if (jo == null) {
+				jo = new AdDispalyJO();
+				jo.setDisplayPosition(one.getDisplayPosition());
+				jo.setCname(one.getCname());
 				map.put(one.getDisplayPosition(), jo);
 			}
 			jo.addImg(one);

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.filter.IFilter;
+import cn.com.didi.core.filter.IOperationListener;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.tx.TranscationalCallBack;
@@ -32,6 +33,7 @@ import cn.com.didi.order.trade.service.ITradeTranscationCallBack;
 import cn.com.didi.order.trade.service.ITradeTranscationCallBackFinder;
 import cn.com.didi.order.trade.service.IWechatTradeService;
 import cn.com.didi.order.trade.service.IWechatTransferService;
+import cn.com.didi.order.trade.util.TradeOperations;
 import cn.com.didi.order.util.OrderMessageConstans;
 import cn.com.didi.thirdExt.produce.IAppEnv;
 
@@ -48,6 +50,8 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 	protected IWechatTransferService wechatTransferService ;
 	@Resource
 	protected ITradeTranscationCallBackFinder finder;
+	@Resource
+	protected IOperationListener<TradeOperations, Object> wechatOperationListener;
 	protected int dived = 1 << 16 - 1;
 	protected IFilter<Field> field = new IFilter<Field>() {
 
@@ -141,7 +145,10 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 			LOGGER.error("Tag:{};解析微信返回失败 code{} message {}",tag, notifyResult.getCode(),notifyResult.getMessage());
 		}
 		WechatPayNotifyReturnVO returnVO=notifyResult.getData();
+		wechatOperationListener.operate(TradeOperations.NOTIFY_START_WECHAT_ASYN, returnVO);
+		returnVO.setSource(null);
 		boolean verifySign=wechatTransferService.verifySign(returnVO);
+		
 		if(!verifySign){
 			LOGGER.error("Tag:{};验证微信签名失败\n{}",tag,returnVO);
 			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_PAY_NOTIFY_VERIFGY_SIGN_ERROR);
@@ -173,7 +180,7 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 	 * @return
 	 */
 	protected PayResultDto getPayResultDto(WechatPayNotifyReturnVO map){
-		String dealId = map.getPartner_trade_no();
+		String dealId = map.getOut_trade_no();
 		String cost = map.getTotal_fee();
 		String trade_no=map.getTransaction_id();
 		PayResultDto payResult = new PayResultDto();

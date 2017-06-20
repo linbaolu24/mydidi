@@ -38,6 +38,7 @@ public class JsonHttpHandler<T> implements IHttpHandler {
 	public static final String HEADER_CONTENT_TYPE_JSON="application/json;charset=utf-8";
 	protected Exception e;
 	protected IConverter<String, String> convert;
+	protected String source;
 	
 	public JsonHttpHandler(Object obj, Map<String, String> headerMap, Class<T> resultClass, String url,
 			String charset) {
@@ -91,6 +92,7 @@ public class JsonHttpHandler<T> implements IHttpHandler {
 			byte[] tempResult = EntityUtils.toByteArray(entity);
 			String returnStr=new String(tempResult,charset);
 			LOGGER.info("返回结果为:  {}",returnStr);
+			source=returnStr;
 			if(convert!=null){
 				returnStr=convert.convert(returnStr);
 				LOGGER.info("转换结果为:  {}",returnStr);
@@ -131,6 +133,14 @@ public class JsonHttpHandler<T> implements IHttpHandler {
 
 	public void setConvert(IConverter<String, String> convert) {
 		this.convert = convert;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 }

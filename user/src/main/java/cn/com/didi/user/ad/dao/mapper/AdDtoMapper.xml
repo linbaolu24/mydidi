@@ -377,10 +377,10 @@
     <select id="selectAd" resultMap="BaseResultMap">
   select <include refid="Base_Column_List"></include> from t_advert 
   <where>
-      ads_start &lt;= #{time,jdbcType=TIMESTAMP},
-      and ads_end &gt;= #{time,jdbcType=TIMESTAMP},
-      and ads_time_start &lt;= #{hour,jdbcType=INTEGER},
-      and ads_time_end &gt;= #{hour,jdbcType=INTEGER},
+      ads_start &lt;= #{time,jdbcType=TIMESTAMP}
+      and ads_end &gt;= #{time,jdbcType=TIMESTAMP}
+      and ads_time_start &lt;= #{hour,jdbcType=INTEGER}
+      and ads_time_end &gt;= #{hour,jdbcType=INTEGER}
       and displayPosition=#{display,jdbcType=VARCHAR}
       and state='0' limit 1
   </where>
@@ -404,11 +404,11 @@
 		<include refid="Base_Column_List"></include>
 		from t_advert
 		<where>
-			ads_start &lt;= #{time,jdbcType=TIMESTAMP},
-			and ads_end &gt;= #{time,jdbcType=TIMESTAMP},
-			and ads_time_start &lt;= #{hour,jdbcType=INTEGER},
-			and ads_time_end &gt;= #{hour,jdbcType=INTEGER},
-			<if test="displayPosition != null">
+			ads_start &lt;= #{time,jdbcType=TIMESTAMP}
+			and ads_end &gt;= #{time,jdbcType=TIMESTAMP}
+			and ads_time_start &lt;= #{hour,jdbcType=INTEGER}
+			and ads_time_end &gt;= #{hour,jdbcType=INTEGER}
+			<if test="dispaly != null">
 				and displayPosition=#{display,jdbcType=VARCHAR}
 			</if>
 			and state='0'

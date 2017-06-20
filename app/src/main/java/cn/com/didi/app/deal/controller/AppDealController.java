@@ -27,14 +27,14 @@ import cn.com.didi.user.users.service.IUserService;
 public class AppDealController extends AbstractDealController{
 	@Resource
 	protected IUserService userService;
-	@RequestMapping(value = "/app/c/deposit/drawList", method = RequestMethod.POST)
+	@RequestMapping(value = "/app/b/trade/drawList", method = RequestMethod.POST)
 	public IResult drawList(@RequestBody TimeInterval interval ,HttpServletRequest request){
 		Long accountId = resolver.resolve(request);
 		interval.setAccountId(accountId);
 		List<DealDrawListDto> remain=tradeInfoService.selectDrawList(interval);
 		return ResultFactory.success(remain);
 	}
-	@RequestMapping(value = "/app/c/deposit/drawInit", method = RequestMethod.POST)
+	@RequestMapping(value = "/app/b/trade/drawInit", method = RequestMethod.POST)
 	public IResult drawInit(HttpServletRequest request){
 		Long accountId = resolver.resolve(request);
 		UserLinkIdDto linkedIdDto=userService.selectUserLinkedId(accountId);
@@ -44,7 +44,7 @@ public class AppDealController extends AbstractDealController{
 		}
 		return ResultFactory.success(new DrawInfoWrapperJAO(drawInfo, linkedIdDto));
 	}
-	@RequestMapping(value = "/app/c/deposit/draw", method = RequestMethod.POST)
+	@RequestMapping(value = "/app/b/trade/draw", method = RequestMethod.POST)
 	public IResult draw(@RequestBody DrawJAO drawJao,HttpServletRequest request){
 		Long accountId = resolver.resolve(request);
 		UserLinkIdDto linked=userService.selectUserLinkedId(accountId);

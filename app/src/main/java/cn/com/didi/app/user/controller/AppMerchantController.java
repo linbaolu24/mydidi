@@ -18,12 +18,12 @@ import cn.com.didi.app.user.domain.MerchantServiceWrapperJAO;
 import cn.com.didi.app.user.domain.MerchantWrapperJAO;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
-import cn.com.didi.domain.domains.wechat.WechatUserInfo;
 import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.domain.util.Role;
 import cn.com.didi.domain.util.State;
+import cn.com.didi.order.trade.domain.UserWechatDto;
 import cn.com.didi.order.trade.service.IWechatBaseService;
 import cn.com.didi.user.login2.service.ILoginService;
 import cn.com.didi.user.register.service.IRegisterService;
@@ -74,7 +74,7 @@ public class AppMerchantController {
 	}
 	protected void  popWechat(MerchantExtDto merchantExtDto,Long accountId){
 		if(!StringUtils.isEmpty(merchantExtDto.getCode())){
-			WechatUserInfo userInfo=wechatBaseService.getUserInfo(accountId, merchantExtDto.getCode());
+			UserWechatDto userInfo=wechatBaseService.getUserInfo(accountId, merchantExtDto.getCode());
 			MerchantDto mdto=merchantExtDto.dto();
 			mdto.setWechatName(userInfo.getNickname());
 			mdto.setWechatAccount(userInfo.getNickname());

@@ -43,22 +43,25 @@ public class AdUtils {
 	 * @return
 	 */
 	public static List<Couple<AdDto, AdPicDto>> combine(List<AdDto> adDto, List<AdPicDto> adPic,
-			Consumer<AdDto> consumer) {
+			Consumer<AdDto> consumer, double hdivW) {
 		List<Couple<AdDto, AdPicDto>> arrayList = new ArrayList<Couple<AdDto, AdPicDto>>(adDto.size());
-		allLoop: for (AdDto one : adDto) {
+		for (AdDto one : adDto) {
 			double minDis = Double.MAX_VALUE;
+			Couple<AdDto, AdPicDto> cou = new Couple<>(one, null);
 			for (AdPicDto two : adPic) {
 				if (one.getAdId().equals(two.getAdId())) {
-					double distance = 1.0 * two.getHeight() / two.getWidth();
+					double distance = Math.abs(1.0 * two.getHeight() / two.getWidth() - hdivW);
 					if (distance < minDis) {
-						minDis=distance;
-						arrayList.add(new Couple<>(one, two));
-						break allLoop;
+						minDis = distance;
+						cou.setSecond(two);
 					}
 				}
-				if (consumer != null) {
-					consumer.accept(one);
-				}
+			}
+			if (cou.getSecond() != null) {
+				arrayList.add(cou);
+			}
+			if (consumer != null) {
+				consumer.accept(one);
 			}
 		}
 		return arrayList;

@@ -51,7 +51,7 @@ public class AdController {
 		return ResultFactory.success(jo);
 	}
 	@RequestMapping(value = "/platform/ad/updateState", method = { RequestMethod.POST })
-	public IResult updateState(List<IdStateDto> lists) {
+	public IResult updateState(@RequestBody List<IdStateDto> lists) {
 		adService.updateState(lists);
 		return ResultFactory.success();
 	}

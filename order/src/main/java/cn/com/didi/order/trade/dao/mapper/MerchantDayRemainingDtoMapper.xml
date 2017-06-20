@@ -239,7 +239,7 @@
 		and pat =#{at,jdbcType=VARCHAR}
 	</select>
 	
-		<select id="countFrozeRemain" resultMap="java.lang.Long">
+		<select id="countFrozeRemain" resultType="java.lang.Long">
 		select sum(remaining) remaining  from merchant_day_remaining where account_Id=
 		#{accountId,jdbcType=BIGINT} and daytime&gt;=#{maxDay,jdbcType=INTEGER}
 	</select>

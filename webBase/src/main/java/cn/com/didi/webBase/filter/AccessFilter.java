@@ -38,6 +38,7 @@ public class AccessFilter extends OncePerRequestFilter implements Filter {
 		if (!StringUtils.isEmpty(ignoreUrl)) {
 			String[] temps = ignoreUrl.split(";|,");
 			for (int i = 0; i < temps.length; i++) {
+				temps[i]=temps[i].trim();
 				if (!temps[i].startsWith("/")) {
 					temps[i] = "/" + temps[i];
 				}

@@ -19,15 +19,19 @@ import org.apache.http.ParseException;
 import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.core.filter.IFilter;
+import cn.com.didi.core.message.Message;
 import cn.com.didi.core.property.IConverter;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.domain.domains.WechatPayCustomerReqVo;
 import cn.com.didi.domain.domains.WechatPayCustomerReturnVo;
 import cn.com.didi.domain.domains.WechatPayNotifyReturnVO;
+import cn.com.didi.domain.domains.wechat.AWechatCodeDto;
+import cn.com.didi.domain.domains.wechat.AccessTokenDto;
 import cn.com.didi.domain.domains.wechat.AccessTokenOpenIdDto;
 import cn.com.didi.domain.domains.wechat.WechatUserInfo;
 import cn.com.didi.domain.util.ABeanUtils;
@@ -39,21 +43,21 @@ import cn.com.didi.thirdExt.http.IHttpService;
 import cn.com.didi.thirdExt.http.JsonGetHttpHandler;
 import cn.com.didi.thirdExt.http.StringHttpHandler;
 import cn.com.didi.thirdExt.produce.IAppEnv;
-
+@Service
 public class WechatTransferServiceImpl implements IWechatTransferService {
 	private static Logger LOGGER = LoggerFactory.getLogger(WechatTransferServiceImpl.class);
 	@Resource
 	protected IHttpService httpService;
 	@Resource
 	protected IAppEnv appEnv;
-	@Resource
 	private static final String UNION_ACCESS_URL="https://api.weixin.qq.com/sns/oauth2/access_token?appid=${APPID}&secret=${SECRET}&code=${CODE}&grant_type=authorization_code";
 	private static final String UNION_USER_URL="https://api.weixin.qq.com/sns/userinfo?access_token=${ACCESS_TOKEN}&openid=${OPENID}&lang=zh_CN";
+	private static final String ACCESS_TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${SECRET}";
 	protected IFilter<Field> field = new IFilter<Field>() {
 
 		@Override
 		public boolean filter(Field obj) {
-			return !obj.getName().equals("sign")&&!Modifier.isStatic(obj.getModifiers());
+			return Modifier.isStatic(obj.getModifiers())&&!signMap.containsKey(obj.getName());
 		}
 	};
 	protected IConverter<String, String> convert=new IConverter<String, String>() {
@@ -85,6 +89,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 			return value;
 		}
 	};
+	protected Map<String,String> signMap=new HashMap<>();
 	protected Map<String,String> payMap;
 	protected Map<String,String> transMap;
 	{
@@ -94,6 +99,10 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		transMap=new HashMap<>();
 		transMap.put("appid", "mch_appid");
 		transMap.put("mch_id","mchid");
+		signMap.put("mch_appid", "Y");
+		signMap.put("cost", "Y");
+		signMap.put("sign", "Y");
+		signMap.put("source", "Y");
 	}
 	@Override
 	public IResult<WechatPayCustomerReturnVo> transferAppPay(WechatPayCustomerReqVo reqVo) {
@@ -190,6 +199,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 			map = WechatXmlUtil.parse(xml);
 			WechatPayNotifyReturnVO vo=new WechatPayNotifyReturnVO();
 			BeanUtils.copyProperties(vo, map);
+			vo.setSource(xml);
 			return ResultFactory.success(vo);
 		} catch (DocumentException | IllegalAccessException | InvocationTargetException e) {
 			LOGGER.error(e.getMessage(),e);
@@ -216,6 +226,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		JsonGetHttpHandler<AccessTokenOpenIdDto> handler = new JsonGetHttpHandler(parms, AccessTokenOpenIdDto.class,
 				UNION_ACCESS_URL);
 		try {
+			httpService.get(handler);
 			return handler.getResultAndThrow();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
@@ -228,8 +239,9 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		 parms.put("ACCESS_TOKEN", accessToken);
          parms.put("OPENID", openId);
          JsonGetHttpHandler<WechatUserInfo> handler = new JsonGetHttpHandler(parms, AccessTokenOpenIdDto.class,
- 				UNION_ACCESS_URL);
+        		 UNION_USER_URL);
         try{
+        	httpService.get(handler);
         	WechatUserInfo userInfo=handler.getResultAndThrow();
         	return userInfo;
         } catch (Exception e) {
@@ -240,7 +252,35 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	@Override
 	public WechatUserInfo getUserFromCode(String appid, String secret, String code) {
 		AccessTokenOpenIdDto dto=getUnionAccess(appid, secret, code);
-		return getUser(dto.getAccess_token(), dto.getOpenid());
+		if(!dto.normalSuccess()){
+			LOGGER.error("获取access微信返回代码错误{}",dto);
+			throw new MessageObjectException(OrderMessageConstans.WECHAT_GET_ACCESS_CODE_ERROR);
+		}
+		WechatUserInfo info= getUser(dto.getAccess_token(), dto.getOpenid());
+		if(!info.normalSuccess()){
+			LOGGER.error("获取用户信息微信返回代码错误{}",info);
+			throw new MessageObjectException(OrderMessageConstans.WECHAT_GET_USER_INFO_ERROR);
+		}
+		return info;
 	}
-	
+	@Override
+	public AccessTokenDto getAccessToken(String appId, String secret) {
+		Map<String, String> parms = new HashMap<String, String>();
+		parms.put("APPID", appId);
+		parms.put("SECRET", secret);
+		return getUrl(parms, AccessTokenDto.class, OrderMessageConstans.WECHAT_GET_ACCESS_TOKEN_ERROR);
+	}
+
+	protected <T extends AWechatCodeDto> T getUrl(Map<String, String> params, Class<T> target, Message error) {
+		JsonGetHttpHandler<T> handler = new JsonGetHttpHandler(params, target, UNION_USER_URL);
+		try {
+			httpService.get(handler);
+			T result = handler.getResultAndThrow();
+			return result;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new MessageObjectException(error);
+		}
+
+	}
 }

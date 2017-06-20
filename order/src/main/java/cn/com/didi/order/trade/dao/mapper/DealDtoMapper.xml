@@ -603,15 +603,15 @@
     category='1' and dai=#{time.accountId,jdbcType=BIGINT}
   </select>
   
-   <select id="countSum" resultMap="java.lang.Long"> 
+   <select id="countSum" resultType="java.lang.Long"> 
   select
     sum( amount)
     from deal where 
-    category=#{cat,jdbcType=CHAR} and dai=#{accountId,jdbcType=BIGINT} 
+    category=#{cat,jdbcType=CHAR} and dai=#{dai,jdbcType=BIGINT} 
     and create_time&gt;#{fromDate,jdbcType=TIMESTAMP}
   </select>
   
-  <update id="updateDealState">
+  <update id="updateDealStateAndSourceArray">
 	update deal set state= #{destState,jdbcType=CHAR} where deal_id =
 	#{dealId,jdbcType=BIGINT} and category=#{cat,jdbcType=CHAR}
 	<if test="sourceState != null">

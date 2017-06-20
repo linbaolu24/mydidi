@@ -3,7 +3,6 @@ package cn.com.didi.order.trade.service;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.domain.domains.WechatPayCustomerReturnVo;
 import cn.com.didi.domain.domains.WechatPayNotifyReturnVO;
-import cn.com.didi.domain.domains.ali.AlipayTransToAccountResponse;
 import cn.com.didi.order.trade.domain.DealDto;
 
 public interface IWechatTradeService {

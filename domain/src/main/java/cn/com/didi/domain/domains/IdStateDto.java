@@ -23,4 +23,7 @@ public class IdStateDto {
     public void setMessageId(Long messageId){
     	setId(messageId);
     }
+    public void setAdId(Long messageId){
+    	setId(messageId);
+    }
 }

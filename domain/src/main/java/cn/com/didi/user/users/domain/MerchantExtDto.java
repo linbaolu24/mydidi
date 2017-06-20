@@ -206,9 +206,7 @@ public class MerchantExtDto implements Serializable{
 		dto.setMastername(mastername);
 	}
 
-	public String toString() {
-		return dto.toString();
-	}
+
 
 	public String getMpn() {
 		return dto.getMpn();
@@ -241,13 +239,6 @@ public class MerchantExtDto implements Serializable{
 		dto.setMastername(mastername);
 	}
 
-	public String getPassword() {
-		return dto.getPassword();
-	}
-
-	public void setPassword(String password) {
-		dto.setPassword(password);
-	}
 
 	public String getAlipayAccount() {
 		return dto.getAlipayAccount();
@@ -257,13 +248,7 @@ public class MerchantExtDto implements Serializable{
 		dto.setAlipayAccount(alipayAccount);
 	}
 
-	public String getWechatAccount() {
-		return dto.getWechatAccount();
-	}
-
-	public void setWechatAccount(String wechatAccount) {
-		dto.setWechatAccount(wechatAccount);
-	}
+	
 
 	public String getSpecialType() {
 		return dto.getSpecialType();
@@ -319,6 +304,22 @@ public class MerchantExtDto implements Serializable{
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getPassword() {
+		return dto.getPassword();
+	}
+
+	public void setPassword(String password) {
+		dto.setPassword(password);
+	}
+
+	public String getWechatName() {
+		return dto.getWechatName();
+	}
+
+	public void setWechatName(String wechatName) {
+		dto.setWechatName(wechatName);
 	}
 
 }

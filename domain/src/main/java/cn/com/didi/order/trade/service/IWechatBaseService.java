@@ -2,7 +2,7 @@ package cn.com.didi.order.trade.service;
 
 import java.util.Map;
 
-import cn.com.didi.domain.domains.wechat.WechatUserInfo;
+import cn.com.didi.order.trade.domain.UserWechatDto;
 
 public interface IWechatBaseService {
 	public void suiteTicketPostData(Map<String, String> map, String postData, String suiteId);
@@ -12,5 +12,13 @@ public interface IWechatBaseService {
 	 * @param code
 	 * @return
 	 */
-	public WechatUserInfo getUserInfo(Long accountId,String code);
+	public UserWechatDto getUserInfo(Long accountId,String code);
+	/**
+	 * @param postData
+	 */
+	public void subscribe (String postData);
+	/**
+	 * @return
+	 */
+	public String getAccessToken(String type);
 }

@@ -8,6 +8,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,7 @@ public class JsonGetHttpHandler<T> extends JsonHttpHandler<T> {
 	}
 
 	@Override
-	public boolean preForRequest(HttpEntityEnclosingRequestBase post) {
+	public boolean preForRequestGet(HttpUriRequest post) {
 
 		if (MapUtils.isNotEmpty(headerMap)) {
 			Set<Map.Entry<String, String>> set = headerMap.entrySet();
@@ -33,7 +35,7 @@ public class JsonGetHttpHandler<T> extends JsonHttpHandler<T> {
 		try {
 			String newUrl=urlReplace(url,(Map)obj);						// JackSonUtil.toJSONString(obj);
 			LOGGER.info("请求URL为:  {}", newUrl);
-			post.setURI(new URI(newUrl));
+			((HttpRequestBase)post).setURI(new URI(newUrl));
 		} catch (Exception e) {
 			LOGGER.error("" + e.getMessage(), e);
 			this.e = e;

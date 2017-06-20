@@ -122,7 +122,13 @@ public class DomainMessageConstans {
 	 * 获取微信用户信息异常
 	 */
 	public static final String CODE_WECHAT_GET_USER_INFO_ERROR="5002100002";
+	
 	/**
+	 * 
+	 */
+	public static final String CODE_WECHAT_GET_ACCESS_TOKEN_ERROR="5002100003";
+	/**
+	 * 
 	 * 订单自动派单无师傅
 	 */
 	public static final String CODE_ORDER_AUTO_DIS_NO_MASTER="5003000001";

@@ -84,6 +84,12 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 		if (StringUtils.isEmpty(adDto.getImgUrl())) {
 			adDto.setImgUrl(picList.get(0).getImgUrl());
 		}
+		if(adDto.getCreateTime()==null){
+			adDto.setCreateTime(new Date());
+		}
+		if(StringUtils.isEmpty(adDto.getState())){
+			adDto.setState(State.VALID.getState());;
+		}
 		adMapper.insertSelective(adDto);
 		for (int i = 0; i < picList.size(); i++) {
 			picList.get(i).setAdId(adDto.getAdId());
@@ -206,18 +212,18 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 	}
 	@Override
 	public List<Couple<AdDto, AdPicDto>> queryAdList(Long accountId,DpDto display) {
-		if(display==null||StringUtils.isEmpty(display.getDisplayPosition())){
+		if(display==null||display.getHeight()==null||display.getWidth()==null||display.getHeight()==0||display.getWidth()==0){
 			return null;
 		}
 		Calendar cal=Calendar.getInstance();
 		int hour=cal.get(Calendar.HOUR_OF_DAY);
 		List<AdDto> adDto=adMapper.selectAdList(org.apache.commons.lang.StringUtils.defaultIfBlank( display.getDisplayPosition(),null), cal.getTime(), hour);
-		if(!CollectionUtils.isEmpty(adDto)){
+		if(CollectionUtils.isEmpty(adDto)){
 			return null;
 		}
 		List<Long> adList=AdUtils.getAdList(adDto);
 		List<AdPicDto> adPic=queryAdPicList(adList,display);
-		List<Couple<AdDto, AdPicDto>> couple= AdUtils.combine(adDto, adPic, null);
+		List<Couple<AdDto, AdPicDto>> couple= AdUtils.combine(adDto, adPic, null, 1.0*display.getHeight()/display.getWidth());
 		if(listener!=null){
 			listener.fireQueryAdList(accountId,display,couple);
 		}

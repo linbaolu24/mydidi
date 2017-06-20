@@ -37,6 +37,7 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
 
+import cn.com.didi.core.filter.IOperationListener;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.tx.TranscationalCallBack;
@@ -59,6 +60,7 @@ import cn.com.didi.order.trade.service.ITradeService;
 import cn.com.didi.order.trade.service.ITradeTranscationCallBack;
 import cn.com.didi.order.trade.service.ITradeTranscationCallBackFinder;
 import cn.com.didi.order.trade.util.AliPayBuilder;
+import cn.com.didi.order.trade.util.TradeOperations;
 import cn.com.didi.order.util.OrderMessageConstans;
 
 /**
@@ -74,6 +76,8 @@ public class AliTradeServiceImpl implements IAliTradeService {
 	protected ITradeService tradeService;
 	@Resource
 	protected ITradeTranscationCallBackFinder finder;
+	@Resource
+	protected IOperationListener<TradeOperations, Object> aliOperationListener;
 	@Value("${ali.pId}")
 	private String pId;
 	@Value("${ali.signType:RSA2}")
@@ -89,6 +93,7 @@ public class AliTradeServiceImpl implements IAliTradeService {
 	private String aliPubkey;
 	private PublicKey aliPublicKey;
 	private AlipayClient alipayClient ;
+	
 	@PostConstruct
 	public void init() throws Exception {
 		byte[] bkey = Base64.decodeBase64(priKey);
@@ -145,7 +150,8 @@ public class AliTradeServiceImpl implements IAliTradeService {
 
 	@Override
 	public IResult<Void> asynnotify(Map<String, String> map) {
-		IResult<Void> result = asynnotify(map);
+		
+		IResult<Void> result = asynormalVerify(map);
 		if (result != null) {
 			return result;
 		}
@@ -157,6 +163,7 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		return ResultFactory.success();
 	}
 	protected <T> IResult asynormalVerify(Map<String, String> map) {
+		aliOperationListener.operate(TradeOperations.NOTIFY_START_ALI_ASYN, map);
 		String charset = StringUtils.defaultIfEmpty(map.get(CHARSET), Constans.CHARSET_UTF_8);
 		boolean isSuccess = false;
 		LOGGER.debug("异步通知验证签名");

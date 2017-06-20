@@ -75,7 +75,7 @@ public interface IAppEnv {
 	 */
 	public String getWechatShh();
 	
-	
+	public String getWechatAppSecret();
 	
 	
 	/**

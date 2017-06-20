@@ -55,8 +55,12 @@ public class DrawInfoWrapperJAO {
 		drawInfo.setPending(pending);
 	}
 
-	public List<MerchantDayRemainingDto> getRemainDto() {
+	public List<MerchantDayRemainingDto> remainDto() {
 		return drawInfo.getRemainDto();
+	}
+
+	public Long getTotal() {
+		return drawInfo.getTotal();
 	}
 
 }

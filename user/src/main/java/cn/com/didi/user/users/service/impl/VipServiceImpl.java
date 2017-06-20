@@ -1,10 +1,13 @@
 package cn.com.didi.user.users.service.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
@@ -20,7 +23,6 @@ import cn.com.didi.order.trade.service.IDepositService;
 import cn.com.didi.order.trade.service.ITradeInfoService;
 import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
-import cn.com.didi.user.ad.domain.AdDto;
 import cn.com.didi.user.users.dao.mapper.VipDtoMapper;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.VipDescrptionDto;
@@ -96,6 +98,10 @@ public class VipServiceImpl implements IVipService{
 			return null;
 		}
 		VipDescrptionDto desc=appEnvService.getVipDesc(slsId);
+		DateFormat format=new SimpleDateFormat("yyyy年MM月dd日");
+		Date date=DateUtils.addYears(dto.getCreateTime(), 1);
+		//format.format(date);
+		desc.setUsable(desc.getUsable().replace("#{endTime}",format.format(date) ));
 		desc=desc.cloneSelf();
 		desc.setVipDto(dto);
 		return desc;
@@ -141,7 +147,7 @@ public class VipServiceImpl implements IVipService{
 		vipDto.setCname(cname);
 		vipDto.setUpdateTime(new Date());
 		vipDto.setProfilePhoto(pp);
-	    vipMapper.updateByPrimaryKey(vipDto);
+	    vipMapper.updateByPrimaryKeySelective(vipDto);
 		
 	}
 	@Override

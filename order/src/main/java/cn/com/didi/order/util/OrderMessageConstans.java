@@ -18,6 +18,8 @@ public class OrderMessageConstans {
 	 */
 	public static final Message WECHAT_GET_USER_INFO_ERROR=newMessage(DomainMessageConstans.CODE_WECHAT_GET_USER_INFO_ERROR);//"5002100002";
 	
+	public static final Message WECHAT_GET_ACCESS_TOKEN_ERROR=newMessage(DomainMessageConstans.CODE_WECHAT_GET_ACCESS_TOKEN_ERROR);//"5002100003";
+	
 	
 	
 	

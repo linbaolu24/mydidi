@@ -1,5 +1,6 @@
 package cn.com.didi.domain.domains.wechat;
 
+import org.apache.commons.lang.StringUtils;
 
 public  class AWechatCodeDto {
     
@@ -34,5 +35,10 @@ public  class AWechatCodeDto {
         return "errcode:"+errcode+"  errmsg:"+errmsg;
         
     }
-
+    public boolean normalSuccess(){
+    	if(errcode==null||0==errcode){
+    		return true;
+    	}
+    	return false;
+    }
 }

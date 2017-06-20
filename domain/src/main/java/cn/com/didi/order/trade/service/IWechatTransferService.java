@@ -45,4 +45,9 @@ public interface IWechatTransferService {
 	 * @return
 	 */
 	public WechatUserInfo getUserFromCode(String appid,String secret,String code);
+	/**
+	 * @param appId
+	 * @param String
+	 */
+	public AccessTokenDto getAccessToken(String appId, String secret);
 }

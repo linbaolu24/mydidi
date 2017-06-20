@@ -354,7 +354,7 @@
   
   <!--  add by my -->
    <select id="selectVips" resultMap="BaseResultMap">
-  select <include refid="Base_Column_List"></include> from t_advert 
+  select <include refid="Base_Column_List"></include> from t_vip 
   <where>
     <if test="time.startTime != null">and create_time&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
     <if test="time.endTime != null">and create_time&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>

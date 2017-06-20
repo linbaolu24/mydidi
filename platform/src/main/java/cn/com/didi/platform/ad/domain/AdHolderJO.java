@@ -9,6 +9,9 @@ import cn.com.didi.user.ad.domain.AdPicDto;
 public class AdHolderJO {
 	private AdDto adDto;
 	private List<AdPicDto> imgList;
+	public AdHolderJO(){
+		adDto=new AdDto();
+	}
 	public Long getAdId() {
 		return adDto.getAdId();
 	}

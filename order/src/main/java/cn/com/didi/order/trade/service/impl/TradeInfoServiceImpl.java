@@ -197,6 +197,6 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 
 	@Override
 	public int updateTradeState(Long dealId, String dest,String cat, String... source) {
-		return 0;
+		return dealDtoMapper.updateDealStateAndSourceArray(dealId, dest, cat, source);
 	}
 }

@@ -10,16 +10,17 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-
 import cn.com.didi.domain.domains.SuiteTicketInfoDto;
-import cn.com.didi.domain.domains.wechat.AccessTokenOpenIdDto;
 import cn.com.didi.domain.domains.wechat.WechatUserInfo;
 import cn.com.didi.domain.util.SuiteTicketTypeEnum;
 import cn.com.didi.domain.util.WechatConsts;
+import cn.com.didi.order.trade.dao.mapper.UserWechatDtoMapper;
+import cn.com.didi.order.trade.domain.UserWechatDto;
 import cn.com.didi.order.trade.service.IWechatBaseService;
 import cn.com.didi.order.trade.service.IWechatTransferService;
 import cn.com.didi.order.trade.util.SHA1;
@@ -32,6 +33,8 @@ public class WechatBaseServiceImpl implements IWechatBaseService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WechatBaseServiceImpl.class);
 	@Resource
 	protected IAppEnv appEnv;
+	@Resource
+	protected UserWechatDtoMapper myUserWechatMapper;
 	private static final String TOKEN = "436346346346363";
 
 	private static final String ENCODINGAESKEY = "1234567890123456789012345678901234567890abc";
@@ -123,9 +126,45 @@ public class WechatBaseServiceImpl implements IWechatBaseService {
 	}
 
 	@Override
-	public WechatUserInfo getUserInfo(Long accountId,String code) {
-		AccessTokenOpenIdDto dto=wechatTransferService.getUnionAccess(appEnv.getWechatAppId(), appEnv.getWechatAppkey(), code);
-		return wechatTransferService.getUser(dto.getAccess_token(), dto.getOpenid());
+	public UserWechatDto getUserInfo(Long accountId, String code) {
+		UserWechatDto dto = myUserWechatMapper.selectByPrimaryKey(accountId);
+		if (dto == null) {
+			WechatUserInfo info = wechatTransferService.getUserFromCode(appEnv.getWechatAppId(),
+					appEnv.getWechatAppSecret(), code);
+			dto = infoToUserWechatDto(accountId, info);
+			myUserWechatMapper.insert(dto);
+		}
+		return dto;
+	}
+
+	protected UserWechatDto infoToUserWechatDto(Long accountId, WechatUserInfo info) {
+		UserWechatDto dto = new UserWechatDto();
+		dto.setAccountId(accountId);
+		dto.setCountry(info.getCountry());
+		dto.setCity(info.getCity());
+		dto.setOpenid(info.getOpenid());
+		dto.setSex(String.valueOf(info.getSex()));
+		dto.setUnionid(info.getUnionid());
+		dto.setProvince(info.getProvince());
+		dto.setNickname(info.getNickname());
+		dto.setHeadimgurl(info.getHeadimgurl());
+		return dto;
+	}
+
+	@Override
+	public void subscribe(String postData) {
+		try {
+			WechatXmlUtil.parse(postData);
+		} catch (Exception e) {
+			
+		}
+		
+	}
+
+	@Override
+	public String getAccessToken(String type) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

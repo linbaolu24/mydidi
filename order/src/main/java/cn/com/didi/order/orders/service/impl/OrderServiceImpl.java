@@ -56,6 +56,7 @@ import cn.com.didi.order.orders.util.OrderUtils;
 import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.order.result.OrderRuslt;
 import cn.com.didi.order.trade.domain.DealDto;
+import cn.com.didi.order.trade.service.IAccountAssetsService;
 import cn.com.didi.order.trade.service.ITradeService;
 import cn.com.didi.order.util.OrderMessageConstans;
 import cn.com.didi.user.users.domain.VipDto;
@@ -82,6 +83,8 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	protected IOrderNotifyMessageFinder orderMessageFinder;
 	@Resource
 	protected IVipService vipService;
+	@Resource
+	protected IAccountAssetsService accountService;
 	protected TranscationalCallBack<DealDto> dealTranscationalCallBack = new TranscationalCallBack<DealDto>() {
 
 		@Override
@@ -460,7 +463,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		stateDto.setCost(order.getCost());
 		stateDto.setState(order.getState());
 		if (!OrderState.ORDER_STATE_CANNEL.getCode().equals(order.getState())&&!"1".equals(order.getCancelFlag())) {// 如果不是重复取消
-			LOGGER.debug("============非重复取消顶端=========");
+			LOGGER.debug("============非重复取订单=========");
 			OrderState state = OrderState.ORDER_STATE_CANNEL;
 			if (OrderState.ORDER_STATE_START_SERVICE.isLessEqual(order.getState())&&BusinessCharge.isCharge(order.getBusinessCharge())) {
 				stateDto.setCost(order.getCommission());
@@ -506,12 +509,16 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		DealDto deal = new DealDto();
 		deal.setCommission(dto.getCommission());
 		TradeCategory category = TradeCategory.IN;
+		deal.setDai(dto.getMerchantAccountId());
+		deal.setPoundage(dto.getPoundage());
 		if ("1".equals(dto.getCancelFlag())) {
 			category = TradeCategory.PENALTY;
+			deal.setDai(accountService.getSystemAccount());
+			deal.setPoundage(0);
 		}
 		deal.setCategory(category.getCode());
 		deal.setAmount(dto.getCost());
-		deal.setDai(dto.getMerchantAccountId());
+		
 		deal.setSat(payEnum.getCode());
 		deal.setDat(payEnum.getCode());
 		deal.setDealType(category.getType());
@@ -519,7 +526,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		deal.setSai(dto.getConsumerAccountId());
 		deal.setCment(StringUtils.defaultIfEmpty(desc, null));
 		deal.setSpecialType(dto.getSpecialType());
-		deal.setPoundage(dto.getPoundage());
+		
 		tradeService.createTrade(deal, dealTranscationalCallBack);
 		result = new OrderRuslt<>("", OrderRuslt.SUCCESS_CODE, null, createOrderDealDescDto(deal, dto));
 		return result;
