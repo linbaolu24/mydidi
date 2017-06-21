@@ -37,14 +37,16 @@ public interface IWechatTransferService {
 	 * @param openId
 	 * @return
 	 */
-	public WechatUserInfo getUser(String accessToken,String openId);
+	public WechatUserInfo getUser(String url,String accessToken,String openId);
 	/**
+	 * 获取UNION
 	 * @param appid
 	 * @param secret
 	 * @param code
 	 * @return
 	 */
 	public WechatUserInfo getUserFromCode(String appid,String secret,String code);
+
 	/**
 	 * @param appId
 	 * @param String

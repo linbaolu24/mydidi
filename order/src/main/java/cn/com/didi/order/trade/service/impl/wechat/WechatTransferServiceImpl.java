@@ -1,4 +1,4 @@
-package cn.com.didi.order.trade.service.impl;
+package cn.com.didi.order.trade.service.impl.wechat;
 
 import java.beans.IntrospectionException;
 import java.io.IOException;
@@ -52,6 +52,8 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	protected IAppEnv appEnv;
 	private static final String UNION_ACCESS_URL="https://api.weixin.qq.com/sns/oauth2/access_token?appid=${APPID}&secret=${SECRET}&code=${CODE}&grant_type=authorization_code";
 	private static final String UNION_USER_URL="https://api.weixin.qq.com/sns/userinfo?access_token=${ACCESS_TOKEN}&openid=${OPENID}&lang=zh_CN";
+	
+	private static final String OPEN_UNION_USER_URL="https://api.weixin.qq.com/cgi-bin/user/info?access_token=${ACCESS_TOKEN}&openid=${OPENID}&lang=zh_CN";
 	private static final String ACCESS_TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${SECRET}";
 	protected IFilter<Field> field = new IFilter<Field>() {
 
@@ -210,7 +212,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	@Override
 	public boolean verifySign(WechatPayNotifyReturnVO vo) {
 		try {
-			return SignatureUtils.verifySign(vo, appEnv.getWechatAppkey(), appEnv.getWechatCharSet(), vo.getSign(), field);
+			return SignatureUtils.verifySign(vo, appEnv.getWechatAppSignedkey(), appEnv.getWechatCharSet(), vo.getSign(), field);
 		} catch (IllegalArgumentException | IllegalAccessException | UnsupportedEncodingException e) {
 			LOGGER.error(e.getMessage(),e);
 			return false;
@@ -233,22 +235,19 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 			throw new MessageObjectException(OrderMessageConstans.WECHAT_GET_ACCESS_CODE_ERROR);
 		}
 	}
+
 	@Override
-	public WechatUserInfo getUser(String accessToken, String openId) {
-		Map<String, Object> parms = new HashMap<String, Object>();
-		 parms.put("ACCESS_TOKEN", accessToken);
-         parms.put("OPENID", openId);
-         JsonGetHttpHandler<WechatUserInfo> handler = new JsonGetHttpHandler(parms, AccessTokenOpenIdDto.class,
-        		 UNION_USER_URL);
-        try{
-        	httpService.get(handler);
-        	WechatUserInfo userInfo=handler.getResultAndThrow();
-        	return userInfo;
-        } catch (Exception e) {
-			LOGGER.error(e.getMessage(),e);
-			throw new MessageObjectException(OrderMessageConstans.WECHAT_GET_USER_INFO_ERROR);
-        }
+	public WechatUserInfo getUser(String url, String accessToken, String openId) {
+		if (StringUtils.isEmpty(url)) {
+			url=OPEN_UNION_USER_URL;
+		}
+		Map<String, String> parms = new HashMap<String, String>();
+		parms.put("ACCESS_TOKEN", accessToken);
+		parms.put("OPENID", openId);
+		return getUrl(parms, WechatUserInfo.class, url, OrderMessageConstans.WECHAT_GET_USER_INFO_ERROR);
+
 	}
+
 	@Override
 	public WechatUserInfo getUserFromCode(String appid, String secret, String code) {
 		AccessTokenOpenIdDto dto=getUnionAccess(appid, secret, code);
@@ -256,7 +255,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 			LOGGER.error("获取access微信返回代码错误{}",dto);
 			throw new MessageObjectException(OrderMessageConstans.WECHAT_GET_ACCESS_CODE_ERROR);
 		}
-		WechatUserInfo info= getUser(dto.getAccess_token(), dto.getOpenid());
+		WechatUserInfo info= getUser(UNION_USER_URL,dto.getAccess_token(), dto.getOpenid());
 		if(!info.normalSuccess()){
 			LOGGER.error("获取用户信息微信返回代码错误{}",info);
 			throw new MessageObjectException(OrderMessageConstans.WECHAT_GET_USER_INFO_ERROR);
@@ -268,11 +267,11 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		Map<String, String> parms = new HashMap<String, String>();
 		parms.put("APPID", appId);
 		parms.put("SECRET", secret);
-		return getUrl(parms, AccessTokenDto.class, OrderMessageConstans.WECHAT_GET_ACCESS_TOKEN_ERROR);
+		return getUrl(parms, AccessTokenDto.class,ACCESS_TOKEN_URL, OrderMessageConstans.WECHAT_GET_ACCESS_TOKEN_ERROR);
 	}
 
-	protected <T extends AWechatCodeDto> T getUrl(Map<String, String> params, Class<T> target, Message error) {
-		JsonGetHttpHandler<T> handler = new JsonGetHttpHandler(params, target, UNION_USER_URL);
+	protected <T extends AWechatCodeDto> T getUrl(Map<String, String> params, Class<T> target,String url, Message error) {
+		JsonGetHttpHandler<T> handler = new JsonGetHttpHandler(params, target, url);
 		try {
 			httpService.get(handler);
 			T result = handler.getResultAndThrow();

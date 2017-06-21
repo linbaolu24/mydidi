@@ -1,9 +1,11 @@
-package cn.com.didi.order.trade.service.impl;
+package cn.com.didi.order.trade.service.impl.wechat;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.filter.IFilter;
 import cn.com.didi.core.filter.IOperationListener;
+import cn.com.didi.core.property.IConverter;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.tx.TranscationalCallBack;
@@ -22,8 +25,10 @@ import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.domains.WechatPayCustomerReqVo;
 import cn.com.didi.domain.domains.WechatPayCustomerReturnVo;
 import cn.com.didi.domain.domains.WechatPayNotifyReturnVO;
+import cn.com.didi.domain.domains.wechat.WechatPayContext;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.domain.util.SignatureUtils;
+import cn.com.didi.domain.util.WechatEnum;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.service.IOrderService;
 import cn.com.didi.order.result.IOrderRuslt;
@@ -31,6 +36,7 @@ import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.service.ITradeService;
 import cn.com.didi.order.trade.service.ITradeTranscationCallBack;
 import cn.com.didi.order.trade.service.ITradeTranscationCallBackFinder;
+import cn.com.didi.order.trade.service.IWechatProvider;
 import cn.com.didi.order.trade.service.IWechatTradeService;
 import cn.com.didi.order.trade.service.IWechatTransferService;
 import cn.com.didi.order.trade.util.TradeOperations;
@@ -52,6 +58,27 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 	protected ITradeTranscationCallBackFinder finder;
 	@Resource
 	protected IOperationListener<TradeOperations, Object> wechatOperationListener;
+	@Resource
+	protected IWechatProvider wechatProvider;
+	protected Map<String,String> mapName=new HashMap<>();
+	{
+		mapName.put("packageStr", "package");
+	}
+	protected IConverter<String, String> nameConvert=new IConverter<String, String>() {
+		
+		@Override
+		public String convert(String source) {
+			String value=mapName.get(source);
+			if(StringUtils.isEmpty(value)){
+				return value;
+			}
+			if("Y".equals(value)){
+				return null;
+			}
+			return value;
+			
+		}
+	};
 	protected int dived = 1 << 16 - 1;
 	protected IFilter<Field> field = new IFilter<Field>() {
 
@@ -62,7 +89,7 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 	};
 
 	@Override
-	public IResult<WechatPayCustomerReturnVo> createOdrerRequest(Long orderId, Long bId, String desc) {
+	public IResult<WechatPayContext> createOdrerRequest(Long orderId, Long bId, String desc) {
 		IOrderRuslt<OrderDealDescDto> orderResult = orderService.createDeal(orderId, bId, PayAccountEnum.WECHATPAY,
 				desc);
 		if (orderResult != null && !orderResult.success()) {
@@ -70,25 +97,39 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		}
 		try {
 			WechatPayCustomerReqVo vo = generatorWechatPayRequest(orderResult.getData());//创建请求对象
-			IResult<WechatPayCustomerReturnVo>  result=payNoraml(vo);
+			IResult<WechatPayContext>  result=payNoraml(vo);
 			return result;
 		} catch (Exception e) {
 			LOGGER.error("" + e.getMessage(), e);
 			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TYXD_ERROR);
 		}
 	}
-	protected IResult<WechatPayCustomerReturnVo> payNoraml(WechatPayCustomerReqVo vo){
+	protected WechatPayContext generatWechatPayContext(WechatPayCustomerReqVo vo,WechatPayCustomerReturnVo data) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
+		WechatPayContext context=new WechatPayContext();
+		context.setAppid(vo.getAppid());
+		context.setNoncestr(vo.getNonce_str());
+		context.setPackageStr("Sign=WXPay");
+		context.setPartnerid(vo.getMch_id());
+		context.setPrepayid(data.getPrepay_id());
+		context.setTimestamp(String.valueOf(System.currentTimeMillis()/1000));
+		SignatureUtils.getPaySign(context, appProduct.getWechatAppSignedkey(),
+				appProduct.getWechatCharSet(), field,nameConvert);
+		return context;
+	}
+	protected IResult<WechatPayContext> payNoraml(WechatPayCustomerReqVo vo) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
 		IResult<WechatPayCustomerReturnVo>  result=wechatTransferService.transferAppPay(vo);
 		if(result.success()){
 			result.getData().setPartner_trade_no(vo.getPartner_trade_no());
 		}
 		WechatPayCustomerReturnVo returnVO=result.getData();
-		returnVO.setCost(vo.getAmount());
 		if(returnVO.verifySuccess()){
-			return result;
+			returnVO.setCost(vo.getAmount());
+			WechatPayContext context=generatWechatPayContext(vo, returnVO);
+			context.setWechatPayCustomerReturnVo(returnVO);
+			return ResultFactory.success(context);
 		}else{
 			String msg=StringUtils.defaultIfEmpty(returnVO.errorMsg(),OrderMessageConstans.DEAL_WECHAT_TYXD_ERROR.getMessage());
-			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TYXD_ERROR.getCode(), msg, returnVO);
+			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TYXD_ERROR.getCode(), msg);
 		}
 	}
 	protected WechatPayCustomerReqVo generatorWechatPayRequest(OrderDealDescDto desc)
@@ -100,8 +141,13 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		return requestDto;
 	}
 	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(String name) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
+		return createNormalPayCustomerReqVo(WechatEnum.APP, name);
+	}
+	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(WechatEnum type,String name) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
+		String appId=wechatProvider.getAppId(type);
+		//String appSecret=wechatProvider.getAppSecret(type);
 		WechatPayCustomerReqVo requestDto = new WechatPayCustomerReqVo();
-		requestDto.setAppid(appProduct.getWechatAppId());
+		requestDto.setAppid(appId);
 		requestDto.setNonce_str(String.valueOf(RandomUtils.nextInt() & dived));//随机字符串
 		requestDto.setMch_id(appProduct.getWechatMchId());
 	
@@ -109,13 +155,13 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		requestDto.setNotify_url(appProduct.getWechatPayNotifyUrl());
 		requestDto.setBody(appProduct.getAppName() + "-" +name);
 		requestDto.setTrade_type(appProduct.getWechatTradeType());
-		requestDto.setSign(SignatureUtils.getPaySign(requestDto, appProduct.getWechatAppkey(),
-				appProduct.getWechatCharSet(), field));
+		requestDto.setSign(SignatureUtils.getPaySign(requestDto, appProduct.getWechatAppSignedkey(),
+				appProduct.getWechatCharSet(), field,null));
 		return requestDto;
 	}
 	
 	@Override
-	public IResult<WechatPayCustomerReturnVo> createPayRequest(Long accountId, String type, String obj) {
+	public IResult<WechatPayContext> createPayRequest(Long accountId, String type, String obj) {
 		ITradeTranscationCallBack<DealDto> callBack = finder.findCreateTranscationalCallBack(accountId, type, obj);
 		DealDto dto = new DealDto();
 		dto.setSai(accountId);

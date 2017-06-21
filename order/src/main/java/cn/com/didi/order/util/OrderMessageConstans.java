@@ -147,6 +147,13 @@ public class OrderMessageConstans {
 	 */
 	public static final Message DEAL_ACCOUNT_NOT_EQUAL= newMessage(DomainMessageConstans.CODE_DEAL_ACCOUNT_NOT_EQUAL);
 	
+	/**
+	 * 账户余额不足不能转账
+	 */
+	public static final Message DEAL_ASSERT_NOT_ENOUGH= newMessage(DomainMessageConstans.CODE_DEAL_ASSERT_NOT_ENOUGH);
+	
+	
+	
 	
 	/**
 	 * 验证阿里签名失败

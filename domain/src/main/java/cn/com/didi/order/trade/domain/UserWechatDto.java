@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public class UserWechatDto implements Serializable {
     /**
-     * 账户ID
-     */
-    private Long accountId;
-
-    /**
      * 微信uniondID
      */
     private String unionid;
+
+    /**
+     * 账户ID
+     */
+    private Long accountId;
 
     /**
      * 微信昵称
@@ -51,20 +51,6 @@ public class UserWechatDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 账户ID
-     **/
-    public Long getAccountId() {
-        return accountId;
-    }
-
-    /**
-     * 账户ID
-     **/
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
-    }
-
-    /**
      * 微信uniondID
      **/
     public String getUnionid() {
@@ -76,6 +62,20 @@ public class UserWechatDto implements Serializable {
      **/
     public void setUnionid(String unionid) {
         this.unionid = unionid == null ? null : unionid.trim();
+    }
+
+    /**
+     * 账户ID
+     **/
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    /**
+     * 账户ID
+     **/
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 
     /**

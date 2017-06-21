@@ -104,66 +104,6 @@ public class UserWechatDtoExample {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        public Criteria andAccountIdIsNull() {
-            addCriterion("account_Id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdIsNotNull() {
-            addCriterion("account_Id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdEqualTo(Long value) {
-            addCriterion("account_Id =", value, "accountId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdNotEqualTo(Long value) {
-            addCriterion("account_Id <>", value, "accountId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdGreaterThan(Long value) {
-            addCriterion("account_Id >", value, "accountId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("account_Id >=", value, "accountId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdLessThan(Long value) {
-            addCriterion("account_Id <", value, "accountId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdLessThanOrEqualTo(Long value) {
-            addCriterion("account_Id <=", value, "accountId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdIn(List<Long> values) {
-            addCriterion("account_Id in", values, "accountId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdNotIn(List<Long> values) {
-            addCriterion("account_Id not in", values, "accountId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdBetween(Long value1, Long value2) {
-            addCriterion("account_Id between", value1, value2, "accountId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAccountIdNotBetween(Long value1, Long value2) {
-            addCriterion("account_Id not between", value1, value2, "accountId");
-            return (Criteria) this;
-        }
-
         public Criteria andUnionidIsNull() {
             addCriterion("unionid is null");
             return (Criteria) this;
@@ -231,6 +171,66 @@ public class UserWechatDtoExample {
 
         public Criteria andUnionidNotBetween(String value1, String value2) {
             addCriterion("unionid not between", value1, value2, "unionid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdIsNull() {
+            addCriterion("account_Id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdIsNotNull() {
+            addCriterion("account_Id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdEqualTo(Long value) {
+            addCriterion("account_Id =", value, "accountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdNotEqualTo(Long value) {
+            addCriterion("account_Id <>", value, "accountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdGreaterThan(Long value) {
+            addCriterion("account_Id >", value, "accountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("account_Id >=", value, "accountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdLessThan(Long value) {
+            addCriterion("account_Id <", value, "accountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdLessThanOrEqualTo(Long value) {
+            addCriterion("account_Id <=", value, "accountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdIn(List<Long> values) {
+            addCriterion("account_Id in", values, "accountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdNotIn(List<Long> values) {
+            addCriterion("account_Id not in", values, "accountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdBetween(Long value1, Long value2) {
+            addCriterion("account_Id between", value1, value2, "accountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountIdNotBetween(Long value1, Long value2) {
+            addCriterion("account_Id not between", value1, value2, "accountId");
             return (Criteria) this;
         }
 

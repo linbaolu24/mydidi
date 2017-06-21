@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.core.lock.ILock;
 import cn.com.didi.core.lock.LockManager;
 import cn.com.didi.core.property.IResult;
@@ -159,7 +160,7 @@ public class TradeServiceImpl implements ITradeService {
 		MerchantDayRemainingDto mat = getMerchantDayDto(pay);
 		boolean ifCan = accountAssetsService.decreMerchantDayRemainingIfCan(mat);
 		if (!ifCan) {
-			//TODO 抛出异常
+			throw new MessageObjectException(OrderMessageConstans.DEAL_ASSERT_NOT_ENOUGH);
 		}
 		tradeInfoService.createTrade(pay, null);
 	}

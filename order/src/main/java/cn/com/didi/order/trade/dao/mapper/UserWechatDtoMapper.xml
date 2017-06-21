@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.didi.order.trade.dao.mapper.UserWechatDtoMapper" >
   <resultMap id="BaseResultMap" type="cn.com.didi.order.trade.domain.UserWechatDto" >
-    <id column="account_Id" property="accountId" jdbcType="BIGINT" />
-    <result column="unionid" property="unionid" jdbcType="VARCHAR" />
+    <id column="unionid" property="unionid" jdbcType="VARCHAR" />
+    <result column="account_Id" property="accountId" jdbcType="BIGINT" />
     <result column="nickname" property="nickname" jdbcType="VARCHAR" />
     <result column="sex" property="sex" jdbcType="CHAR" />
     <result column="headimgurl" property="headimgurl" jdbcType="VARCHAR" />
@@ -71,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    account_Id, unionid, nickname, sex, headimgurl, openid, province, city, country
+    unionid, account_Id, nickname, sex, headimgurl, openid, province, city, country
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.order.trade.domain.UserWechatDtoExample" >
     select
@@ -88,15 +88,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from user_wechat
-    where account_Id = #{accountId,jdbcType=BIGINT}
+    where unionid = #{unionid,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from user_wechat
-    where account_Id = #{accountId,jdbcType=BIGINT}
+    where unionid = #{unionid,jdbcType=VARCHAR}
   </delete>
   <delete id="deleteByExample" parameterType="cn.com.didi.order.trade.domain.UserWechatDtoExample" >
     delete from user_wechat
@@ -105,11 +105,11 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.didi.order.trade.domain.UserWechatDto" >
-    insert ignore into user_wechat (account_Id, unionid, nickname, 
+    insert ignore into user_wechat (unionid, account_Id, nickname, 
       sex, headimgurl, openid, 
       province, city, country
       )
-    values (#{accountId,jdbcType=BIGINT}, #{unionid,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
+    values (#{unionid,jdbcType=VARCHAR}, #{accountId,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}, 
       #{sex,jdbcType=CHAR}, #{headimgurl,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, 
       #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}
       )
@@ -117,11 +117,11 @@
   <insert id="insertSelective" parameterType="cn.com.didi.order.trade.domain.UserWechatDto" >
     insert ignore into user_wechat
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="accountId != null" >
-        account_Id,
-      </if>
       <if test="unionid != null" >
         unionid,
+      </if>
+      <if test="accountId != null" >
+        account_Id,
       </if>
       <if test="nickname != null" >
         nickname,
@@ -146,11 +146,11 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="accountId != null" >
-        #{accountId,jdbcType=BIGINT},
-      </if>
       <if test="unionid != null" >
         #{unionid,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null" >
+        #{accountId,jdbcType=BIGINT},
       </if>
       <if test="nickname != null" >
         #{nickname,jdbcType=VARCHAR},
@@ -184,11 +184,11 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update user_wechat
     <set >
-      <if test="record.accountId != null" >
-        account_Id = #{record.accountId,jdbcType=BIGINT},
-      </if>
       <if test="record.unionid != null" >
         unionid = #{record.unionid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accountId != null" >
+        account_Id = #{record.accountId,jdbcType=BIGINT},
       </if>
       <if test="record.nickname != null" >
         nickname = #{record.nickname,jdbcType=VARCHAR},
@@ -218,8 +218,8 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update user_wechat
-    set account_Id = #{record.accountId,jdbcType=BIGINT},
-      unionid = #{record.unionid,jdbcType=VARCHAR},
+    set unionid = #{record.unionid,jdbcType=VARCHAR},
+      account_Id = #{record.accountId,jdbcType=BIGINT},
       nickname = #{record.nickname,jdbcType=VARCHAR},
       sex = #{record.sex,jdbcType=CHAR},
       headimgurl = #{record.headimgurl,jdbcType=VARCHAR},
@@ -234,8 +234,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.com.didi.order.trade.domain.UserWechatDto" >
     update user_wechat
     <set >
-      <if test="unionid != null" >
-        unionid = #{unionid,jdbcType=VARCHAR},
+      <if test="accountId != null" >
+        account_Id = #{accountId,jdbcType=BIGINT},
       </if>
       <if test="nickname != null" >
         nickname = #{nickname,jdbcType=VARCHAR},
@@ -259,11 +259,11 @@
         country = #{country,jdbcType=VARCHAR},
       </if>
     </set>
-    where account_Id = #{accountId,jdbcType=BIGINT}
+    where unionid = #{unionid,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.com.didi.order.trade.domain.UserWechatDto" >
     update user_wechat
-    set unionid = #{unionid,jdbcType=VARCHAR},
+    set account_Id = #{accountId,jdbcType=BIGINT},
       nickname = #{nickname,jdbcType=VARCHAR},
       sex = #{sex,jdbcType=CHAR},
       headimgurl = #{headimgurl,jdbcType=VARCHAR},
@@ -271,6 +271,13 @@
       province = #{province,jdbcType=VARCHAR},
       city = #{city,jdbcType=VARCHAR},
       country = #{country,jdbcType=VARCHAR}
-    where account_Id = #{accountId,jdbcType=BIGINT}
+    where unionid = #{unionid,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- add by my -->
+   <update id="updateAccountId" parameterType="cn.com.didi.order.trade.domain.UserWechatDto" >
+    update user_wechat
+    set account_Id = #{accountId,jdbcType=BIGINT}
+    where unionid = #{unionid,jdbcType=VARCHAR}
   </update>
 </mapper>

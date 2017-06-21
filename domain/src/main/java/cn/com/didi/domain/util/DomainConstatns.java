@@ -102,9 +102,20 @@ public class DomainConstatns {
 	 * 入驻状态
 	 */
 	public static final String ARRIVAL_STATUS="arrivalStatus";
-	public static final String PREPAY_ID="prepayId";
 	
+
 	
 	public static final String LOCK_DRAW_PREFIX="";
 	public static final String REASSIGNMENT_FLAG ="reassignmentFlag";
+	
+	
+	
+	/* 用于微信支付 */
+	public static final String PREPAY_ID="prepayid";
+	public static final String PARTNERID="partnerid";
+	public static final String APPID="appid";
+	public static final String PACKAGEVALUE="packageValue";
+	public static final String TIMESTAMP="timestamp";
+	public static final String SIGN="sign";
+	public static final String NONCESTR="noncestr";
 }

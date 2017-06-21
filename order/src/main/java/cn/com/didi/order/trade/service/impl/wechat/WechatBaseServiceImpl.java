@@ -1,4 +1,4 @@
-package cn.com.didi.order.trade.service.impl;
+package cn.com.didi.order.trade.service.impl.wechat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,22 +10,27 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import cn.com.didi.core.cache.ICache;
+import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.domain.domains.SuiteTicketInfoDto;
+import cn.com.didi.domain.domains.wechat.AccessTokenDto;
 import cn.com.didi.domain.domains.wechat.WechatUserInfo;
 import cn.com.didi.domain.util.SuiteTicketTypeEnum;
 import cn.com.didi.domain.util.WechatConsts;
-import cn.com.didi.order.trade.dao.mapper.UserWechatDtoMapper;
+import cn.com.didi.domain.util.WechatEnum;
 import cn.com.didi.order.trade.domain.UserWechatDto;
 import cn.com.didi.order.trade.service.IWechatBaseService;
+import cn.com.didi.order.trade.service.IWechatProvider;
 import cn.com.didi.order.trade.service.IWechatTransferService;
+import cn.com.didi.order.trade.service.IWechatUserService;
 import cn.com.didi.order.trade.util.SHA1;
 import cn.com.didi.order.trade.util.WXBizMsgCrypt;
 import cn.com.didi.order.trade.util.WechatXmlUtil;
+import cn.com.didi.order.util.OrderMessageConstans;
 import cn.com.didi.thirdExt.produce.IAppEnv;
 
 @Service
@@ -34,7 +39,7 @@ public class WechatBaseServiceImpl implements IWechatBaseService {
 	@Resource
 	protected IAppEnv appEnv;
 	@Resource
-	protected UserWechatDtoMapper myUserWechatMapper;
+	protected IWechatUserService wechatUserService;
 	private static final String TOKEN = "436346346346363";
 
 	private static final String ENCODINGAESKEY = "1234567890123456789012345678901234567890abc";
@@ -47,6 +52,10 @@ public class WechatBaseServiceImpl implements IWechatBaseService {
 	}
 	@Resource
 	protected IWechatTransferService wechatTransferService;
+	@Resource
+	protected IWechatProvider wechatProvider;
+	@Resource
+	protected ICache<String, Object> accessToneCache;
 	@Override
 	public void suiteTicketPostData(Map<String, String> map, String postData, String suiteId) {
 		String msgSignature = (String) map.get(WechatConsts.SIGN_MSG_SIGNATURE);
@@ -127,44 +136,67 @@ public class WechatBaseServiceImpl implements IWechatBaseService {
 
 	@Override
 	public UserWechatDto getUserInfo(Long accountId, String code) {
-		UserWechatDto dto = myUserWechatMapper.selectByPrimaryKey(accountId);
+		return getUserInfo(accountId, code, WechatEnum.APP);
+	}
+
+	@Override
+	public AccessTokenDto getAccessToken(WechatEnum type) {
+		String appid = wechatProvider.getAppId(type);
+		AccessTokenDto dto = (AccessTokenDto) accessToneCache.get(WechatConsts.CACHE_ACCESS_TOKEN_PREFIX + appid);
 		if (dto == null) {
-			WechatUserInfo info = wechatTransferService.getUserFromCode(appEnv.getWechatAppId(),
-					appEnv.getWechatAppSecret(), code);
-			dto = infoToUserWechatDto(accountId, info);
-			myUserWechatMapper.insert(dto);
+			String appSecret = wechatProvider.getAppSecret(type);
+			dto = wechatTransferService.getAccessToken(appid, appSecret);
+			int timeOut = dto.getExpires_in() <= 0 ? 7200 : dto.getExpires_in()-100;
+			accessToneCache.put(WechatConsts.CACHE_ACCESS_TOKEN_PREFIX + appid, dto, timeOut * 1000);
 		}
 		return dto;
 	}
 
-	protected UserWechatDto infoToUserWechatDto(Long accountId, WechatUserInfo info) {
-		UserWechatDto dto = new UserWechatDto();
-		dto.setAccountId(accountId);
-		dto.setCountry(info.getCountry());
-		dto.setCity(info.getCity());
-		dto.setOpenid(info.getOpenid());
-		dto.setSex(String.valueOf(info.getSex()));
-		dto.setUnionid(info.getUnionid());
-		dto.setProvince(info.getProvince());
-		dto.setNickname(info.getNickname());
-		dto.setHeadimgurl(info.getHeadimgurl());
+	@Override
+	public void subscribe(WechatEnum type,Map<String,Object> xmlMap) {
+		String openId = (String) xmlMap.get(WechatConsts.FROM_USER_NAME);
+		AccessTokenDto accessTokenDto=getAccessToken(type);
+		if(!accessTokenDto.normalSuccess()){
+			LOGGER.error("获取微信AccessToke,返回结果{}",accessTokenDto);
+			throw new MessageObjectException(OrderMessageConstans.WECHAT_GET_ACCESS_TOKEN_ERROR);
+		}
+		String appid = wechatProvider.getAppId(type);
+		WechatUserInfo wechatUserInfo= wechatTransferService.getUser(null,accessTokenDto.getAccess_token(),openId);
+		if(!wechatUserInfo.normalSuccess()){
+			LOGGER.error("获取微信用户信息,返回结果{}",wechatUserInfo);
+			throw new MessageObjectException(OrderMessageConstans.WECHAT_GET_USER_INFO_ERROR);
+		}
+		wechatUserService.saveWithOutAccountId(wechatUserInfo, appid, type, null);
+	}
+
+	@Override
+	public UserWechatDto getUserInfo(Long accountId, String code, WechatEnum type) {
+		UserWechatDto dto=wechatUserService.getWechatDto(accountId);// = myUserWechatMapper.selectByPrimaryKey(accountId);
+		if (dto == null) {
+			String appid=wechatProvider.getAppId(type);
+			String appSecret=wechatProvider.getAppSecret(type);
+			WechatUserInfo info = wechatTransferService.getUserFromCode(appid,
+					appSecret, code);
+			dto = wechatUserService.saveWithAccountId(accountId, info, appid, type);
+		}
 		return dto;
 	}
 
 	@Override
-	public void subscribe(String postData) {
+	public String message(String xml,WechatEnum type) {
 		try {
-			WechatXmlUtil.parse(postData);
-		} catch (Exception e) {
-			
-		}
-		
-	}
+			Map<String, Object> xmlMap = WechatXmlUtil.parse(xml);
+			if ("event".equals(xmlMap.get(WechatConsts.MSG_TYPE))&&"subscribe".equals(xmlMap.get(WechatConsts.EVENT))) {
 
-	@Override
-	public String getAccessToken(String type) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+				 subscribe(type, xmlMap);
+
+			}
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return  WechatConsts.ERROR;
+		}
+		return WechatConsts.SUCCESS;
+}
 
 }

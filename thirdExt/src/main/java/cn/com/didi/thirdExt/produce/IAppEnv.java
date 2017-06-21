@@ -1,5 +1,6 @@
 package cn.com.didi.thirdExt.produce;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
@@ -12,6 +13,16 @@ public interface IAppEnv {
 	
 	public String getWechatAppId();
 	/**
+	 * 获取微信公众号Appid
+	 * @return
+	 */
+	public String getWechatOpenAppId();
+	/**
+	 * 获取微信公众号OpenSecret
+	 * @return
+	 */
+	public String getWechatOpenSecret();
+	/**微信商户号
 	 * @return
 	 */
 	public String getWechatMchId();
@@ -34,7 +45,7 @@ public interface IAppEnv {
 	 */
 	public String getWechatTradeType();
 	
-	/**
+	/**用于app支付的字符集
 	 * @return
 	 */
 	public String getWechatCharSet();
@@ -42,7 +53,7 @@ public interface IAppEnv {
 	/**
 	 * @return
 	 */
-	public String getWechatAppkey();
+	public String getWechatAppSignedkey();
 	
 	/**
 	 * 微信统一下单URL
@@ -57,9 +68,10 @@ public interface IAppEnv {
 	
 	/**
 	 * @return
+	 * @throws IOException 
 	 */
-	public InputStream getWechatKeyStroe();
-	/**
+	public InputStream getWechatKeyStroe() throws IOException;
+	/**证书的password
 	 * @return
 	 */
 	public String getWechatPassword();
@@ -69,11 +81,6 @@ public interface IAppEnv {
 	public String getWechatValidatorToken();
 	
 	
-	/**
-	 * 微信商户号
-	 * @return
-	 */
-	public String getWechatShh();
 	
 	public String getWechatAppSecret();
 	
@@ -82,10 +89,6 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public String getOrderTransJson();
-	/**
-	 * @return
-	 */
-	public String getAesKey();
 	/**
 	 * @return
 	 */

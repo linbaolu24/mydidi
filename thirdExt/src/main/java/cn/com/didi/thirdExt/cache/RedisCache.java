@@ -56,10 +56,7 @@ public class RedisCache implements IRedisCache {
 		return valueOps.getAndSet(key, value);
 	}
 
-	@Override
-	public Object put(String key, Object value, int TTL) {
-		return put(key, value,TTL);
-	}
+	
 	public Object put(String key, Object value, long TTL){
 		Object obj=valueOps.getAndSet(key, value);
 		redisTemplate.expire(key, TTL, TimeUnit.MILLISECONDS);

@@ -62,13 +62,15 @@
 		<entry key="5003000021" value="${msg.5003000021:非自营订单不能改派。}"></entry>
 		
 		
-		<entry key="5004000001" value="${msg.5004000001:交易记录不存在}"></entry>
-		<entry key="5004000002" value="${msg.5004000002:交易记录金额不相等}"></entry>
+		<entry key="5004200001" value="${msg.5004200001:交易记录不存在}"></entry>
+		<entry key="5004200002" value="${msg.5004200002:交易记录金额不相等}"></entry>
+		<entry key="5004200003" value="${msg.5004200003:账户余额不足不能转账}"></entry>
+		
+		
 		<entry key="5004000003" value="${msg.5004000003:验证阿里签名失败}"></entry>
 		<entry key="5004000004" value="${msg.5004000004:阿里返回交易失败}"></entry>
 		<entry key="5004000005" value="${msg.5004000005:生成支付宝订单支付信息异常}"></entry>
-		<entry key="5004000006" value="${msg.5004000005:支付宝转账异常}"></entry>
-		
+		<entry key="5004000006" value="${msg.5004000006:支付宝转账异常}"></entry>
 		<entry key="5004000007" value="${msg.5004000007:支付宝转账异常,且恢复转账预处理状态失败。}"></entry>
 		<entry key="5004000008" value="${msg.5004000008:支付宝转账成功,但修改转账状态位已确认失败。}"></entry>
 		

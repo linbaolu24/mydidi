@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.com.didi.app.deal.domain.AliPayJAO;
 import cn.com.didi.app.order.domain.OrderIDJAO;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
-import cn.com.didi.domain.domains.WechatPayCustomerReturnVo;
 import cn.com.didi.domain.domains.WechatPayNotifyReturnVO;
+import cn.com.didi.domain.domains.wechat.WechatPayContext;
 import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.order.trade.service.IWechatTradeService;
 
@@ -69,21 +70,43 @@ public class WechatDealController extends AbstractDealController {
 			return ERROR_START+"异常"+ERROR_END;
 		}
 	}
-
-	public IResult wechatPay(@RequestBody OrderIDJAO map, HttpServletRequest request) {
+	@RequestMapping(value="/app/c/order/wechatPay",method = RequestMethod.POST)
+	public IResult orderWechatPay(@RequestBody OrderIDJAO map, HttpServletRequest request) {
 		Long orderId = (Long) map.getOrderId();
 		assertOrderId(orderId);
 		Long accountId = resolver.resolve(request);
-		IResult<WechatPayCustomerReturnVo> result = wechatTradeService.createOdrerRequest(orderId, accountId,
+		IResult<WechatPayContext> result = wechatTradeService.createOdrerRequest(orderId, accountId,
 				map.getDescription());
 		if (result.success()) {
-			WechatPayCustomerReturnVo returnVo = result.getData();
-			Map<String, Object> resmap = new HashMap<>(4);
-			resmap.put(DomainConstatns.DEALID, Long.parseLong(returnVo.getPartner_trade_no()));
-			resmap.put(DomainConstatns.AMOUNT, returnVo.getCost());
-			resmap.put(DomainConstatns.PREPAY_ID, returnVo.getPrepay_id());
+			WechatPayContext returnVo = result.getData();
+			Map maps=toMaps(returnVo);
+			return ResultFactory.success(maps);
 		}
 		return ResultFactory.error(result);
+	}
+	@RequestMapping(value="app/trade/pay/wechatPay",method = RequestMethod.POST)
+	public IResult wechatPay(@RequestBody AliPayJAO map, HttpServletRequest request){
+		Long accountId = resolver.resolve(request);
+		IResult<WechatPayContext> result = wechatTradeService.createPayRequest(accountId, map.getType(), map.getObj());
+		if (result.success()) {
+			WechatPayContext returnVo = result.getData();
+			Map maps=toMaps(returnVo);
+			return ResultFactory.success(maps);
+		}
+		return ResultFactory.error(result);
+	}
+	protected Map toMaps(WechatPayContext returnVo){
+		Map<String, Object> resmap = new HashMap<>(4);
+		resmap.put(DomainConstatns.DEALID, Long.parseLong(returnVo.getWechatPayCustomerReturnVo().getPartner_trade_no()));
+		resmap.put(DomainConstatns.AMOUNT, returnVo.getWechatPayCustomerReturnVo().getCost());
+		resmap.put(DomainConstatns.PREPAY_ID,returnVo.getPrepayid());
+		resmap.put(DomainConstatns.PARTNERID,returnVo.getPartnerid());
+		resmap.put(DomainConstatns.APPID,returnVo.getAppid());
+		resmap.put(DomainConstatns.PACKAGEVALUE,returnVo.getPackageStr());
+		resmap.put(DomainConstatns.TIMESTAMP,returnVo.getTimestamp());
+		resmap.put(DomainConstatns.SIGN,returnVo.getSign());
+		resmap.put(DomainConstatns.NONCESTR,returnVo.getNoncestr());
+		return resmap;
 	}
 
 }

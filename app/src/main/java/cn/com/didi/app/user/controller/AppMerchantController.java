@@ -77,7 +77,7 @@ public class AppMerchantController {
 			UserWechatDto userInfo=wechatBaseService.getUserInfo(accountId, merchantExtDto.getCode());
 			MerchantDto mdto=merchantExtDto.dto();
 			mdto.setWechatName(userInfo.getNickname());
-			mdto.setWechatAccount(userInfo.getNickname());
+			mdto.setWechatAccount(userInfo.getUnionid());
 		}
 	}
 

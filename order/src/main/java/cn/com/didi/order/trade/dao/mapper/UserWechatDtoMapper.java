@@ -10,7 +10,7 @@ public interface UserWechatDtoMapper {
 
     int deleteByExample(UserWechatDtoExample example);
 
-    int deleteByPrimaryKey(Long accountId);
+    int deleteByPrimaryKey(String unionid);
 
     int insert(UserWechatDto record);
 
@@ -18,7 +18,7 @@ public interface UserWechatDtoMapper {
 
     List<UserWechatDto> selectByExample(UserWechatDtoExample example);
 
-    UserWechatDto selectByPrimaryKey(Long accountId);
+    UserWechatDto selectByPrimaryKey(String unionid);
 
     int updateByExampleSelective(@Param("record") UserWechatDto record, @Param("example") UserWechatDtoExample example);
 
@@ -27,4 +27,13 @@ public interface UserWechatDtoMapper {
     int updateByPrimaryKeySelective(UserWechatDto record);
 
     int updateByPrimaryKey(UserWechatDto record);
+    
+    
+    /*add by my*/
+    /**
+     * @param unionId
+     * @param accountId
+     * @return
+     */
+    int updateAccountId(@Param("unionid") String unionId,@Param("accountId") Long accountId);
 }

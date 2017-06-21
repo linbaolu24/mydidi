@@ -45,7 +45,7 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 			dto.setDaytime(getDayTime());
 		}
 		if(StringUtils.isEmpty(dto.getCategory())){
-			dto.setCategory("0");
+			dto.setCategory(TradeCategory.IN.getCode());
 		}
 		if (!systemOnly&&!getSystemAccount().equals(dto.getAccountId())) {
 			myMerchantDayRemainingDtoMapper.saveMerchantDayRemainingDto(dto);
@@ -71,11 +71,16 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		}
 		return DateUtil.getCurrentYYYYMMDD();
 	}
+	public int getOutDay(){
+		return DEAULT_DAY;
+	}
 	@Override
 	public void rollBackMerchantDayRemainingDto(MerchantDayRemainingDto dto,boolean systemOnly) {
 		if(dto==null||dto.getRemaining()==null){
 			return;
 		}
+		dto.setCategory(TradeCategory.OUT.getCode());
+		dto.setDaytime(getOutDay());
 		addMerchantDayRemainingDto(dto, systemOnly);
 	}
 
@@ -93,10 +98,11 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		if(remain.getRemaining()>0){
 			remain.setRemaining(-remain.getRemaining());
 		}
-		//remain.setCategory("1");
+		remain.setCategory(TradeCategory.OUT.getCode());
+		remain.setDaytime(getOutDay());
 		myMerchantDayRemainingDtoMapper.saveMerchantDayRemainingDto(remain);//总支出有一个总支出的地方,先这样干
 		updateSystemRemain(payEnum,(long)remain.getRemaining().intValue());
-		return false;
+		return true;
 	}
     public void updateSystemRemain(PayAccountEnum payEnum,Integer remain){
     	updateSystemRemain(payEnum,(long)remain.intValue());

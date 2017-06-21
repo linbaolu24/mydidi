@@ -12,7 +12,7 @@ import java.util.Set;
 public interface ICache<K, V> {
 	V put(K key, V value);
 
-	V put(K key, V value, int TTL);
+	V put(K key, V value, long TTL);
 
 	/**
 	 * @param key

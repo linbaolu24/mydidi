@@ -1,6 +1,10 @@
 package cn.com.didi.thirdExt.http;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,6 +14,7 @@ import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,13 +53,19 @@ public class JsonGetHttpHandler<T> extends JsonHttpHandler<T> {
      * @param urlEnums
      * @param parms
      * @return
+	 * @throws UnsupportedEncodingException 
      */
-    public  String urlReplace (String url,  Map parms){
+    public  String urlReplace (String url,  Map<String,String> parms) throws UnsupportedEncodingException{
         if (StringUtils.isNotBlank(url) && null != parms ){
-            StrSubstitutor strsub = new StrSubstitutor(parms);
+        	Map map2=new HashMap<>(parms.size());
+        	for(Map.Entry<String, String> one:parms.entrySet()){
+        		map2.put(one.getKey(), URLEncoder.encode(one.getValue(),charset));
+        	}
+            StrSubstitutor strsub = new StrSubstitutor(map2);
             url = strsub.replace(url);
         }
         return url;
     }
+    
 	
 }

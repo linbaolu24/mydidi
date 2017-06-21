@@ -1,15 +1,18 @@
 package cn.com.didi.thirdExt.produce.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.core.io.Resource;
 
 import com.alibaba.fastjson.JSON;
 
 import cn.com.didi.core.property.IEnvironment;
+import cn.com.didi.core.utils.Constans;
 import cn.com.didi.core.utils.NumberUtil;
 import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.thirdExt.util.EnvConstants;
@@ -21,6 +24,13 @@ public class AppEnvImpl implements IAppEnv {
 	private String orderTransJson;
 	private String depositeAliNotifyUrl;
 	private URI appPayUri;
+	private String depositeWechatNotifyUrl;
+	private String ipAdress;
+	private String  wechatPayNotifyUrl;
+	private String wechatMchId;
+	private String wechatPassword;
+	private Resource keyStoreResource;
+	private String wechatAppSignedkey;
 	protected URI wechatTransFer;
 	{
 		try {
@@ -48,12 +58,6 @@ public class AppEnvImpl implements IAppEnv {
 	public void setAppEnviroment(IEnvironment appEnviroment) {
 		this.appEnviroment = appEnviroment;
 	}
-	@Override
-	public String getAesKey() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public int getDeposite() {
 		String value = appEnviroment.getProperty(EnvConstants.DEPOSITE_MONEY);
@@ -88,7 +92,7 @@ public class AppEnvImpl implements IAppEnv {
 	}
 	@Override
 	public boolean isAdRtStatistic() {
-		return true;
+		return false;
 	}
 	@Override
 	public VipDescrptionDto getVipDesc(Integer slsId) {
@@ -146,8 +150,7 @@ public class AppEnvImpl implements IAppEnv {
 	
 	@Override
 	public String getDepositeWechatNotifyUrl() {
-		// TODO Auto-generated method stub
-		return null;
+		return depositeWechatNotifyUrl;
 	}
 	@Override
 	public String getAppName() {
@@ -156,24 +159,22 @@ public class AppEnvImpl implements IAppEnv {
 
 	@Override
 	public String getWechatAppId() {
-		return "wxe29a2f519cf39295";
+		return "wxf0f6836240fdaf3e";
 	}
 
 	@Override
 	public String getWechatMchId() {
-		// TODO Auto-generated method stub
-		return null;
+		return wechatMchId;
 	}
 
 	@Override
 	public String getIpAdress() {
-		// TODO Auto-generated method stub
-		return "9b7b4ee13fd9e9ee82f3ad55f585db47";
+		return ipAdress;
 	}
 
 	@Override
 	public String getWechatPayNotifyUrl() {
-		return null;
+		return wechatPayNotifyUrl;
 	}
 
 	@Override
@@ -183,14 +184,12 @@ public class AppEnvImpl implements IAppEnv {
 
 	@Override
 	public String getWechatCharSet() {
-		// TODO Auto-generated method stub
-		return null;
+		return Constans.CHARSET_UTF_8;
 	}
 
 	@Override
-	public String getWechatAppkey() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getWechatAppSignedkey() {
+		return wechatAppSignedkey;
 	}
 
 	@Override
@@ -199,20 +198,17 @@ public class AppEnvImpl implements IAppEnv {
 	}
 
 	@Override
-	public InputStream getWechatKeyStroe() {
-		// TODO Auto-generated method stub
+	public InputStream getWechatKeyStroe() throws IOException {
+		if(keyStoreResource!=null){
+				return keyStoreResource.getInputStream();
+			
+		}
 		return null;
 	}
 
 	@Override
 	public String getWechatPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public String getWechatShh() {
-		// TODO Auto-generated method stub
-		return null;
+		return wechatPassword;
 	}
 
 	@Override
@@ -222,7 +218,50 @@ public class AppEnvImpl implements IAppEnv {
 
 	@Override
 	public String getWechatAppSecret() {
+		return "40956ed28413514d4a4dfee2ebb8471a";
+	}
+
+	@Override
+	public String getWechatOpenAppId() {
+		return "wxe29a2f519cf39295";
+	}
+
+	@Override
+	public String getWechatOpenSecret() {
+	
 		return "9b7b4ee13fd9e9ee82f3ad55f585db47";
+	}
+
+	public void setDepositeWechatNotifyUrl(String depositeWechatNotifyUrl) {
+		this.depositeWechatNotifyUrl = depositeWechatNotifyUrl;
+	}
+
+	public void setIpAdress(String ipAdress) {
+		this.ipAdress = ipAdress;
+	}
+
+	public void setWechatPayNotifyUrl(String wechatPayNotifyUrl) {
+		this.wechatPayNotifyUrl = wechatPayNotifyUrl;
+	}
+
+	public void setWechatMchId(String wechatMchId) {
+		this.wechatMchId = wechatMchId;
+	}
+
+	public void setWechatPassword(String wechatPassword) {
+		this.wechatPassword = wechatPassword;
+	}
+
+	public Resource getKeyStoreResource() {
+		return keyStoreResource;
+	}
+
+	public void setKeyStoreResource(Resource keyStoreResource) {
+		this.keyStoreResource = keyStoreResource;
+	}
+
+	public void setWechatAppSignedkey(String wechatAppSignedkey) {
+		this.wechatAppSignedkey = wechatAppSignedkey;
 	}
 	
 

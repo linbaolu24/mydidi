@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,15 +19,20 @@ import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.PayAccountEnum;
+import cn.com.didi.domain.util.WechatEnum;
 import cn.com.didi.order.trade.domain.DealDrawListDto;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.DrawInfoDto;
+import cn.com.didi.order.trade.domain.UserWechatOpenIdDto;
+import cn.com.didi.order.trade.service.IWechatUserService;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.service.IUserService;
 @RestController
 public class AppDealController extends AbstractDealController{
 	@Resource
 	protected IUserService userService;
+	@Resource
+	protected IWechatUserService wechatUserService;
 	@RequestMapping(value = "/app/b/trade/drawList", method = RequestMethod.POST)
 	public IResult drawList(@RequestBody TimeInterval interval ,HttpServletRequest request){
 		Long accountId = resolver.resolve(request);
@@ -60,6 +66,13 @@ public class AppDealController extends AbstractDealController{
 		dealDto.setCreateTime(new Date());
 		
 		String  da=enums.getAccoutId(linked);
+		if(PayAccountEnum.WECHATPAY.equals(enums)){
+			UserWechatOpenIdDto dtos=wechatUserService.getWechatDto(da, WechatEnum.OPEN);
+			if(dtos==null||StringUtils.isEmpty(dtos.getOpenid())){
+				throw new IllegalArgumentException("请先关注公众号。");
+			}
+			da=dtos.getOpenid();
+		}
 		dealDto.setDa(da);
 		dealDto.setExt1(linked.userName());
 		dealDto.setCommission(0);

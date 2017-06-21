@@ -142,11 +142,11 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		dto.setCategory(category.getCode());
 		dto.setDealType(category.getType());
 	}
-	public void draw(DealDto deal,TranscationalCallBack<DealDto> callBack){
+	/*public void draw(DealDto deal,TranscationalCallBack<DealDto> callBack){
 		popNormalDeal(deal, TradeCategory.OUT);
 		accountAssers.decreMerchantDayRemainingIfCan(null);
 		dealDtoMapper.insertSelective(deal);
-	}
+	}*/
 
 	@Override
 	public List<DealDrawListDto> selectDrawList(TimeInterval interval) {
@@ -165,7 +165,8 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 	@Override
 	@Transactional
 	public void rollBack(DealDto deal) {
-		
+		MerchantDayRemainingDto dto=getMerchantDayDto(deal);
+		accountAssers.rollBackMerchantDayRemainingDto(dto, false);
 	}
 
 	@Override
@@ -184,7 +185,12 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		createTrade(pay, null);
 	}
 	protected MerchantDayRemainingDto getMerchantDayDto(DealDto pay){
-		return null;
+		MerchantDayRemainingDto dto=new MerchantDayRemainingDto();
+		dto.setAccountId(pay.getDai());
+		//dto.setCategory(category);
+		dto.setPat(pay.getDat());
+		dto.setRemaining(pay.getRemain());
+		return dto;
 	}
 	protected void popNormalDraw(DealDto pay){
 		pay.setCategory(TradeCategory.OUT.getCode());

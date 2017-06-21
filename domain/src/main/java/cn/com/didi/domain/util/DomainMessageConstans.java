@@ -124,7 +124,7 @@ public class DomainMessageConstans {
 	public static final String CODE_WECHAT_GET_USER_INFO_ERROR="5002100002";
 	
 	/**
-	 * 
+	 * 获取微信ACCESS_TOKEN_ERROR
 	 */
 	public static final String CODE_WECHAT_GET_ACCESS_TOKEN_ERROR="5002100003";
 	/**
@@ -239,11 +239,15 @@ public class DomainMessageConstans {
 	/**
 	 * 交易记录不存在
 	 */
-	public static final String CODE_DEAL_NOT_EXIST="5004000001";
+	public static final String CODE_DEAL_NOT_EXIST="5004200001";
 	/**
 	 * 交易记录金额不相等
 	 */
-	public static final String CODE_DEAL_ACCOUNT_NOT_EQUAL="5004000002";
+	public static final String CODE_DEAL_ACCOUNT_NOT_EQUAL="5004200002";
+	/**
+	 * 账户余额不足不能转账
+	 */
+	public static final String CODE_DEAL_ASSERT_NOT_ENOUGH="5004200003";
 	
 	/**
 	 * 验证阿里签名失败
@@ -273,6 +277,10 @@ public class DomainMessageConstans {
 	 * 转账成功更新完成提取状态失败
 	 */
 	public static final String CODE_DEAL_ALI_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR="5004000008";
+	
+	
+	
+	
 	
 	/**微信统一下单异常*/
 	public static final String CODE_DEAL_WECHAT_TYXD_ERROR="5004100001";

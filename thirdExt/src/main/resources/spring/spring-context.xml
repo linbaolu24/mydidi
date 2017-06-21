@@ -86,11 +86,7 @@
 	<bean id="jsonConfigureShapeGenerator" class="cn.com.didi.thirdExt.shape.JsonConfigureShapeGenerator"></bean>
 	
 	
-	<bean id="appEnvImpl" class="cn.com.didi.thirdExt.produce.impl.AppEnvImpl" init-method="init">
-	<property name="orderTransJson" value="${appEnv.orderTransJson}"></property>
-	<property name="appEnviroment" ref="cacheEnvironment"></property>
-	<property name="depositeAliNotifyUrl" value="${appEnv.deposite.depositeAliNotifyUrl}"></property>
-    </bean>
+	
     <bean id="cachedCodeAndParam" class="cn.com.didi.thirdExt.property.CachedDeracotorSysParamAndCodeDicService" primary="true">
     <property name="hashAble" ref="redisCache"></property>
     <property name="wrappedCodeDicService" ref="${cached.wrappedCodeDicService:codeDicServiceImpl}"></property>
@@ -107,4 +103,21 @@
 	<property name="url" value="${lock.redis.url}"></property>
 	<property name="password" value="${lock.redis.password}"></property>
    </bean>
+   
+   
+   
+   
+   <bean id="appEnvImpl" class="cn.com.didi.thirdExt.produce.impl.AppEnvImpl" init-method="init">
+   <property name="appEnviroment" ref="cacheEnvironment"></property>
+	<property name="orderTransJson" value="${appEnv.orderTransJson}"></property>
+	
+	<property name="depositeAliNotifyUrl" value="${appEnv.deposite.depositeAliNotifyUrl}"></property>
+	<property name="depositeWechatNotifyUrl" value="${wechat.deposite.notifyUrl}"></property>
+	<property name="ipAdress" value="${ip.address}"></property>
+	<property name="wechatMchId" value="${wechat.mchId}"></property>
+	<property name="wechatPassword" value="${wechat.keyStore.password}"></property>
+	<property name="wechatPayNotifyUrl" value="${wechat.notifyUrl}"></property>
+	<property name="wechatAppSignedkey" value="${wechat.pay.signKey}"></property>
+	<!-- <property name="keyStoreResource" value="${wechat.keyStore.resource}"></property> -->
+    </bean>
 </beans>
