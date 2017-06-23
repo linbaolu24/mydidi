@@ -222,5 +222,12 @@ public class UserController {
 		String result=userService.sendSmToUser(role,sms);
 		return ResultFactory.success(result);
 	}
+	@RequestMapping(value = "/platform/b/updateRyToken", method = RequestMethod.POST)
+	public IResult updateRyToken(@RequestBody Map<String,String> map){
+		String role=map.get("role");
+		String result=userService.reflashUserLinkId(role);
+		return ResultFactory.success(result);
+	}
+	
 }
 

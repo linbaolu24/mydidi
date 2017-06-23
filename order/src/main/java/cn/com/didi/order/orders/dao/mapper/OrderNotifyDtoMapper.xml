@@ -374,16 +374,17 @@
   
   <!--  add by myself -->
   <insert id="insertNotifyList">
-  insert ignore into (order_id, merchant_account_id, sls_id, 
+  insert ignore into t_order_notify (order_id, merchant_account_id, sls_id, 
       fls_id, description, cname, 
       cci, consumer_address, cas, 
       consumer_name, consumer_account_id, Lng, 
       lat, valid_flag,create_time)
-      <foreach collection="rlist" item="item" open=" values (" separator="),(" close=")"></foreach>
-    #{orderId,jdbcType=BIGINT}, #{item.accountId,jdbcType=BIGINT}, #{slsId,jdbcType=INTEGER}, 
-      #{flsId,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, 
-      #{cci,jdbcType=VARCHAR}, #{consumerAddress,jdbcType=VARCHAR}, #{cas,jdbcType=VARCHAR}, 
-      #{consumerName,jdbcType=VARCHAR}, #{consumerAccountId,jdbcType=BIGINT}, #{lng,jdbcType=DECIMAL}, 
-      #{lat,jdbcType=DECIMAL}, #{validFlag,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}
+      <foreach collection="rlist" item="item" open=" values (" separator="),(" close=")">
+    #{record.orderId,jdbcType=BIGINT}, #{item.accountId,jdbcType=BIGINT}, #{record.slsId,jdbcType=INTEGER}, 
+      #{record.flsId,jdbcType=INTEGER}, #{record.description,jdbcType=VARCHAR}, #{record.cname,jdbcType=VARCHAR}, 
+      #{record.cci,jdbcType=VARCHAR}, #{record.consumerAddress,jdbcType=VARCHAR}, #{record.cas,jdbcType=VARCHAR}, 
+      #{record.consumerName,jdbcType=VARCHAR}, #{record.consumerAccountId,jdbcType=BIGINT}, #{record.lng,jdbcType=DECIMAL}, 
+      #{record.lat,jdbcType=DECIMAL}, #{record.validFlag,jdbcType=CHAR}, #{record.createTime,jdbcType=TIMESTAMP}
+      </foreach>
   </insert>
 </mapper>

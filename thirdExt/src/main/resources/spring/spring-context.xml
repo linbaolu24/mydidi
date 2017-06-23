@@ -103,21 +103,28 @@
 	<property name="url" value="${lock.redis.url}"></property>
 	<property name="password" value="${lock.redis.password}"></property>
    </bean>
-   
-   
-   
-   
-   <bean id="appEnvImpl" class="cn.com.didi.thirdExt.produce.impl.AppEnvImpl" init-method="init">
-   <property name="appEnviroment" ref="cacheEnvironment"></property>
-	<property name="orderTransJson" value="${appEnv.orderTransJson}"></property>
-	
-	<property name="depositeAliNotifyUrl" value="${appEnv.deposite.depositeAliNotifyUrl}"></property>
-	<property name="depositeWechatNotifyUrl" value="${wechat.deposite.notifyUrl}"></property>
-	<property name="ipAdress" value="${ip.address}"></property>
-	<property name="wechatMchId" value="${wechat.mchId}"></property>
-	<property name="wechatPassword" value="${wechat.keyStore.password}"></property>
-	<property name="wechatPayNotifyUrl" value="${wechat.notifyUrl}"></property>
-	<property name="wechatAppSignedkey" value="${wechat.pay.signKey}"></property>
-	<!-- <property name="keyStoreResource" value="${wechat.keyStore.resource}"></property> -->
-    </bean>
+
+
+
+
+	<bean id="appEnvImpl" class="cn.com.didi.thirdExt.produce.impl.AppEnvImpl"
+		init-method="init">
+		<property name="appEnviroment" ref="cacheEnvironment"></property>
+		<property name="orderTransJson" value="${appEnv.orderTransJson}"></property>
+
+		<property name="depositeAliNotifyUrl" value="${appEnv.deposite.depositeAliNotifyUrl}"></property>
+		<property name="depositeWechatNotifyUrl" value="${wechat.deposite.notifyUrl}"></property>
+		<property name="ipAdress" value="${ip.address}"></property>
+		<property name="wechatMchId" value="${wechat.mchId}"></property>
+		<property name="wechatPassword" value="${wechat.keyStore.password}"></property>
+		<property name="wechatPayNotifyUrl" value="${wechat.notifyUrl}"></property>
+		<property name="wechatAppSignedkey" value="${wechat.pay.signKey}"></property>
+		<property name="mfxfSlsId" value="${appEnv.mfxfSlsId}"></property>
+		<property name="keyStoreResource"
+			value="${wechat.keyStore.resource:classpath:apiclient_cert.p12}"></property>
+		<property name="ryAppKey" value="${appEnv.ryAppKey}"></property>
+		<property name="ryAppSecret" value="${appEnv.ryAppSecret}"></property>
+		<property name="ryBAppKey" value="${appEnv.ryBAppKey}"></property>
+		<property name="ryBAppSecret" value="${appEnv.ryBAppSecret}"></property>
+	</bean>
 </beans>

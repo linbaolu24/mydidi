@@ -1,5 +1,6 @@
 package cn.com.didi.order.trade.service;
 
+import java.util.Date;
 import java.util.List;
 
 import cn.com.didi.domain.util.PayAccountEnum;
@@ -68,5 +69,10 @@ public interface IAccountAssetsService {
 	 */
 	public DrawInfoDto drawInfo(Long accountId);
 	public Long getSystemAccount();
+	/**
+	 * @param time
+	 * @return
+	 */
+	public Date getMaxDrawEndTime(Date time);
 	
 }

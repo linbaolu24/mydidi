@@ -59,7 +59,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 
 		@Override
 		public boolean filter(Field obj) {
-			return Modifier.isStatic(obj.getModifiers())&&!signMap.containsKey(obj.getName());
+			return Modifier.isStatic(obj.getModifiers())&&!signMap.containsKey(obj.getName());//签名过滤
 		}
 	};
 	protected IConverter<String, String> convert=new IConverter<String, String>() {
@@ -77,6 +77,9 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		}
 	};
 	
+	/**
+	 * 用于app支付的命名转换
+	 */
 	protected IConverter<String, String> payConvert=new IConverter<String, String>() {
 		
 		@Override
@@ -97,11 +100,12 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	{
 		payMap=new HashMap<>();
 		payMap.put("amount", "total_fee");
-		
+		payMap.put("partner_trade_no", "out_trade_no");
+
 		transMap=new HashMap<>();
 		transMap.put("appid", "mch_appid");
 		transMap.put("mch_id","mchid");
-		signMap.put("mch_appid", "Y");
+		//signMap.put("mch_appid", "Y");
 		signMap.put("cost", "Y");
 		signMap.put("sign", "Y");
 		signMap.put("source", "Y");
@@ -109,7 +113,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	@Override
 	public IResult<WechatPayCustomerReturnVo> transferAppPay(WechatPayCustomerReqVo reqVo) {
 		try {
-			reqVo.setTrade_type("APP");
+			
 			return transferInternal(reqVo, appEnv.getWechatAppPayURI(),payConvert);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| IntrospectionException e) {
@@ -120,8 +124,16 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TYXD_PARSE_RESPONSE_ERROR);
 		}
 	}
+	@Override
+	public String getAppPaySign(WechatPayCustomerReqVo req, String signKey,String charset) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException {
+		//req.setTrade_type("JSAPI");
+		//req.setAppid("wxe29a2f519cf39295");
+		//req.setTrade_type("APP");
+		//req.setAppid("wxf0f6836240fdaf3e");
+		return SignatureUtils.getPaySign(req, signKey, charset, field, payConvert);
+	}
 	protected IResult<WechatPayCustomerReturnVo> transferInternal(WechatPayCustomerReqVo reqVo,URI url,IConverter<String, String> nameConvert) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, IOException, DocumentException{
-		LOGGER.debug("微信交易请求对象{}",reqVo);
+		LOGGER.debug("微信交易请求对象{},url:{}",reqVo,url);
 		String str = ABeanUtils.transBean2Xml(reqVo,nameConvert);
 		LOGGER.debug("微信交易请求对象{},报文{}",reqVo,str);
 		WechatStringHttpHandler handler=new WechatStringHttpHandler(str,url);
@@ -212,7 +224,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	@Override
 	public boolean verifySign(WechatPayNotifyReturnVO vo) {
 		try {
-			return SignatureUtils.verifySign(vo, appEnv.getWechatAppSignedkey(), appEnv.getWechatCharSet(), vo.getSign(), field);
+			return SignatureUtils.verifySign(vo, appEnv.getWechatAppSignedkey(), appEnv.getWechatCharSet(), vo.getSign(), field,null);
 		} catch (IllegalArgumentException | IllegalAccessException | UnsupportedEncodingException e) {
 			LOGGER.error(e.getMessage(),e);
 			return false;
@@ -282,4 +294,26 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		}
 
 	}
+	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException, InvocationTargetException, IntrospectionException {
+		WechatTransferServiceImpl impl=new WechatTransferServiceImpl();
+		/**appid=wxe29a2f519cf39295&body=嘀嘀服务-年费&mch_id=1482609172
+		 * &nonce_str=32768&notify_url=https://118.178.226.138/api/app/trade/deposit/wechatAsnyNotify
+		 * &out_trade_no=98&spbill_create_ip=115.238.29.228&total_fee=1&trade_type=JSAPI&key=a4IZm4bhhUw3qAxcwVZjaokJlNuVlPbc*/
+		WechatPayCustomerReqVo reqVo=new WechatPayCustomerReqVo();
+		reqVo.setAmount(1);
+		reqVo.setAppid("wxf0f6836240fdaf3e");
+		reqVo.setBody("嘀嘀服务-年费");
+		reqVo.setMch_id("1480906112");
+		reqVo.setNonce_str("32768");
+		reqVo.setNotify_url("https://118.178.226.138/api/app/trade/deposit/wechatAsnyNotify");
+		reqVo.setPartner_trade_no("101");
+		reqVo.setSpbill_create_ip("115.238.29.228");
+		reqVo.setTrade_type("APP");
+		//reqVo.setOpenid("odRaHwaX8GWHMFJcMXA_ehA-l6ac");
+		reqVo.setSign(impl.getAppPaySign(reqVo, "a4IZm4bhhUw3qAxcwVZjaokJlNuVlPbc", "utf-8"));
+
+		System.out.println(ABeanUtils.transBean2Xml(reqVo, impl.payConvert));
+		//<xml><total_fee>1</total_fee><appid>wxf0f6836240fdaf3e</appid><body>&#22016;&#22016;&#26381;&#21153;-&#24180;&#36153;</body><mch_id>1480906112</mch_id><nonce_str>32768</nonce_str><notify_url>https://118.178.226.138/api/app/trade/deposit/wechatAsnyNotify</notify_url><out_trade_no>101</out_trade_no><sign>15710892FB57C79F8CFF152819D9EE8F</sign><spbill_create_ip>115.238.29.228</spbill_create_ip><trade_type>APP</trade_type></xml>
+	}
+	
 }

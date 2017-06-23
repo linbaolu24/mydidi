@@ -113,7 +113,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.didi.user.users.domain.VipDto" >
-    insert into t_vip (account_Id, sls_id, cname, 
+    insert ignore into t_vip (account_Id, sls_id, cname, 
       profile_photo, bpn, state, 
       role, business_category, create_time, 
       update_time, phone, pat, 
@@ -125,7 +125,7 @@
       #{referee,jdbcType=VARCHAR}, #{dealId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.didi.user.users.domain.VipDto" >
-    insert into t_vip
+    insert ignore into t_vip
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="accountId != null" >
         account_Id,

@@ -43,4 +43,8 @@ public class EnvConstants {
 	 * 是否可以发送消息
 	 */
 	public static final String CAN_SEND_SMS="10000009";
+	/**
+	 * 是否可以刷新用户linkid
+	 */
+	public static final String CAN_REFLASH_USER_LINKED="10000010";
 }

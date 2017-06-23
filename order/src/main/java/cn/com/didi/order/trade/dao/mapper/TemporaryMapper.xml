@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.didi.order.trade.dao.mapper.TemporaryMapper" >
+  <update id="updateVipState">
+	 update t_vip
+    set 
+      state = #{state,jdbcType=CHAR},
+      create_time = now(),
+      deal_id = #{dealId,jdbcType=BIGINT}
+    where account_Id = #{accountId,jdbcType=BIGINT}
+      and sls_id = #{slsId,jdbcType=INTEGER}
+   </update>
+</mapper>

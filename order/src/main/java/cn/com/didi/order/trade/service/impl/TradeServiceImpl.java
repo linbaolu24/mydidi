@@ -144,6 +144,8 @@ public class TradeServiceImpl implements ITradeService {
 			LOGGER.debug("获取锁{},结果{}", lockName, locked);
 			if (locked) {
 				drawInternal(pay);
+			}else{
+				throw new MessageObjectException(OrderMessageConstans.DEAL_GET_USER_LOCK_FAIL);
 			}
 		} finally {
 			if (lock != null&&locked) {
@@ -194,7 +196,9 @@ public class TradeServiceImpl implements ITradeService {
 				locked = lock.lock((long) appEnv.getLockedWait(), TimeUnit.MICROSECONDS);
 				LOGGER.debug("回滚获取锁{},结果{}", lockName, locked);
 				if (locked) {
-					rollBackInternal(pay);
+					 rollBackInternal(pay);
+				}else{
+					throw new MessageObjectException(OrderMessageConstans.DEAL_GET_USER_LOCK_FAIL);
 				}
 			} finally {
 				if (lock != null&&locked) {
@@ -206,11 +210,16 @@ public class TradeServiceImpl implements ITradeService {
 				}
 			}
 		} else {
-			rollBackInternal(pay);
+			 rollBackInternal(pay);
 		}
 	}
-	public void rollBackInternal(DealDto pay){
-		tradeInfoService.rollBack(pay);
+	public int rollBackInternal(DealDto pay){
+
+		int count= tradeInfoService.rollBack(pay);
+		if(count<=0){
+			throw new MessageObjectException(OrderMessageConstans.DEAL_STATE_CHANGE);
+		}
+		return count;
 	}
 	@Override
 	public int auditing(DealDto dealId) {

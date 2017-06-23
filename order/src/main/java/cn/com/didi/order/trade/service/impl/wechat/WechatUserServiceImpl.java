@@ -55,7 +55,7 @@ public class WechatUserServiceImpl implements IWechatUserService {
 	protected UserWechatDto saveInternal(Long accountId, WechatUserInfo info, String appid, WechatEnum type) {
 		UserWechatDto dto = infoToUserWechatDto(null, info);
 		userWechatDtoMapper.insertSelective(dto);
-		UserWechatOpenIdDto openId = infoToUserWechatOpenId(null, info, appid, type);
+		UserWechatOpenIdDto openId = infoToUserWechatOpenId(accountId, info, appid, type);
 		if (openId != null) {
 			myUserWechatOpenIdDtoMapper.insertSelective(openId);
 		}

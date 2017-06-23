@@ -49,12 +49,24 @@ public abstract class MessageConstans {
 	 */
 	public static final Message USER_STATE_NOT_VALID=newMessage(CODE_USER_STATE_NOT_VALID);
 	
+	/**
+	 * 创建融云token异常
+	 */
+	public static final Message USER_CREATE_ROY_TOKEN_ERROR=newMessage(CODE_USER_CREATE_ROY_TOKEN_ERROR);//="5001000012";
+	
+	
+	
+	
 	/**未付款不能升级为VIP*/
 	public static final Message VIP_NOT_PAY=newMessage(CODE_VIP_NOT_PAY);
 	/**
 	 * 支付未到账不能升级为VIP
 	 */
 	public static final Message VIP_PAY_NOT_ARRIVE=newMessage(CODE_VIP_PAY_NOT_ARRIVE);
+	/**
+	 * 会员已存在
+	 */
+	public static final Message VIP_EXIST_VALID_VIP=newMessage(CODE_VIP_EXIST_VALID_VIP);
 	/**
 	 * @param code
 	 * @return

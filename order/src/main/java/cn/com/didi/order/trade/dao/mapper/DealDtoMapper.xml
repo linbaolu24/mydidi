@@ -586,7 +586,7 @@
   <select id="selectDraws" resultMap="BaseListResultMap"> 
   select
     deal_id, state, deal_type,  amount, category, create_time, 
-   cment,remain,ext1 as cname from deal
+   cment,remain,ext1 as cname ,cause from deal
     <where>
     category='1'
     <if test="time.startTime != null">and create_time&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
@@ -620,4 +620,96 @@
 			separator=",">  #{item,jdbcType=CHAR}  </foreach>
 	</if>
    </update>
+   
+   
+   
+   <update id="updateByPrimaryKeySelectiveAndSourceState" parameterType="cn.com.didi.order.trade.domain.DealDto" >
+    update deal
+    <set >
+      <if test="state != null" >
+        state = #{state,jdbcType=CHAR},
+      </if>
+      <if test="cause != null" >
+        cause = #{cause,jdbcType=VARCHAR},
+      </if>
+      <if test="dealType != null" >
+        deal_type = #{dealType,jdbcType=CHAR},
+      </if>
+      <if test="sat != null" >
+        sat = #{sat,jdbcType=VARCHAR},
+      </if>
+      <if test="sa != null" >
+        sa = #{sa,jdbcType=VARCHAR},
+      </if>
+      <if test="dat != null" >
+        dat = #{dat,jdbcType=VARCHAR},
+      </if>
+      <if test="da != null" >
+        da = #{da,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=INTEGER},
+      </if>
+      <if test="category != null" >
+        category = #{category,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cment != null" >
+        cment = #{cment,jdbcType=VARCHAR},
+      </if>
+      <if test="remain != null" >
+        remain = #{remain,jdbcType=BIGINT},
+      </if>
+      <if test="sai != null" >
+        sai = #{sai,jdbcType=BIGINT},
+      </if>
+      <if test="dai != null" >
+        dai = #{dai,jdbcType=BIGINT},
+      </if>
+      <if test="commission != null" >
+        commission = #{commission,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="tradeId != null" >
+        trade_id = #{tradeId,jdbcType=VARCHAR},
+      </if>
+      <if test="poundage != null" >
+        poundage = #{poundage,jdbcType=INTEGER},
+      </if>
+      <if test="ext1 != null" >
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="specialType != null" >
+        special_type = #{specialType,jdbcType=CHAR},
+      </if>
+      <if test="tradeinfo != null" >
+        tradeInfo = #{tradeinfo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where deal_id = #{dealId,jdbcType=BIGINT} and state = #{sourceState,jdbcType=CHAR},
+  </update>
+   
+   <resultMap id="BaseListResultMap_Stat" type="cn.com.didi.order.trade.domain.DealStatDto" >
+    <result column="amount" property="amount" jdbcType="BIGINT" />
+    <result column="category" property="category" jdbcType="CHAR" />
+    <result column="day_time" property="dayTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+   
+   <select id="countDai" resultMap="BaseListResultMap_Stat"> 
+    select amount,category, day_time from 
+     (select amount,category, DATE_FORMAT(create_time,'%Y-%m-%d') 
+    as day_time from deal where state ='1' and dai=#{dai,jdbcType=BIGINT} and category in ('0','1') 
+    and create_time&lt;#{endTime,jdbcType=TIMESTAMP}  ) 
+    tt group by tt.category,tt.day_time
+  </select>
 </mapper>

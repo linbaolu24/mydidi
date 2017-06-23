@@ -31,6 +31,11 @@ public class AppEnvImpl implements IAppEnv {
 	private String wechatPassword;
 	private Resource keyStoreResource;
 	private String wechatAppSignedkey;
+	private Integer mfxfSlsId;
+	private String ryAppSecret;
+	public String ryAppKey;
+	private String ryBAppSecret;
+	private String ryBAppKey;
 	protected URI wechatTransFer;
 	{
 		try {
@@ -115,7 +120,11 @@ public class AppEnvImpl implements IAppEnv {
 	}
 	@Override
 	public Integer getMfxfSlsId() {
-		return Integer.parseInt(appEnviroment.getProperty(EnvConstants.MRMF_SLS_ID));
+		if(mfxfSlsId!=null){
+			return mfxfSlsId;
+		}
+		mfxfSlsId= Integer.parseInt(appEnviroment.getProperty(EnvConstants.MRMF_SLS_ID));
+		return mfxfSlsId;
 	}
 	@Override
 	public List<AdDescDto> listMrmfAds() {
@@ -262,6 +271,49 @@ public class AppEnvImpl implements IAppEnv {
 
 	public void setWechatAppSignedkey(String wechatAppSignedkey) {
 		this.wechatAppSignedkey = wechatAppSignedkey;
+	}
+
+	public void setMfxfSlsId(Integer mrmfSlsId) {
+		this.mfxfSlsId = mrmfSlsId;
+	}
+
+
+	@Override
+	public boolean canReflashUserLinked() {
+		String value=appEnviroment.getProperty(EnvConstants.CAN_REFLASH_USER_LINKED);
+		return StringUtils.isEmpty(value)||"Y".equalsIgnoreCase(value);
+	}
+
+	public String getRyAppSecret() {
+		return ryAppSecret;
+	}
+
+	public void setRyAppSecret(String ryAppSecret) {
+		this.ryAppSecret = ryAppSecret;
+	}
+
+	public String getRyAppKey() {
+		return ryAppKey;
+	}
+
+	public void setRyAppKey(String ryAppKey) {
+		this.ryAppKey = ryAppKey;
+	}
+
+	public String getRyBAppSecret() {
+		return ryBAppSecret;
+	}
+
+	public void setRyBAppSecret(String ryBAppSecret) {
+		this.ryBAppSecret = ryBAppSecret;
+	}
+
+	public String getRyBAppKey() {
+		return ryBAppKey;
+	}
+
+	public void setRyBAppKey(String ryBAppKey) {
+		this.ryBAppKey = ryBAppKey;
 	}
 	
 

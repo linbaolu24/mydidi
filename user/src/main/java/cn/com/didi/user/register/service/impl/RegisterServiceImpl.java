@@ -24,7 +24,9 @@ import cn.com.didi.user.register.domain.RegisterDto;
 import cn.com.didi.user.register.service.IRegisterService;
 import cn.com.didi.user.register.service.ISendVcService;
 import cn.com.didi.user.users.domain.UserDto;
+import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.service.IUserService;
+import cn.com.didi.user.users.service.IUserThirdAccountService;
 import cn.com.didi.user.util.MessageConstans;
 
 @Service
@@ -38,7 +40,8 @@ public class RegisterServiceImpl implements IRegisterService {
 	protected IUserService userService;
 	@Resource
 	protected IEnvironment didEnvironment;
-
+	@Resource
+	protected IUserThirdAccountService thirdAccountService;
 	@Override
 	public Long sendVc(String phone) {
 		PhoneVcDtoExample example = new PhoneVcDtoExample();
@@ -140,13 +143,14 @@ public class RegisterServiceImpl implements IRegisterService {
 		if (userDto != null) {
 			throw new MessageObjectException(MessageConstans.USER_USER__EXISTS);// 用户已存在
 		}
+		UserLinkIdDto linked=thirdAccountService.generatorUserLinkAndThrow(dto.getPhone(), dto.getRole());
 		UserDto users = dto.toUserDto(State.VALID.getState(), new Date());
 		try{
 			updateState(State.UNVALID.getState(),dto.getVcId());
 		}catch(Exception e){
 			LOGGER.error(""+e.getMessage(),e);
 		}
-		userService.addUser(users);
+		userService.addUser(users,linked!=null?linked:new UserLinkIdDto());
 		return users.getAccountId();
 	}
 

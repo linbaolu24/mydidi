@@ -1,5 +1,6 @@
 package cn.com.didi.thirdExt.http;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,8 +13,10 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +30,8 @@ public class FormHttpHandler implements IHttpHandler {
 	private List<? extends NameValuePair> pair;
 	private String charset = Charsets.UTF_8.name();
 	private HttpResponse reponse;
+	private String result;
+	private Exception e;
 	public boolean preForRequest(HttpEntityEnclosingRequestBase post) {
 		if (MapUtils.isNotEmpty(headerMap)) {
 			Set<Map.Entry<String, String>> set = headerMap.entrySet();
@@ -46,8 +51,12 @@ public class FormHttpHandler implements IHttpHandler {
 			post.setURI(new URI(url));
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.error(e.getMessage(), e);
+			this.e=e;
+			return true;
 		} catch (URISyntaxException e) {
 			LOGGER.error(e.getMessage(), e);
+			this.e=e;
+			return true;
 		}
 		return false;
 
@@ -55,6 +64,11 @@ public class FormHttpHandler implements IHttpHandler {
 
 	public void forResponse(HttpResponse post) {
 		this.reponse=post;
+		try {
+			result = EntityUtils.toString(post.getEntity(), charset);
+		} catch (ParseException | IOException e) {
+			this.e=e;
+		}
 	}
 
 	public Map<String, String> getHeaderMap() {
@@ -93,5 +107,18 @@ public class FormHttpHandler implements IHttpHandler {
 		return reponse;
 	}
 
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
+	}
+	public String getResultAndThrow() throws Exception {
+		if(e!=null){
+			throw e;
+		}
+		return result;
+	}
 
 }

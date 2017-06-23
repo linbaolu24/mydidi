@@ -84,10 +84,22 @@ public class WechatDealController extends AbstractDealController {
 		}
 		return ResultFactory.error(result);
 	}
-	@RequestMapping(value="app/trade/pay/wechatPay",method = RequestMethod.POST)
+	@RequestMapping(value="/app/trade/pay/wechatPay",method = RequestMethod.POST)
 	public IResult wechatPay(@RequestBody AliPayJAO map, HttpServletRequest request){
 		Long accountId = resolver.resolve(request);
 		IResult<WechatPayContext> result = wechatTradeService.createPayRequest(accountId, map.getType(), map.getObj());
+		if (result.success()) {
+			WechatPayContext returnVo = result.getData();
+			Map maps=toMaps(returnVo);
+			return ResultFactory.success(maps);
+		}
+		return ResultFactory.error(result);
+	}
+	
+	@RequestMapping(value="/app/trade/pay/testwechatPay",method = {RequestMethod.POST, RequestMethod.GET})
+	public IResult wechatPay(HttpServletRequest request){
+		Long accountId = 2L;
+		IResult<WechatPayContext> result = wechatTradeService.createPayRequest(accountId, "deposit", null);
 		if (result.success()) {
 			WechatPayContext returnVo = result.getData();
 			Map maps=toMaps(returnVo);
@@ -106,6 +118,7 @@ public class WechatDealController extends AbstractDealController {
 		resmap.put(DomainConstatns.TIMESTAMP,returnVo.getTimestamp());
 		resmap.put(DomainConstatns.SIGN,returnVo.getSign());
 		resmap.put(DomainConstatns.NONCESTR,returnVo.getNoncestr());
+		LOGGER.debug("返回Map={}",resmap);
 		return resmap;
 	}
 

@@ -3,13 +3,14 @@ package cn.com.didi.order.trade.service;
 import java.util.List;
 
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.select.IPageBound;
 import cn.com.didi.core.tx.TranscationalCallBack;
 import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.query.TimeInterval;
-import cn.com.didi.domain.util.DealEnum;
 import cn.com.didi.order.trade.domain.DealDrawListDto;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.DealListDto;
+import cn.com.didi.order.trade.domain.DealStatDto;
 
 /**
  * @author xlm
@@ -68,7 +69,7 @@ public interface ITradeInfoService {
 	/**
 	 * @param deal
 	 */
-	public void rollBack(DealDto deal);
+	public int rollBack(DealDto deal);
 	/**
 	 * @param pay
 	 */
@@ -81,4 +82,10 @@ public interface ITradeInfoService {
 	 * @return
 	 */
 	public int updateTradeState(Long dealId,String dest,String cat,String... source);
+	/**
+	 * 对商户进行分析
+	 * @param accountId
+	 * @return
+	 */
+	public List<DealStatDto> statBusiness(Long accountId,IPageBound pageBounds);
 }

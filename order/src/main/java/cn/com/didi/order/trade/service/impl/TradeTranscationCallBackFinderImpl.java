@@ -9,11 +9,13 @@ import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.domains.WechatPayCustomerReqVo;
 import cn.com.didi.domain.util.DealEnum;
 import cn.com.didi.domain.util.SpecialTypeEnum;
+import cn.com.didi.domain.util.State;
 import cn.com.didi.domain.util.TradeCategory;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.DepositDto;
 import cn.com.didi.order.trade.service.IDepositService;
+import cn.com.didi.order.trade.service.ISimpleVipService;
 import cn.com.didi.order.trade.service.ITradeTranscationCallBack;
 import cn.com.didi.order.trade.service.ITradeTranscationCallBackFinder;
 import cn.com.didi.order.trade.util.AliPayBuilder;
@@ -29,6 +31,8 @@ public class TradeTranscationCallBackFinderImpl implements ITradeTranscationCall
 	protected IDepositService depositService;
 	@Resource
 	protected IAppEnv appEnv;
+	@Resource
+	protected ISimpleVipService simpleVipService;
 	@Override
 	public ITradeTranscationCallBack<DealDto> findCreateTranscationalCallBack(Long accountId,String type, String key) {
 		return new DepositeTranscationalCallBack();
@@ -84,6 +88,7 @@ public class TradeTranscationCallBackFinderImpl implements ITradeTranscationCall
 		public void invoke(PayResultDto pay) {
 			DealDto deal=pay.getDeal();
 			depositService.updateTradeState(deal.getOrderId(), DealEnum.FINISH.getCode());
+			simpleVipService.updateState(deal.getSai(), appEnv.getMfxfSlsId(), deal.getDealId(), State.VALID);
 		}
 	
 	}

@@ -15,7 +15,6 @@ import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.ResultExt;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.order.trade.domain.DealListDto;
-import cn.com.didi.order.trade.domain.DepositDto;
 import cn.com.didi.order.trade.service.IDepositService;
 import cn.com.didi.order.trade.service.ITradeInfoService;
 import cn.com.didi.order.trade.service.ITradeService;

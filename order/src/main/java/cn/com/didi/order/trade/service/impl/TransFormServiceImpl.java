@@ -42,7 +42,7 @@ public class TransFormServiceImpl implements ITransFormService {
 	private int tradeInfoLength=1000;
 
 	@Override
-	public void audit(Long dealId, DealEnum deal) {
+	public void audit(Long dealId, DealEnum deal,String cause) {
 		DealDto dto = tradeInfoService.selectDeal(dealId);
 		if (dto == null) {
 			throw new IllegalArgumentException("提现记录不存在。");
@@ -50,6 +50,7 @@ public class TransFormServiceImpl implements ITransFormService {
 		if(!TradeCategory.OUT.codeEqual(dto.getCategory())){
 			throw new IllegalArgumentException("非提现记录不能审核。");
 		}
+		dto.setCause(cause);
 		if (DealEnum.NOT_PASSING.equals(deal)) {
 			rollBack(dto);
 		} else {
@@ -97,6 +98,7 @@ public class TransFormServiceImpl implements ITransFormService {
 					aliSubMessage);
 		}
 		DealDto dealDto = generator(dto.getDealId(), response.getOrder_id(), response.getBody());
+		dealDto.setCause(dto.getCause());
 		try {
 			tradeService.auditing(dealDto);
 		} catch (Exception e) {
@@ -113,6 +115,7 @@ public class TransFormServiceImpl implements ITransFormService {
 		if (!StringUtils.isEmpty(tradeInfo)) {
 			dto.setTradeinfo(tradeInfo.substring(Math.min(tradeInfo.length(), tradeInfoLength)));
 		}
+		dto.setState(DealEnum.FINISH.getCode());
 		return dto;
 	}
 

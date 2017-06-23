@@ -1,5 +1,7 @@
 package cn.com.didi.order.orders.util;
 
+import java.util.Date;
+
 import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.util.State;
 import cn.com.didi.order.orders.domain.OrderDto;
@@ -28,5 +30,6 @@ public class OrderUtils {
 		notifyDto.setMerchantAccountId(dto.getMerchantAccountId());
 		notifyDto.setOrderId(dto.getOrderId());
 		notifyDto.setValidFlag(State.VALID.getState());
+		notifyDto.setCreateTime(new Date());
 	}
 }

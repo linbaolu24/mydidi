@@ -39,6 +39,7 @@ import cn.com.didi.user.users.domain.UserDtoExample;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.domain.UserLinkIdDtoExample;
 import cn.com.didi.user.users.service.IUserService;
+import cn.com.didi.user.users.service.IUserThirdAccountService;
 import cn.com.didi.user.util.MessageConstans;
 
 @Service
@@ -58,6 +59,8 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 	protected ISendVcService sendVcService;
 	@Resource
 	protected IAppEnv appEnv;
+	@Resource
+	protected IUserThirdAccountService userThirdAccountService;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -79,7 +82,7 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		if (userDto == null) {
 			return;
 		}
-		codePassword(userDto);
+		/*codePassword(userDto);
 		if(StringUtils.isEmpty(userDto.getBusinessCategory())){
 			userDto.setBusinessCategory(BusinessCategory.SELF.getCode());
 		}
@@ -89,8 +92,39 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		linked.setRole(userDto.getRole());
 		linked.setBusinessCategory(userDto.getBusinessCategory());
 		linked.setExt1(userDto.getUserName());
-		userLinkIdDtoMapper.insertSelective(linked);
+		userLinkIdDtoMapper.insertSelective(linked);*/
+		addUser(userDto, new UserLinkIdDto());
+	}
+	@Override
+	public void addUser(UserDto userDto, boolean verify) {
+		UserLinkIdDto linked=userThirdAccountService.generatorUserLinkAndThrow(userDto.getUserName(), userDto.getRole());
+		addUser(userDto,linked==null?new UserLinkIdDto():linked ,verify);
 		
+	}
+	public void addUser(UserDto userDto,UserLinkIdDto userLinked,boolean verify){
+		if(verify&&exists(userDto.getUserName(), userDto.getRole())){
+			throw new MessageObjectException(MessageConstans.USER_USER__EXISTS);
+		}
+		addUser(userDto,userLinked);
+	}
+	
+	
+	@Override
+	public void addUser(UserDto userDto, UserLinkIdDto linked) {
+		if (userDto == null) {
+			return;
+		}
+		codePassword(userDto);
+		if(StringUtils.isEmpty(userDto.getBusinessCategory())){
+			userDto.setBusinessCategory(BusinessCategory.SELF.getCode());
+		}
+		userDtoMapper.insertSelective(userDto);
+		//UserLinkIdDto linked=new UserLinkIdDto();
+		linked.setAccountId(userDto.getAccountId());
+		linked.setRole(userDto.getRole());
+		linked.setBusinessCategory(userDto.getBusinessCategory());
+		linked.setExt1(userDto.getUserName());
+		userLinkIdDtoMapper.insertSelective(linked);
 	}
 
 	protected void codePassword(UserDto userDto) {
@@ -314,14 +348,7 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		return user.getBpn();
 	}
 
-	@Override
-	public void addUser(UserDto userDto, boolean verify) {
-		if(verify&&exists(userDto.getUserName(), userDto.getRole())){
-			throw new MessageObjectException(MessageConstans.USER_USER__EXISTS);
-		}
-		addUser(userDto);
-		
-	}
+
 
 	@Override
 	public void updateUserState(List<UserDto> lists) {
@@ -389,6 +416,39 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 
 		return array.toString();
 	}
+	
+	@Override
+	public String reflashUserLinkId(String role) {
+		if (!appEnv.canReflashUserLinked()) {
+			throw new IllegalArgumentException("不允许更新token");
+		}
+		List<UserDto> lists = selectUsers(role);
+		if (!CollectionUtils.isEmpty(lists)) {
+			ArrayList<String> array = new ArrayList<>();
+			for (UserDto one : lists) {
+				try {
+					UserLinkIdDto dto = userThirdAccountService.generatorUserLinkAndThrow(one.getUserName(),
+							one.getRole());
+					if (dto != null) {
+						dto.setAccountId(one.getAccountId());
+						userLinkIdDtoMapper.updateByPrimaryKeySelective(dto);
+					}
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(), e);
+					array.add(one.getAccountId().toString());
+				}
+			}
+			return array.toString();
+		}
+		return null;
+	}
+	public List<UserDto> selectUsers(String role){
+		UserDtoExample example=new UserDtoExample();
+		UserDtoExample.Criteria cri=example.createCriteria();
+		cri.andRoleEqualTo(role);
+		return userDtoMapper.selectByExample(example);
+		
+	}
 
 	@Override
 	public void updateProfilePhoto(Long accountId, String pp) {
@@ -429,6 +489,10 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		userDtoMapper.updateByPrimaryKeySelective(dto);
 		
 	}
+
+	
+
+
 
 
 	

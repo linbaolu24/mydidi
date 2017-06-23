@@ -16,6 +16,7 @@ import cn.com.didi.app.deal.domain.DrawInfoWrapperJAO;
 import cn.com.didi.app.deal.domain.DrawJAO;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
+import cn.com.didi.core.select.impl.SimplePageBound;
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.PayAccountEnum;
@@ -49,6 +50,11 @@ public class AppDealController extends AbstractDealController{
 			drawInfo=new DrawInfoDto();
 		}
 		return ResultFactory.success(new DrawInfoWrapperJAO(drawInfo, linkedIdDto));
+	}
+	@RequestMapping(value = "/app/b/trade/stat", method = RequestMethod.POST)
+	public IResult dealStat(@RequestBody SimplePageBound pageBounds,HttpServletRequest request){
+		Long accountId = resolver.resolve(request);
+		return ResultFactory.success(tradeInfoService.statBusiness(accountId, pageBounds));
 	}
 	@RequestMapping(value = "/app/b/trade/draw", method = RequestMethod.POST)
 	public IResult draw(@RequestBody DrawJAO drawJao,HttpServletRequest request){

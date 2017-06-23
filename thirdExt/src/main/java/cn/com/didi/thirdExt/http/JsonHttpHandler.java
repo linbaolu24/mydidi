@@ -80,6 +80,7 @@ public class JsonHttpHandler<T> implements IHttpHandler {
 		} catch (Exception e) {
 			LOGGER.error(""+e.getMessage(),e);
 			this.e=e;
+			return true;
 		} 
 		return false;
 

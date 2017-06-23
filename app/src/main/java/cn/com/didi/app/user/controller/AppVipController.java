@@ -64,4 +64,19 @@ public class AppVipController {
 		return ResultFactory.success(new VipDescriptionJAO(descDto));
 		
 	}
+	
+	@RequestMapping(value="/app/c/vip/preReg",method=RequestMethod.POST)
+	public IResult preReg(@RequestBody VipDealJAO vip,HttpServletRequest request){
+		vip.setCreateTime(null);
+		Long accountId=resolver.resolve(request);
+		vip.setAccountId(accountId);
+		vip.setSlsId(getDefaultSlsId());
+		vipService.reg(vip, vip.getDealId());
+		VipDescrptionDto descDto=vipService.desc(accountId, vip.getSlsId());
+		if(descDto==null){
+			return ResultFactory.success();
+		}
+		return ResultFactory.success(new VipDescriptionJAO(descDto));
+		
+	}
 }

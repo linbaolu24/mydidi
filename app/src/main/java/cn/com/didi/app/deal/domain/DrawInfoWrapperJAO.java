@@ -32,7 +32,7 @@ public class DrawInfoWrapperJAO {
 			}
 		}
 		if (remain != null) {
-			remain.stream().map(one -> new ReamainingWrapperJAO(one, userLinkedId)).collect(Collectors.toList());
+			remainingList=remain.stream().map(one -> new ReamainingWrapperJAO(one, userLinkedId)).collect(Collectors.toList());
 		}
 	}
 

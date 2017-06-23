@@ -88,6 +88,12 @@ public class DomainMessageConstans {
 	public static final String CODE_USER_STATE_NOT_VALID="5001000011";
 	
 	
+	/**
+	 * 创建融云token异常
+	 */
+	public static final String CODE_USER_CREATE_ROY_TOKEN_ERROR="5001000012";
+	
+	
 	
 	/**
 	 * 格式 500 表示错误 100 表示表示短信错误  0001 表示具体错误
@@ -233,7 +239,11 @@ public class DomainMessageConstans {
 	 */
 	public static final String  CODE_ORDER_NOT_SELF="5003000021";
 	
-	
+	/**
+	 * 
+	 * 订单通知无师傅
+	 */
+	public static final String CODE_ORDER_NOTIFY_DIS_NO_MASTER="5003000022";
 	
 	/*以下位交易*/
 	/**
@@ -248,6 +258,16 @@ public class DomainMessageConstans {
 	 * 账户余额不足不能转账
 	 */
 	public static final String CODE_DEAL_ASSERT_NOT_ENOUGH="5004200003";
+	/**
+	 * 交易状态已发生变化
+	 */
+	public static final String CODE_DEAL_STATE_CHANGE="5004200004";
+	/**
+	 * 获取用户锁失败
+	 */
+	public static final String CODE_DEAL_GET_USER_LOCK_FAIL="5004200005";
+	
+	
 	
 	/**
 	 * 验证阿里签名失败
@@ -329,7 +349,10 @@ public class DomainMessageConstans {
 	 * 支付未到账不能升级为VIP
 	 */
 	public static final String CODE_VIP_PAY_NOT_ARRIVE="5005000002";
-	
+	/**
+	 * 已经是VIP会员
+	 */
+	public static final String CODE_VIP_EXIST_VALID_VIP="5005000003";
 	
 	
 	

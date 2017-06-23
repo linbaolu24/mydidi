@@ -38,6 +38,7 @@ import cn.com.didi.domain.util.CodeNameConstatns;
 import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.domain.util.ServiceState;
 import cn.com.didi.domain.util.SpecialTypeEnum;
+import cn.com.didi.domain.util.State;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderNotifyDto;
@@ -46,7 +47,6 @@ import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.result.IOrderRuslt;
 import cn.com.didi.thirdExt.select.ListPage;
 import cn.com.didi.user.ad.domain.AdDescDto;
-import cn.com.didi.user.ad.domain.AdDto;
 import cn.com.didi.user.item.domain.SlServiceDto;
 import cn.com.didi.user.item.service.IItemService;
 import cn.com.didi.user.system.domain.CodeDictionaryDto;
@@ -196,6 +196,10 @@ public class AppOrderController extends AppBaseOrderController {
 	@RequestMapping(value = "/app/c/order/publish", method = { RequestMethod.POST })
 	public IResult publish(@RequestBody OrderJAO body, HttpServletRequest request) {
 		Long accountId = resolver.resolve(request);
+		UserDto users=userService.selectUser(accountId);
+		if(!State.VALID.getState().equals(users.getState())){
+			throw new IllegalArgumentException("用户已被禁用，不能发布订单。");
+		}
 		OrderDto order = toOrderDto2(body);
 		SlServiceDto sls=itemService.selectSlService(order.getSlsId());
 		popNormal(order, accountId,sls);

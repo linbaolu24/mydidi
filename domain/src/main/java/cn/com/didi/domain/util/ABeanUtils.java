@@ -1,6 +1,7 @@
 package cn.com.didi.domain.util;
 
 import java.beans.BeanInfo;
+import java.beans.Encoder;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -11,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,7 +70,10 @@ public abstract class ABeanUtils {
 		return map;
 	}
 	public static String transBean2Xml(Object obj) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException{
-		return transBean2Xml(obj,null);
+		return transBean2Xml(obj,null,true);
+	}
+	public static String transBean2Xml(Object obj,IConverter<String, String> nameConvert) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException{
+		return transBean2Xml(obj, nameConvert,true);
 	}
 	/**
 	 * bean转xml
@@ -80,7 +85,7 @@ public abstract class ABeanUtils {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static String transBean2Xml(Object obj,IConverter<String, String> nameConvert)
+	public static String transBean2Xml(Object obj,IConverter<String, String> nameConvert,boolean encode)
 			throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		StringBuffer buf = new StringBuffer();
 		if (obj == null) {
@@ -102,7 +107,7 @@ public abstract class ABeanUtils {
 				Object value = getter.invoke(obj);
 				if (value==null)
 					continue;
-				buf.append(startXml(key)).append(xmlCDATA(value)).append(endXml(key));
+				buf.append(startXml(key)).append(xmlCDATA(value,encode)).append(endXml(key));
 			}
 		}
 
@@ -148,9 +153,26 @@ public abstract class ABeanUtils {
 	 * @return
 	 */
 	private static String xmlCDATA(Object value) {
+	/*	if (null == value)
+			value = "";
+		return "<![CDATA[" + value + "]]>";*/
+		return xmlCDATA(value,false);
+	}
+
+	/**
+	 * 设置cdata内容
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private static String xmlCDATA(Object value, boolean encode) {
 		if (null == value)
 			value = "";
-		return "<![CDATA[" + value + "]]>";
+		if (encode) {
+			return StringEscapeUtils.escapeXml(value.toString());
+		} else {
+			return "<![CDATA[" + value + "]]>";
+		}
 	}
 
 	/**

@@ -1,17 +1,21 @@
 package cn.com.didi.order.trade.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
+import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.select.IPageBound;
 import cn.com.didi.core.tx.TranscationalCallBack;
 import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.domains.PayResultDto;
@@ -22,9 +26,11 @@ import cn.com.didi.order.trade.dao.mapper.DealDtoMapper;
 import cn.com.didi.order.trade.domain.DealDrawListDto;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.DealListDto;
+import cn.com.didi.order.trade.domain.DealStatDto;
 import cn.com.didi.order.trade.domain.MerchantDayRemainingDto;
 import cn.com.didi.order.trade.service.IAccountAssetsService;
 import cn.com.didi.order.trade.service.ITradeInfoService;
+import cn.com.didi.order.util.OrderMessageConstans;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.system.service.ICodeTextResolver;
 @Service
@@ -123,6 +129,7 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 	}
 	public IPage<DealListDto> selectDraws(TimeInterval interval){
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
+		interval.setEndTime(accountAssers.getMaxDrawEndTime(interval.getEndTime()));
 		PageList<DealListDto> list = (PageList<DealListDto>) dealDtoMapper.selectDraws(interval, pageBounds);
 		return new MybatisPaginatorPage<>(list);
 	}
@@ -158,15 +165,20 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 
 	@Override
 	public int auditing(DealDto dealId) {
-		// TODO Auto-generated method stub
-		return 0;
+		dealId.setSourceState(DealEnum.PRE_AUDIT.getCode());
+		return dealDtoMapper.updateByPrimaryKeySelectiveAndSourceState(dealId);
 	}
 
 	@Override
 	@Transactional
-	public void rollBack(DealDto deal) {
-		MerchantDayRemainingDto dto=getMerchantDayDto(deal);
-		accountAssers.rollBackMerchantDayRemainingDto(dto, false);
+	public int rollBack(DealDto deal) {
+		int count = dealDtoMapper.updateDealStateAndSourceArray(deal.getDealId(), DealEnum.NOT_PASSING.getCode(),
+				TradeCategory.OUT.getCode(), DealEnum.WAITTING.getCode(), DealEnum.PRE_AUDIT.getCode());
+		if (count > 0) {
+			MerchantDayRemainingDto dto = getMerchantDayDto(deal);
+			accountAssers.rollBackMerchantDayRemainingDto(dto, false);
+		}
+		return count;
 	}
 
 	@Override
@@ -180,7 +192,7 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		MerchantDayRemainingDto mat = getMerchantDayDto(pay);
 		boolean ifCan = accountAssers.decreMerchantDayRemainingIfCan(mat);
 		if (!ifCan) {
-			//TODO 抛出异常
+			throw new MessageObjectException(OrderMessageConstans.DEAL_ACCOUNT_NOT_EQUAL);//余额不足
 		}
 		createTrade(pay, null);
 	}
@@ -204,5 +216,13 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 	@Override
 	public int updateTradeState(Long dealId, String dest,String cat, String... source) {
 		return dealDtoMapper.updateDealStateAndSourceArray(dealId, dest, cat, source);
+	}
+
+	@Override
+	public List<DealStatDto> statBusiness(Long accountId,IPageBound pageBounds) {
+		PageBounds bounds=new PageBounds(pageBounds.getPageIndex(), pageBounds.getPageSize(), false);
+		Date now =new Date();
+		now=DateUtils.truncate(now, Calendar.DAY_OF_MONTH);
+		return dealDtoMapper.countDai(accountId, now, bounds);
 	}
 }

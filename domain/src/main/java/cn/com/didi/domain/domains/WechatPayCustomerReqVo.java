@@ -196,6 +196,15 @@ APP——需传入应用市场上的APP名字-实际商品名称，天天爱消�
 		this.mch_id = mch_id;
 	}
 
+	@Override
+	public String toString() {
+		return "WechatPayCustomerReqVo [appid=" + appid + ", mch_id=" + mch_id + ", device_info=" + device_info
+				+ ", nonce_str=" + nonce_str + ", sign=" + sign + ", partner_trade_no=" + partner_trade_no + ", openid="
+				+ openid + ", check_name=" + check_name + ", re_user_name=" + re_user_name + ", amount=" + amount
+				+ ", desc=" + desc + ", spbill_create_ip=" + spbill_create_ip + ", body=" + body + ", notify_url="
+				+ notify_url + ", trade_type=" + trade_type + "]";
+	}
+
    
 
 }

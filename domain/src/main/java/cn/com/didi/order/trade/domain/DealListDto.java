@@ -45,6 +45,10 @@ public class DealListDto {
 	 */
 	private Integer remain;
 	private String cname;
+	/**
+	 * 
+	 */
+	private String cause;
 
 	public Long getDealId() {
 		return dealId;
@@ -126,5 +130,15 @@ public class DealListDto {
 		}
 		return createTime.getTime()+"T"+dealId;
 	}
-	
+
+	public String getCause() {
+		return cause;
+	}
+
+	public void setCause(String cause) {
+		this.cause = cause;
+	}
+	public String getRemark() {
+		return getCause();
+	}
 }

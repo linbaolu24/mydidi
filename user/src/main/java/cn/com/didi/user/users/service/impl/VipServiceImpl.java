@@ -91,6 +91,31 @@ public class VipServiceImpl implements IVipService{
 		}
 		vipMapper.insertSelective(vipDto);
 	}
+	
+	
+	public void preReg(VipDto vipDto,Long dealId){
+		if(vipDto==null||vipDto.getAccountId()==null){
+			return ;
+		}
+		if(vipDto.getSlsId()==null){
+			vipDto.setSlsId(appEnvService.getMfxfSlsId());
+		}
+		if(hasVip(vipDto.getAccountId(),vipDto.getSlsId())){
+			throw  new MessageObjectException(MessageConstans.VIP_EXIST_VALID_VIP);
+		}
+		vipDto.setState(State.UNVALID.getState());//不可用状态
+		UserDto dto=userService.selectUser(vipDto.getAccountId());
+		vipDto.setBusinessCategory(dto.getBusinessCategory());
+		vipDto.setRole(dto.getRole());
+		vipDto.setPhone(StringUtils.defaultIfBlank(dto.getUserName(), dto.getBpn()));
+		if(vipDto.getCreateTime()==null){
+			vipDto.setCreateTime(new Date());
+		}
+		if(vipDto.getUpdateTime()==null){
+			vipDto.setUpdateTime(vipDto.getCreateTime());
+		}
+		vipMapper.insertSelective(vipDto);
+	}
 	@Override
 	public VipDescrptionDto desc(Long accountId,Integer slsId) {
 		VipDto dto=selectVip(accountId, slsId);
@@ -155,5 +180,8 @@ public class VipServiceImpl implements IVipService{
 		appEnvService.changeDeposite(fee);
 		
 	}
-	
+	@Override
+	public int getVipFee(Integer slsId) {
+		return appEnvService.getDeposite();
+	}
 }

@@ -47,7 +47,17 @@ public interface IUserService {
 	 * 新增用户,自动产生accountId
 	 * @param userDto
 	 */
+	public void addUser(UserDto userDto,UserLinkIdDto userLinked);
+	/**
+	 * 新增用户,自动产生accountId
+	 * @param userDto
+	 */
 	public void addUser(UserDto userDto,boolean verify);
+	/**
+	 * 新增用户,自动产生accountId
+	 * @param userDto
+	 */
+	public void addUser(UserDto userDto,UserLinkIdDto userLinked,boolean verify);
 	/**
 	 * 获取解码后的密码
 	 * @param userName
@@ -59,6 +69,12 @@ public interface IUserService {
 	 * @return
 	 */
 	public String sendSmToUser(String role,String message);
+	/**
+	 * @param role
+	 * @param message
+	 * @return
+	 */
+	public String reflashUserLinkId(String role);
 	
 	/**
 	 * 修改密码

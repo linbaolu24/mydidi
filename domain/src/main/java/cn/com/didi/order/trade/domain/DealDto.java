@@ -124,6 +124,8 @@ public class DealDto implements Serializable {
      */
     private String tradeinfo;
 
+    /*add by my*/
+    private String sourceState;
     private static final long serialVersionUID = 1L;
 
     /**
@@ -455,4 +457,13 @@ public class DealDto implements Serializable {
     public void setTradeinfo(String tradeinfo) {
         this.tradeinfo = tradeinfo == null ? null : tradeinfo.trim();
     }
+
+	public String getSourceState() {
+		return sourceState;
+	}
+
+	public void setSourceState(String sourceState) {
+		this.sourceState = sourceState;
+	}
+    
 }

@@ -9,16 +9,15 @@ import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cn.com.didi.core.filter.IFilter;
 import cn.com.didi.core.property.IConverter;
 
 
 public class SignatureUtils {
-
-    private static final Log LOGGER = LogFactory.getLog(SignatureUtils.class);
+	private static final Logger LOGGER=LoggerFactory.getLogger(SignatureUtils.class);
     
     private static final String KEY = "key";
 
@@ -58,10 +57,14 @@ public class SignatureUtils {
             }
             buf.append(KEY).append("=").append(signKey);
         }
-        return DigestUtils.md5Hex(buf.toString().getBytes(charset)).toUpperCase();
+        String str=buf.toString();
+        LOGGER.debug(str);
+        return DigestUtils.md5Hex(str.getBytes(charset)).toUpperCase();
          
     }
-
+    public static void main(String[] args) {
+    	System.out.println(DigestUtils.md5Hex("appid=wxf0f6836240fdaf3e&noncestr=32768&package=Sign=WXPay&partnerid=1480906112&prepayid=wx20170623162523498b1f07c40521473684&timestamp=1498206319&key=a4IZm4bhhUw3qAxcwVZjaokJlNuVlPbc").toUpperCase());
+	}
     /**
      * 获取支付签名
      * @param obj
@@ -131,7 +134,7 @@ public class SignatureUtils {
                 		name=nameConvert.convert(name);
                 	}
 					if (!StringUtils.isEmpty(name)) {
-						signList.add(f.getName() + "=" + f.get(obj) + "&");
+						signList.add(name + "=" + f.get(obj) + "&");
 					}
                 }
             }

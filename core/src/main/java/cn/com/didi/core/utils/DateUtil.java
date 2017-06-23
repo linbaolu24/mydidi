@@ -57,4 +57,13 @@ public class DateUtil {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		return cal.getTime();
 	}
+	public static Date min(Date one,Date two){
+		if(one==null){
+			return two;
+		}
+		if(two==null){
+			return one;
+		}
+		return one.compareTo(two)<=0?one:two;
+	}
 }

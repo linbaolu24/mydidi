@@ -148,4 +148,21 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public int getLockedWait();
+	
+	/**融云AppSecret
+	 * @return
+	 */
+	public String getRyAppSecret ();
+	/**
+	 * 容云APpKEy
+	 * @return
+	 */
+	public String getRyAppKey ();
+	/**
+	 * @return
+	 */
+	public boolean canReflashUserLinked();
+	public String getRyBAppSecret();
+
+	public String getRyBAppKey();
 }

@@ -8,5 +8,10 @@ import cn.com.didi.domain.util.DealEnum;
  *
  */
 public interface ITransFormService {
-	public void audit(Long dealId,DealEnum deal);
+	/**
+	 * 审核
+	 * @param dealId
+	 * @param deal
+	 */
+	public void audit(Long dealId,DealEnum deal,String cause);
 }

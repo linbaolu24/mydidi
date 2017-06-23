@@ -135,6 +135,11 @@ public class OrderMessageConstans {
 	 */
 	public static final Message  ORDER_NOT_SELF=newMessage(DomainMessageConstans.CODE_ORDER_NOT_SELF);;//"5003000021";
 	
+	/**
+	 * 订单通知无师傅
+	 */
+	public static final Message ORDER_NOTIFY_DIS_NO_MASTER=newMessage(DomainMessageConstans.CODE_ORDER_NOTIFY_DIS_NO_MASTER);
+	
 	
 	/*以下为交易*/
 	/**
@@ -153,7 +158,15 @@ public class OrderMessageConstans {
 	public static final Message DEAL_ASSERT_NOT_ENOUGH= newMessage(DomainMessageConstans.CODE_DEAL_ASSERT_NOT_ENOUGH);
 	
 	
+	/**
+	 * 交易状态已发生变化
+	 */
+	public static final Message DEAL_STATE_CHANGE= newMessage(DomainMessageConstans.CODE_DEAL_STATE_CHANGE);;//"5004200004";
 	
+	/**
+	 * 获取用户锁失败
+	 */
+	public static final Message DEAL_GET_USER_LOCK_FAIL= newMessage(DomainMessageConstans.CODE_DEAL_GET_USER_LOCK_FAIL);;//"5004200004";
 	
 	/**
 	 * 验证阿里签名失败

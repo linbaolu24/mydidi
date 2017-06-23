@@ -16,6 +16,15 @@ public class Http200Hanle implements IHttpHandler {
 		this.warpperHandle = warpperHandle;
 	}
 
+	public Http200Hanle(IHttpHandler warpperHandle) {
+		super();
+		this.warpperHandle = warpperHandle;
+	}
+
+	public Http200Hanle() {
+		super();
+	}
+
 	private IHttpHandler warpperHandle;
 
 	@Override

@@ -19,7 +19,7 @@ public abstract class StringHttpHandler implements IHttpHandler {
 	public boolean preForRequest(HttpEntityEnclosingRequestBase post) {
 		post.setURI(uri);
 		post.setEntity(new StringEntity(request, charset));
-		return true;
+		return false;
 	}
 
 	public void forResponseInternal(HttpResponse post) throws ParseException, IOException {
@@ -50,6 +50,14 @@ public abstract class StringHttpHandler implements IHttpHandler {
 
 	public void setUri(URI uri) {
 		this.uri = uri;
+	}
+
+	public String getCharset() {
+		return charset;
+	}
+
+	public void setCharset(String charset) {
+		this.charset = charset;
 	}
 
 }

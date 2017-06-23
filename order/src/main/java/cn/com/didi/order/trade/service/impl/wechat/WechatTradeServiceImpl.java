@@ -70,7 +70,7 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		public String convert(String source) {
 			String value=mapName.get(source);
 			if(StringUtils.isEmpty(value)){
-				return value;
+				return source;
 			}
 			if("Y".equals(value)){
 				return null;
@@ -79,12 +79,12 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 			
 		}
 	};
-	protected int dived = 1 << 16 - 1;
+	protected int dived = 1 << (31 - 1);
 	protected IFilter<Field> field = new IFilter<Field>() {
 
 		@Override
 		public boolean filter(Field obj) {
-			return !Modifier.isStatic(obj.getModifiers());
+			return Modifier.isStatic(obj.getModifiers());
 		}
 	};
 
@@ -112,8 +112,8 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		context.setPartnerid(vo.getMch_id());
 		context.setPrepayid(data.getPrepay_id());
 		context.setTimestamp(String.valueOf(System.currentTimeMillis()/1000));
-		SignatureUtils.getPaySign(context, appProduct.getWechatAppSignedkey(),
-				appProduct.getWechatCharSet(), field,nameConvert);
+		context.setSign(SignatureUtils.getPaySign(context, appProduct.getWechatAppSignedkey(),
+				appProduct.getWechatCharSet(), field,nameConvert));
 		return context;
 	}
 	protected IResult<WechatPayContext> payNoraml(WechatPayCustomerReqVo vo) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
@@ -137,7 +137,7 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		WechatPayCustomerReqVo requestDto=createNormalPayCustomerReqVo(desc.getCname());
 		requestDto.setAmount(desc.getAmount());
 		requestDto.setPartner_trade_no(String.valueOf(desc.getDealId()));
-		
+		requestDto.setSign(wechatTransferService.getAppPaySign(requestDto, appProduct.getWechatAppSignedkey(), appProduct.getWechatCharSet()));
 		return requestDto;
 	}
 	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(String name) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
@@ -155,8 +155,7 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		requestDto.setNotify_url(appProduct.getWechatPayNotifyUrl());
 		requestDto.setBody(appProduct.getAppName() + "-" +name);
 		requestDto.setTrade_type(appProduct.getWechatTradeType());
-		requestDto.setSign(SignatureUtils.getPaySign(requestDto, appProduct.getWechatAppSignedkey(),
-				appProduct.getWechatCharSet(), field,null));
+		
 		return requestDto;
 	}
 	
@@ -171,7 +170,11 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		tradeService.createTrade(dto, callBack);
 		try {
 			WechatPayCustomerReqVo vo=createNormalPayCustomerReqVo(dto.getCment());
+			vo.setPartner_trade_no(String.valueOf(dto.getDealId()));
+			vo.setAmount(dto.getAmount());
 			callBack.popForWechat(vo);
+			vo.setSign(wechatTransferService.getAppPaySign(vo, appProduct.getWechatAppSignedkey(), appProduct.getWechatCharSet()));
+			
 			return payNoraml(vo);
 		} catch (IllegalArgumentException | IllegalAccessException | UnsupportedEncodingException e) {
 			LOGGER.error(e.getMessage(),e);

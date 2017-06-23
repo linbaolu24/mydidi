@@ -11,6 +11,7 @@ import cn.com.didi.order.trade.domain.DealDrawListDto;
 import cn.com.didi.order.trade.domain.DealDto;
 import cn.com.didi.order.trade.domain.DealDtoExample;
 import cn.com.didi.order.trade.domain.DealListDto;
+import cn.com.didi.order.trade.domain.DealStatDto;
 
 public interface DealDtoMapper {
     int countByExample(DealDtoExample example);
@@ -60,4 +61,15 @@ public interface DealDtoMapper {
     List<DealDrawListDto> selectDrawList(@Param("time") TimeInterval time,RowBounds rows);
     Long countSum(@Param("dai") Long dai,@Param("fromDate") Date fromDate,@Param("cat") String category);
     int updateDealStateAndSourceArray(@Param("dealId") Long dealId, @Param("destState") String dest,@Param("cat") String cat,@Param("sourceState") String... source);
+    /**
+     * @param record
+     * @return
+     */
+    int updateByPrimaryKeySelectiveAndSourceState(DealDto record);
+    /**
+     * @param accountId
+     * @param rowBounds
+     * @return
+     */
+    public List<DealStatDto> countDai(@Param("dai") Long accountId,@Param("endTime") Date endTime,RowBounds rowBounds);
 }

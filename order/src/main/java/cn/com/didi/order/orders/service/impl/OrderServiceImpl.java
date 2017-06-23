@@ -9,14 +9,12 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
-import com.google.protobuf.Internal;
 
 import cn.com.didi.core.filter.IOperationInterceptor;
 import cn.com.didi.core.message.Message;
@@ -237,13 +235,13 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		info.setSourceState(info.getState());;
 		OrderRuslt<Void> orderResult = new OrderRuslt<Void>(info.getOrderId());
-		List<IReciverDto> reciverDtos = search.list(new Point(info.getLat(), info.getLng()), info.getSlsId());
+		List<IReciverDto> reciverDtos = search.list(new Point( info.getLng(),info.getLat()), info.getSlsId());
 		if (CollectionUtils.isEmpty(reciverDtos)) {
 			// todo 没有找到接单人
-			orderResult.setCode(OrderMessageConstans.ORDER_AUTO_DIS_NO_MASTER.getCode());
-			orderResult.setMessage(OrderMessageConstans.ORDER_AUTO_DIS_NO_MASTER.getMessage());
+			orderResult.setCode(OrderMessageConstans.ORDER_NOTIFY_DIS_NO_MASTER.getCode());
+			orderResult.setMessage(OrderMessageConstans.ORDER_NOTIFY_DIS_NO_MASTER.getMessage());
 		}else{
-			int count=orderInfoService.updateOrderState(orderId, OrderState.ORDER_STATE_NOTIFY.getCode(), info.getState(),(Integer) null);
+			int count=orderInfoService.notifyOrder(info, reciverDtos);
 			IOrderRuslt<Void> oResult=orderStateChange(count, info, info.getState());
 			if(oResult!=null){
 				return oResult;

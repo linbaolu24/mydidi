@@ -10,9 +10,11 @@ public interface IVipService {
 	public boolean hasVip(VipDto vip);
 	public VipDescrptionDto desc(Long accountId,Integer slsId);
 	public void reg(VipDto vipDto,Long dealId);
+	public void preReg(VipDto vipDto,Long dealId);
 	public String regInit(Integer slsId);
 	public VipDto getDto(Long accountId,Integer slsId);
 	public IPage<VipDto> listPage(TimeInterval interval);
 	public void updateVip(Long accountId,Integer slsId,String cname,String bpn,String pp);
 	public void setVipFee(Integer slsId,int fee);
+	public int getVipFee(Integer slsId);
 }

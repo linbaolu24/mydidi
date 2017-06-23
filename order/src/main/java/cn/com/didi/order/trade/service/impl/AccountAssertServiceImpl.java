@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.utils.DateUtil;
@@ -61,7 +62,7 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 	/**包含该天*/
 	protected int getMaxDay(){
 		if(LOCKED<=0){
-			return 209001;
+			return 20900101;
 		}
 		return DateUtil.getIntervalYYYYMMDD(LOCKED);
 	}
@@ -158,7 +159,7 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		if (lockedSupport()) {
 			sum = myMerchantDayRemainingDtoMapper.countFrozeRemain(accountId, maxDay);
 		} else {
-			Date fromDate=DateUtil.getInterval(selectLocked);
+			Date fromDate=DateUtil.getInterval(-selectLocked);
 			sum=myDealDtoMapper.countSum(accountId, fromDate, TradeCategory.OUT.getCode());
 		}
 		return sum == null ? 0 : sum;
@@ -183,6 +184,17 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 	@Override
 	public Long getSystemAccount() {
 		return SYSTEM_ACCOUNT_ID;
+	}
+	@Override
+	public Date getMaxDrawEndTime(Date time) {
+		if(lockedSupport()){
+			return time;
+		}
+		Date fromDate=DateUtil.getInterval(-selectLocked);
+		if(time==null){
+			return fromDate;
+		}
+		return DateUtil.min(fromDate, time);
 	}
 
 	
