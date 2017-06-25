@@ -8,12 +8,27 @@ package cn.com.didi.core.tx;
  * @param <T>
  */
 public interface TranscationalCallBack<T> {
-	default void invoeBefore(T t){
-		
+	public static TranscationalCallBack NULL_TRANSCATIONALCALLBACK = new TranscationalCallBack() {
+
+		@Override
+		public void invoke(Object t) {
+
+		}
+
+	};
+
+	default void invoeBefore(T t) {
+
 	}
+
 	public void invoke(T t);
+
 	@Deprecated
-	public default boolean callAfterTranscational(T t){
+	public default boolean callAfterTranscational(T t) {
 		return true;
+	}
+
+	public static <S> TranscationalCallBack<S> nullTranscationalCallBack() {
+		return NULL_TRANSCATIONALCALLBACK;
 	}
 }

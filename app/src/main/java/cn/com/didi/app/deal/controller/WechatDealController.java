@@ -28,7 +28,7 @@ import cn.com.didi.order.trade.service.IWechatTradeService;
 @RestController
 public class WechatDealController extends AbstractDealController {
 	private static final String SUCCESS = "<xml><return_code><![CDATA[SUCCESS]]></return_code> <return_msg><![CDATA[OK]]></return_msg></xml>";
-	private static final String ERROR_START = "<xml><return_code><![CDATA[SUCCESS]]></return_code> <return_msg><![CDATA[";
+	private static final String ERROR_START = "<xml><return_code><![CDATA[ERROR]]></return_code> <return_msg><![CDATA[";
 	private static final String ERROR_END = "]]></return_msg></xml>";
 	private static final Logger LOGGER=LoggerFactory.getLogger(WechatDealController.class);
 	@Resource
@@ -56,19 +56,21 @@ public class WechatDealController extends AbstractDealController {
 	@RequestMapping(value = "/app/trade/{type}/wechatAsnyNotify", method = RequestMethod.POST)
 	public String alipayTypedSdkNotify(@RequestBody String requestStr,@PathVariable(value="type") String type) throws UnsupportedEncodingException {
 		LOGGER.debug("type:{}微信异步通知{}",type,requestStr);
+		String str=SUCCESS;
 		try {
+			
 			IResult<WechatPayNotifyReturnVO> result = wechatTradeService.asynnotify(type,requestStr);
-			if (result.success()) {
-				return SUCCESS;
-			}else{
+			if (!result.success()){
 				LOGGER.error("支付返回错误:code{}, message{}",result.getCode(),result.getMessage());
-				return ERROR_START+result.getMessage()+ERROR_END;
+				str= ERROR_START+result.getMessage()+ERROR_END;
 				
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
-			return ERROR_START+"异常"+ERROR_END;
+			str= ERROR_START+"异常"+ERROR_END;
 		}
+		LOGGER.debug("微信支付返回结果：{}",str);
+		return str;
 	}
 	@RequestMapping(value="/app/c/order/wechatPay",method = RequestMethod.POST)
 	public IResult orderWechatPay(@RequestBody OrderIDJAO map, HttpServletRequest request) {

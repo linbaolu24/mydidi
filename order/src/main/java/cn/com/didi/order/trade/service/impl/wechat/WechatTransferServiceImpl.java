@@ -59,7 +59,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 
 		@Override
 		public boolean filter(Field obj) {
-			return Modifier.isStatic(obj.getModifiers())&&!signMap.containsKey(obj.getName());//签名过滤
+			return Modifier.isStatic(obj.getModifiers())||signMap.containsKey(obj.getName());//签名过滤
 		}
 	};
 	protected IConverter<String, String> convert=new IConverter<String, String>() {

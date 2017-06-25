@@ -1,7 +1,6 @@
 package cn.com.didi.app.user.controller;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -14,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.com.didi.app.user.domain.AccountDomain;
 import cn.com.didi.app.user.domain.MerchantServiceWrapperJAO;
 import cn.com.didi.app.user.domain.MerchantWrapperJAO;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.CrEnum;
-import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.domain.util.Role;
 import cn.com.didi.domain.util.State;
 import cn.com.didi.order.trade.domain.UserWechatDto;
@@ -57,13 +56,12 @@ public class AppMerchantController {
 
 	@RequestMapping(value = "/app/user/enterMerchant", method = { RequestMethod.POST })
 	public IResult enterMerchant(@RequestBody MerchantExtDto merchantExtDto, HttpServletRequest request) {
-		Map obj = (Map) resolver.resolveObject(request);
-		String role = (String) obj.get(DomainConstatns.ROLE);
+		AccountDomain obj = (AccountDomain) resolver.resolveObject(request);
+		String role = (String) obj.getRole();
 		if (!Role.BUSINESS.getCode().equals(role)) {
 			throw new IllegalArgumentException("非商户端不能入驻企业。");
 		}
-		String sAccoutId = String.valueOf(obj.get(DomainConstatns.ACCOUNT_ID));
-		Long accountId = Long.parseLong(sAccoutId);
+		Long accountId =obj.getAccountId();
 		merchantExtDto.setCr(CrEnum.WATTING.getCode());
 		merchantExtDto.setState(State.VALID.getState());
 		merchantExtDto.setBusinessCategory(BusinessCategory.THIRD.getCode());

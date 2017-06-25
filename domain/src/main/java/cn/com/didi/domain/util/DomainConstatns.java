@@ -105,7 +105,7 @@ public class DomainConstatns {
 	
 
 	
-	public static final String LOCK_DRAW_PREFIX="";
+	public static final String LOCK_DRAW_PREFIX="assert_lock";
 	public static final String REASSIGNMENT_FLAG ="reassignmentFlag";
 	
 	

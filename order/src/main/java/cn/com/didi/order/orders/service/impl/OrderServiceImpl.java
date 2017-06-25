@@ -504,6 +504,12 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		}
 		// PayAccountDto
 		// accountDto=tradeService.getAccountDto(dto.getMerchantAccountId());
+		DealDto deal = createDealDto(dto, payEnum,desc);
+		tradeService.createTrade(deal, dealTranscationalCallBack);
+		result = new OrderRuslt<>("", OrderRuslt.SUCCESS_CODE, null, createOrderDealDescDto(deal, dto));
+		return result;
+	}
+	protected DealDto createDealDto(OrderDto dto,PayAccountEnum payEnum,String desc){
 		DealDto deal = new DealDto();
 		deal.setCommission(dto.getCommission());
 		TradeCategory category = TradeCategory.IN;
@@ -524,10 +530,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		deal.setSai(dto.getConsumerAccountId());
 		deal.setCment(StringUtils.defaultIfEmpty(desc, null));
 		deal.setSpecialType(dto.getSpecialType());
-		
-		tradeService.createTrade(deal, dealTranscationalCallBack);
-		result = new OrderRuslt<>("", OrderRuslt.SUCCESS_CODE, null, createOrderDealDescDto(deal, dto));
-		return result;
+		return deal;
 	}
 	protected OrderDealDescDto createOrderDealDescDto(DealDto deal,OrderDto order){
 		OrderDealDescDto desc=new OrderDealDescDto();
@@ -537,6 +540,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		desc.setOrderId(order.getOrderId());
 		desc.setDealId(deal.getDealId());
 		desc.setDealTime(deal.getCreateTime());
+		desc.setDealDto(deal);
 		return desc;
 	}
 	@Override

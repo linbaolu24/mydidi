@@ -465,5 +465,15 @@ public class DealDto implements Serializable {
 	public void setSourceState(String sourceState) {
 		this.sourceState = sourceState;
 	}
+
+	@Override
+	public String toString() {
+		return "DealDto [dealId=" + dealId + ", state=" + state + ", cause=" + cause + ", dealType=" + dealType
+				+ ", sat=" + sat + ", sa=" + sa + ", dat=" + dat + ", da=" + da + ", amount=" + amount + ", category="
+				+ category + ", createTime=" + createTime + ", updateTime=" + updateTime + ", cment=" + cment
+				+ ", remain=" + remain + ", sai=" + sai + ", dai=" + dai + ", commission=" + commission + ", orderId="
+				+ orderId + ", tradeId=" + tradeId + ", poundage=" + poundage + ", ext1=" + ext1 + ", ext2=" + ext2
+				+ ", specialType=" + specialType + ", tradeinfo=" + tradeinfo + ", sourceState=" + sourceState + "]";
+	}
     
 }

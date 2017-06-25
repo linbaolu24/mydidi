@@ -82,4 +82,11 @@ public interface ITradeService {
 	 * @return
 	 */
 	public int recoverAuditing(Long dealId);
+	/**
+	 * 交易失败
+	 * @param payResult
+	 * @param deal
+	 * @return
+	 */
+	public IResult<Void> fail(PayResultDto payResult,TranscationalCallBack<PayResultDto> deal);
 } 

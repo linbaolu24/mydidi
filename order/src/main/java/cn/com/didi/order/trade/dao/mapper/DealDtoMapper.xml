@@ -696,7 +696,7 @@
         tradeInfo = #{tradeinfo,jdbcType=VARCHAR},
       </if>
     </set>
-    where deal_id = #{dealId,jdbcType=BIGINT} and state = #{sourceState,jdbcType=CHAR},
+    where deal_id = #{dealId,jdbcType=BIGINT} and state = #{sourceState,jdbcType=CHAR}
   </update>
    
    <resultMap id="BaseListResultMap_Stat" type="cn.com.didi.order.trade.domain.DealStatDto" >
@@ -712,4 +712,13 @@
     and create_time&lt;#{endTime,jdbcType=TIMESTAMP}  ) 
     tt group by tt.category,tt.day_time
   </select>
+  
+  
+  
+   <update id="updateFail" parameterType="cn.com.didi.order.trade.domain.DealDto" >
+    update deal set
+        state = '2',update_time = now(), cause = #{cause,jdbcType=VARCHAR}
+
+    where deal_id = #{dealId,jdbcType=BIGINT} and state != '1'
+  </update>
 </mapper>

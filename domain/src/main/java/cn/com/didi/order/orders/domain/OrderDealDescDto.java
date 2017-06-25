@@ -3,6 +3,8 @@ package cn.com.didi.order.orders.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import cn.com.didi.order.trade.domain.DealDto;
+
 public class OrderDealDescDto implements Serializable{
     
 	@Override
@@ -40,6 +42,7 @@ public class OrderDealDescDto implements Serializable{
      */
     private String description;
     private Date dealTime;
+    private DealDto dealDto;
     /**
      * 
      */
@@ -80,6 +83,12 @@ public class OrderDealDescDto implements Serializable{
 	}
 	public void setNotifyUrl(String notifyUrl) {
 		this.notifyUrl = notifyUrl;
+	}
+	public DealDto getDealDto() {
+		return dealDto;
+	}
+	public void setDealDto(DealDto dealDto) {
+		this.dealDto = dealDto;
 	}
 	
 }

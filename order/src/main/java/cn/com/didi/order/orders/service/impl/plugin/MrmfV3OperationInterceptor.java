@@ -9,8 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.property.Couple;
+import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
+import cn.com.didi.domain.domains.UseAbleDto;
 import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.order.orders.domain.OrderContextDto;
@@ -23,14 +25,19 @@ import cn.com.didi.order.util.OrderMessageConstans;
 import cn.com.didi.user.users.domain.VipDto;
 import cn.com.didi.user.users.service.IVipService;
 
-public class MrmfV2OperationInterceptor extends MrmfOperationInterceptor{
-	private static final Logger LOGGER = LoggerFactory.getLogger(MrmfV2OperationInterceptor.class);
+/**
+ * @author xlm
+ *
+ */
+@Service
+public class MrmfV3OperationInterceptor extends MrmfV2OperationInterceptor{
+	private static final Logger LOGGER = LoggerFactory.getLogger(MrmfV3OperationInterceptor.class);
 	@Resource
 	protected IVipService vipService;
 	public <R> IOrderRuslt<R> interceptor(OrderMessageOperation operation, OrderContextDto data, IOrderService source){
 		OrderDto order = data.getOrderDto();
 		if (SpecialTypeEnum.MRMF.codeEqual(order.getSpecialType())){
-			if (OrderMessageOperation.BEFORE_PUBLISH.equals(operation)){
+			if (OrderMessageOperation.AUTH.equals(operation)||OrderMessageOperation.BEFORE_PUBLISH.equals(operation)){
 				VipDto dto=getVipDto(order, data);
 				IOrderRuslt<R> result= vipHandle(order, data, source,dto);
 				if(result!=null&&!result.success()){
@@ -40,39 +47,27 @@ public class MrmfV2OperationInterceptor extends MrmfOperationInterceptor{
 				if(result!=null&&!result.success()){
 					return result;
 				}
-				result = handleCountController(order, data);
+				result=handleCountController(order, data);
+				if(OrderMessageOperation.AUTH.equals(operation)&&(result==null||result.success())){
+					UseAbleDto<VipDto> userAbleDto=new UseAbleDto<>(0, 0, "");
+					userAbleDto.setData(dto);
+					data.setUsed(userAbleDto);
+				}
 				return result;
-			}else if (OrderMessageOperation.AUTH.equals(operation)){
-				VipDto dto=getVipDto(order, data);
-			    return handleAuthCountControllerByMonth(order, data, dto);
 			} else if (OrderMessageOperation.BEFORE_ADD.equals(operation)) {
 				return popBeforeAdd(order, data, source);
 			}
 		}
 		return null;
 	}
-	protected VipDto getVipDto(OrderDto order, OrderContextDto data){
-		return vipService.getDto(order.getConsumerAccountId(), order.getSlsId());
-	}
 	protected <T> IOrderRuslt<T> vipHandle(OrderDto order, OrderContextDto data, IOrderService source){
-		return vipHandle(order, data, source,null,false);
-	}
-	protected <T> IOrderRuslt<T> vipHandle(OrderDto order, OrderContextDto data, IOrderService source, VipDto dto) {
-		return vipHandle(order, data, source, dto,true);
-	}
-	protected <T> IOrderRuslt<T> vipHandle(OrderDto order, OrderContextDto data, IOrderService source, VipDto dto,boolean vipPassed) {
 		LOGGER.debug("开始VIP校验");
-		boolean hasVip = false;
-		if (!vipPassed) {
-			hasVip = vipService.hasVip(order.getConsumerAccountId(), order.getSlsId());
-		} else {
-			hasVip = vipService.hasVip(dto);
-		}
-		LOGGER.debug("订单 {} VIP校验结果{}", order, hasVip);
-		if (hasVip) {
+		boolean hasVip=vipService.hasVip(order.getConsumerAccountId(), order.getSlsId());
+		LOGGER.debug("订单 {} VIP校验结果{}",order,hasVip);
+		if(hasVip){
 			return null;
 		}
-		return new OrderRuslt<>(OrderMessageConstans.ORDER_MRMF_NOT_VIP);
+		return new OrderRuslt<>(OrderMessageConstans.ORDER_MRMF_NOT_VIP);	
 	}
 	protected  <T> IOrderRuslt<T> popBeforeAdd(OrderDto order, OrderContextDto data, IOrderService source){
 		Couple<IMerchantDto, IReciverDto> couple = reciverSearch

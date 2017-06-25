@@ -133,6 +133,9 @@ public class DomainMessageConstans {
 	 * 获取微信ACCESS_TOKEN_ERROR
 	 */
 	public static final String CODE_WECHAT_GET_ACCESS_TOKEN_ERROR="5002100003";
+	
+	
+	/*订单*/
 	/**
 	 * 
 	 * 订单自动派单无师傅
@@ -214,6 +217,8 @@ public class DomainMessageConstans {
 	 */
 	public static final String  CODE_ORDER_NO_USER_EXPERIENCE="5003000016";
 	
+	
+	
 	/**
 	 * 美容美发间隔时间不到
 	 */
@@ -245,6 +250,8 @@ public class DomainMessageConstans {
 	 */
 	public static final String CODE_ORDER_NOTIFY_DIS_NO_MASTER="5003000022";
 	
+	
+	
 	/*以下位交易*/
 	/**
 	 * 交易记录不存在
@@ -266,6 +273,15 @@ public class DomainMessageConstans {
 	 * 获取用户锁失败
 	 */
 	public static final String CODE_DEAL_GET_USER_LOCK_FAIL="5004200005";
+	
+	/**已经成功状态的交易不能更新为失败
+	 *
+	 */
+	public static final String CODE_DEAL_SUCCESS_CAN_NOT_FAIL="5004200006";
+	/**
+	 *将交易状态为失败出错了
+	 */
+	public static final String CODE_DEAL_UPDATE_FAIL_ERROR="5004200007";
 	
 	
 	

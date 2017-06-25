@@ -165,4 +165,12 @@ public interface IAppEnv {
 	public String getRyBAppSecret();
 
 	public String getRyBAppKey();
+	/**
+	 * @return
+	 */
+	public boolean passWechatNotifySign();
+	/**
+	 * @return
+	 */
+	public boolean passAliNotifySign();
 }

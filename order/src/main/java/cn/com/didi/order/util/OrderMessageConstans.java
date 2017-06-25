@@ -166,7 +166,17 @@ public class OrderMessageConstans {
 	/**
 	 * 获取用户锁失败
 	 */
-	public static final Message DEAL_GET_USER_LOCK_FAIL= newMessage(DomainMessageConstans.CODE_DEAL_GET_USER_LOCK_FAIL);;//"5004200004";
+	public static final Message DEAL_GET_USER_LOCK_FAIL= newMessage(DomainMessageConstans.CODE_DEAL_GET_USER_LOCK_FAIL);//"5004200005";
+	
+	
+	/**已经成功状态的交易不能更新为失败
+	 */
+	public static final Message DEAL_SUCCESS_CAN_NOT_FAIL=newMessage(DomainMessageConstans.CODE_DEAL_SUCCESS_CAN_NOT_FAIL);//="5004200006";
+	
+	/**
+	 *将交易状态为失败出错了
+	 */
+	public static final  Message DEAL_UPDATE_FAIL_ERROR=newMessage(DomainMessageConstans.CODE_DEAL_UPDATE_FAIL_ERROR);//"5004200007";
 	
 	/**
 	 * 验证阿里签名失败

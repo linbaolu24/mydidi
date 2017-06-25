@@ -18,4 +18,9 @@ public interface ITradeTranscationCallBackFinder {
 	 * @return
 	 */
 	TranscationalCallBack<PayResultDto> findFinishTranscationalCallBack(String type);
+	/**
+	 * @param type
+	 * @return
+	 */
+	TranscationalCallBack<PayResultDto> findFailTranscationalCallBack(String type);
 }

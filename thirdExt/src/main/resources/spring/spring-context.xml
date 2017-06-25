@@ -126,5 +126,7 @@
 		<property name="ryAppSecret" value="${appEnv.ryAppSecret}"></property>
 		<property name="ryBAppKey" value="${appEnv.ryBAppKey}"></property>
 		<property name="ryBAppSecret" value="${appEnv.ryBAppSecret}"></property>
+		<property name="passAliNotifySign" value="${appEnv.passAliNotifySign}"></property>
+		<property name="passWchatNotifySign" value="${appEnv.passWchatNotifySign}"></property>
 	</bean>
 </beans>

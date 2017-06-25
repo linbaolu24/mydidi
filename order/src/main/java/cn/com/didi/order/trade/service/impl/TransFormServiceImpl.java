@@ -83,7 +83,7 @@ public class TransFormServiceImpl implements ITransFormService {
 		}
 		IResult<AlipayTransToAccountResponse> result = aliTradeService.sendTransForm(dto);
 		AlipayTransToAccountResponse response = result.getData();
-		if (!result.success() || (response != null && response.success())) {
+		if (!result.success() || (response != null && !response.success())) {
 			// 如果结果不正确
 			String alMessage = response == null ? "" : response.getMsg();
 			String aliSubMessage = response == null ? "" : response.getSub_msg();

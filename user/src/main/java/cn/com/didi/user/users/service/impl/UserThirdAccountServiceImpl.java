@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 
 import cn.com.didi.core.excpetion.BaseRuntimeException;
+import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.domain.util.Role;
@@ -45,37 +46,13 @@ public class UserThirdAccountServiceImpl implements IUserThirdAccountService {
 
 	@Override
 	public IResult<UserLinkIdDto> generatorUserLink(String phone, String role) {
-		if (!StringUtils.isEmpty(phone) && !StringUtils.isEmpty(role)) {
-			 return ResultFactory.success(null);
+		if(!support(phone, role)){
+			return ResultFactory.success();
 		}
-		String appkey;
-		String appSecret;
-		if(Role.COUSMER.codeEqual(role)){
-			appkey=appEnv.getRyAppKey();
-			appSecret=appEnv.getRyAppSecret();
-		}else if(Role.BUSINESS.codeEqual(role)){
-			appkey=appEnv.getRyBAppKey();
-			appSecret=appEnv.getRyBAppSecret();
-		}else{
-		   return ResultFactory.success(null);
-		}
-		FormHttpHandler handler = new FormHttpHandler();
-		handler.setUrl(RO_URL);
-		NameValuePair pair = new BasicNameValuePair("userId", phone + "_" + role);
-		handler.setPair(Arrays.asList(pair));
-		
-		Map<String, String> header = generatorSign(appkey, appSecret);
-		handler.setHeaderMap(header);
-		httpExeService.post(new Http200Hanle(handler));
 		try {
-			String result = handler.getResultAndThrow();
-			LOGGER.debug("容云返回{}", result);
-			TokenResult tokenResult = JSON.parseObject(result, TokenResult.class);
-			if (tokenResult != null || SUCCESS.equals(tokenResult.getCode())) {
-				UserLinkIdDto dto=new UserLinkIdDto();
-				dto.setRyToken(tokenResult.getToken());
-				return ResultFactory.success(dto);
-			}
+			UserLinkIdDto dto=new UserLinkIdDto();
+			generatorUserLink(phone, role,dto);
+			return ResultFactory.success(dto);
 		} catch (BaseRuntimeException e) {
 			LOGGER.error(e.getMessage(), e);
 			return ResultFactory.error(e.getCode(), e.getMessage());
@@ -85,7 +62,58 @@ public class UserThirdAccountServiceImpl implements IUserThirdAccountService {
 		}
 		return ResultFactory.error(MessageConstans.USER_CREATE_ROY_TOKEN_ERROR);
 	}
+	protected boolean support(String phone, String role){
+		if (StringUtils.isEmpty(phone) || StringUtils.isEmpty(role)) {
+			return false;
+		}
+		if (Role.COUSMER.codeEqual(role)||Role.BUSINESS.codeEqual(role)) {
+			return  true;
+		} 
+		return false;
+	}
+	@Override
+	public void generatorUserLink(String phone, String role, UserLinkIdDto linkDto) {
+		if(!support(phone, role)){
+			return ;
+		}
+		String appkey;
+		String appSecret;
+		if (Role.COUSMER.codeEqual(role)) {
+			appkey = appEnv.getRyAppKey();
+			appSecret = appEnv.getRyAppSecret();
+		} else  {
+			appkey = appEnv.getRyBAppKey();
+			appSecret = appEnv.getRyBAppSecret();
+		}
+		FormHttpHandler handler = new FormHttpHandler();
+		handler.setUrl(RO_URL);
+		NameValuePair pair = new BasicNameValuePair("userId", phone + "_" + role);
+		//NameValuePair pair2 = new BasicNameValuePair("name", "测试");
+		//NameValuePair pair3 = new BasicNameValuePair("portraitUri", "http://www.w3school.com.cn/i/eg_tulip.jpg");
+		handler.setPair(Arrays.asList(pair));
 
+		Map<String, String> header = generatorSign(appkey, appSecret);
+		handler.setHeaderMap(header);
+		httpExeService.post(handler);//new Http200Hanle()
+		String result=null;;
+		try {
+			result = handler.getResultAndThrow();
+			
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new MessageObjectException(MessageConstans.USER_CREATE_ROY_TOKEN_ERROR);
+		}finally {
+			LOGGER.debug("容云返回{}", result);
+		}
+		
+		TokenResult tokenResult = JSON.parseObject(result, TokenResult.class);
+		if (tokenResult != null || SUCCESS.equals(tokenResult.getCode())) {
+			linkDto.setRyToken(tokenResult.getToken());
+			return;
+		}
+		throw new MessageObjectException(MessageConstans.USER_CREATE_ROY_TOKEN_ERROR);
+
+	}
 	protected Map<String, String> generatorSign(String appKey, String appSecret) {
 		Map<String, String> headMap = new HashMap<>(4);
 		String nonce = String.valueOf(RandomUtils.nextInt());
@@ -102,7 +130,7 @@ public class UserThirdAccountServiceImpl implements IUserThirdAccountService {
 	/**
 	 * getToken 返回结果
 	 */
-	public class TokenResult {
+	public static class TokenResult {
 		// 返回码，200 为正常.如果您正在使用开发环境的 AppKey，您的应用只能注册 100 名用户，达到上限后，将返回错误码
 		// 2007.如果您需要更多的测试账户数量，您需要在应用配置中申请“增加测试人数”。
 		Integer code;
@@ -118,6 +146,10 @@ public class UserThirdAccountServiceImpl implements IUserThirdAccountService {
 			this.token = token;
 			this.userId = userId;
 			this.errorMessage = errorMessage;
+		}
+
+		public TokenResult() {
+			super();
 		}
 
 		/**
@@ -188,4 +220,6 @@ public class UserThirdAccountServiceImpl implements IUserThirdAccountService {
 			return errorMessage;
 		}
 	}
+
+	
 }

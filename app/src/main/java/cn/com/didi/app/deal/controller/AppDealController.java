@@ -1,7 +1,9 @@
 package cn.com.didi.app.deal.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +56,12 @@ public class AppDealController extends AbstractDealController{
 	@RequestMapping(value = "/app/b/trade/stat", method = RequestMethod.POST)
 	public IResult dealStat(@RequestBody SimplePageBound pageBounds,HttpServletRequest request){
 		Long accountId = resolver.resolve(request);
-		return ResultFactory.success(tradeInfoService.statBusiness(accountId, pageBounds));
+		List list=tradeInfoService.statBusiness(accountId, pageBounds);
+		Date date=new Date();
+		Map map=new HashMap<>();
+		map.put("date", date);
+		map.put("list", list);
+		return ResultFactory.success(list);
 	}
 	@RequestMapping(value = "/app/b/trade/draw", method = RequestMethod.POST)
 	public IResult draw(@RequestBody DrawJAO drawJao,HttpServletRequest request){
@@ -66,20 +73,29 @@ public class AppDealController extends AbstractDealController{
 		if(drawJao.getAmount()<10L){
 			throw new IllegalArgumentException("提现金额不能小于0.1元。");
 		}
+		if(drawJao.getAmount().longValue()>Integer.MAX_VALUE){
+			throw new IllegalArgumentException("提现金额不能超过1400万");
+		}
+			
 		DealDto dealDto=new DealDto();
 		dealDto.setDat(enums.getCode());
 		dealDto.setAmount(drawJao.getAmount().intValue());
 		dealDto.setCreateTime(new Date());
-		
 		String  da=enums.getAccoutId(linked);
+		if(StringUtils.isEmpty(da)){
+			throw new IllegalArgumentException("请先绑定提现账号。");
+		}
 		if(PayAccountEnum.WECHATPAY.equals(enums)){
-			UserWechatOpenIdDto dtos=wechatUserService.getWechatDto(da, WechatEnum.OPEN);
+			UserWechatOpenIdDto dtos=wechatUserService.getWechatDto(da, WechatEnum.APP);
 			if(dtos==null||StringUtils.isEmpty(dtos.getOpenid())){
 				throw new IllegalArgumentException("请先关注公众号。");
 			}
 			da=dtos.getOpenid();
 		}
 		dealDto.setDa(da);
+		dealDto.setDai(accountId);
+		dealDto.setSa(da);
+		dealDto.setSat(dealDto.getDat());
 		dealDto.setExt1(linked.userName());
 		dealDto.setCommission(0);
 		tradeService.draw(dealDto);

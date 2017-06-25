@@ -101,6 +101,15 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		addUser(userDto,linked==null?new UserLinkIdDto():linked ,verify);
 		
 	}
+	@Override
+	public void addUserWithGenThird(UserDto userDto, boolean verify, UserLinkIdDto linkDto) {
+		if(verify&&exists(userDto.getUserName(), userDto.getRole())){
+			throw new MessageObjectException(MessageConstans.USER_USER__EXISTS);
+		}
+		userThirdAccountService.generatorUserLink(userDto.getUserName(), userDto.getRole(),linkDto);
+		addUser(userDto, linkDto);
+	}
+
 	public void addUser(UserDto userDto,UserLinkIdDto userLinked,boolean verify){
 		if(verify&&exists(userDto.getUserName(), userDto.getRole())){
 			throw new MessageObjectException(MessageConstans.USER_USER__EXISTS);
@@ -115,6 +124,10 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 			return;
 		}
 		codePassword(userDto);
+		
+		if(Role.BUSINESS.codeEqual(userDto.getRole())&&StringUtils.isEmpty(userDto.getBusinessCategory())){
+			userDto.setBusinessCategory(BusinessCategory.THIRD.getCode());
+		}
 		if(StringUtils.isEmpty(userDto.getBusinessCategory())){
 			userDto.setBusinessCategory(BusinessCategory.SELF.getCode());
 		}
@@ -455,7 +468,7 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		UserDto user=new UserDto();
 		user.setAccountId(accountId);
 		user.setProfilePhoto(pp);
-		userDtoMapper.updateByPrimaryKey(user);
+		userDtoMapper.updateByPrimaryKeySelective(user);
 		
 	}
 
@@ -490,6 +503,7 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		
 	}
 
+	
 	
 
 

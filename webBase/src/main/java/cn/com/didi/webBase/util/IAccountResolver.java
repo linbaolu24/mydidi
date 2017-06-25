@@ -24,6 +24,7 @@ public interface IAccountResolver {
 	 * @param obj
 	 */
 	public String saveAccountAndGeneratorReflashToken(HttpServletRequest request,Long accountId,Object obj);
+
 	/**
 	 * @param key
 	 * @param key

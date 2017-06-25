@@ -56,10 +56,28 @@ public interface DealDtoMapper {
     
     List<DealListDto> selectTrades(@Param("time") TimeInterval time,RowBounds rows);
     List<DealListDto> selectDraws(@Param("time") TimeInterval time,RowBounds rows);
+    /**
+     * @param dealId
+     * @param cause
+     * @return
+     */
     int updateFail(@Param("dealId") Long dealId,@Param("cause") String cause);
     
     List<DealDrawListDto> selectDrawList(@Param("time") TimeInterval time,RowBounds rows);
+    /**
+     * @param dai
+     * @param fromDate
+     * @param category
+     * @return
+     */
     Long countSum(@Param("dai") Long dai,@Param("fromDate") Date fromDate,@Param("cat") String category);
+    /**
+     * @param dealId
+     * @param dest
+     * @param cat
+     * @param source
+     * @return
+     */
     int updateDealStateAndSourceArray(@Param("dealId") Long dealId, @Param("destState") String dest,@Param("cat") String cat,@Param("sourceState") String... source);
     /**
      * @param record

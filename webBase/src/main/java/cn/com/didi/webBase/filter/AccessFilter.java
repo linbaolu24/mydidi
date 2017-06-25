@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.alibaba.fastjson.JSON;
@@ -20,6 +22,7 @@ import cn.com.didi.webBase.util.IAccountResolver;
 import cn.com.didi.webBase.util.impl.AccountResolver;
 
 public class AccessFilter extends OncePerRequestFilter implements Filter {
+	private static final  Logger LOGGER=LoggerFactory.getLogger(AccessFilter.class);
 	public String getIgnoreUrl() {
 		return ignoreUrl;
 	}
@@ -97,6 +100,7 @@ public class AccessFilter extends OncePerRequestFilter implements Filter {
 				}
 			}
 		}
+		LOGGER.debug("过滤URL{}",str);
 		for (String one : filters) {
 			if (one.equals(str)) {
 				return true;

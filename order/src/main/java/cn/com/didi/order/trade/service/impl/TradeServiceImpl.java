@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.com.didi.core.excpetion.BaseRuntimeException;
 import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.core.lock.ILock;
 import cn.com.didi.core.lock.LockManager;
@@ -78,8 +79,10 @@ public class TradeServiceImpl implements ITradeService {
 		Long dealId = payResult.getDealId();
 		for (int i = 0; i < 3; i++) {
 			DealDto deal = tradeInfoService.selectDeal(dealId);
+			LOGGER.debug("finishDeal:交易对象为{}",deal);
 			IResult<Void> result = dealExist(deal);
 			if (result != null) {
+				LOGGER.debug("交易不存在");
 				return result;
 			}
 			result = dealVerify(payResult, deal);
@@ -87,15 +90,21 @@ public class TradeServiceImpl implements ITradeService {
 				return result;
 			}
 			if (DealEnum.FINISH.getCode().equals(deal.getState())) {// 如果已经是成功状态的deal
-				return null;
+				LOGGER.debug("已完成的交易");
+				return ResultFactory.success();
 			}
 			payResult.setDeal(deal);
-			int count = tradeInfoService.finishDeal(deal, payResult, dealCallBack);
-			if (count > 0) {
-				return null;
+			try {
+				tradeInfoService.finishDeal(deal, payResult, dealCallBack);
+				break;
+			} catch (BaseRuntimeException e) {
+				LOGGER.error(e.getMessage(),e);
+				if(i==2){
+					return ResultFactory.error(e);
+				}
 			}
 		}
-		return null;//返回错误
+		return ResultFactory.success();// 返回错误
 	}
 
 	protected <T> IResult<T> dealExist(DealDto deal) {
@@ -158,31 +167,7 @@ public class TradeServiceImpl implements ITradeService {
 		}
 	}
 	protected void drawInternal(DealDto pay){
-		popNormalDraw(pay);
-		MerchantDayRemainingDto mat = getMerchantDayDto(pay);
-		boolean ifCan = accountAssetsService.decreMerchantDayRemainingIfCan(mat);
-		if (!ifCan) {
-			throw new MessageObjectException(OrderMessageConstans.DEAL_ASSERT_NOT_ENOUGH);
-		}
-		tradeInfoService.createTrade(pay, null);
-	}
-	protected MerchantDayRemainingDto getMerchantDayDto(DealDto pay){
-		return null;
-	}
-
-	protected void popNormalDraw(DealDto pay) {
-		pay.setCategory(TradeCategory.OUT.getCode());
-		pay.setDealType(TradeCategory.OUT.getType());
-		pay.setSai(accountAssetsService.getSystemAccount());
-		pay.setSat(pay.getDat());
-		if (pay.getCreateTime() == null) {
-			pay.setCreateTime(new Date());
-		}
-		if (pay.getUpdateTime() == null) {
-			pay.setUpdateTime(pay.getCreateTime());
-		}
-		pay.setState(DealEnum.WAITTING.getCode());
-		pay.setCommission(0);
+		tradeInfoService.draw(pay);
 	}
 
 	@Override
@@ -237,6 +222,34 @@ public class TradeServiceImpl implements ITradeService {
 	@Override
 	public int recoverAuditing(Long dealId) {
 		return tradeInfoService.updateTradeState(dealId, DealEnum.WAITTING.getCode(), TradeCategory.OUT.getCode(), DealEnum.PRE_AUDIT.getCode());
+	}
+
+	@Override
+	public IResult<Void> fail(PayResultDto payResult, TranscationalCallBack<PayResultDto> dealCallBack) {
+		Long dealId = payResult.getDealId();
+		DealDto deal = payResult.getDeal();
+		if (payResult.getDeal() != null) {
+			deal = tradeInfoService.selectDeal(dealId);
+			payResult.setDeal(deal);
+			IResult<Void> result = dealExist(deal);
+			if (result != null) {
+				return result;
+			}
+			result = dealVerify(payResult, deal);
+			if (result != null) {
+				return result;
+			}
+		}
+		if (DealEnum.FINISH.getCode().equals(deal.getState())) {// 如果已经是成功状态的deal
+			return ResultFactory.error(OrderMessageConstans.DEAL_SUCCESS_CAN_NOT_FAIL);
+		}
+		try {
+			tradeInfoService.failDeal(deal, payResult, dealCallBack);
+			return ResultFactory.success();
+		} catch (MessageObjectException e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResultFactory.error(e);
+		}
 	}
 
 }

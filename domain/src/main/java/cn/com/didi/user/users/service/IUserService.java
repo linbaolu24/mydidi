@@ -57,6 +57,11 @@ public interface IUserService {
 	 * 新增用户,自动产生accountId
 	 * @param userDto
 	 */
+	public void addUserWithGenThird(UserDto userDto,boolean verify,UserLinkIdDto linkDto);
+	/**
+	 * 新增用户,自动产生accountId
+	 * @param userDto
+	 */
 	public void addUser(UserDto userDto,UserLinkIdDto userLinked,boolean verify);
 	/**
 	 * 获取解码后的密码

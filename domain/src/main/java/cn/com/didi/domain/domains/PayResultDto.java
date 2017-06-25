@@ -58,6 +58,8 @@ public class PayResultDto {
 	private boolean addRemaining=true;//增加余额
 	private boolean systemOnly=true;//是否只增加系统余额
 	private DealDto deal;
+	private boolean success=true;
+	private String cause;
 	/**
 	 * 交易系统交易ID
 	 */
@@ -85,6 +87,18 @@ public class PayResultDto {
 	}
 	public void setSystemOnly(boolean systemOnly) {
 		this.systemOnly = systemOnly;
+	}
+	public boolean isSuccess() {
+		return success;
+	}
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+	public String getCause() {
+		return cause;
+	}
+	public void setCause(String cause) {
+		this.cause = cause;
 	}
 	
 }

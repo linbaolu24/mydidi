@@ -62,6 +62,7 @@ import cn.com.didi.order.trade.service.ITradeTranscationCallBackFinder;
 import cn.com.didi.order.trade.util.AliPayBuilder;
 import cn.com.didi.order.trade.util.TradeOperations;
 import cn.com.didi.order.util.OrderMessageConstans;
+import cn.com.didi.thirdExt.produce.IAppEnv;
 
 /**
  * @author xlm
@@ -78,6 +79,8 @@ public class AliTradeServiceImpl implements IAliTradeService {
 	protected ITradeTranscationCallBackFinder finder;
 	@Resource
 	protected IOperationListener<TradeOperations, Object> aliOperationListener;
+	@Resource
+	protected IAppEnv myAppEnv;
 	@Value("${ali.pId}")
 	private String pId;
 	@Value("${ali.signType:RSA2}")
@@ -117,9 +120,9 @@ public class AliTradeServiceImpl implements IAliTradeService {
 			return ResultFactory.success(aliDto);
 		} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | SignatureException e) {
 			LOGGER.error("订单生成签名失败 = {},异常 = {}", orderResult.getData(), e);
+			failDeal(orderId, orderResult.getData().getDealId(), orderResult.getData().getDealDto(), "阿里订单生成签名失败", null);
 			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_PAY_ORDERINFO_FAIL);
 		}
-
 	}
 
 	protected AliPayBuilder createBuilder(OrderDealDescDto desc) {
@@ -159,16 +162,24 @@ public class AliTradeServiceImpl implements IAliTradeService {
 			LOGGER.debug("=====交易完成操作====");
 			result = finishDeal(map);
 			return result;
+		}else{
+			failDeal(map);
 		}
 		return ResultFactory.success();
 	}
+
 	protected <T> IResult asynormalVerify(Map<String, String> map) {
 		aliOperationListener.operate(TradeOperations.NOTIFY_START_ALI_ASYN, map);
 		String charset = StringUtils.defaultIfEmpty(map.get(CHARSET), Constans.CHARSET_UTF_8);
 		boolean isSuccess = false;
 		LOGGER.debug("异步通知验证签名");
 		try {
-			isSuccess = AlipaySignature.rsaCheckV1(map, aliPubkey, charset, map.get(AlipayConstants.SIGN_TYPE));
+			if (myAppEnv.passAliNotifySign()) {
+				LOGGER.debug("异步允许验证阿里签名直接通过");
+				isSuccess = true;
+			} else {
+				isSuccess = AlipaySignature.rsaCheckV1(map, aliPubkey, charset, map.get(AlipayConstants.SIGN_TYPE));
+			}
 		} catch (Exception e) {
 			LOGGER.error("阿里异步通知验证签名失败 =   {}  ", map, e);
 		}
@@ -192,8 +203,13 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		String signType = (String) map.getSign_type();
 		boolean isSuccess = false;
 		try {
-			isSuccess = SignUtil.verify(getSignAlgFromSignType(signType), aliPublicKey, map.getAlipay_trade_app_pay_response().getBytes(charset),
-					Base64.decodeBase64(sign))||true;
+			if (myAppEnv.passAliNotifySign()) {
+				LOGGER.debug("同步允许验证阿里签名直接通过");
+				isSuccess = true;
+			} else {
+				isSuccess = SignUtil.verify(getSignAlgFromSignType(signType), aliPublicKey,
+						map.getAlipay_trade_app_pay_response().getBytes(charset), Base64.decodeBase64(sign)) || true;
+			}
 		} catch (InvalidKeyException | NoSuchAlgorithmException | SignatureException | UnsupportedEncodingException e) {
 			LOGGER.error("阿里同步通知验证签名失败 =   {}  ", map, e);
 		} 
@@ -234,6 +250,15 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		String trade_no=(String) map.get(AlipayConstants.TRADE_NO);
 		return finishOrderDeal(new Long(dealId), dCost.intValue(), trade_no);
 	}
+	protected IResult<Void> failDeal(Map map) {
+		String dealId = (String) map.get(OUT_TRADE_NO);
+		String cost = (String) map.get(TOTAL_AMOUNT);
+		BigDecimal dCost = new BigDecimal(cost).multiply(Constans.YB);
+		String trade_no=(String) map.get(AlipayConstants.TRADE_NO);
+		String status=(String) map.get(TRADE_STATUS);
+		IResult<Void>  result=failDeal(null, new Long(dealId), null, status, null);
+		return result;
+	}
 	/**
 	 * @param map
 	 * @return
@@ -251,11 +276,19 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		return payResult;
 	}
 
-	protected void failDeal(Long dealId, String cause) {
+	protected <T> IResult<T> failDeal(Long orderId,Long dealId,DealDto dto, String cause,TranscationalCallBack<PayResultDto> callback) {
 		try {
-			tradeService.fail(dealId, cause);
+			PayResultDto resultDto=new PayResultDto();
+			resultDto.setOrderId(orderId);
+			resultDto.setDeal(dto);
+			resultDto.setCause(cause);
+			resultDto.setDeal(dto);
+			IResult result=tradeService.fail(resultDto,callback);
+			LOGGER.debug("tradeService.fail 的结果为{},{}",result.getCode(),result.getMessage());
+			return (IResult<T>) result;
 		} catch (Exception e) {
 			LOGGER.error("订单 {} 更新为失败 {} 时发生错误 ", dealId, cause, e);
+			return ResultFactory.error(OrderMessageConstans.DEAL_UPDATE_FAIL_ERROR);
 		}
 	}
 
@@ -352,6 +385,7 @@ public class AliTradeServiceImpl implements IAliTradeService {
 			return ResultFactory.success(aliDto);
 		} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | SignatureException e) {
 			LOGGER.error("阿里生成签名失败 = {},异常 = {}", dto, e);
+			failDeal(null, dto.getDealId(), dto, type+"阿里订单生成签名失败", null);
 			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_PAY_ORDERINFO_FAIL);
 		}
 	}
@@ -367,6 +401,8 @@ public class AliTradeServiceImpl implements IAliTradeService {
 			TranscationalCallBack<PayResultDto> payResultCallBack = finder.findFinishTranscationalCallBack(type);
 			PayResultDto payResult = getPayResultDto(map);
 			return tradeService.finishDeal(payResult, payResultCallBack);
+		}else{
+			failDeal(map);
 		}
 		return ResultFactory.success();
 	}
@@ -389,7 +425,7 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
 		AlipayFundTransToaccountTransferModel model = new AlipayFundTransToaccountTransferModel();
 		model.setAmount(NumberUtil.intToDecimal2(dto.getAmount()));
-		model.setOutBizNo(dto.getTradeId());
+		model.setOutBizNo(String.valueOf(dto.getDealId()));
 		model.setPayeeType("ALIPAY_LOGONID");
 		model.setPayeeAccount(dto.getDa());
 		model.setPayerShowName("嘀嘀服务");

@@ -167,11 +167,23 @@ public class MerchantServiceImpl implements IMerchantService {
 			UserDto userDto = dto.toUserDto();
 			userDto.setPassword(StringUtils.isEmpty(dto.getPassword()) ? DigestUtils.md5Hex("123456")
 					: DigestUtils.md5Hex(dto.getPassword()));
-			userService.addUser(userDto,true);
+			UserLinkIdDto linkDto=generate(dto);
+			userService.addUserWithGenThird(userDto,true,linkDto);
 			dto.setAccountId(userDto.getAccountId());
+		}else{
+			UserLinkIdDto linkedDto=generate(dto);
+			linkedDto.setAccountId(dto.getAccountId() );
+			userService.updateUserLinked(linkedDto);
 		}
 		// if(!StringUtils)
 		merchantMapper.insertSelective(dto);
+	}
+	protected UserLinkIdDto generate(MerchantDto dto){
+		UserLinkIdDto linkDto=new UserLinkIdDto();
+		linkDto.setAlipayAccount(StringUtils.defaultIfBlank(dto.getAlipayAccount(),null));
+		linkDto.setWechatName(StringUtils.defaultIfBlank(dto.getWechatName(),null));
+		linkDto.setWechatAccount(StringUtils.defaultIfBlank(dto.getWechatAccount(),null));
+		return linkDto;
 	}
 
 	public boolean addMerchantArea(MerchantAreaDto dto) {
@@ -414,6 +426,7 @@ public class MerchantServiceImpl implements IMerchantService {
 	 * @param areaList
 	 * @param temp
 	 */
+	@Transactional
 	protected void editMerchant(MerchantDto merchant, List<MerchantServiceDto> serviceList,
 			List<MerchantAreaDto> areaList,MerchantDto temp){
 	

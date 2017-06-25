@@ -1,15 +1,14 @@
 package cn.com.didi.app.user.domain;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 
 import cn.com.didi.domain.util.DomainConstatns;
 
 public class AccountDomain {
 	private  Long accountId;
-	private  String vcId;
+	/*private  String vcId;*/
 	private  String profilePhoto;
 	private  String alipayAccount;
 	private  String wechatAccount;
@@ -20,12 +19,13 @@ public class AccountDomain {
 	private String role;
 	private String arrivalStatus;
 	private String businessCategory;
-	public String getVcId() {
+	private Date timeout;
+	/*public String getVcId() {
 		return vcId;
 	}
 	public void setVcId(String vcId) {
 		this.vcId = vcId;
-	}
+	}*/
 	public String getProfilePhoto() {
 		return profilePhoto;
 	}
@@ -107,5 +107,19 @@ public class AccountDomain {
 	public void setBusinessCategory(String businessCategory) {
 		this.businessCategory = businessCategory;
 	}
+	public Date getTimeout() {
+		return timeout;
+	}
+	public void setTimeout(Date timeout) {
+		this.timeout = timeout;
+	}
+	@Override
+	public String toString() {
+		return "AccountDomain [accountId=" + accountId + ", profilePhoto=" + profilePhoto + ", alipayAccount="
+				+ alipayAccount + ", wechatAccount=" + wechatAccount + ", gtCid=" + gtCid + ", bpn=" + bpn
+				+ ", ryToken=" + ryToken + ", vipFlag=" + vipFlag + ", role=" + role + ", arrivalStatus="
+				+ arrivalStatus + ", businessCategory=" + businessCategory + ", timeout=" + timeout + "]";
+	}
+	
 	
 }

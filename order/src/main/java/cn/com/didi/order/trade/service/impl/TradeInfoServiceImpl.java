@@ -7,6 +7,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,7 @@ import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.system.service.ICodeTextResolver;
 @Service
 public class TradeInfoServiceImpl implements ITradeInfoService {
+	private static final Logger LOGGER=LoggerFactory.getLogger(TradeInfoServiceImpl.class);
 	private static final Long SYSTEM_ACCOUNT = 0L;
 	@Resource
 	protected DealDtoMapper dealDtoMapper;
@@ -57,7 +60,9 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		if(dto.getDai()==null){
 			dto.setDai(SYSTEM_ACCOUNT);
 		}
+		if (deal != null) {
 		deal.invoeBefore(dto);
+		}
 		/*if(dto.getRemain()==null){
 			MerchantRemainingDto mrd = new MerchantRemainingDto();
 			mrd.setAccountId(SYSTEM_ACCOUNT);
@@ -91,12 +96,12 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		Long remain = getSystemRemain(pay.getAccountEnum().getCode());
 		remain = remain == null ? 0 + pay.getCost() : remain + pay.getCost();
 		int count = dealDtoMapper.updateDealState(pay.getDealId(), DealEnum.FINISH.getCode(), source.getState(), pay.getTradeId(), remain);//
-		if (count == 0) {//
+		if (count <= 0) {//
 			/*
 			 * dealDtoMapper.updatePureDealState(pay.getDealId(),
 			 * "1",pay.getTradeId());
 			 */
-			return count;
+			throw new MessageObjectException(OrderMessageConstans.DEAL_STATE_CHANGE);
 		} //
 		if (pay.isAddRemaining()&&source.getAmount()!=null&&source.getAmount()!=0) {
 			MerchantDayRemainingDto dto=new MerchantDayRemainingDto();
@@ -111,6 +116,20 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 			deal.invoke(pay);
 		}
 		return count;
+	}
+	@Override
+	public int failDeal(DealDto source, PayResultDto pay, TranscationalCallBack<PayResultDto> deal) {
+		if(deal!=null){
+		    deal.invoeBefore(pay);
+		}
+		int count =dealDtoMapper.updateFail(source.getDealId(), pay.getCause());
+		if (count <= 0) {//
+			throw new MessageObjectException(OrderMessageConstans.DEAL_STATE_CHANGE);
+		} 
+		if(deal!=null){
+			deal.invoke(pay);
+		}
+		return 1;
 	}
 	protected Long getSystemRemain(String dat){
 		MerchantDayRemainingDto remain=accountAssers.selectSystemRemaining();
@@ -192,24 +211,23 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		MerchantDayRemainingDto mat = getMerchantDayDto(pay);
 		boolean ifCan = accountAssers.decreMerchantDayRemainingIfCan(mat);
 		if (!ifCan) {
-			throw new MessageObjectException(OrderMessageConstans.DEAL_ACCOUNT_NOT_EQUAL);//余额不足
+			throw new MessageObjectException(OrderMessageConstans.DEAL_ASSERT_NOT_ENOUGH);//余额不足
 		}
 		createTrade(pay, null);
 	}
 	protected MerchantDayRemainingDto getMerchantDayDto(DealDto pay){
 		MerchantDayRemainingDto dto=new MerchantDayRemainingDto();
 		dto.setAccountId(pay.getDai());
-		//dto.setCategory(category);
+		dto.setCategory(TradeCategory.OUT.getCode());
 		dto.setPat(pay.getDat());
-		dto.setRemaining(pay.getRemain());
+		dto.setRemaining((long)pay.getAmount());
 		return dto;
 	}
 	protected void popNormalDraw(DealDto pay){
-		pay.setCategory(TradeCategory.OUT.getCode());
-		pay.setDealType(TradeCategory.OUT.getType());
+		popNormalDeal(pay, TradeCategory.OUT);
 		pay.setSai(accountAssers.getSystemAccount());
 		pay.setSat(pay.getDat());
-		pay.setCreateTime(new Date());
+		pay.setState(DealEnum.WAITTING.getCode());
 		pay.setCommission(0);
 	}
 
@@ -225,4 +243,6 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 		now=DateUtils.truncate(now, Calendar.DAY_OF_MONTH);
 		return dealDtoMapper.countDai(accountId, now, bounds);
 	}
+
+	
 }

@@ -25,8 +25,7 @@ public class FormHttpHandler implements IHttpHandler {
 	private Map<String, String> headerMap;
 	private String url;
 	private static final String HEADER_CONTENT_TYPE = "Content-Type";
-	private static final String HEADER_CONTENT_TYPE_JSON = "application/x-www-form-urlencoded;charset="
-			+ HEADER_CONTENT_TYPE;
+	private static final String HEADER_CONTENT_TYPE_JSON = "application/x-www-form-urlencoded;charset=";
 	private List<? extends NameValuePair> pair;
 	private String charset = Charsets.UTF_8.name();
 	private HttpResponse reponse;
@@ -41,7 +40,7 @@ public class FormHttpHandler implements IHttpHandler {
 		}
 		Header[] header = post.getHeaders(HEADER_CONTENT_TYPE);
 		if (header == null || header.length <= 0) {
-			post.setHeader(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON);
+			post.setHeader(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON+charset);
 		}
 		try {
 			if (pair != null) {

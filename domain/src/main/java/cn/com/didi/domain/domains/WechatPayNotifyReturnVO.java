@@ -12,6 +12,9 @@ public class WechatPayNotifyReturnVO extends WechatPayCustomerReturnVo{
 	private String time_end;//支付完成时间，
 	private String appid;//应用ID	appid	是	String(32)	wx8888888888888888	微信开放平台审核通过的应用APPID
 	private String source;
+	private String fee_type;
+	private String is_subscribe;
+	private String mch_id;
 	public String getBank_type() {
 		return bank_type;
 	}
@@ -86,6 +89,24 @@ public class WechatPayNotifyReturnVO extends WechatPayCustomerReturnVo{
 	}
 	public void setSource(String source) {
 		this.source = source;
+	}
+	public String getFee_type() {
+		return fee_type;
+	}
+	public void setFee_type(String fee_type) {
+		this.fee_type = fee_type;
+	}
+	public String getIs_subscribe() {
+		return is_subscribe;
+	}
+	public void setIs_subscribe(String is_subscribe) {
+		this.is_subscribe = is_subscribe;
+	}
+	public String getMch_id() {
+		return mch_id;
+	}
+	public void setMch_id(String mch_id) {
+		this.mch_id = mch_id;
 	}
 	
 }

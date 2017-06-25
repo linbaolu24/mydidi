@@ -112,6 +112,7 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		MerchantRemainingDto dto=new MerchantRemainingDto();
 		dto.setAccountId(SYSTEM_ACCOUNT_ID);
 		dto.setPat(payEnum.getCode());
+		dto.setRemaining(remain);
 		systemMerchantRemainDtoMapper.updateAddRemaining(dto);
 	}
 	@Override

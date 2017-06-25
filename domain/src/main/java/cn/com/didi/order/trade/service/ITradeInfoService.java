@@ -32,6 +32,10 @@ public interface ITradeInfoService {
 	 * @param pay
 	 */
 	public int finishDeal(DealDto source,PayResultDto pay, TranscationalCallBack<PayResultDto> deal);
+	/**如果已经订单已经
+	 * @param pay
+	 */
+	public int failDeal(DealDto source,PayResultDto pay, TranscationalCallBack<PayResultDto> deal);
 	/**
 	 * @param dealId
 	 * @return

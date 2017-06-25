@@ -93,4 +93,9 @@ public class TradeTranscationCallBackFinderImpl implements ITradeTranscationCall
 	
 	}
 
+	@Override
+	public TranscationalCallBack<PayResultDto> findFailTranscationalCallBack(String type) {
+		return TranscationalCallBack.nullTranscationalCallBack();
+	}
+
 }

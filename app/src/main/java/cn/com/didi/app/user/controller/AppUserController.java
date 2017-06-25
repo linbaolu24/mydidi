@@ -8,29 +8,29 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.com.didi.app.user.domain.AccountDomain;
+import cn.com.didi.app.user.domain.AccountDomainWrapperJAO;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.utils.AssertUtil;
 import cn.com.didi.domain.util.ArrivalStatusEnum;
 import cn.com.didi.domain.util.BusinessCategory;
-import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.DomainConstatns;
 import cn.com.didi.domain.util.FlagEnum;
 import cn.com.didi.domain.util.Role;
-import cn.com.didi.domain.util.State;
 import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.user.login2.domain.LoginDto;
 import cn.com.didi.user.login2.domain.UserExtDto;
 import cn.com.didi.user.login2.service.ILoginService;
 import cn.com.didi.user.register.domain.RegisterDto;
 import cn.com.didi.user.register.service.IRegisterService;
-import cn.com.didi.user.users.domain.MerchantExtDto;
 import cn.com.didi.user.users.domain.UserDto;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
 import cn.com.didi.user.users.service.IMerchantService;
@@ -40,6 +40,7 @@ import cn.com.didi.webBase.util.IAccountResolver;
 
 @RestController
 public class AppUserController {
+	private static final Logger LOGGER=LoggerFactory.getLogger(AppUserController.class);
 	@Resource
 	protected IAccountResolver resolver;
 	@Resource
@@ -115,6 +116,7 @@ public class AppUserController {
 		}
 		return hasVip?FlagEnum.FLAG_SET.getCode():FlagEnum.FLAG_NOT_SET.getCode();
 	}
+	
 	@RequestMapping(value = "/app/user/login", method = RequestMethod.POST)
 	public IResult login(@RequestBody LoginDto login, HttpServletRequest request) {
 		long now=System.currentTimeMillis();
@@ -123,31 +125,59 @@ public class AppUserController {
 			return ResultFactory.error(result.getCode(), result.getMessage());
 		}
 		UserExtDto ext = result.getData();
-		Map p=toMap(ext,login);
+		AccountDomain p=toAccountDomain(ext,login);
 		Long timeOut=resolver.getSessionTimepout(request);
 		Date date=new Date(now+timeOut*1000);
-		p.put(DomainConstatns.TIMEOUT,date);
+		p.setTimeout(date);
 		String reflashToken=resolver.saveAccountAndGeneratorReflashToken(request, ext.getUserDto().getAccountId(),p);
-		Map pa=new HashMap(p);
-		pa.put(DomainConstatns.REFLASH_TOKEN,reflashToken);
+		AccountDomainWrapperJAO warpper=new AccountDomainWrapperJAO(p,reflashToken);
 		
-		return ResultFactory.success(pa);
+		return ResultFactory.success(warpper);
+	}
+	protected AccountDomain toAccountDomain(UserExtDto ext,LoginDto login){
+		AccountDomain p = new AccountDomain();
+		p.setAccountId( ext.getUserDto().getAccountId());
+		p.setProfilePhoto( ext.getUserDto().getProfilePhoto());
+		p.setWechatAccount(null);
+		p.setAlipayAccount(null);
+		p.setGtCid(ext.gtCid());
+		p.setRyToken(ext.ryToken());
+		p.setBpn(StringUtils.defaultIfEmpty(login.getPhone(),ext.getUserDto().getBpn()));
+		p.setRole( ext.getUserDto().getRole());
+		p.setVipFlag(vipValue(login, ext.getUserDto().getAccountId()));
+		p.setBusinessCategory( ext.getUserDto().getBusinessCategory());
+		p.setArrivalStatus(arrivalStatus(ext.getUserDto().getAccountId(), ext.getUserDto().getRole(),  ext.getUserDto().getBusinessCategory(), null) );
+		return p;
+	}
+	@RequestMapping(value = "/app/user/reflashToken", method = { RequestMethod.POST, RequestMethod.GET })
+	public IResult reflashToken(@RequestBody Map<String,String> map,HttpServletRequest request) {
+		String reflashToken=map.get(DomainConstatns.REFLASH_TOKEN);
+		AssertUtil.assertNotNullAppend(reflashToken, DomainConstatns.REFLASH_TOKEN);
+		long now=System.currentTimeMillis();
+		AccountDomain accountDomain=resolver.pasreReflashToken(reflashToken, AccountDomain.class);
+		reflashProperties(accountDomain);
+		Long timeOut=resolver.getSessionTimepout(request);
+		Date date=new Date(now+timeOut*1000);
+		accountDomain.setTimeout(date);
+		String nReflashToken=resolver.saveAccountAndGeneratorReflashToken(request, accountDomain.getAccountId(),accountDomain);
+		
+		AccountDomainWrapperJAO warpper=new AccountDomainWrapperJAO(accountDomain,reflashToken);
+		return ResultFactory.success(warpper);
 	}
 	
-	protected Map toMap(UserExtDto ext,LoginDto login){
-		Map p = new HashMap(4);
-		p.put(DomainConstatns.ACCOUNT_ID, ext.getUserDto().getAccountId());
-		p.put(DomainConstatns.PROFILE_PHOTO, ext.getUserDto().getProfilePhoto());
-		p.put(DomainConstatns.ALIPAY_ACCOUNT, ext.alipayAccount());
-		p.put(DomainConstatns.WECHAT_ACCOUNT, ext.wechatAccount());
-		p.put(DomainConstatns.GT_CID, ext.gtCid());
-		p.put(DomainConstatns.RY_TOKEN, ext.ryToken());
-		p.put(DomainConstatns.BPN,StringUtils.defaultIfEmpty(login.getPhone(),ext.getUserDto().getBpn()));
-		p.put(DomainConstatns.ROLE, ext.getUserDto().getRole());
-		p.put(DomainConstatns.VIP_FLAG,vipValue(login, ext.getUserDto().getAccountId()));
-		p.put(DomainConstatns.BUSINESS_CATEGORY, ext.getUserDto().getBusinessCategory());
-		p.put(DomainConstatns.ARRIVAL_STATUS,arrivalStatus(ext.getUserDto().getAccountId(), ext.getUserDto().getRole(),  ext.getUserDto().getBusinessCategory(), null) );
-		return p;
+	@RequestMapping(value = "/app/user/reflashUser", method = { RequestMethod.POST, RequestMethod.GET })
+	public IResult reflashUser(HttpServletRequest request) {
+		
+		long now=System.currentTimeMillis();
+		AccountDomain accountDomain=(AccountDomain) resolver.resolveObject(request);
+		LOGGER.debug("===刷新用户信息===={}",accountDomain);
+		reflashProperties(accountDomain);
+		Long timeOut=resolver.getSessionTimepout(request);
+		Date date=new Date(now+timeOut*1000);
+		accountDomain.setTimeout(date);
+		LOGGER.debug("===刷新为===={}",accountDomain);
+		resolver.saveAccount(request, accountDomain.getAccountId(),accountDomain);
+		return ResultFactory.success(accountDomain);
 	}
 	@RequestMapping(value = "/app/user/loginout", method = { RequestMethod.POST, RequestMethod.GET })
 	public IResult setThirdId(HttpServletRequest request) {
@@ -156,34 +186,15 @@ public class AppUserController {
 	}
 	
 	
-	@RequestMapping(value = "/app/user/reflashToken", method = { RequestMethod.POST, RequestMethod.GET })
-	public IResult reflashToken(@RequestBody Map<String,String> map,HttpServletRequest request) {
-		String reflashToken=map.get(DomainConstatns.REFLASH_TOKEN);
-		AssertUtil.assertNotNullAppend(reflashToken, DomainConstatns.REFLASH_TOKEN);
-		long now=System.currentTimeMillis();
-		AccountDomain accountDomain=resolver.pasreReflashToken(reflashToken, AccountDomain.class);
-		Map tokenMap=accountDomain.toMap();
-		Long timeOut=resolver.getSessionTimepout(request);
-		Date date=new Date(now+timeOut*1000);
-		tokenMap.put(DomainConstatns.TIMEOUT,date);
-		String nReflashToken=resolver.saveAccountAndGeneratorReflashToken(request, accountDomain.getAccountId(),tokenMap);
-		
-       Map pa=new HashMap(4);
-		
-		pa.put(DomainConstatns.REFLASH_TOKEN,nReflashToken);
-		pa.put(DomainConstatns.TIMEOUT,date);
-		return ResultFactory.success(pa);
-	}
+	
 	protected void reflashProperties(AccountDomain accountDomains){
 		UserDto dto=null;
-		if(StringUtils.isEmpty(accountDomains.getRole())||StringUtils.isEmpty(accountDomains.getBusinessCategory())){
-			dto=tUserService.selectUser(accountDomains.getAccountId());
-			accountDomains.setRole(dto.getRole());
-			accountDomains.setBusinessCategory(dto.getBusinessCategory());
-		}
+		dto=tUserService.selectUser(accountDomains.getAccountId());
+		accountDomains.setRole(dto.getRole());
+		accountDomains.setBusinessCategory(dto.getBusinessCategory());
 		accountDomains.setArrivalStatus(arrivalStatus(accountDomains.getAccountId(), accountDomains.getRole(), 
 				accountDomains.getBusinessCategory(), accountDomains.getArrivalStatus()));
-		
+		accountDomains.setProfilePhoto(dto.getProfilePhoto());
 		vipValue(accountDomains.getRole(), accountDomains.getAccountId());
 	}
 	protected String arrivalStatus(Long accountId,String role,String businessCategory,String nowStatus){
@@ -223,3 +234,57 @@ public class AppUserController {
 	}
  
 }
+
+/*==========================================分隔线=========================================================*/
+/*@RequestMapping(value = "/app/user/login", method = RequestMethod.POST)
+public IResult login(@RequestBody LoginDto login, HttpServletRequest request) {
+	long now=System.currentTimeMillis();
+	IResult<UserExtDto> result = tloginService.login(login);
+	if (!result.success()) {
+		return ResultFactory.error(result.getCode(), result.getMessage());
+	}
+	UserExtDto ext = result.getData();
+	Map p=toMap(ext,login);
+	Long timeOut=resolver.getSessionTimepout(request);
+	Date date=new Date(now+timeOut*1000);
+	p.put(DomainConstatns.TIMEOUT,date);
+	String reflashToken=resolver.saveAccountAndGeneratorReflashToken(request, ext.getUserDto().getAccountId(),p);
+	Map pa=new HashMap(p);
+	pa.put(DomainConstatns.REFLASH_TOKEN,reflashToken);
+	
+	return ResultFactory.success(pa);
+}*/
+/*protected Map toMap(UserExtDto ext,LoginDto login){
+	Map p = new HashMap(4);
+	p.put(DomainConstatns.ACCOUNT_ID, ext.getUserDto().getAccountId());
+	p.put(DomainConstatns.PROFILE_PHOTO, ext.getUserDto().getProfilePhoto());
+	p.put(DomainConstatns.ALIPAY_ACCOUNT, ext.alipayAccount());
+	p.put(DomainConstatns.WECHAT_ACCOUNT, ext.wechatAccount());
+	p.put(DomainConstatns.GT_CID, ext.gtCid());
+	p.put(DomainConstatns.RY_TOKEN, ext.ryToken());
+	p.put(DomainConstatns.BPN,StringUtils.defaultIfEmpty(login.getPhone(),ext.getUserDto().getBpn()));
+	p.put(DomainConstatns.ROLE, ext.getUserDto().getRole());
+	p.put(DomainConstatns.VIP_FLAG,vipValue(login, ext.getUserDto().getAccountId()));
+	p.put(DomainConstatns.BUSINESS_CATEGORY, ext.getUserDto().getBusinessCategory());
+	p.put(DomainConstatns.ARRIVAL_STATUS,arrivalStatus(ext.getUserDto().getAccountId(), ext.getUserDto().getRole(),  ext.getUserDto().getBusinessCategory(), null) );
+	return p;
+}*/
+/*@RequestMapping(value = "/app/user/reflashToken", method = { RequestMethod.POST, RequestMethod.GET })
+public IResult reflashToken(@RequestBody Map<String,String> map,HttpServletRequest request) {
+	String reflashToken=map.get(DomainConstatns.REFLASH_TOKEN);
+	AssertUtil.assertNotNullAppend(reflashToken, DomainConstatns.REFLASH_TOKEN);
+	long now=System.currentTimeMillis();
+	AccountDomain accountDomain=resolver.pasreReflashToken(reflashToken, AccountDomain.class);
+	Map tokenMap=accountDomain.toMap();
+	Long timeOut=resolver.getSessionTimepout(request);
+	Date date=new Date(now+timeOut*1000);
+	accountDomain.put(DomainConstatns.TIMEOUT,date);
+	String nReflashToken=resolver.saveAccountAndGeneratorReflashToken(request, accountDomain.getAccountId(),tokenMap);
+	
+   Map pa=new HashMap(4);
+	
+	pa.put(DomainConstatns.REFLASH_TOKEN,nReflashToken);
+	pa.put(DomainConstatns.TIMEOUT,date);
+	return ResultFactory.success(pa);
+}*/
+/*==========================================分隔线=========================================================*/

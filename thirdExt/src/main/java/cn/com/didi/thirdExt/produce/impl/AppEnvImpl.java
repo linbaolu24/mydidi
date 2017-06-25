@@ -35,7 +35,10 @@ public class AppEnvImpl implements IAppEnv {
 	private String ryAppSecret;
 	public String ryAppKey;
 	private String ryBAppSecret;
+	
 	private String ryBAppKey;
+	private String passWchatNotifySign;
+	private String passAliNotifySign;
 	protected URI wechatTransFer;
 	{
 		try {
@@ -315,7 +318,36 @@ public class AppEnvImpl implements IAppEnv {
 	public void setRyBAppKey(String ryBAppKey) {
 		this.ryBAppKey = ryBAppKey;
 	}
+
+	@Override
+	public boolean passWechatNotifySign() {
+		return booleanStr(getPassWchatNotifySign());
+	}
+
+	@Override
+	public boolean passAliNotifySign() {
+		return booleanStr(getPassAliNotifySign());
+	}
+
+	public String getPassWchatNotifySign() {
+		return passWchatNotifySign;
+	}
+
+	public void setPassWchatNotifySign(String passWchatNotifySign) {
+		this.passWchatNotifySign = passWchatNotifySign;
+	}
+
+	public String getPassAliNotifySign() {
+		return passAliNotifySign;
+	}
+
+	public void setPassAliNotifySign(String passAliNotifySign) {
+		this.passAliNotifySign = passAliNotifySign;
+	}
 	
+	public boolean booleanStr(String value){
+		return StringUtils.isEmpty(value)||"Y".equalsIgnoreCase(value);
+	}
 
 	
 

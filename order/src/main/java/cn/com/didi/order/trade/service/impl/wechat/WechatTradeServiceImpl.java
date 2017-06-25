@@ -95,13 +95,19 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		if (orderResult != null && !orderResult.success()) {
 			return ResultFactory.error(orderResult.getCode(), orderResult.getMessage());
 		}
+		IResult<WechatPayContext> result=null;
 		try {
 			WechatPayCustomerReqVo vo = generatorWechatPayRequest(orderResult.getData());//创建请求对象
-			IResult<WechatPayContext>  result=payNoraml(vo);
-			return result;
+			result=payNoraml(vo);
 		} catch (Exception e) {
 			LOGGER.error("" + e.getMessage(), e);
-			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TYXD_ERROR);
+			result= ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TYXD_ERROR);
+		}finally {
+			if(result!=null&&!result.success()){
+				OrderDealDescDto data=orderResult.getData();
+				failDeal(orderId, data.getDealId(), data.getDealDto(), result.getMessage(), null);
+			}
+			return result;
 		}
 	}
 	protected WechatPayContext generatWechatPayContext(WechatPayCustomerReqVo vo,WechatPayCustomerReturnVo data) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
@@ -168,6 +174,7 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		dto.setSat(PayAccountEnum.WECHATPAY.getCode());
 		dto.setCreateTime(new Date());
 		tradeService.createTrade(dto, callBack);
+		IResult<WechatPayContext> result=null;
 		try {
 			WechatPayCustomerReqVo vo=createNormalPayCustomerReqVo(dto.getCment());
 			vo.setPartner_trade_no(String.valueOf(dto.getDealId()));
@@ -175,10 +182,15 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 			callBack.popForWechat(vo);
 			vo.setSign(wechatTransferService.getAppPaySign(vo, appProduct.getWechatAppSignedkey(), appProduct.getWechatCharSet()));
 			
-			return payNoraml(vo);
-		} catch (IllegalArgumentException | IllegalAccessException | UnsupportedEncodingException e) {
+			result= payNoraml(vo);
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
-			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TYXD_ERROR);
+			result= ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TYXD_ERROR);
+		}finally {
+			if(result!=null&&!result.success()){
+				failDeal(null, dto.getDealId(), dto, result.getMessage(), null);
+			}
+			return result;
 		}
 	}
 	
@@ -186,26 +198,53 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 	public IResult<WechatPayNotifyReturnVO> asynnotify(String notifyStr) {
 		return asynnotify(notifyStr, null, "订单异步支付");
 	}
+	protected <T> IResult<T> failDeal(WechatPayNotifyReturnVO returnVO) {
+		return failDeal(null,Long.parseLong(returnVO.getOut_trade_no()),null,
+				StringUtils.defaultIfEmpty(returnVO.getReturn_code(), returnVO.getErr_code_des())+"::"
+				+StringUtils.defaultIfEmpty(returnVO.getReturn_msg(),returnVO.getErr_code_des()),
+				null);
+	}
+	protected <T> IResult<T> failDeal(Long orderId,Long dealId,DealDto dto, String cause,TranscationalCallBack<PayResultDto> callback) {
+		try {
+			PayResultDto resultDto=new PayResultDto();
+			resultDto.setOrderId(orderId);
+			resultDto.setCause(cause);
+			resultDto.setDeal(dto);
+			resultDto.setDealId(dealId);
+			IResult result=tradeService.fail(resultDto,callback);
+			LOGGER.debug("tradeService.fail 的结果为{},{}",result.getCode(),result.getMessage());
+			return (IResult<T>) result;
+		} catch (Exception e) {
+			LOGGER.error("订单 {} 更新为失败 {} 时发生错误 ", dealId, cause, e);
+			return ResultFactory.error(OrderMessageConstans.DEAL_UPDATE_FAIL_ERROR);
+		}
+	}
 	
 	public IResult<WechatPayNotifyReturnVO> asynnotify(String notifyStr,TranscationalCallBack<PayResultDto> callBack,String tag) {
 		LOGGER.debug("Tag:{};====微信返回\n{}=====",tag,notifyStr);
 		IResult<WechatPayNotifyReturnVO> notifyResult=wechatTransferService.parseNotifyResponse(notifyStr);
 		if(!notifyResult.success()){
 			LOGGER.error("Tag:{};解析微信返回失败 code{} message {}",tag, notifyResult.getCode(),notifyResult.getMessage());
+			return notifyResult;
 		}
 		WechatPayNotifyReturnVO returnVO=notifyResult.getData();
 		wechatOperationListener.operate(TradeOperations.NOTIFY_START_WECHAT_ASYN, returnVO);
 		returnVO.setSource(null);
-		boolean verifySign=wechatTransferService.verifySign(returnVO);
-		
+		boolean verifySign=appProduct.passWechatNotifySign();
+		LOGGER.debug("微信不验证签名与否?{}",verifySign);
+		if (!verifySign) {
+			verifySign=wechatTransferService.verifySign(returnVO);
+		}
 		if(!verifySign){
 			LOGGER.error("Tag:{};验证微信签名失败\n{}",tag,returnVO);
 			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_PAY_NOTIFY_VERIFGY_SIGN_ERROR);
 		}
 		if(!returnVO.verifySuccess()){
-			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_PAY_NOTIFY_ERROR,returnVO);
+			failDeal(returnVO);
+			LOGGER.info("Tag:{};微信通知不成功\n{}",tag,returnVO);
+			return ResultFactory.success();
 		}
-		if (callBack != null) {
+		if (callBack == null) {
 			IResult<Void> result = finishOrderDeal(Long.parseLong(returnVO.getOut_trade_no()),
 					Integer.parseInt(returnVO.getTotal_fee()), returnVO.getTransaction_id());
 			if (result != null && !result.success()) {

@@ -1,6 +1,8 @@
 package cn.com.didi.domain.util;
 
-public enum State {
+import cn.com.didi.core.property.ICodeAble;
+
+public enum State implements ICodeAble{
 	VALID("0"), UNVALID("1");
 	private String state;
 
@@ -24,5 +26,10 @@ public enum State {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public String getCode() {
+		return getState();
 	}
 }
