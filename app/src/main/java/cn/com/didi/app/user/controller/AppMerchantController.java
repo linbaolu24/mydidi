@@ -66,6 +66,7 @@ public class AppMerchantController {
 		merchantExtDto.setState(State.VALID.getState());
 		merchantExtDto.setBusinessCategory(BusinessCategory.THIRD.getCode());
 		merchantExtDto.setAccountId(accountId);
+		merchantExtDto.setBpn(obj.getBpn());
 		popWechat(merchantExtDto, accountId);
 		merchantService.enterMerchant(merchantExtDto.dto(), merchantExtDto.getServiceList(), null);
 		return ResultFactory.success();
