@@ -93,8 +93,9 @@ public class POrderController {
 		OrderDto order = result.getData();
 		Map<String,Object> map=new HashMap<>();
 		map.put(DomainConstatns.ORDER_ID, String.valueOf(order.getOrderId()));
-		map.put(DomainConstatns.CNAME, String.valueOf(order.getCname()));
-		map.put(DomainConstatns.MASTER_NAME, String.valueOf(order.getMasterName()));
+		map.put(DomainConstatns.CNAME, order.getCname());
+		map.put(DomainConstatns.MASTER_NAME, order.getMasterName());
+		map.put(DomainConstatns.SERVICE_ADDRESS, order.getConsumerAddress());
 		SimplePageBound bounds = new SimplePageBound();
 		bounds.setPageIndex(1);
 		bounds.setPageSize(10);

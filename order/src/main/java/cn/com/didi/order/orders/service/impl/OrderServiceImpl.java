@@ -866,7 +866,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	@Override
 	public IOrderRuslt<Void> reassignment(Long orderId, Long bId) {
 		 IOrderRuslt<OrderDto> result=getOrderWithCheckChangeDispatch(orderId);
-		 if(result!=null){
+		 if(result!=null&&!result.success()){
 			 return IOrderRuslt.error(result);
 		 }
 		 Couple<IMerchantDto, IReciverDto>  couple= search.getMerchantAndReciver(bId);
