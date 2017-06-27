@@ -9,10 +9,12 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
+import cn.com.didi.core.utils.Constans;
+
 public abstract class StringHttpHandler implements IHttpHandler {
 	private String request;
 	private String response;
-	private String charset;
+	private String charset=Constans.CHARSET_UTF_8;
 	private URI uri;
 
 	@Override
@@ -23,7 +25,13 @@ public abstract class StringHttpHandler implements IHttpHandler {
 	}
 
 	public void forResponseInternal(HttpResponse post) throws ParseException, IOException {
-
+		/*byte[] bytes=EntityUtils.toByteArray(post.getEntity());
+		FileUtils.writeByteArrayToFile(new File("D:\result.txt"), bytes);
+		System.err.println(new String(bytes));
+		System.err.println(new String(bytes,"UNICODE"));
+		response=new String(bytes,charset);
+		System.err.println(response);*/
+	
 		response = EntityUtils.toString(post.getEntity(), charset);
 
 	}

@@ -62,7 +62,7 @@
 
 	 
 	<bean id="simpleHttpService" class="cn.com.didi.thirdExt.http.SimpleHttpService">
-		<property name="httpExe" ref="simpleHttpExe"></property>
+		<property name="httpExe" ref="mappedHttpExe"></property>
 	</bean>
 	<bean id="messageApplicationContext" class="cn.com.didi.thirdExt.message.MessageApplicationContext"></bean>
 	<bean id="cacheEnvironment" class="cn.com.didi.thirdExt.property.CacheEnvironment">

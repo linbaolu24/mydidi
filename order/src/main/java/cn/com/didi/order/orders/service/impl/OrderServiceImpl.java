@@ -857,7 +857,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if(!OrderState.ORDER_STATE_TAKING.codeEqual(dto.getState())){
 			return new OrderRuslt<OrderDto>(OrderMessageConstans.ORDER_STATE_NOT_PENDING_SERIVCE);
 		}
-		if(BusinessCategory.SELF.codeEqual(dto.getBusinessCategory())){
+		if(!BusinessCategory.SELF.codeEqual(dto.getBusinessCategory())){
 			return new OrderRuslt<OrderDto>(OrderMessageConstans.ORDER_NOT_SELF);
 		}
 		return new OrderRuslt<OrderDto>(dto);

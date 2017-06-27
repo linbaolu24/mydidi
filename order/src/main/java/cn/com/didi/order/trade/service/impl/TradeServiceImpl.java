@@ -228,7 +228,7 @@ public class TradeServiceImpl implements ITradeService {
 	public IResult<Void> fail(PayResultDto payResult, TranscationalCallBack<PayResultDto> dealCallBack) {
 		Long dealId = payResult.getDealId();
 		DealDto deal = payResult.getDeal();
-		if (payResult.getDeal() != null) {
+		if (payResult.getDeal() == null) {
 			deal = tradeInfoService.selectDeal(dealId);
 			payResult.setDeal(deal);
 			IResult<Void> result = dealExist(deal);

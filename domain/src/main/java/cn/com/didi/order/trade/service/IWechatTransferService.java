@@ -26,6 +26,15 @@ public interface IWechatTransferService {
 	 */
 	public String getAppPaySign(WechatPayCustomerReqVo req,String signKey,String charSet) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException;
 	/**
+	 * @param req
+	 * @param signKey
+	 * @return 
+	 * @throws UnsupportedEncodingException 
+	 * @throws IllegalAccessException 
+	 * @throws IllegalArgumentException 
+	 */
+	public String getAppTransferSign(WechatPayCustomerReqVo req,String signKey,String charSet) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException;
+	/**
 	 * 转账
 	 * @param reqVo
 	 * @return

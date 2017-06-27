@@ -314,7 +314,10 @@ public class DomainMessageConstans {
 	 */
 	public static final String CODE_DEAL_ALI_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR="5004000008";
 	
-	
+	/**
+	 * 向阿里发送转账请求异常
+	 */
+	public static final String CODE_DEAL_ALI_TRANSFER_REQUSET_ERROR="5004000009";
 	
 	
 	
@@ -356,6 +359,9 @@ public class DomainMessageConstans {
 	public static final String CODE_DEAL_WECHAT_TRANSFER_BUILD_REQUEST_ERROR="5004100010";
 	/**微信转账解析返回结果异常*/
 	public static final String CODE_DEAL_WECHAT_TRANSFER_PARSE_RESPONSE_ERROR="5004100011";
+	
+	/**向微信转账发送请求异常*/
+	public static final String CODE_DEAL_WECHAT_TRANSFER_REQUEST_EXCEPTION="5004100012";
 	
 	
 	/**未付款不能升级为VIP*/

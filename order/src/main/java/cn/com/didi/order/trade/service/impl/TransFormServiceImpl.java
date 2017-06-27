@@ -11,6 +11,7 @@ import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.core.lock.LockManager;
 import cn.com.didi.core.property.ICodeAble;
 import cn.com.didi.core.property.IResult;
+import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.domain.domains.WechatPayCustomerReturnVo;
 import cn.com.didi.domain.domains.ali.AlipayTransToAccountResponse;
 import cn.com.didi.domain.util.DealEnum;
@@ -39,6 +40,7 @@ public class TransFormServiceImpl implements ITransFormService {
 	protected IAliTradeService aliTradeService;
 	@Resource
 	protected IWechatTradeService wechatService;
+	
 	private int tradeInfoLength=1000;
 
 	@Override
@@ -81,7 +83,13 @@ public class TransFormServiceImpl implements ITransFormService {
 		if (i <= 0) {
 			throw new IllegalArgumentException("支付宝转账,交易ID"+dto.getDealId()+"预审核锁定失败。");
 		}
-		IResult<AlipayTransToAccountResponse> result = aliTradeService.sendTransForm(dto);
+		IResult<AlipayTransToAccountResponse> result =null;
+		try {
+			result =  aliTradeService.sendTransForm(dto);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			result = ResultFactory.error(OrderMessageConstans.DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION);
+		}
 		AlipayTransToAccountResponse response = result.getData();
 		if (!result.success() || (response != null && !response.success())) {
 			// 如果结果不正确
@@ -122,12 +130,18 @@ public class TransFormServiceImpl implements ITransFormService {
 	public void drawByWechat(DealDto dto) {
 		int i = tradeService.preAuditing(dto.getDealId());
 		if (i <= 0) {
-			throw new IllegalArgumentException("微信转账,交易ID"+dto.getDealId()+"预审核锁定失败。");
+			throw new IllegalArgumentException("微信转账,交易ID" + dto.getDealId() + "预审核锁定失败。");
 		}
-		IResult<WechatPayCustomerReturnVo> result = wechatService.sendTransForm(dto);
-				
+		IResult<WechatPayCustomerReturnVo> result = null;
+
+		try {
+			result = wechatService.sendTransForm(dto);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			result = ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TRANSFER_REQUEST_EXCEPTION);
+		}
 		WechatPayCustomerReturnVo response = result.getData();
-		if (!result.success() || (response != null && response.verifySuccess())) {
+		if (!result.success() || (response != null && !response.verifySuccess())) {
 			// 如果结果不正确
 			String alMessage = response == null ? "" : response.getReturn_msg();
 			String aliSubMessage = response == null ? "" : response.getErr_code_des();
@@ -145,8 +159,9 @@ public class TransFormServiceImpl implements ITransFormService {
 		try {
 			tradeService.auditing(dealDto);
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(),e);
-			throw new MessageObjectException(OrderMessageConstans.DEAL_WECHAT_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR);
+			LOGGER.error(e.getMessage(), e);
+			throw new MessageObjectException(
+					OrderMessageConstans.DEAL_WECHAT_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR);
 		}
 	}
 	

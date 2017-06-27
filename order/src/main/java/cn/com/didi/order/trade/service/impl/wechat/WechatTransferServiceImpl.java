@@ -114,7 +114,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	public IResult<WechatPayCustomerReturnVo> transferAppPay(WechatPayCustomerReqVo reqVo) {
 		try {
 			
-			return transferInternal(reqVo, appEnv.getWechatAppPayURI(),payConvert);
+			return transferInternal(reqVo, appEnv.getWechatAppPayURI(),payConvert,true);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| IntrospectionException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -132,9 +132,14 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		//req.setAppid("wxf0f6836240fdaf3e");
 		return SignatureUtils.getPaySign(req, signKey, charset, field, payConvert);
 	}
-	protected IResult<WechatPayCustomerReturnVo> transferInternal(WechatPayCustomerReqVo reqVo,URI url,IConverter<String, String> nameConvert) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, IOException, DocumentException{
+	@Override
+	public String getAppTransferSign(WechatPayCustomerReqVo req, String signKey, String charSet)
+			throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException {
+		return SignatureUtils.getPaySign(req, signKey, charSet, field, convert);
+	}
+	protected IResult<WechatPayCustomerReturnVo> transferInternal(WechatPayCustomerReqVo reqVo,URI url,IConverter<String, String> nameConvert,boolean pay) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, IOException, DocumentException{
 		LOGGER.debug("微信交易请求对象{},url:{}",reqVo,url);
-		String str = ABeanUtils.transBean2Xml(reqVo,nameConvert);
+		String str = ABeanUtils.transBean2Xml(reqVo,nameConvert,pay);
 		LOGGER.debug("微信交易请求对象{},报文{}",reqVo,str);
 		WechatStringHttpHandler handler=new WechatStringHttpHandler(str,url);
 		httpService.post(handler);
@@ -153,13 +158,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	@Override
 	public IResult<WechatPayCustomerReturnVo> transferForTransferAccounts(WechatPayCustomerReqVo reqVo) {
 		try {
-			if (StringUtils.isEmpty(reqVo.getCheck_name())) {
-				reqVo.setCheck_name(StringUtils.isEmpty(reqVo.getRe_user_name()) ? "NO_CHECK" : "FORCE_CHECK");
-			}
-			if(StringUtils.isEmpty(reqVo.getDesc())){
-				reqVo.setDesc("提现");
-			}
-			return transferInternal(reqVo, null,convert);
+			return transferInternal(reqVo, appEnv.getWechatTransferURI(),convert,false);
 		}  catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| IntrospectionException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -315,5 +314,6 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		System.out.println(ABeanUtils.transBean2Xml(reqVo, impl.payConvert));
 		//<xml><total_fee>1</total_fee><appid>wxf0f6836240fdaf3e</appid><body>&#22016;&#22016;&#26381;&#21153;-&#24180;&#36153;</body><mch_id>1480906112</mch_id><nonce_str>32768</nonce_str><notify_url>https://118.178.226.138/api/app/trade/deposit/wechatAsnyNotify</notify_url><out_trade_no>101</out_trade_no><sign>15710892FB57C79F8CFF152819D9EE8F</sign><spbill_create_ip>115.238.29.228</spbill_create_ip><trade_type>APP</trade_type></xml>
 	}
+	
 	
 }

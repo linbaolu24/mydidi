@@ -377,7 +377,7 @@ public class MerchantServiceImpl implements IMerchantService {
 	@Override
 	@Transactional
 	public void checkMerchant(Long accountId, String cr, String cause) {
-		if(StringUtils.isEmpty(cr)||accountId==null){
+		if(accountId==null){
 			return;
 		}
 		MerchantDto dto = new MerchantDto();
@@ -482,8 +482,9 @@ public class MerchantServiceImpl implements IMerchantService {
 	}
 
 	@Override
+	@Transactional
 	public void checkMerchant(List<MerchantCrDto> mdtoList) {
-		if(CollectionUtils.isEmpty(mdtoList)){
+		if(!CollectionUtils.isEmpty(mdtoList)){
 			for(MerchantCrDto one:mdtoList){
 				checkMerchant(one.getAccountId(), one.getCr(), one.getCause());
 			}

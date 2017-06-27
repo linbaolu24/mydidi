@@ -20,6 +20,7 @@ import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.select.impl.SimplePageBound;
 import cn.com.didi.core.utils.AssertUtil;
+import cn.com.didi.core.utils.NumberUtil;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.domain.util.WechatEnum;
@@ -70,8 +71,8 @@ public class AppDealController extends AbstractDealController{
 		PayAccountEnum enums=cn.com.didi.core.property.ICodeAble.getCode(PayAccountEnum.values(),drawJao.getPat());
 		AssertUtil.assertNotNullAppend(enums, "到账账户");
 		AssertUtil.assertNotNullAppend(drawJao.getAmount(), "提现金额");
-		if(drawJao.getAmount()<10L){
-			throw new IllegalArgumentException("提现金额不能小于0.1元。");
+		if(drawJao.getAmount()<enums.getMinTransAmount()){
+			throw new IllegalArgumentException("提现金额不能小于"+NumberUtil.intToDecimal2(enums.getMinTransAmount())+"元。");
 		}
 		if(drawJao.getAmount().longValue()>Integer.MAX_VALUE){
 			throw new IllegalArgumentException("提现金额不能超过1400万");

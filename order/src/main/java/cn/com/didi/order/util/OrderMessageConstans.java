@@ -207,6 +207,12 @@ public class OrderMessageConstans {
 	 * 转账成功更新完成提取状态失败
 	 */
 	public static final Message DEAL_ALI_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR=newMessage(DomainMessageConstans.CODE_DEAL_ALI_TRANSFER_TO_ACCOUNT_SUCCESS_UPDATE_STATE_ERROR);
+	/**
+	 * 向阿里发送转账请求异常
+	 */
+	public static final Message DEAL_ALI_TRANSFER_REQUSET_ERROR=newMessage(DomainMessageConstans.CODE_DEAL_ALI_TRANSFER_REQUSET_ERROR);//"5004000009";
+	
+	
 	
 	/**
 	 * 微信统一下单异常
@@ -255,7 +261,8 @@ public class OrderMessageConstans {
 	 */
 	public static final Message DEAL_WECHAT_TRANSFER_PARSE_RESPONSE_ERROR= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TRANSFER_PARSE_RESPONSE_ERROR);
 	
-	
+	/**向微信转账发送请求异常*/
+	public static final Message DEAL_WECHAT_TRANSFER_REQUEST_EXCEPTION= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TRANSFER_REQUEST_EXCEPTION);//="5004100012";
 	
 	
 	

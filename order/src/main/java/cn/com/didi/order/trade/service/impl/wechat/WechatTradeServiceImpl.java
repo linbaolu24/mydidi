@@ -294,9 +294,13 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 			WechatPayCustomerReqVo requestDto = createNormalPayCustomerReqVo("提现");
 			requestDto.setBody(null);
 			requestDto.setTrade_type(null);
+			requestDto.setNotify_url(null);
 			requestDto.setAmount(dto.getAmount());
 			requestDto.setPartner_trade_no(String.valueOf(dto.getDealId()));
 			requestDto.setOpenid(dto.getDa());
+			requestDto.setCheck_name(StringUtils.isEmpty(requestDto.getRe_user_name()) ? "NO_CHECK" : "FORCE_CHECK");
+			requestDto.setDesc("嘀嘀服务-提现");
+			requestDto.setSign(wechatTransferService.getAppTransferSign(requestDto, appProduct.getWechatAppSignedkey(), appProduct.getWechatCharSet()));
 			return wechatTransferService.transferForTransferAccounts(requestDto);
 		} catch (IllegalArgumentException | IllegalAccessException | UnsupportedEncodingException e) {
 			LOGGER.error(e.getMessage(), e);
