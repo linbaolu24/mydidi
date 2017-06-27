@@ -23,22 +23,89 @@ public class AppEnvImpl implements IAppEnv {
 	private IEnvironment appEnviroment;
 	private String orderTransJson;
 	private String depositeAliNotifyUrl;
+	/**
+	 * 微信支付url
+	 */
 	private URI appPayUri;
+	/**
+	 * 微信押金通知URL
+	 */
 	private String depositeWechatNotifyUrl;
+	/**
+	 * 微信ip地址
+	 */
 	private String ipAdress;
+	/**
+	 * 微信支付异步通知url
+	 */
 	private String  wechatPayNotifyUrl;
-	private String wechatMchId;
+
+	/**
+	 * 微信B端转账商户证书密码
+	 */
 	private String wechatPassword;
+	/**
+	 * 微信转账商户端使用的安全证书
+	 */
 	private Resource keyStoreResource;
-	private String wechatAppSignedkey;
+	
+	/**
+	 * 美容美发二级服务ID
+	 */
 	private Integer mfxfSlsId;
+	/**
+	 * 融云C端AppSecret
+	 */
 	private String ryAppSecret;
+	/**
+	 * 融云C端APP key
+	 */
 	public String ryAppKey;
+	/**
+	 * 冗员B端AppSecret
+	 */
 	private String ryBAppSecret;
 	
+	/**
+	 * 容云B端APP key
+	 */
 	private String ryBAppKey;
+	/**
+	 * 微信支付不校验签名
+	 */
 	private String passWchatNotifySign;
+	/**
+	 * 支付宝支付不校验签名
+	 */
 	private String passAliNotifySign;
+	
+	
+	
+	/**
+	 * 微信C端配置
+	 */
+	private String wechatCAppId;
+	private String wechatCAppSignKey;
+	private String wechatCAppSecret;
+	private String wechatCMchId;
+	
+	
+	/**
+	 * 微信B端配置
+	 */
+	private String wechatAppId;
+	private String wechatAppSecret;
+	/**
+	 * 微信B端商户号
+	 */
+	private String wechatMchId;
+	/**
+	 * 微信B端商户签名key
+	 */
+	private String wechatAppSignedkey;
+	/**
+	 * 微信转账URL
+	 */
 	protected URI wechatTransFer;
 	{
 		try {
@@ -146,10 +213,7 @@ public class AppEnvImpl implements IAppEnv {
 	public Integer getMrmfCountByMonth() {
 		return 10;
 	}
-	@Override
-	public String getWechatValidatorToken() {
-		return "scurry30";
-	}
+	
 	@Override
 	public int getLockedWait() {
 		return 5000;
@@ -171,7 +235,7 @@ public class AppEnvImpl implements IAppEnv {
 
 	@Override
 	public String getWechatAppId() {
-		return "wxf0f6836240fdaf3e";
+		return wechatAppId;
 	}
 
 	@Override
@@ -230,19 +294,10 @@ public class AppEnvImpl implements IAppEnv {
 
 	@Override
 	public String getWechatAppSecret() {
-		return "40956ed28413514d4a4dfee2ebb8471a";
+		return wechatAppSecret;
 	}
 
-	@Override
-	public String getWechatOpenAppId() {
-		return "wxe29a2f519cf39295";
-	}
 
-	@Override
-	public String getWechatOpenSecret() {
-	
-		return "9b7b4ee13fd9e9ee82f3ad55f585db47";
-	}
 
 	public void setDepositeWechatNotifyUrl(String depositeWechatNotifyUrl) {
 		this.depositeWechatNotifyUrl = depositeWechatNotifyUrl;
@@ -349,6 +404,59 @@ public class AppEnvImpl implements IAppEnv {
 		return StringUtils.isEmpty(value)||"Y".equalsIgnoreCase(value);
 	}
 
+	public String getWechatCAppId() {
+		return wechatCAppId;
+	}
+
+	public void setWechatCAppId(String wechatCAppId) {
+		this.wechatCAppId = wechatCAppId;
+	}
+
+	public String getWechatCAppSignKey() {
+		return wechatCAppSignKey;
+	}
+
+	public void setWechatCAppSignKey(String wechatCAppSignKey) {
+		this.wechatCAppSignKey = wechatCAppSignKey;
+	}
+
+	public String getWechatCAppSecret() {
+		return wechatCAppSecret;
+	}
+
+	public void setWechatCAppSecret(String wechatCAppSecret) {
+		this.wechatCAppSecret = wechatCAppSecret;
+	}
+
+	public String getWechatCMchId() {
+		return wechatCMchId;
+	}
+
+	public void setWechatCMchId(String wechatCMchId) {
+		this.wechatCMchId = wechatCMchId;
+	}
+
+	public void setWechatAppId(String wechatAppId) {
+		this.wechatAppId = wechatAppId;
+	}
+
+	public void setWechatAppSecret(String wechatAppSecret) {
+		this.wechatAppSecret = wechatAppSecret;
+	}
+
 	
+	@Override
+	public String getWechatValidatorToken() {
+		return "scurry30";
+	}
+	@Override
+	public String getWechatOpenAppId() {
+		return "wxe29a2f519cf39295";
+	}
+	@Override
+	public String getWechatOpenSecret() {
+	
+		return "9b7b4ee13fd9e9ee82f3ad55f585db47";
+	}
 
 }

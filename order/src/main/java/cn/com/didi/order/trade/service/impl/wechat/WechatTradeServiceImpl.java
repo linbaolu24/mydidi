@@ -25,6 +25,7 @@ import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.domains.WechatPayCustomerReqVo;
 import cn.com.didi.domain.domains.WechatPayCustomerReturnVo;
 import cn.com.didi.domain.domains.WechatPayNotifyReturnVO;
+import cn.com.didi.domain.domains.wechat.WechatAppDto;
 import cn.com.didi.domain.domains.wechat.WechatPayContext;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.domain.util.SignatureUtils;
@@ -140,28 +141,32 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 	}
 	protected WechatPayCustomerReqVo generatorWechatPayRequest(OrderDealDescDto desc)
 			throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException {
-		WechatPayCustomerReqVo requestDto=createNormalPayCustomerReqVo(desc.getCname());
+		WechatPayCustomerReqVo requestDto=createNormalPayCustomerReqVo(WechatEnum.APP_C,desc.getCname());
+		requestDto.setNotify_url(appProduct.getWechatPayNotifyUrl());
+		
 		requestDto.setAmount(desc.getAmount());
 		requestDto.setPartner_trade_no(String.valueOf(desc.getDealId()));
-		requestDto.setSign(wechatTransferService.getAppPaySign(requestDto, appProduct.getWechatAppSignedkey(), appProduct.getWechatCharSet()));
+		requestDto.setSign(wechatTransferService.getAppPaySign(requestDto, requestDto.getSignKey(), appProduct.getWechatCharSet()));
 		return requestDto;
 	}
 	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(String name) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
 		return createNormalPayCustomerReqVo(WechatEnum.APP, name);
 	}
 	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(WechatEnum type,String name) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
-		String appId=wechatProvider.getAppId(type);
+		WechatAppDto appDto =wechatProvider.getAppConfig(type);
+		return createNormalPayCustomerReqVo(type, appDto, name);
+	}
+	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(WechatEnum type,WechatAppDto appDto,String name) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
+		String appId=appDto.getAppid();
 		//String appSecret=wechatProvider.getAppSecret(type);
 		WechatPayCustomerReqVo requestDto = new WechatPayCustomerReqVo();
 		requestDto.setAppid(appId);
 		requestDto.setNonce_str(String.valueOf(RandomUtils.nextInt() & dived));//随机字符串
-		requestDto.setMch_id(appProduct.getWechatMchId());
-	
+		requestDto.setMch_id(appDto.getMchid());
 		requestDto.setSpbill_create_ip(appProduct.getIpAdress());
-		requestDto.setNotify_url(appProduct.getWechatPayNotifyUrl());
-		requestDto.setBody(appProduct.getAppName() + "-" +name);
+		requestDto.setBody(appDto.getAppName() + "-" +name);
 		requestDto.setTrade_type(appProduct.getWechatTradeType());
-		
+		requestDto.setSignKey(appDto.getSignKey());
 		return requestDto;
 	}
 	
@@ -180,7 +185,7 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 			vo.setPartner_trade_no(String.valueOf(dto.getDealId()));
 			vo.setAmount(dto.getAmount());
 			callBack.popForWechat(vo);
-			vo.setSign(wechatTransferService.getAppPaySign(vo, appProduct.getWechatAppSignedkey(), appProduct.getWechatCharSet()));
+			vo.setSign(wechatTransferService.getAppPaySign(vo, vo.getSignKey(), appProduct.getWechatCharSet()));
 			
 			result= payNoraml(vo);
 		} catch (Exception e) {
@@ -292,6 +297,7 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		LOGGER.debug("微信提现,对象{}", dto);
 		try {
 			WechatPayCustomerReqVo requestDto = createNormalPayCustomerReqVo("提现");
+			requestDto.setDesc(requestDto.getBody());
 			requestDto.setBody(null);
 			requestDto.setTrade_type(null);
 			requestDto.setNotify_url(null);
@@ -299,7 +305,6 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 			requestDto.setPartner_trade_no(String.valueOf(dto.getDealId()));
 			requestDto.setOpenid(dto.getDa());
 			requestDto.setCheck_name(StringUtils.isEmpty(requestDto.getRe_user_name()) ? "NO_CHECK" : "FORCE_CHECK");
-			requestDto.setDesc("嘀嘀服务-提现");
 			requestDto.setSign(wechatTransferService.getAppTransferSign(requestDto, appProduct.getWechatAppSignedkey(), appProduct.getWechatCharSet()));
 			return wechatTransferService.transferForTransferAccounts(requestDto);
 		} catch (IllegalArgumentException | IllegalAccessException | UnsupportedEncodingException e) {

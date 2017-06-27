@@ -45,5 +45,12 @@ public class AppItemController {
 
 		return ResultFactory.success(FlsItemWrapper.wrap(fls));
 	}
+	@RequestMapping(value="/api/app/b/service/allService",method=RequestMethod.POST)
+	public IResult bAllService() {
+		List<FlsItemDto> fls = item.selectBAllFlsItem();
+
+		return ResultFactory.success(FlsItemWrapper.wrap(fls));
+	}
+	
 
 }

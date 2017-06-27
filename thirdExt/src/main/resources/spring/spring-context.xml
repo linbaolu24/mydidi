@@ -113,20 +113,36 @@
 		<property name="orderTransJson" value="${appEnv.orderTransJson}"></property>
 
 		<property name="depositeAliNotifyUrl" value="${appEnv.deposite.depositeAliNotifyUrl}"></property>
-		<property name="depositeWechatNotifyUrl" value="${wechat.deposite.notifyUrl}"></property>
+	
 		<property name="ipAdress" value="${ip.address}"></property>
-		<property name="wechatMchId" value="${wechat.mchId}"></property>
-		<property name="wechatPassword" value="${wechat.keyStore.password}"></property>
-		<property name="wechatPayNotifyUrl" value="${wechat.notifyUrl}"></property>
-		<property name="wechatAppSignedkey" value="${wechat.pay.signKey}"></property>
+		
+		
 		<property name="mfxfSlsId" value="${appEnv.mfxfSlsId}"></property>
-		<property name="keyStoreResource"
-			value="${wechat.keyStore.resource:classpath:apiclient_cert.p12}"></property>
+		
 		<property name="ryAppKey" value="${appEnv.ryAppKey}"></property>
 		<property name="ryAppSecret" value="${appEnv.ryAppSecret}"></property>
 		<property name="ryBAppKey" value="${appEnv.ryBAppKey}"></property>
 		<property name="ryBAppSecret" value="${appEnv.ryBAppSecret}"></property>
+		
 		<property name="passAliNotifySign" value="${appEnv.passAliNotifySign}"></property>
 		<property name="passWchatNotifySign" value="${appEnv.passWchatNotifySign}"></property>
+		
+	    <property name="depositeWechatNotifyUrl" value="${wechat.deposite.notifyUrl}"></property>
+		<property name="keyStoreResource"
+			value="${wechat.keyStore.resource:classpath:apiclient_cert.p12}"></property>
+		<property name="wechatPassword" value="${wechat.keyStore.password}"></property>
+		<property name="wechatPayNotifyUrl" value="${wechat.notifyUrl}"></property>
+		
+		
+		<property name="wechatCAppId" value="${wechat.cAppId}"></property>
+		<property name="wechatCAppSecret" value="${wechat.cAppSecret}"></property>
+		<property name="wechatCAppSignKey" value="${wechat.cAppSignKey}"></property>
+		<property name="wechatCMchId" value="${wechat.cMchId}"></property>
+		
+		
+		<property name="wechatMchId" value="${wechat.bMchId}"></property>
+		<property name="wechatAppSignedkey" value="${wechat.bAppSignKey}"></property>
+		<property name="wechatAppId" value="${wechat.bAppId}"></property>
+		<property name="wechatAppSecret" value="${wechat.bAppId}"></property>
 	</bean>
 </beans>

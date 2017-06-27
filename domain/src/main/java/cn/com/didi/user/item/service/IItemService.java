@@ -33,6 +33,7 @@ public interface IItemService {
 	 * @return
 	 */
 	public List<FlServiceDto> selectAllFlService();
+	
 	/**
 	 * @param flsId
 	 * @return
@@ -59,6 +60,7 @@ public interface IItemService {
 	 * @param dto
 	 */
 	public void addSlsService(SlsSericeExtDto dto);
+	
 	/**
 	 * @param dto
 	 * @param cityList
@@ -91,5 +93,10 @@ public interface IItemService {
 	 * @return
 	 */
 	public List<FlsItemDto> selectAllFlsItem();
+	/**
+	 * 查询所有商户端一级服务
+	 * @return
+	 */
+	public List<FlsItemDto> selectBAllFlsItem();
 	
 }

@@ -10,7 +10,9 @@ public enum WechatEnum {
 	 */
 	OPEN,
 	/**
-	 * app
+	 * app 商户端
 	 */
-	APP;
+	APP,
+	/**app商户端*/
+	APP_C;
 }

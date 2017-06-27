@@ -9,80 +9,7 @@ import cn.com.didi.user.ad.domain.AdDescDto;
 import cn.com.didi.user.users.domain.VipDescrptionDto;
 
 public interface IAppEnv {
-	public String getAppName();
 	
-	public String getWechatAppId();
-	/**
-	 * 获取微信公众号Appid
-	 * @return
-	 */
-	public String getWechatOpenAppId();
-	/**
-	 * 获取微信公众号OpenSecret
-	 * @return
-	 */
-	public String getWechatOpenSecret();
-	/**微信商户号
-	 * @return
-	 */
-	public String getWechatMchId();
-	/**
-	 * @return 
-	 */
-	public String getIpAdress();
-	/**
-	 * 获取微信通知Url
-	 * @return
-	 */
-	public String getWechatPayNotifyUrl();
-	/**
-	 * 获取微信通知URL
-	 * @return
-	 */
-	public String getDepositeWechatNotifyUrl();
-	/**
-	 * @return
-	 */
-	public String getWechatTradeType();
-	
-	/**用于app支付的字符集
-	 * @return
-	 */
-	public String getWechatCharSet();
-	
-	/**
-	 * @return
-	 */
-	public String getWechatAppSignedkey();
-	
-	/**
-	 * 微信统一下单URL
-	 * @return
-	 */
-	public URI getWechatAppPayURI();
-	/**
-	 * 微信转账URI
-	 * @return
-	 */
-	public URI getWechatTransferURI();
-	
-	/**
-	 * @return
-	 * @throws IOException 
-	 */
-	public InputStream getWechatKeyStroe() throws IOException;
-	/**证书的password
-	 * @return
-	 */
-	public String getWechatPassword();
-	/** 获取微信校验token
-	 * @return
-	 */
-	public String getWechatValidatorToken();
-	
-	
-	
-	public String getWechatAppSecret();
 	
 	
 	/**
@@ -173,4 +100,129 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public boolean passAliNotifySign();
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 获取微信通知Url
+	 * @return
+	 */
+	public String getWechatPayNotifyUrl();
+	/**
+	 * 获取微信通知URL
+	 * @return
+	 */
+	public String getDepositeWechatNotifyUrl();
+	/**
+	 * @return
+	 */
+	public String getWechatTradeType();
+	
+	/**用于app支付的字符集
+	 * @return
+	 */
+	public String getWechatCharSet();
+	
+	
+	
+	/**
+	 * 微信统一下单URL
+	 * @return
+	 */
+	public URI getWechatAppPayURI();
+	/**
+	 * 微信转账URI
+	 * @return
+	 */
+	public URI getWechatTransferURI();
+	
+	/**
+	 * @return
+	 * @throws IOException 
+	 */
+	public InputStream getWechatKeyStroe() throws IOException;
+	/**证书的password
+	 * @return
+	 */
+	public String getWechatPassword();
+	
+	/**
+	 * @return 
+	 */
+	public String getIpAdress();
+	
+	
+	/*以下微信接口已过时*/
+	
+	public String getAppName();
+	/**
+	 * 获取用户端APPID
+	 * @return
+	 */
+	public String getWechatCAppId();
+	/**
+	 * 获取用户端AppSecret
+	 * @return
+	 */
+	public String getWechatCAppSecret();
+	/**
+	 * @return 
+	 */
+	public String getWechatCAppSignKey();
+	/**
+	 * 获取用户端商户号ID
+	 * @return
+	 */
+	public String getWechatCMchId();
+	
+	
+	
+	/**
+	 * @return
+	 */
+	public String getWechatAppId();
+	
+
+	/**微信商户号
+	 * @return
+	 */
+	public String getWechatMchId();
+
+	/**
+	 * @return
+	 */
+	public String getWechatAppSignedkey();
+
+	
+	/**
+	 * @return
+	 */
+	public String getWechatAppSecret();
+	
+	
+	
+	
+	/**
+	 * 获取微信公众号OpenSecret
+	 * @return
+	 */
+	public String getWechatOpenSecret();
+	/**
+	 * 获取微信公众号Appid
+	 * @return
+	 */
+	public String getWechatOpenAppId();
+
+	/** 获取微信校验token
+	 * @return
+	 */
+	public String getWechatValidatorToken();
+	
+	
 }

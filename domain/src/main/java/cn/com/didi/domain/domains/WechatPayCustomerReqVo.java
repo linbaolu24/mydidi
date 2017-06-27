@@ -72,7 +72,10 @@ APP——需传入应用市场上的APP名字-实际商品名称，天天爱消�
      * 交易类型	trade_type	是	String(16)	APP	支付类型
      */
     private String trade_type;
-
+    /**
+     * 签名的key
+     */
+    private String signKey;
    
 
     public String getDevice_info() {
@@ -203,6 +206,14 @@ APP——需传入应用市场上的APP名字-实际商品名称，天天爱消�
 				+ openid + ", check_name=" + check_name + ", re_user_name=" + re_user_name + ", amount=" + amount
 				+ ", desc=" + desc + ", spbill_create_ip=" + spbill_create_ip + ", body=" + body + ", notify_url="
 				+ notify_url + ", trade_type=" + trade_type + "]";
+	}
+
+	public String getSignKey() {
+		return signKey;
+	}
+
+	public void setSignKey(String signKey) {
+		this.signKey = signKey;
 	}
 
    

@@ -58,7 +58,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	protected IFilter<Field> field = new IFilter<Field>() {
 
 		@Override
-		public boolean filter(Field obj) {
+		public boolean filter(Field obj) {//如果为true表示要过滤
 			return Modifier.isStatic(obj.getModifiers())||signMap.containsKey(obj.getName());//签名过滤
 		}
 	};
@@ -101,13 +101,16 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		payMap=new HashMap<>();
 		payMap.put("amount", "total_fee");
 		payMap.put("partner_trade_no", "out_trade_no");
+		payMap.put("signKey", "N");
 
 		transMap=new HashMap<>();
 		transMap.put("appid", "mch_appid");
 		transMap.put("mch_id","mchid");
+		transMap.put("signKey","N");
 		//signMap.put("mch_appid", "Y");
 		signMap.put("cost", "Y");
 		signMap.put("sign", "Y");
+		signMap.put("signKey", "Y");
 		signMap.put("source", "Y");
 	}
 	@Override

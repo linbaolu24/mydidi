@@ -14,17 +14,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
+import cn.com.didi.core.filter.IFilter;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.BusinessCharge;
 import cn.com.didi.domain.util.ServiceState;
+import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.domain.util.VisualMark;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 import cn.com.didi.user.item.dao.mapper.FlServiceDtoMapper;
 import cn.com.didi.user.item.dao.mapper.SlServiceDtoMapper;
 import cn.com.didi.user.item.dao.mapper.SlsCityDtoMapper;
 import cn.com.didi.user.item.domain.FlServiceDto;
+import cn.com.didi.user.item.domain.FlServiceDtoExample;
 import cn.com.didi.user.item.domain.FlServiceItemDto;
 import cn.com.didi.user.item.domain.FlsItemDto;
 import cn.com.didi.user.item.domain.SlServiceDto;
@@ -87,7 +90,6 @@ public class ItemServiceImpl implements IItemService {
 	public List<FlServiceDto> selectAllFlService(String state) {
 		return flsMapper.selectAllStateFlService(state);
 	}
-	
 	
 
 	@Override
@@ -228,16 +230,16 @@ public class ItemServiceImpl implements IItemService {
 	@Override
 	public List<SlsItemDto> selectSlItems(Integer flsId) {
 		List<SlServiceDto> dto = selectSls(flsId,ServiceState.NORMAL.getCode());
-		return toSlsItems(dto);
+		return toSlsItems(dto,true);
 	}
 	
-	protected List<SlsItemDto> toSlsItems(List<SlServiceDto> dto){
+	protected List<SlsItemDto> toSlsItems(List<SlServiceDto> dto,boolean contiansCity){
 		if (CollectionUtils.isEmpty(dto)) {
 			return null;
 		}
 		List<SlsItemDto> items = SlsItemDto.wrap(dto);
 		List<SlsCityDtoKey> list = slsCityapper.selectSlsCity(dto);
-		if (CollectionUtils.isEmpty(list)) {
+		if (CollectionUtils.isEmpty(list)||!contiansCity) {
 			return items;
 		}
 		for (SlsCityDtoKey one : list) {
@@ -255,26 +257,43 @@ public class ItemServiceImpl implements IItemService {
 		return slsMapper.selectByPrimaryKey(slsId);
 	}
 
+	public List<SlsItemDto> selectSlItems(List<Integer> flsId,boolean contiansCity) {
+		List<SlServiceDto> slsServiceDto=selectSls(flsId,ServiceState.NORMAL.getCode());
+		return toSlsItems(slsServiceDto,contiansCity);
+	}
 	@Override
 	public List<SlsItemDto> selectSlItems(List<Integer> flsId) {
-		List<SlServiceDto> slsServiceDto=selectSls(flsId,ServiceState.NORMAL.getCode());
-		return toSlsItems(slsServiceDto);
+		return selectSlItems(flsId, true);
 	}
-
+	public boolean isSelfOrSpecailService(SlServiceDto dto){
+		return BusinessCategory.SELF.codeEqual(dto.getBusinessCategory())
+		||!SpecialTypeEnum.NORMAL.codeEqual(dto.getSpecialType());
+	}
+	@Override
+	public List<FlsItemDto> selectBAllFlsItem() {
+		return selectAllFlsItem(false,obj-> !isSelfOrSpecailService(obj.getDto()));
+	}
 	@Override
 	public List<FlsItemDto> selectAllFlsItem() {
+		return selectAllFlsItem(true, null);
+	}
+	/***/
+	public List<FlsItemDto> selectAllFlsItem(boolean containCity,IFilter<SlsItemDto> filter) {
 		List<FlServiceDto> flServiceList=selectAllFlService(ServiceState.NORMAL.getCode());
 		if(CollectionUtils.isEmpty(flServiceList)){
 			return null;
 		}
 		List<Integer> flIdList=toServiceIdList(flServiceList);
-		List<SlsItemDto> slsItems=selectSlItems(flIdList);
+		List<SlsItemDto> slsItems=selectSlItems(flIdList,containCity);
 	
 		List<FlsItemDto> flItem=FlsItemDto.wrap(flServiceList);
 		if(CollectionUtils.isEmpty(slsItems)){
 			return flItem;
 		}
 		for (SlsItemDto one : slsItems) {
+			if(filter!=null&&filter.filter(one)){
+				continue;
+			}
 			for (int i = 0; i < flItem.size(); i++) {
 				if(flItem.get(i).addSlsItem(one)){
 					break;
@@ -282,7 +301,6 @@ public class ItemServiceImpl implements IItemService {
 			}
 		}
 		return flItem;
-		 
 	}
 	protected List<Integer> toServiceIdList(List<FlServiceDto> list){
 		List<Integer> lists=new ArrayList(list.size());
@@ -303,5 +321,9 @@ public class ItemServiceImpl implements IItemService {
 		cri.andServiceIdIn(slsIdS);
 		return slsMapper.selectByExample(example);
 	}
+
+	
+
+	
 
 }
