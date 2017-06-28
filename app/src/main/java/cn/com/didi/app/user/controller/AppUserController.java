@@ -198,7 +198,7 @@ public class AppUserController {
 		vipValue(accountDomains.getRole(), accountDomains.getAccountId());
 	}
 	protected String arrivalStatus(Long accountId,String role,String businessCategory,String nowStatus){
-		if(Role.BUSINESS.codeEqual(role)&&BusinessCategory.THIRD.equals(businessCategory)&&
+		if(Role.BUSINESS.codeEqual(role)&&BusinessCategory.THIRD.codeEqual(businessCategory)&&
 				!ArrivalStatusEnum.NORMAL.codeEqual(nowStatus)){
 			return merchantService.selectArrivalStatus(accountId).getCode();
 		}
