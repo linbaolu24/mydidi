@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.filter.IOperationInterceptor;
 import cn.com.didi.core.property.Couple;
+import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.core.utils.NumberUtil;
 import cn.com.didi.domain.domains.IMerchantDto;
@@ -97,7 +98,7 @@ public class MrmfOperationInterceptor
 	protected <R> IOrderRuslt<R> merchantVerify(OrderContextDto data) {
 		IMerchantDto dto = data.getMerchantDto();
 		if (dto == null) {
-			
+			return new OrderRuslt<>( OrderMessageConstans.ORDER_NO_SPECAIL_MERCHANT);
 		}
 		OrderDto order = data.getOrderDto();
 		order.setMasterName(dto.getMasterName());

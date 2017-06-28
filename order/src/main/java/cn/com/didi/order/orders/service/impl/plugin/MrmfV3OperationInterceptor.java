@@ -1,18 +1,15 @@
 package cn.com.didi.order.orders.service.impl.plugin;
 
-import java.util.Date;
-
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import cn.com.didi.core.property.Couple;
-import cn.com.didi.core.property.ResultFactory;
+import cn.com.didi.core.message.Message;
 import cn.com.didi.domain.domains.IMerchantDto;
-import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.UseAbleDto;
+import cn.com.didi.domain.util.LatLngUtiil;
 import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.order.orders.domain.OrderContextDto;
@@ -69,27 +66,33 @@ public class MrmfV3OperationInterceptor extends MrmfV2OperationInterceptor{
 		}
 		return new OrderRuslt<>(OrderMessageConstans.ORDER_MRMF_NOT_VIP);	
 	}
-	protected  <T> IOrderRuslt<T> popBeforeAdd(OrderDto order, OrderContextDto data, IOrderService source){
-		Couple<IMerchantDto, IReciverDto> couple = reciverSearch
-				.getMerchantAndReciver(order.getMerchantAccountId());
+	protected <T> IOrderRuslt<T> handleDistance(OrderDto order, OrderContextDto data, IOrderService source){
+		LOGGER.debug("对距离进行校验");
+		boolean hasVip=vipService.hasVip(order.getConsumerAccountId(), order.getSlsId());
+		LOGGER.debug("订单 {} VIP校验结果{}",order,hasVip);
+		if(hasVip){
+			return null;
+		}
+		return new OrderRuslt<>(OrderMessageConstans.ORDER_MRMF_NOT_VIP);	
+	}
+	protected <R> IOrderRuslt<R> merchantVerify(OrderContextDto data) {
+		IOrderRuslt<R> result=super.merchantVerify(data);
+		if(result!=null&&!result.success()){
+			return result;
+		}
+		int distance=appEnv.getMrmfCommmitMaxDistance();
+		LOGGER.debug("订单最小提交距离为{}米",distance);
+		if(distance<=0){
+			return null;
+		}
+		OrderDto dto=data.getOrderDto();
+		double rdistance=Math.abs(LatLngUtiil.getDistance(dto.getLng().doubleValue(), dto.getLat().doubleValue(),
+				dto.getMlng().doubleValue(), dto.getLat().doubleValue()));
+		if(rdistance>distance){
+			Message message=OrderMessageConstans.ORDER_COUSMER_MERCHANT_DISTANCE_TOO_LONG;
+			return new OrderRuslt<>(message.getMessage(distance),message.getCode());
+		}
+		return null;
 		
-		order.setEvaluation(5);
-		if (couple != null) {
-			data.setMerchantDto(couple.getFirst());
-			data.setReciverDto(couple.getSecond());
-		}
-		IOrderRuslt<T> result= merchantVerify(data);
-		order.setState(OrderState.ORDER_STATE_FINISH.getCode());
-		Date  date=order.getOct();
-		if(date==null){
-			date=new Date();
-			order.setOct(date);
-		}
-		order.setOrt(date);
-		order.setOfst(date);
-		order.setOfst(date);
-		order.setOet(date);
-		order.setSst(date);
-		return result;
 	}
 }

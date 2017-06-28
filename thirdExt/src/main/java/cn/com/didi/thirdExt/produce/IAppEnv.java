@@ -63,6 +63,10 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public Integer getMfxfSlsId();
+	/**美容美发最大提交距离
+	 * @return
+	 */
+	public int getMrmfCommmitMaxDistance();
 	/**
 	 * @return
 	 */

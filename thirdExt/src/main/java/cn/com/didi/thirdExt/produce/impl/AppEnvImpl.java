@@ -334,7 +334,14 @@ public class AppEnvImpl implements IAppEnv {
 	public void setMfxfSlsId(Integer mrmfSlsId) {
 		this.mfxfSlsId = mrmfSlsId;
 	}
-
+	@Override
+	public int getMrmfCommmitMaxDistance() {
+	   String value=appEnviroment.getProperty(EnvConstants.MRMF_ORDER_COMMIT_MAX_DISTANCE);
+	   if(StringUtils.isEmpty(value)){
+		   return -1;
+	   }
+	   return Integer.parseInt(value);
+	}
 
 	@Override
 	public boolean canReflashUserLinked() {
@@ -458,5 +465,7 @@ public class AppEnvImpl implements IAppEnv {
 	
 		return "9b7b4ee13fd9e9ee82f3ad55f585db47";
 	}
+
+	
 
 }

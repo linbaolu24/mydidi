@@ -249,6 +249,16 @@ public class DomainMessageConstans {
 	 * 订单通知无师傅
 	 */
 	public static final String CODE_ORDER_NOTIFY_DIS_NO_MASTER="5003000022";
+	/**
+	 * 
+	 * 不存在指定商户
+	 */
+	public static final String CODE_ORDER_NO_SPECAIL_MERCHANT="5003000023";
+	/**
+	 * 
+	 * 与商户距离太远
+	 */
+	public static final String CODE_ORDER_COUSMER_MERCHANT_DISTANCE_TOO_LONG="5003000024";
 	
 	
 	

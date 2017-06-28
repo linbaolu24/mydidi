@@ -139,6 +139,16 @@ public class OrderMessageConstans {
 	 * 订单通知无师傅
 	 */
 	public static final Message ORDER_NOTIFY_DIS_NO_MASTER=newMessage(DomainMessageConstans.CODE_ORDER_NOTIFY_DIS_NO_MASTER);
+	/**
+	 * 不存在指定商户
+	 */
+	public static final Message ORDER_NO_SPECAIL_MERCHANT=newMessage(DomainMessageConstans.CODE_ORDER_NO_SPECAIL_MERCHANT);
+	
+	/**
+	 * 
+	 * 与商户距离太远
+	 */
+	public static final Message ORDER_COUSMER_MERCHANT_DISTANCE_TOO_LONG=newMessage(DomainMessageConstans.CODE_ORDER_COUSMER_MERCHANT_DISTANCE_TOO_LONG);//="5003000024";
 	
 	
 	/*以下为交易*/

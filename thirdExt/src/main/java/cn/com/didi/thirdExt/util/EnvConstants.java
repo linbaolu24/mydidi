@@ -47,4 +47,8 @@ public class EnvConstants {
 	 * 是否可以刷新用户linkid
 	 */
 	public static final String CAN_REFLASH_USER_LINKED="10000010";
+	/**
+	 * 美容美发与商户的最大距离
+	 */
+	public static final String MRMF_ORDER_COMMIT_MAX_DISTANCE="10000011";
 }
