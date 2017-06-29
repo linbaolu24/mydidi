@@ -42,4 +42,10 @@ public class MerchantServiceDtoKey implements Serializable {
     public void setSlsId(Integer slsId) {
         this.slsId = slsId;
     }
+    
+    
+    //TODO add by myself
+	public void setServiceId(Integer slsId){
+		setSlsId(slsId);
+	}
 }
