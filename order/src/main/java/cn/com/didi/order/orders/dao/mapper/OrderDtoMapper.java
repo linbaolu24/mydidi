@@ -53,6 +53,13 @@ public interface OrderDtoMapper {
 	 */
 	List<OrderListDto> selectOrders(@Param("time") TimeInterval interval, RowBounds bounds);
 	
+	/**
+	 * @param interval
+	 * @param bounds
+	 * @return
+	 */
+	List<OrderListDto> selectOrdersByUserPhone(@Param("time") TimeInterval interval, RowBounds bounds);
+	
 	
 	
 	/**

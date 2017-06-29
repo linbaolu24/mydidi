@@ -54,6 +54,7 @@ public class TimeInterval implements Serializable{
 	 * 查询ID
 	 */
 	private Number id;
+	private String phone;
 
 	public Date getStartTime() {
 		return startTime;
@@ -112,6 +113,14 @@ public class TimeInterval implements Serializable{
 
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	

@@ -17,6 +17,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -33,9 +34,12 @@ import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayFundTransToaccountTransferModel;
+import com.alipay.api.domain.AlipayTradeQueryModel;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
+import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
+import com.alipay.api.response.AlipayTradeQueryResponse;
 
 import cn.com.didi.core.filter.IOperationListener;
 import cn.com.didi.core.property.IResult;
@@ -48,6 +52,7 @@ import cn.com.didi.domain.domains.AliPAyRequestDto;
 import cn.com.didi.domain.domains.AliSynResultDto;
 import cn.com.didi.domain.domains.AlipayTradeAppPayResponseDto;
 import cn.com.didi.domain.domains.PayResultDto;
+import cn.com.didi.domain.domains.ali.AliPayTradeResponse;
 import cn.com.didi.domain.domains.ali.AlipayTransToAccountResponse;
 import cn.com.didi.domain.util.AlipayConstants;
 import cn.com.didi.domain.util.PayAccountEnum;
@@ -151,22 +156,6 @@ public class AliTradeServiceImpl implements IAliTradeService {
 		return builder;
 	}
 
-	@Override
-	public IResult<Void> asynnotify(Map<String, String> map) {
-		
-		IResult<Void> result = asynormalVerify(map);
-		if (result != null) {
-			return result;
-		}
-		if (TRADE_SUCCESS.equalsIgnoreCase((String) map.get(TRADE_STATUS))||AlipayConstants.TRADE_FINISHED.equalsIgnoreCase((String) map.get(TRADE_STATUS))) {
-			LOGGER.debug("=====交易完成操作====");
-			result = finishDeal(map);
-			return result;
-		}else{
-			failDeal(map);
-		}
-		return ResultFactory.success();
-	}
 
 	protected <T> IResult asynormalVerify(Map<String, String> map) {
 		aliOperationListener.operate(TradeOperations.NOTIFY_START_ALI_ASYN, map);
@@ -221,19 +210,7 @@ public class AliTradeServiceImpl implements IAliTradeService {
 
 	}
 
-	@Override
-	public IResult<Void> synnotify(AliSynResultDto synResultDto) {
-		IResult<Map> verifyResult = synnotifyVerity(synResultDto);
-		if (verifyResult != null && !verifyResult.success()) {
-			return ResultFactory.error(verifyResult.getCode(), verifyResult.getMessage());
-		}
-		Map resMap = verifyResult.getData();
-		IResult<Void> result = finishDeal(resMap);
-		if (result == null || result.success()) {
-			return ResultFactory.success();
-		}
-		return result;
-	}
+
 
 	protected String getSignAlgFromSignType(String signType) {
 		String alg = Constans.SHA1_WITH_RSA;
@@ -302,6 +279,222 @@ public class AliTradeServiceImpl implements IAliTradeService {
 
 	}
 
+
+	protected AlipayTradeAppPayResponseDto toAliResonse(AliSynResultDto synResultDto){
+		net.sf.json.JSONObject jo=net.sf.json.JSONObject.fromObject(synResultDto.getResult());
+		AlipayTradeAppPayResponseDto map =new AlipayTradeAppPayResponseDto();
+		map.setAlipay_trade_app_pay_response(jo.optString(AlipayConstants.ALIPAY_TRADE_APP_PAY_RESPONSE));
+		map.setSign(jo.optString(AlipayConstants.SIGN));
+		map.setSign_type(jo.optString(AlipayConstants.SIGN_TYPE));
+		return map;
+	}
+
+	@Override
+	public IResult<AliPAyRequestDto> createOdrerRequest(Long accountId, String type, String obj) {
+		AliPayBuilder builder = createNormalBuilder();
+		DealDto dto = new DealDto();
+		dto.setSai(accountId);
+		dto.setDat(PayAccountEnum.ALIPAY.getCode());
+		dto.setSat(PayAccountEnum.ALIPAY.getCode());
+		dto.setCreateTime(new Date());
+		ITradeTranscationCallBack<DealDto> callBack = finder.findCreateTranscationalCallBack(accountId,type, obj);
+		tradeService.createTrade(dto, callBack);
+		try {
+			builder.bzout_trade_no(dto.getDealId());
+			builder.totalAmount(dto.getAmount());
+			builder.timestamp(dto.getCreateTime());
+			callBack.popForAli(builder);
+			AliPAyRequestDto aliDto = builder.build(key);
+			return ResultFactory.success(aliDto);
+		} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | SignatureException e) {
+			LOGGER.error("阿里生成签名失败 = {},异常 = {}", dto, e);
+			failDeal(null, dto.getDealId(), dto, type+"阿里订单生成签名失败", null);
+			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_PAY_ORDERINFO_FAIL);
+		}
+	}
+
+	@Override
+	public IResult<Void> asynnotify(Map<String, String> map, String type) {
+		/*IResult<Void> result = asynormalVerify(map);
+		if (result != null) {
+			return result;
+		}
+		if (TRADE_SUCCESS.equalsIgnoreCase((String) map.get(TRADE_STATUS))
+				|| AlipayConstants.TRADE_FINISHED.equalsIgnoreCase((String) map.get(TRADE_STATUS))) {
+			TranscationalCallBack<PayResultDto> payResultCallBack = finder.findFinishTranscationalCallBack(type);
+			PayResultDto payResult = getPayResultDto(map);
+			return tradeService.finishDeal(payResult, payResultCallBack);
+		}else{
+			failDeal(map);
+		}
+		return ResultFactory.success();*/
+		return asynnotifyInternal(map, type, true);
+	}
+	@Override
+	public IResult<Void> asynnotify(Map<String, String> map) {
+		
+		/*IResult<Void> result = asynormalVerify(map);
+		if (result != null) {
+			return result;
+		}
+		if (TRADE_SUCCESS.equalsIgnoreCase((String) map.get(TRADE_STATUS))||AlipayConstants.TRADE_FINISHED.equalsIgnoreCase((String) map.get(TRADE_STATUS))) {
+			LOGGER.debug("=====交易完成操作====");
+			result = finishDeal(map);
+			return result;
+		}else{
+			failDeal(map);
+		}
+		return ResultFactory.success();*/
+		return asynnotifyInternal(map,null,false);
+	}
+
+	
+	public IResult<Void> asynnotifyInternal(Map<String, String> map, String type,boolean verify) {
+		if (verify) {
+			IResult<Void> result = asynormalVerify(map);
+			if (result != null) {
+				return result;
+			}
+		}
+		if (TRADE_SUCCESS.equalsIgnoreCase((String) map.get(TRADE_STATUS))
+				|| AlipayConstants.TRADE_FINISHED.equalsIgnoreCase((String) map.get(TRADE_STATUS))) {
+			if (StringUtils.isEmpty(type)) {
+				return finishDeal(map);
+			} else {
+				TranscationalCallBack<PayResultDto> payResultCallBack = finder.findFinishTranscationalCallBack(type);
+				PayResultDto payResult = getPayResultDto(map);
+				return tradeService.finishDeal(payResult, payResultCallBack);
+			}
+		} else {
+			failDeal(map);
+		}
+		return ResultFactory.success();
+	}
+
+	
+	
+
+	@Override
+	public IResult<AlipayTransToAccountResponse> sendTransForm(DealDto dto) {
+		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
+		AlipayFundTransToaccountTransferModel model = new AlipayFundTransToaccountTransferModel();
+		model.setAmount(NumberUtil.intToDecimal2(dto.getAmount()));
+		model.setOutBizNo(String.valueOf(dto.getDealId()));
+		model.setPayeeType("ALIPAY_LOGONID");
+		model.setPayeeAccount(dto.getDa());
+		model.setPayerShowName("嘀嘀服务");
+		model.setRemark("提现");
+		request.setBizModel(model);
+		try {
+			AlipayFundTransToaccountTransferResponse response = alipayClient.execute(request);
+			AlipayTransToAccountResponse newResponse=new AlipayTransToAccountResponse();
+			pop(response, newResponse);
+			return ResultFactory.success(newResponse);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION);
+		}
+	}
+	
+	public IResult<AlipayTransToAccountResponse> queryTrade(DealDto dto) {
+		AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+		AlipayTradeQueryModel model = new AlipayTradeQueryModel();
+		model.setOutTradeNo(String.valueOf(dto.getDealId()));
+		request.setBizModel(model);
+		try {
+			AlipayTradeQueryResponse response = alipayClient.execute(request);
+			AliPayTradeResponse newResponse=new AliPayTradeResponse();
+			pop(response, newResponse);
+			return ResultFactory.success(newResponse);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION);
+		}
+	}
+	
+	protected void pop(AlipayFundTransToaccountTransferResponse response,AlipayTransToAccountResponse newResponse){
+		newResponse.setBody(response.getBody());
+		newResponse.setCode(response.getCode());
+		newResponse.setMsg(response.getMsg());
+		newResponse.setOrder_id(response.getOrderId());
+		newResponse.setOut_biz_no(response.getOutBizNo());
+		newResponse.setParams(response.getParams());
+		newResponse.setPay_date(response.getPayDate());
+		newResponse.setSub_code(response.getSubCode());
+		newResponse.setSub_msg(response.getSubMsg());
+	}
+	protected void pop(AlipayTradeQueryResponse response,AliPayTradeResponse newResponse){
+		newResponse.setBody(response.getBody());
+		newResponse.setCode(response.getCode());
+		newResponse.setMsg(response.getMsg());
+		newResponse.setOrder_id(response.getTradeNo());//支付宝订单号
+		newResponse.setOut_biz_no(response.getOutTradeNo());
+		newResponse.setParams(response.getParams());
+		//newResponse.setPay_date(response.get);
+		newResponse.setSub_code(response.getSubCode());
+		newResponse.setSub_msg(response.getSubMsg());
+		newResponse.setAmount(response.getTotalAmount());
+		newResponse.setTrade_status(response.getTradeStatus());
+	}
+
+	public Map<String, String> toMap(AliPayTradeResponse newResponse) {
+		Map<String, String> map = new HashMap<>();
+		map.put(OUT_TRADE_NO, newResponse.getOut_biz_no());
+		map.put(TOTAL_AMOUNT, newResponse.getAmount());
+		map.put(AlipayConstants.TRADE_NO, newResponse.getOrder_id());
+		map.put(TRADE_STATUS, newResponse.getTrade_status());
+		return map;
+	}
+	
+	
+	
+	@Override
+	public IResult<Void> synnotify(String type, AliSynResultDto map) {
+		IResult<Map> verifyResult = synnotifyVerity(map);
+		if (verifyResult != null && !verifyResult.success()) {
+			return ResultFactory.error(verifyResult.getCode(), verifyResult.getMessage());
+		}
+		Map resMap = verifyResult.getData();
+		TranscationalCallBack<PayResultDto> payResultCallBack = finder.findFinishTranscationalCallBack(type);
+		PayResultDto payResult = getPayResultDto(resMap);
+		return tradeService.finishDeal(payResult, payResultCallBack);
+	}
+	@Override
+	public IResult<Void> synnotify(AliSynResultDto synResultDto) {
+		IResult<Map> verifyResult = synnotifyVerity(synResultDto);
+		if (verifyResult != null && !verifyResult.success()) {
+			return ResultFactory.error(verifyResult.getCode(), verifyResult.getMessage());
+		}
+		Map resMap = verifyResult.getData();
+		IResult<Void> result = finishDeal(resMap);
+		if (result == null || result.success()) {
+			return ResultFactory.success();
+		}
+		return result;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public IOrderService getOrderService() {
 		return orderService;
 	}
@@ -356,101 +549,6 @@ public class AliTradeServiceImpl implements IAliTradeService {
 
 	public void setKey(PrivateKey key) {
 		this.key = key;
-	}
-	protected AlipayTradeAppPayResponseDto toAliResonse(AliSynResultDto synResultDto){
-		net.sf.json.JSONObject jo=net.sf.json.JSONObject.fromObject(synResultDto.getResult());
-		AlipayTradeAppPayResponseDto map =new AlipayTradeAppPayResponseDto();
-		map.setAlipay_trade_app_pay_response(jo.optString(AlipayConstants.ALIPAY_TRADE_APP_PAY_RESPONSE));
-		map.setSign(jo.optString(AlipayConstants.SIGN));
-		map.setSign_type(jo.optString(AlipayConstants.SIGN_TYPE));
-		return map;
-	}
-
-	@Override
-	public IResult<AliPAyRequestDto> createOdrerRequest(Long accountId, String type, String obj) {
-		AliPayBuilder builder = createNormalBuilder();
-		DealDto dto = new DealDto();
-		dto.setSai(accountId);
-		dto.setDat(PayAccountEnum.ALIPAY.getCode());
-		dto.setSat(PayAccountEnum.ALIPAY.getCode());
-		dto.setCreateTime(new Date());
-		ITradeTranscationCallBack<DealDto> callBack = finder.findCreateTranscationalCallBack(accountId,type, obj);
-		tradeService.createTrade(dto, callBack);
-		try {
-			builder.bzout_trade_no(dto.getDealId());
-			builder.totalAmount(dto.getAmount());
-			builder.timestamp(dto.getCreateTime());
-			callBack.popForAli(builder);
-			AliPAyRequestDto aliDto = builder.build(key);
-			return ResultFactory.success(aliDto);
-		} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | SignatureException e) {
-			LOGGER.error("阿里生成签名失败 = {},异常 = {}", dto, e);
-			failDeal(null, dto.getDealId(), dto, type+"阿里订单生成签名失败", null);
-			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_PAY_ORDERINFO_FAIL);
-		}
-	}
-
-	@Override
-	public IResult<Void> asynnotify(Map<String, String> map, String type) {
-		IResult<Void> result = asynormalVerify(map);
-		if (result != null) {
-			return result;
-		}
-		if (TRADE_SUCCESS.equalsIgnoreCase((String) map.get(TRADE_STATUS))
-				|| AlipayConstants.TRADE_FINISHED.equalsIgnoreCase((String) map.get(TRADE_STATUS))) {
-			TranscationalCallBack<PayResultDto> payResultCallBack = finder.findFinishTranscationalCallBack(type);
-			PayResultDto payResult = getPayResultDto(map);
-			return tradeService.finishDeal(payResult, payResultCallBack);
-		}else{
-			failDeal(map);
-		}
-		return ResultFactory.success();
-	}
-
-	@Override
-	public IResult<Void> synnotify(String type, AliSynResultDto map) {
-		IResult<Map> verifyResult = synnotifyVerity(map);
-		if (verifyResult != null && !verifyResult.success()) {
-			return ResultFactory.error(verifyResult.getCode(), verifyResult.getMessage());
-		}
-		Map resMap = verifyResult.getData();
-		TranscationalCallBack<PayResultDto> payResultCallBack = finder.findFinishTranscationalCallBack(type);
-		PayResultDto payResult = getPayResultDto(resMap);
-		return tradeService.finishDeal(payResult, payResultCallBack);
-	}
-	
-
-	@Override
-	public IResult<AlipayTransToAccountResponse> sendTransForm(DealDto dto) {
-		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
-		AlipayFundTransToaccountTransferModel model = new AlipayFundTransToaccountTransferModel();
-		model.setAmount(NumberUtil.intToDecimal2(dto.getAmount()));
-		model.setOutBizNo(String.valueOf(dto.getDealId()));
-		model.setPayeeType("ALIPAY_LOGONID");
-		model.setPayeeAccount(dto.getDa());
-		model.setPayerShowName("嘀嘀服务");
-		model.setRemark("提现");
-		request.setBizModel(model);
-		try {
-			AlipayFundTransToaccountTransferResponse response = alipayClient.execute(request);
-			AlipayTransToAccountResponse newResponse=new AlipayTransToAccountResponse();
-			pop(response, newResponse);
-			return ResultFactory.success(newResponse);
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(),e);
-			return ResultFactory.error(OrderMessageConstans.DEAL_ALI_TRANSFER_TO_ACCOUNT_EXCEPTION);
-		}
-	}
-	protected void pop(AlipayFundTransToaccountTransferResponse response,AlipayTransToAccountResponse newResponse){
-		newResponse.setBody(response.getBody());
-		newResponse.setCode(response.getCode());
-		newResponse.setMsg(response.getMsg());
-		newResponse.setOrder_id(response.getOrderId());
-		newResponse.setOut_biz_no(response.getOutBizNo());
-		newResponse.setParams(response.getParams());
-		newResponse.setPay_date(response.getPayDate());
-		newResponse.setSub_code(response.getSubCode());
-		newResponse.setSub_msg(response.getSubMsg());
 	}
 
 }

@@ -29,6 +29,7 @@ import cn.com.didi.domain.domains.wechat.WechatAppDto;
 import cn.com.didi.domain.domains.wechat.WechatPayContext;
 import cn.com.didi.domain.util.PayAccountEnum;
 import cn.com.didi.domain.util.SignatureUtils;
+import cn.com.didi.domain.util.TradeCategory;
 import cn.com.didi.domain.util.WechatEnum;
 import cn.com.didi.order.orders.domain.OrderDealDescDto;
 import cn.com.didi.order.orders.service.IOrderService;
@@ -149,14 +150,14 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		requestDto.setSign(wechatTransferService.getAppPaySign(requestDto, requestDto.getSignKey(), appProduct.getWechatCharSet()));
 		return requestDto;
 	}
-	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(String name) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
+	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(String name) {
 		return createNormalPayCustomerReqVo(WechatEnum.APP, name);
 	}
-	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(WechatEnum type,String name) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
+	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(WechatEnum type,String name) {
 		WechatAppDto appDto =wechatProvider.getAppConfig(type);
 		return createNormalPayCustomerReqVo(type, appDto, name);
 	}
-	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(WechatEnum type,WechatAppDto appDto,String name) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException{
+	protected WechatPayCustomerReqVo createNormalPayCustomerReqVo(WechatEnum type,WechatAppDto appDto,String name) {
 		String appId=appDto.getAppid();
 		//String appSecret=wechatProvider.getAppSecret(type);
 		WechatPayCustomerReqVo requestDto = new WechatPayCustomerReqVo();
@@ -164,7 +165,9 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		requestDto.setNonce_str(String.valueOf(RandomUtils.nextInt() & dived));//随机字符串
 		requestDto.setMch_id(appDto.getMchid());
 		requestDto.setSpbill_create_ip(appProduct.getIpAdress());
-		requestDto.setBody(appDto.getAppName() + "-" +name);
+		if(!StringUtils.isEmpty(name)){
+		    requestDto.setBody(appDto.getAppName() + "-" +name);
+		}
 		requestDto.setTrade_type(appProduct.getWechatTradeType());
 		requestDto.setSignKey(appDto.getSignKey());
 		return requestDto;
@@ -244,9 +247,15 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 			LOGGER.error("Tag:{};验证微信签名失败\n{}",tag,returnVO);
 			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_PAY_NOTIFY_VERIFGY_SIGN_ERROR);
 		}
-		if(!returnVO.verifySuccess()){
+		
+		return finishPayNormal(returnVO, callBack, tag);
+	}
+
+	public IResult<WechatPayNotifyReturnVO> finishPayNormal(WechatPayNotifyReturnVO returnVO,
+			TranscationalCallBack<PayResultDto> callBack, String tag) {
+		if (!returnVO.verifySuccess()) {
 			failDeal(returnVO);
-			LOGGER.info("Tag:{};微信通知不成功\n{}",tag,returnVO);
+			LOGGER.info("Tag:{};微信通知不成功\n{}", tag, returnVO);
 			return ResultFactory.success();
 		}
 		if (callBack == null) {
@@ -256,12 +265,11 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 				return ResultFactory.error(result.getCode(), result.getMessage());
 			}
 		} else {
-			PayResultDto resultVo=getPayResultDto(returnVO);
+			PayResultDto resultVo = getPayResultDto(returnVO);
 			tradeService.finishDeal(resultVo, callBack);
 		}
 		return ResultFactory.success(returnVO);
 	}
-	
 	
 	@Override
 	public IResult<WechatPayNotifyReturnVO> asynnotify(String type, String notifyStr) {
@@ -311,5 +319,24 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 			LOGGER.error(e.getMessage(), e);
 			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TRANSFER_BUILD_REQUEST_ERROR);
 		}
+	}
+	
+	/**
+	 * 转账查询
+	 * @param dto
+	 * @return
+	 */
+	public IResult<WechatPayNotifyReturnVO> tradeQuery(DealDto dto){
+		TradeCategory tardeCategory=cn.com.didi.core.property.ICodeAble.getCode(TradeCategory.values(), dto.getCategory());
+		WechatPayCustomerReqVo request=createNormalPayCustomerReqVo(null);
+		request.setSpbill_create_ip(null);
+		request.setTrade_type(null);
+		IResult<WechatPayNotifyReturnVO> result= wechatTransferService.transferAppPayQuery(request);
+		WechatPayNotifyReturnVO returnVo=result.getData();
+		if(result.success()){
+			TranscationalCallBack<PayResultDto> callBack=(tardeCategory==TradeCategory.IN?null:finder.findFinishTranscationalCallBack(tardeCategory.getType()));
+			return finishPayNormal(returnVo,callBack,"查询订单结果");
+		}
+		return result;
 	}
 }

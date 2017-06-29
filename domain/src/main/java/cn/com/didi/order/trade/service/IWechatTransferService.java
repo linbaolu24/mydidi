@@ -17,6 +17,11 @@ public interface IWechatTransferService {
 	 */
 	public IResult<WechatPayCustomerReturnVo> transferAppPay(WechatPayCustomerReqVo reqVo);
 	/**
+	 * @param reqVo
+	 * @return
+	 */
+	public IResult<WechatPayNotifyReturnVO> transferAppPayQuery(WechatPayCustomerReqVo reqVo);
+	/**
 	 * @param req
 	 * @param signKey
 	 * @return 

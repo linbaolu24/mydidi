@@ -274,7 +274,14 @@ public class OrderMessageConstans {
 	/**向微信转账发送请求异常*/
 	public static final Message DEAL_WECHAT_TRANSFER_REQUEST_EXCEPTION= newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TRANSFER_REQUEST_EXCEPTION);//="5004100012";
 	
-	
+	/**
+	 * 微信订单查询异常
+	 */
+	public static final Message DEAL_WECHAT_TRADE_QUERY_EXCEPTION =newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TRADE_QUERY_EXCEPTION);//="5004100013";
+	/**
+	 * 微信订单查询解析微信返回结果异常
+	 */
+	public static final Message DEAL_WECHAT_TRADE_QUERY_PARE_RES_EXCEPTION =newMessage(DomainMessageConstans.CODE_DEAL_WECHAT_TRADE_QUERY_PARE_RES_EXCEPTION);//="5004100014";
 	
 	/**
 	 * @param code

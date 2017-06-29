@@ -73,9 +73,15 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 
 	public IPage<OrderListDto> selectOrders(TimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
-		PageList<OrderListDto> list = (PageList<OrderListDto>) orderMapper.selectOrders(interval, pageBounds);
+		PageList<OrderListDto> list=null;
+		if (StringUtils.isEmpty(interval.getPhone())) {
+			list = (PageList<OrderListDto>) orderMapper.selectOrders(interval, pageBounds);
+		} else {
+			list = (PageList<OrderListDto>) orderMapper.selectOrdersByUserPhone(interval, pageBounds);
+		}
 		return new MybatisPaginatorPage<>(list);
 	}
+	
 
 	public OrderDto selectOrder(Long orderId) {
 		return orderMapper.selectByPrimaryKey(orderId);

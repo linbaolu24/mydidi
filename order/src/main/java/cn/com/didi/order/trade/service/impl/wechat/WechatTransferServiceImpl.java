@@ -7,8 +7,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.annotation.Resource;
 
@@ -55,6 +57,16 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	
 	private static final String OPEN_UNION_USER_URL="https://api.weixin.qq.com/cgi-bin/user/info?access_token=${ACCESS_TOKEN}&openid=${OPENID}&lang=zh_CN";
 	private static final String ACCESS_TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${SECRET}";
+	private static final String ORDER_QUERY="https://api.mch.weixin.qq.com/pay/orderquery";
+	private static  URI ORDER_QUERY_URI;
+	static{
+		try {
+			ORDER_QUERY_URI=new URI(ORDER_QUERY);
+		} catch (URISyntaxException e) {
+			LOGGER.error(e.getMessage(),e);
+			throw new RuntimeException(e);
+		}
+	}
 	protected IFilter<Field> field = new IFilter<Field>() {
 
 		@Override
@@ -117,7 +129,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	public IResult<WechatPayCustomerReturnVo> transferAppPay(WechatPayCustomerReqVo reqVo) {
 		try {
 			
-			return transferInternal(reqVo, appEnv.getWechatAppPayURI(),payConvert,true);
+			return transferInternal(reqVo, ORDER_QUERY_URI,payConvert,true);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| IntrospectionException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -125,6 +137,22 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		}catch(DocumentException |ParseException|IOException e){
 			LOGGER.error(e.getMessage(), e);
 			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TYXD_PARSE_RESPONSE_ERROR);
+		}
+	}
+	@Override
+	public IResult<WechatPayNotifyReturnVO> transferAppPayQuery(WechatPayCustomerReqVo reqVo) {
+       try {
+			if(StringUtils.isEmpty(reqVo.getSign())&&!StringUtils.isEmpty(reqVo.getSignKey())){
+				reqVo.setSign(getAppPaySign(reqVo, reqVo.getSignKey(), appEnv.getWechatCharSet()));
+			}
+			return transferInternal(reqVo, appEnv.getWechatAppPayURI(),payConvert,true,WechatPayNotifyReturnVO::new);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| IntrospectionException e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TRADE_QUERY_EXCEPTION);
+		}catch(DocumentException |ParseException|IOException e){
+			LOGGER.error(e.getMessage(), e);
+			return ResultFactory.error(OrderMessageConstans.DEAL_WECHAT_TRADE_QUERY_PARE_RES_EXCEPTION);
 		}
 	}
 	@Override
@@ -140,23 +168,27 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 			throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException {
 		return SignatureUtils.getPaySign(req, signKey, charSet, field, convert);
 	}
-	protected IResult<WechatPayCustomerReturnVo> transferInternal(WechatPayCustomerReqVo reqVo,URI url,IConverter<String, String> nameConvert,boolean pay) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, IOException, DocumentException{
+	protected <T extends WechatPayCustomerReturnVo> IResult<T> transferInternal(WechatPayCustomerReqVo reqVo,URI url,IConverter<String, String> nameConvert,boolean pay,Supplier<T> sipplier) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, IOException, DocumentException{
 		LOGGER.debug("微信交易请求对象{},url:{}",reqVo,url);
 		String str = ABeanUtils.transBean2Xml(reqVo,nameConvert,pay);
 		LOGGER.debug("微信交易请求对象{},报文{}",reqVo,str);
 		WechatStringHttpHandler handler=new WechatStringHttpHandler(str,url);
 		httpService.post(handler);
 		String response=handler.getResponseAndThrow();
-		LOGGER.debug("微信返回{}",response);
+		LOGGER.debug("url:{},微信返回{}",url,response);
 		Map<String, Object> map=WechatXmlUtil.parse(response);
-		WechatPayCustomerReturnVo vo=new WechatPayCustomerReturnVo();
+		//WechatPayCustomerReturnVo vo=new WechatPayCustomerReturnVo();
+		T vo=sipplier.get();
 		BeanUtils.copyProperties(vo, map);
 		LOGGER.debug("微信返回对象{}",vo);
-		IResult<WechatPayCustomerReturnVo> result=handleResult(vo);
+		IResult<T> result=handleResult(vo);
 		if(result!=null){
 			return result;
 		}
 		return ResultFactory.success(vo);
+	}
+	protected IResult<WechatPayCustomerReturnVo> transferInternal(WechatPayCustomerReqVo reqVo,URI url,IConverter<String, String> nameConvert,boolean pay) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, IOException, DocumentException {
+		return transferInternal(reqVo, url, nameConvert, pay,WechatPayCustomerReturnVo::new);
 	}
 	@Override
 	public IResult<WechatPayCustomerReturnVo> transferForTransferAccounts(WechatPayCustomerReqVo reqVo) {
@@ -294,8 +326,8 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 			LOGGER.error(e.getMessage(), e);
 			throw new MessageObjectException(error);
 		}
-
 	}
+
 	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException, UnsupportedEncodingException, InvocationTargetException, IntrospectionException {
 		WechatTransferServiceImpl impl=new WechatTransferServiceImpl();
 		/**appid=wxe29a2f519cf39295&body=嘀嘀服务-年费&mch_id=1482609172
@@ -317,6 +349,24 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		System.out.println(ABeanUtils.transBean2Xml(reqVo, impl.payConvert));
 		//<xml><total_fee>1</total_fee><appid>wxf0f6836240fdaf3e</appid><body>&#22016;&#22016;&#26381;&#21153;-&#24180;&#36153;</body><mch_id>1480906112</mch_id><nonce_str>32768</nonce_str><notify_url>https://118.178.226.138/api/app/trade/deposit/wechatAsnyNotify</notify_url><out_trade_no>101</out_trade_no><sign>15710892FB57C79F8CFF152819D9EE8F</sign><spbill_create_ip>115.238.29.228</spbill_create_ip><trade_type>APP</trade_type></xml>
 	}
+
 	
-	
+	/*protected IResult<WechatPayCustomerReturnVo> transferInternal(WechatPayCustomerReqVo reqVo,URI url,IConverter<String, String> nameConvert,boolean pay) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, IOException, DocumentException{
+	LOGGER.debug("微信交易请求对象{},url:{}",reqVo,url);
+	String str = ABeanUtils.transBean2Xml(reqVo,nameConvert,pay);
+	LOGGER.debug("微信交易请求对象{},报文{}",reqVo,str);
+	WechatStringHttpHandler handler=new WechatStringHttpHandler(str,url);
+	httpService.post(handler);
+	String response=handler.getResponseAndThrow();
+	LOGGER.debug("url:{},微信返回{}",url,response);
+	Map<String, Object> map=WechatXmlUtil.parse(response);
+	WechatPayCustomerReturnVo vo=new WechatPayCustomerReturnVo();
+	BeanUtils.copyProperties(vo, map);
+	LOGGER.debug("微信返回对象{}",vo);
+	IResult<WechatPayCustomerReturnVo> result=handleResult(vo);
+	if(result!=null){
+		return result;
+	}
+	return ResultFactory.success(vo);
+}*/
 }

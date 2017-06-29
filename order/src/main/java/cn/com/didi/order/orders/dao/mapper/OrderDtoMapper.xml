@@ -977,6 +977,26 @@
     </where>
      
    </select>
+   
+   <select id="selectOrdersByUserPhone" resultMap="BaseListResultMap"  >
+    select 
+    td.order_Id,
+    td.state,
+    td.cname,
+    td.oct,
+    td.business_Category, 
+    td.business_Charge,
+    td.cost
+    from t_order td,users us
+    <where>
+    us.user_name=#{time.phone,jdbcType=VARCHAR} and us.role='B' and us.account_id=td.consumer_account_id
+    <if test="time.startTime != null">and oct&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.endTime != null">and oct&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.id !=null "> and order_id=#{time.id,jdbcType=BIGINT}</if>
+    <if test="time.state !=null "> and td.state=#{time.state,jdbcType=VARCHAR}</if>
+    </where>
+     
+   </select>
   
   
   <select id="selectCOrderList" resultMap="BaseListResultMap"  >

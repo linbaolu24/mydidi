@@ -36,4 +36,5 @@ public interface IWechatTradeService {
 	 * @return
 	 */
 	public IResult<WechatPayCustomerReturnVo> sendTransForm(DealDto dto);
+	
 }
