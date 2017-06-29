@@ -417,7 +417,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		//merchant.setWechatAccount(null);// 禁止更新微信账号
 		//merchant.setBusinessCategory(null);//禁止更新业务类型
 		MerchantDto temp = merchantMapper.selectByPrimaryKey(merchant.getAccountId());
-		editMerchant(merchant, serviceList, areaList);
+		editMerchant(merchant, serviceList, areaList,temp);
 		
 	}
 	/**

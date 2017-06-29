@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONArray;
+
 import cn.com.didi.app.user.domain.AccountDomain;
 import cn.com.didi.app.user.domain.MerchantServiceWrapperJAO;
 import cn.com.didi.app.user.domain.MerchantWrapperJAO;
@@ -68,8 +70,14 @@ public class AppMerchantController {
 		merchantExtDto.setAccountId(accountId);
 		merchantExtDto.setBpn(obj.getBpn());
 		popWechat(merchantExtDto, accountId);
+		setNormal(merchantExtDto);
 		merchantService.enterMerchant(merchantExtDto.dto(), merchantExtDto.getServiceList(), null);
 		return ResultFactory.success();
+	}
+	protected void setNormal(MerchantExtDto extDto){
+		if(CollectionUtils.isEmpty(extDto.getServiceList())&&!StringUtils.isEmpty(extDto.getServiceListStr())){
+			extDto.setServiceList(JSONArray.parseArray(extDto.getServiceListStr(), MerchantServiceDto.class));
+		}
 	}
 	protected void  popWechat(MerchantExtDto merchantExtDto,Long accountId){
 		if(!StringUtils.isEmpty(merchantExtDto.getCode())){
@@ -100,6 +108,7 @@ public class AppMerchantController {
 		Long accountId = resolver.resolve(request);
 		merchantExtDto.setAccountId(accountId);
 		popWechat(merchantExtDto, accountId);
+		setNormal(merchantExtDto);
 		merchantService.editMerchantWithCheck(merchantExtDto.dto(), merchantExtDto.getServiceList(), null);
 		return ResultFactory.success();
 	}
