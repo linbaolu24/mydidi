@@ -265,13 +265,13 @@ public class ItemServiceImpl implements IItemService {
 	public List<SlsItemDto> selectSlItems(List<Integer> flsId) {
 		return selectSlItems(flsId, true);
 	}
-	public boolean isSelfOrSpecailService(SlServiceDto dto){
-		return BusinessCategory.SELF.codeEqual(dto.getBusinessCategory())
+	public boolean isNotSelfOrSpecailService(SlServiceDto dto){
+		return !BusinessCategory.SELF.codeEqual(dto.getBusinessCategory())
 		||!SpecialTypeEnum.NORMAL.codeEqual(dto.getSpecialType());
 	}
 	@Override
 	public List<FlsItemDto> selectBAllFlsItem() {
-		return selectAllFlsItem(false,obj-> !isSelfOrSpecailService(obj.getDto()));
+		return selectAllFlsItem(false,obj-> isNotSelfOrSpecailService(obj.getDto()));
 	}
 	@Override
 	public List<FlsItemDto> selectAllFlsItem() {
