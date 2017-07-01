@@ -496,6 +496,9 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 
 	@Override
 	public void updateRemark(Long accountId, String remark) {
+		if(remark==null){
+			remark="";
+		}
 		UserDto dto=new UserDto();
 		dto.setAccountId(accountId);
 		dto.setRemark(remark);
