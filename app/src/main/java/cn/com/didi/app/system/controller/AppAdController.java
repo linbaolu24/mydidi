@@ -35,8 +35,8 @@ public class AppAdController {
 
 	@RequestMapping(value="/app/ad/get", method = RequestMethod.POST)
 	public IResult getAds(@RequestBody DpDto adPic,HttpServletRequest request){
-		Long accountId=accountResolver.resolve(request);
-		List<Couple<AdDto, AdPicDto>> lists=adService.queryAdList(accountId, adPic);
+		//Long accountId=accountResolver.resolve(request);
+		List<Couple<AdDto, AdPicDto>> lists=adService.queryAdList(null, adPic);
 		if(CollectionUtils.isEmpty(lists)){
 			return ResultFactory.success();
 		}

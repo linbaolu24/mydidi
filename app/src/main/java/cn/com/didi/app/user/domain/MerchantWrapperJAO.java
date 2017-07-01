@@ -205,5 +205,10 @@ public class MerchantWrapperJAO {
 	public void setWechatName(String wechatName) {
 		merchantDto.setWechatName(wechatName);
 	}
-	
+	public String getLocationAddress(){
+		return merchantDto.getExt2();
+	}
+	public void setLocationAddress(String address){
+		 merchantDto.setExt2(address);
+	}
 }
