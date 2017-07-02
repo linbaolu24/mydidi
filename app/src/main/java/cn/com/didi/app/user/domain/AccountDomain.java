@@ -15,6 +15,7 @@ public class AccountDomain {
 	private  String gtCid;
 	private  String bpn;
 	private String ryToken;
+	private String ryUserId;
 	private String vipFlag;
 	private String role;
 	private String arrivalStatus;
@@ -119,6 +120,12 @@ public class AccountDomain {
 				+ alipayAccount + ", wechatAccount=" + wechatAccount + ", gtCid=" + gtCid + ", bpn=" + bpn
 				+ ", ryToken=" + ryToken + ", vipFlag=" + vipFlag + ", role=" + role + ", arrivalStatus="
 				+ arrivalStatus + ", businessCategory=" + businessCategory + ", timeout=" + timeout + "]";
+	}
+	public String getRyUserId() {
+		return ryUserId;
+	}
+	public void setRyUserId(String ryUserId) {
+		this.ryUserId = ryUserId;
 	}
 	
 	

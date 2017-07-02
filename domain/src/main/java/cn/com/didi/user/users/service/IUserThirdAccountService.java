@@ -11,6 +11,7 @@ import cn.com.didi.user.users.domain.UserLinkIdDto;
 public interface IUserThirdAccountService {
 	public IResult<UserLinkIdDto> generatorUserLink(String phone,String role);
 	public void generatorUserLink(String phone,String role,UserLinkIdDto linkDto);
+	public void generatorUserLink(Long accountId,UserLinkIdDto linkDto);
 	public default UserLinkIdDto generatorUserLinkAndThrow(String phone,String role){
 		IResult<UserLinkIdDto> result=generatorUserLink(phone, role);
 		if(result.success()){

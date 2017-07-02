@@ -19,7 +19,6 @@ import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.core.select.IPage;
 import cn.com.didi.core.select.IPageBound;
 import cn.com.didi.core.tx.TranscationalCallBack;
-import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.domains.PayResultDto;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.DealEnum;
@@ -107,7 +106,7 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 			MerchantDayRemainingDto dto=new MerchantDayRemainingDto();
 			dto.setAccountId(source.getDai());
 			dto.setPat(source.getDat());
-			dto.setDaytime(DateUtil.getCurrentYYYYMMDD(source.getCreateTime()));
+			//dto.setDaytime(DateUtil.getCurrentYYYYMMDD(source.getCreateTime()));
 			Long systemReamin=(long)(source.getAmount().intValue());
 			dto.setRemaining((long)(source.getAmount().intValue()-(source.getPoundage()==null?0:source.getPoundage())));
 			accountAssers.addMerchantDayRemainingDto(dto,pay.isSystemOnly(),systemReamin);
@@ -240,6 +239,7 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 	public List<DealStatDto> statBusiness(Long accountId,IPageBound pageBounds) {
 		PageBounds bounds=new PageBounds(pageBounds.getPageIndex(), pageBounds.getPageSize(), false);
 		Date now =new Date();
+		now=DateUtils.addDays(now, 1);
 		now=DateUtils.truncate(now, Calendar.DAY_OF_MONTH);
 		return dealDtoMapper.countDai(accountId, now, bounds);
 	}

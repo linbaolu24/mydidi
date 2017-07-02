@@ -117,5 +117,11 @@ public class AccountDomainWrapperJAO {
 		this.domain = domain;
 		this.reflashToken = reflashToken;
 	}
+	public String getRyUserId() {
+		return domain.getRyUserId();
+	}
+	public void setRyUserId(String ryUserId) {
+		domain.setRyUserId(ryUserId);
+	}
 	
 }

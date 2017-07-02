@@ -706,7 +706,7 @@
   </resultMap>
    
    <select id="countDai" resultMap="BaseListResultMap_Stat"> 
-    select amount,category, day_time from 
+    select sum(amount) as amount,category, day_time from 
      (select amount,category, DATE_FORMAT(create_time,'%Y-%m-%d') 
     as day_time from deal where state ='1' and dai=#{dai,jdbcType=BIGINT} and category in ('0','1') 
     and create_time&lt;#{endTime,jdbcType=TIMESTAMP}  ) 

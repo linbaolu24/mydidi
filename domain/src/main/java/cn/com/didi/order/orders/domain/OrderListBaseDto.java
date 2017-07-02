@@ -83,6 +83,7 @@ public class OrderListBaseDto {
 	private String businessCategory; 
 	private String businessCharge;
 	private Integer cost;
+	private String ryUserId;
 	
 	/**
 	 * 状态文本
@@ -132,5 +133,12 @@ public class OrderListBaseDto {
 	public void setStateText(String stateText) {
 		this.stateText = stateText;
 	}
+	public String getRyUserId() {
+		return ryUserId;
+	}
+	public void setRyUserId(String ryUserId) {
+		this.ryUserId = ryUserId;
+	}
+	
 	
 }

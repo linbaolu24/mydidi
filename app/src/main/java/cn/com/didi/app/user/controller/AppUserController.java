@@ -147,6 +147,7 @@ public class AppUserController {
 		p.setVipFlag(vipValue(login, ext.getUserDto().getAccountId()));
 		p.setBusinessCategory( ext.getUserDto().getBusinessCategory());
 		p.setArrivalStatus(arrivalStatus(ext.getUserDto().getAccountId(), ext.getUserDto().getRole(),  ext.getUserDto().getBusinessCategory(), null) );
+		p.setRyUserId(login.getPhone()+"_"+login.getRole());
 		return p;
 	}
 	@RequestMapping(value = "/app/user/reflashToken", method = { RequestMethod.POST, RequestMethod.GET })

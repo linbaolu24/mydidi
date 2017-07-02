@@ -269,6 +269,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return temp;
 		}
 		temp = new OrderRuslt<>(orderId);
+		((OrderRuslt)temp).setData(info);
 		MessageDto tempMDto=orderMessageFinder.findCTakedMessage(info);
 		info.setState(OrderState.ORDER_STATE_TAKING.getCode());
 		sendMessage(info,  tempMDto, false);
@@ -663,7 +664,15 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		p.put(DomainConstatns.STATE, order.getState());
 		p.put(DomainConstatns.COST, order.getCost());
 		p.put(DomainConstatns.SPECIALTYPE, order.getSpecialType());
+		p.put(DomainConstatns.BUSINESS_CATEGORY,order.getBusinessCategory());
 		p.put(DomainConstatns.REASSIGNMENT_FLAG, InternalFlagEnum.REASSIGNMENT.isFlagSetInteger(order.getInternalFlag())?"1":"0");//表示是否是重新派送的消息
+		if(BusinessCategory.THIRD.codeEqual(order.getBusinessCategory())){
+			p.put(DomainConstatns.CNAME,order.getCname());
+			p.put(DomainConstatns.CONSUMER_NAME,order.getConsumerName());
+			p.put(DomainConstatns.CCI,order.getCci());
+		    p.put(DomainConstatns.CONSUMER_ADDRESS,order.getConsumerAddress());
+		    p.put(DomainConstatns.DESCRIPTION,order.getDescription());
+		}
 		all.put(DomainConstatns.TYPE, "order");
 		all.put(DomainConstatns.OBJ, p);
 		dto.setContent(JSON.toJSONString(all));

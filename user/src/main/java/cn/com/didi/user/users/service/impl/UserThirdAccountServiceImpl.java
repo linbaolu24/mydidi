@@ -23,7 +23,6 @@ import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
 import cn.com.didi.domain.util.Role;
 import cn.com.didi.thirdExt.http.FormHttpHandler;
-import cn.com.didi.thirdExt.http.Http200Hanle;
 import cn.com.didi.thirdExt.http.IHttpService;
 import cn.com.didi.thirdExt.produce.IAppEnv;
 import cn.com.didi.user.users.domain.UserLinkIdDto;
@@ -72,7 +71,11 @@ public class UserThirdAccountServiceImpl implements IUserThirdAccountService {
 		return false;
 	}
 	@Override
-	public void generatorUserLink(String phone, String role, UserLinkIdDto linkDto) {
+	public void generatorUserLink(String phone, String role, UserLinkIdDto linkDto){
+		generatorUserLink(null, phone,  role, linkDto);
+	}
+	
+	public void generatorUserLink(Long accountId,String phone, String role, UserLinkIdDto linkDto) {
 		if(!support(phone, role)){
 			return ;
 		}
@@ -87,7 +90,7 @@ public class UserThirdAccountServiceImpl implements IUserThirdAccountService {
 		}
 		FormHttpHandler handler = new FormHttpHandler();
 		handler.setUrl(RO_URL);
-		NameValuePair pair = new BasicNameValuePair("userId", phone + "_" + role);
+		NameValuePair pair = accountId==null?new BasicNameValuePair("userId", phone + "_" + role):new BasicNameValuePair("userId", String.valueOf(accountId));;
 		//NameValuePair pair2 = new BasicNameValuePair("name", "测试");
 		//NameValuePair pair3 = new BasicNameValuePair("portraitUri", "http://www.w3school.com.cn/i/eg_tulip.jpg");
 		handler.setPair(Arrays.asList(pair));
@@ -219,6 +222,11 @@ public class UserThirdAccountServiceImpl implements IUserThirdAccountService {
 		public String getErrorMessage() {
 			return errorMessage;
 		}
+	}
+
+	@Override
+	public void generatorUserLink(Long accountId, UserLinkIdDto linkDto) {
+		 generatorUserLink(accountId,null,null, linkDto);
 	}
 
 	

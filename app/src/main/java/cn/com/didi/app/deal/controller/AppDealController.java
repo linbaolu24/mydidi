@@ -62,7 +62,7 @@ public class AppDealController extends AbstractDealController{
 		Map map=new HashMap<>();
 		map.put("date", date);
 		map.put("list", list);
-		return ResultFactory.success(list);
+		return ResultFactory.success(map);
 	}
 	@RequestMapping(value = "/app/b/trade/draw", method = RequestMethod.POST)
 	public IResult draw(@RequestBody DrawJAO drawJao,HttpServletRequest request){

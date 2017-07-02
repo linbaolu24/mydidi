@@ -42,11 +42,12 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		if(payEnum==null){
 			return ;
 		}
-		if(dto.getDaytime()==null){
-			dto.setDaytime(getDayTime());
-		}
+		
 		if(StringUtils.isEmpty(dto.getCategory())){
 			dto.setCategory(TradeCategory.IN.getCode());
+		}
+		if(dto.getDaytime()==null){
+			dto.setDaytime(TradeCategory.IN.codeEqual(dto.getCategory())?getDayTime():getOutDay());
 		}
 		if (!systemOnly&&!getSystemAccount().equals(dto.getAccountId())) {
 			myMerchantDayRemainingDtoMapper.saveMerchantDayRemainingDto(dto);
