@@ -347,6 +347,7 @@ public class MerchantServiceImpl implements IMerchantService {
 	public void addMerchantV2(MerchantDto merchant, List<MerchantServiceDto> serviceList,
 			List<MerchantAreaDto> areaList) {
 		if (merchant == null || CollectionUtils.isEmpty(serviceList)) {
+			LOGGER.debug("对象或者服务列表为空,不进行操作");
 			return;
 		}
 		verifyMerchantService(merchant, serviceList);
@@ -403,6 +404,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		if (temp != null) {
 			return;
 		}
+		LOGGER.debug("开始商户入住");
 		addMerchantV2(merchant, serviceList, areaList);
 	}
 

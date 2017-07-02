@@ -119,6 +119,7 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 	
 	
 	@Override
+	@Transactional
 	public void addUser(UserDto userDto, UserLinkIdDto linked) {
 		if (userDto == null) {
 			return;

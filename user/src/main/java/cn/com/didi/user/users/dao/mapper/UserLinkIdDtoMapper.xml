@@ -300,8 +300,8 @@
   
   <!--  add by my -->
   <update id="updateId">
-  insert into user_link_id(account_id,gt_cid,ry_token) VALUEs(#{accountId,jdbcType=BIGINT},#{gtCid,jdbcType=VARCHAR},#{ryToken,jdbcType=VARCHAR}) 
-  ON DUPLICATE KEY UPDATE gt_cid=#{gtCid,jdbcType=VARCHAR},ry_token=#{ryToken,jdbcType=VARCHAR}
+  insert into user_link_id(account_id,gt_cid) VALUEs(#{accountId,jdbcType=BIGINT},#{gtCid,jdbcType=VARCHAR}) 
+  ON DUPLICATE KEY UPDATE gt_cid=#{gtCid,jdbcType=VARCHAR}
   </update>
   
   
