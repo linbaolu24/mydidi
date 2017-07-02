@@ -912,7 +912,8 @@
     <result column="ext2" property="ext2" jdbcType="VARCHAR" />
     <result column="cancel_cause" property="cancelCause" jdbcType="VARCHAR" />
     <result column="Internal_flag" property="internalFlag" jdbcType="INTEGER" />
-    <result column="ry_token" property="ryToken" jdbcType="VARCHAR" />
+    <!-- <result column="ry_token" property="ryToken" jdbcType="VARCHAR" /> -->
+    <result column="ry_user_id" property="ryUserId" jdbcType="VARCHAR" />
   </resultMap>
   
   
@@ -957,7 +958,8 @@
     <result column="ext2" property="ext2" jdbcType="VARCHAR" />
     <result column="cancel_cause" property="cancelCause" jdbcType="VARCHAR" />
     <result column="Internal_flag" property="internalFlag" jdbcType="INTEGER" />
-    <result column="ry_token" property="ryToken" jdbcType="VARCHAR" />
+   <!--  <result column="ry_token" property="ryToken" jdbcType="VARCHAR" /> -->
+    <result column="ry_user_id" property="ryUserId" jdbcType="VARCHAR" />
   </resultMap>
    
    
@@ -1019,7 +1021,7 @@ td.business_Charge,
 td.consumer_account_id,
 td.merchant_account_id,
 td.special_type,
-(select ry_token from user_link_id where account_Id=td.merchant_account_id) as ry_token
+(select CONCAT(us.user_name,'_B') from users us where us.account_Id=td.merchant_account_id) as ry_user_id
 from t_order td where td.consumer_account_id=#{time.accountId,jdbcType=BIGINT} and not (state='2' and ort is null) ORDER BY ort DESC
   </select>
   
@@ -1042,7 +1044,7 @@ td.business_Charge,
 td.consumer_account_id,
 td.merchant_account_id,
 td.special_type,
-(select ry_token from user_link_id where account_Id=td.consumer_account_id) as ry_token
+(select CONCAT(us.user_name,'_C') from users us where account_Id=td.consumer_account_id) as ry_user_id
 from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} and not (state='2' and ort is null) ORDER BY ort DESC
   </select>
  
