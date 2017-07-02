@@ -162,7 +162,7 @@ public interface IAppEnv {
 	public String getIpAdress();
 	
 	
-	/*以下微信接口已过时*/
+	
 	
 	public String getAppName();
 	/**
@@ -184,6 +184,11 @@ public interface IAppEnv {
 	 * @return
 	 */
 	public String getWechatCMchId();
+	/**
+	 * 获取微信C端APP name
+	 * @return
+	 */
+	public String getWechatCAppName();
 	
 	
 	

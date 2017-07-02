@@ -71,7 +71,7 @@ public class AppVipController {
 		Long accountId=resolver.resolve(request);
 		vip.setAccountId(accountId);
 		vip.setSlsId(getDefaultSlsId());
-		vipService.reg(vip, vip.getDealId());
+		vipService.preReg(vip, vip.getDealId());
 		VipDescrptionDto descDto=vipService.desc(accountId, vip.getSlsId());
 		if(descDto==null){
 			return ResultFactory.success();

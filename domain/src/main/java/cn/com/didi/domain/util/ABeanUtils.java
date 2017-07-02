@@ -1,7 +1,6 @@
 package cn.com.didi.domain.util;
 
 import java.beans.BeanInfo;
-import java.beans.Encoder;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -169,7 +168,7 @@ public abstract class ABeanUtils {
 		if (null == value)
 			value = "";
 		if (encode) {
-			return StringEscapeUtils.escapeXml(value.toString());
+			return StringEscapeUtils.escapeXml(value.toString());// value.toString();
 		} else {
 			return "<![CDATA[" + value + "]]>";
 		}
@@ -193,5 +192,8 @@ public abstract class ABeanUtils {
 	 */
 	private static String endXml(String key) {
 		return "</" + key + ">";
+	}
+	public static void main(String[] args) {
+		System.out.println(StringEscapeUtils.escapeXml("嘀嘀服务-年费"));
 	}
 }

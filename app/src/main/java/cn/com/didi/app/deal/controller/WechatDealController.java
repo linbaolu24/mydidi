@@ -123,5 +123,7 @@ public class WechatDealController extends AbstractDealController {
 		LOGGER.debug("返回Map={}",resmap);
 		return resmap;
 	}
-
+	public static void main(String[] args) {
+		
+	}
 }

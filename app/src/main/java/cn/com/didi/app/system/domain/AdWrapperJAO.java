@@ -47,5 +47,11 @@ public class AdWrapperJAO {
 	public void setHeight(Integer height) {
 		adPicDto.setHeight(height);
 	}
+	public String getDisplayPosition() {
+		return adDto.getDisplayPosition();
+	}
+	public void setDisplayPosition(String displayPosition) {
+		adDto.setDisplayPosition(displayPosition);
+	}
 	
 }

@@ -129,7 +129,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 	public IResult<WechatPayCustomerReturnVo> transferAppPay(WechatPayCustomerReqVo reqVo) {
 		try {
 			
-			return transferInternal(reqVo, ORDER_QUERY_URI,payConvert,true);
+			return transferInternal(reqVo,  appEnv.getWechatAppPayURI(),payConvert,true);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| IntrospectionException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -145,7 +145,7 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 			if(StringUtils.isEmpty(reqVo.getSign())&&!StringUtils.isEmpty(reqVo.getSignKey())){
 				reqVo.setSign(getAppPaySign(reqVo, reqVo.getSignKey(), appEnv.getWechatCharSet()));
 			}
-			return transferInternal(reqVo, appEnv.getWechatAppPayURI(),payConvert,true,WechatPayNotifyReturnVO::new);
+			return transferInternal(reqVo,ORDER_QUERY_URI,payConvert,true,WechatPayNotifyReturnVO::new);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| IntrospectionException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -336,11 +336,11 @@ public class WechatTransferServiceImpl implements IWechatTransferService {
 		WechatPayCustomerReqVo reqVo=new WechatPayCustomerReqVo();
 		reqVo.setAmount(1);
 		reqVo.setAppid("wxf0f6836240fdaf3e");
-		reqVo.setBody("嘀嘀服务-年费");
+		reqVo.setBody("嘀嘀服务商户端-年费");
 		reqVo.setMch_id("1480906112");
 		reqVo.setNonce_str("32768");
 		reqVo.setNotify_url("https://118.178.226.138/api/app/trade/deposit/wechatAsnyNotify");
-		reqVo.setPartner_trade_no("101");
+		reqVo.setPartner_trade_no("139");
 		reqVo.setSpbill_create_ip("115.238.29.228");
 		reqVo.setTrade_type("APP");
 		//reqVo.setOpenid("odRaHwaX8GWHMFJcMXA_ehA-l6ac");

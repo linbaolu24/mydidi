@@ -43,7 +43,7 @@ public interface AdDtoMapper {
     List<AdDto>  selectAdPage(@Param("time") TimeInterval interval,RowBounds rowBounds);
     AdDto selectAd(@Param("dispaly") String dispaly,@Param("time") Date time,@Param("hour") int hour);
     /***/
-    List<AdDto>  selectAdList(@Param("dispaly") String dispaly,@Param("time") Date time,@Param("hour") int hour);
+    List<AdDto>  selectAdList(@Param("display") String display,@Param("time") Date time,@Param("hour") int hour);
     int updateAddExposure(@Param("adId") Long adId,@Param("added") int added);
     int updateAddClickRate(@Param("adId") Long adId,@Param("added") int added);
 }

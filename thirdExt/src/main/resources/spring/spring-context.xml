@@ -126,7 +126,7 @@
 		
 		<property name="passAliNotifySign" value="${appEnv.passAliNotifySign}"></property>
 		<property name="passWchatNotifySign" value="${appEnv.passWchatNotifySign}"></property>
-		
+
 	    <property name="depositeWechatNotifyUrl" value="${wechat.deposite.notifyUrl}"></property>
 		<property name="keyStoreResource"
 			value="${wechat.keyStore.resource:classpath:apiclient_cert.p12}"></property>
@@ -143,6 +143,9 @@
 		<property name="wechatMchId" value="${wechat.bMchId}"></property>
 		<property name="wechatAppSignedkey" value="${wechat.bAppSignKey}"></property>
 		<property name="wechatAppId" value="${wechat.bAppId}"></property>
-		<property name="wechatAppSecret" value="${wechat.bAppId}"></property>
+		<property name="wechatAppSecret" value="${wechat.bAppSecret}"></property>
+		<property name="wechatCAppName" value="${wechat.wechatCAppName}"></property>
+		
+		<property name="appName" value="${appEnv.appName}" />
 	</bean>
 </beans>

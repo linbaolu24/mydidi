@@ -51,4 +51,12 @@ public class EnvConstants {
 	 * 美容美发与商户的最大距离
 	 */
 	public static final String MRMF_ORDER_COMMIT_MAX_DISTANCE="10000011";
+	/**
+	 * c端APP name 
+	 */
+	public static final String WECHAT_APP_C_APP_NAME="10000012";
+	/**
+	 * app应用的通用name
+	 */
+	public static final String APP_NORMAL_NAME="10000013";
 }

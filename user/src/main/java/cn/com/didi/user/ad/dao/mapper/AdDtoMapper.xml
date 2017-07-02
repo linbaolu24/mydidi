@@ -408,8 +408,8 @@
 			and ads_end &gt;= #{time,jdbcType=TIMESTAMP}
 			and ads_time_start &lt;= #{hour,jdbcType=INTEGER}
 			and ads_time_end &gt;= #{hour,jdbcType=INTEGER}
-			<if test="dispaly != null">
-				and displayPosition=#{display,jdbcType=VARCHAR}
+			<if test="display != null">
+				and display_position=#{display,jdbcType=VARCHAR}
 			</if>
 			and state='0'
 		</where>

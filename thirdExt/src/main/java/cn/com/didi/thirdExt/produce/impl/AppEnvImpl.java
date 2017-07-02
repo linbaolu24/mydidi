@@ -79,7 +79,7 @@ public class AppEnvImpl implements IAppEnv {
 	 */
 	private String passAliNotifySign;
 	
-	
+	private String appName;
 	
 	/**
 	 * 微信C端配置
@@ -88,6 +88,7 @@ public class AppEnvImpl implements IAppEnv {
 	private String wechatCAppSignKey;
 	private String wechatCAppSecret;
 	private String wechatCMchId;
+	private String wechatCAppName;
 	
 	
 	/**
@@ -230,7 +231,10 @@ public class AppEnvImpl implements IAppEnv {
 	}
 	@Override
 	public String getAppName() {
-		return "嘀嘀服务";
+		if(!StringUtils.isEmpty(appName)){
+			return appName;
+		}
+		return appEnviroment.getProperty(EnvConstants.APP_NORMAL_NAME);
 	}
 
 	@Override
@@ -464,6 +468,21 @@ public class AppEnvImpl implements IAppEnv {
 	public String getWechatOpenSecret() {
 	
 		return "9b7b4ee13fd9e9ee82f3ad55f585db47";
+	}
+
+	public String getWechatCAppName() {
+		if(!StringUtils.isEmpty( wechatCAppName)){
+			return wechatCAppName;
+		}
+		return appEnviroment.getProperty(EnvConstants.WECHAT_APP_C_APP_NAME);
+	}
+
+	public void setWechatCAppName(String wechatCAppName) {
+		this.wechatCAppName = wechatCAppName;
+	}
+
+	public void setAppName(String appName) {
+		this.appName = appName;
 	}
 
 	

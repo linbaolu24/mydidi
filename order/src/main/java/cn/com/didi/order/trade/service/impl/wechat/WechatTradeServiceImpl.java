@@ -184,7 +184,7 @@ public class WechatTradeServiceImpl implements IWechatTradeService {
 		tradeService.createTrade(dto, callBack);
 		IResult<WechatPayContext> result=null;
 		try {
-			WechatPayCustomerReqVo vo=createNormalPayCustomerReqVo(dto.getCment());
+			WechatPayCustomerReqVo vo=createNormalPayCustomerReqVo(WechatEnum.APP_C,dto.getCment());
 			vo.setPartner_trade_no(String.valueOf(dto.getDealId()));
 			vo.setAmount(dto.getAmount());
 			callBack.popForWechat(vo);
