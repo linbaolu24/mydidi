@@ -82,6 +82,9 @@ public class AppMerchantController {
 	protected void  popWechat(MerchantExtDto merchantExtDto,Long accountId){
 		if(!StringUtils.isEmpty(merchantExtDto.getCode())){
 			UserWechatDto userInfo=wechatBaseService.getUserInfo(accountId, merchantExtDto.getCode());
+			if(userInfo==null){
+				throw new IllegalArgumentException("获取微信信息失败。");
+			}
 			MerchantDto mdto=merchantExtDto.dto();
 			mdto.setWechatName(userInfo.getNickname());
 			mdto.setWechatAccount(userInfo.getUnionid());
@@ -95,7 +98,8 @@ public class AppMerchantController {
 		if (holderDto == null) {
 			return ResultFactory.success();
 		}
-		MerchantWrapperJAO wrapped = new MerchantWrapperJAO(holderDto.getDto());
+		UserWechatDto userInfo=wechatBaseService.getUserInfo(accountId);
+		MerchantWrapperJAO wrapped = new MerchantWrapperJAO(holderDto.getDto(),userInfo);
 		List<MerchantServiceDto> lists = holderDto.getServiceList();
 		if (!CollectionUtils.isEmpty(lists)) {
 			List<MerchantServiceWrapperJAO> list2=lists.stream().map(MerchantServiceWrapperJAO::new).collect(Collectors.toList());

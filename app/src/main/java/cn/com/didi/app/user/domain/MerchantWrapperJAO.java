@@ -4,15 +4,24 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import cn.com.didi.order.trade.domain.UserWechatDto;
 import cn.com.didi.user.users.domain.MerchantDto;
 
 public class MerchantWrapperJAO {
 	private MerchantDto merchantDto;
 	private List<MerchantServiceWrapperJAO> serviceList;
+	private UserWechatDto wechatUserinfo;
 	public MerchantWrapperJAO(MerchantDto merchantDto) {
 		super();
 		this.merchantDto = merchantDto;
 	}
+	
+	public MerchantWrapperJAO(MerchantDto merchantDto, UserWechatDto wechatUserinfo) {
+		super();
+		this.merchantDto = merchantDto;
+		this.wechatUserinfo = wechatUserinfo;
+	}
+
 	public List<MerchantServiceWrapperJAO> getServiceList() {
 		return serviceList;
 	}
@@ -211,4 +220,29 @@ public class MerchantWrapperJAO {
 	public void setLocationAddress(String address){
 		 merchantDto.setExt2(address);
 	}
+	public String getNickname() {
+		if(wechatUserinfo==null){
+			return null;
+		}
+		return wechatUserinfo.getNickname();
+	}
+	public void setNickname(String nickname) {
+		if(wechatUserinfo==null){
+			return ;
+		}
+		wechatUserinfo.setNickname(nickname);
+	}
+	public String getHeadimgurl() {
+		if(wechatUserinfo==null){
+			return null;
+		}
+		return wechatUserinfo.getHeadimgurl();
+	}
+	public void setHeadimgurl(String headimgurl) {
+		if(wechatUserinfo==null){
+			return ;
+		}
+		wechatUserinfo.setHeadimgurl(headimgurl);
+	}
+	
 }

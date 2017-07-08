@@ -118,6 +118,9 @@ public class DomainConstatns {
 	public static final String TIMESTAMP="timestamp";
 	public static final String SIGN="sign";
 	public static final String NONCESTR="noncestr";
+	
+	public static final String NICK_NAME="nickname";
+	public static final String HEAD_IMG="headimgurl";
 	/**
 	 * 服务地址
 	 */

@@ -16,6 +16,11 @@ public interface IWechatBaseService {
 	 */
 	public UserWechatDto getUserInfo(Long accountId,String code);
 	/**
+	 * @param accountId
+	 * @return
+	 */
+	public UserWechatDto getUserInfo(Long accountId);
+	/**
 	 * @param code
 	 * @return
 	 */

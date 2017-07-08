@@ -172,7 +172,7 @@ public class WechatBaseServiceImpl implements IWechatBaseService {
 	@Override
 	public UserWechatDto getUserInfo(Long accountId, String code, WechatEnum type) {
 		UserWechatDto dto=wechatUserService.getWechatDto(accountId);// = myUserWechatMapper.selectByPrimaryKey(accountId);
-		if (dto == null) {
+		if (dto == null&&!StringUtils.isEmpty(code)) {
 			String appid=wechatProvider.getAppId(type);
 			String appSecret=wechatProvider.getAppSecret(type);
 			WechatUserInfo info = wechatTransferService.getUserFromCode(appid,
@@ -198,5 +198,10 @@ public class WechatBaseServiceImpl implements IWechatBaseService {
 		}
 		return WechatConsts.SUCCESS;
 }
+
+	@Override
+	public UserWechatDto getUserInfo(Long accountId) {
+		return getUserInfo(accountId, null);
+	}
 
 }
