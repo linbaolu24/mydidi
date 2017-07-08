@@ -121,8 +121,12 @@ public class MerchantServiceImpl implements IMerchantService {
 			return null;
 		}
 		UserLinkIdDto linkedDto=userService.selectUserLinkedId(accountId);
+		if(linkedDto!=null){
 		dto.setWechatName(linkedDto.getWechatName());
 		dto.setAlipayAccount(linkedDto.getAlipayAccount());
+		}
+		String profilePhoto=userService.getProfilePhoto(accountId);
+		dto.setMpn(profilePhoto);
 		MerchantHolderDto dtoExt = new MerchantHolderDto();
 		dtoExt.setDto(dto);
 		List<MerchantAreaDto> list = selectMerchantArea(accountId);
@@ -174,6 +178,9 @@ public class MerchantServiceImpl implements IMerchantService {
 			UserLinkIdDto linkedDto=generate(dto);
 			linkedDto.setAccountId(dto.getAccountId() );
 			userService.updateUserLinked(linkedDto);
+			if(!StringUtils.isEmpty(dto.getMpn())){
+				userService.updateProfilePhoto(dto.getAccountId(), dto.getMpn());
+			}
 		}
 		// if(!StringUtils)
 		merchantMapper.insertSelective(dto);
@@ -438,7 +445,9 @@ public class MerchantServiceImpl implements IMerchantService {
 		merchant.setCr(temp.getCr());
 		merchant.setState(temp.getState());
 		merchantMapper.updateByPrimaryKeySelective(merchant);
-
+		if(!StringUtils.isEmpty(merchant.getMpn())){
+			userService.updateProfilePhoto(merchant.getAccountId(), merchant.getMpn());
+		}
 		if (!CollectionUtils.isEmpty(areaList)) {
 			deleteArea(merchant.getAccountId());// 先删除后插入
 			for (MerchantAreaDto one : areaList) {
