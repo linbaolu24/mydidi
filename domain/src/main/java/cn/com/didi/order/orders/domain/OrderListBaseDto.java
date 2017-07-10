@@ -78,12 +78,14 @@ public class OrderListBaseDto {
 	private String cname;
 	private Date ort;
 	private Date oct;
+	private Date sst;
 	private String lat;
 	private String lng;
 	private String businessCategory; 
 	private String businessCharge;
 	private Integer cost;
 	private String ryUserId;
+	private Integer communionFlag;
 	
 	/**
 	 * 状态文本
@@ -138,6 +140,18 @@ public class OrderListBaseDto {
 	}
 	public void setRyUserId(String ryUserId) {
 		this.ryUserId = ryUserId;
+	}
+	public Integer getCommunionFlag() {
+		return communionFlag;
+	}
+	public void setCommunionFlag(Integer communionFlag) {
+		this.communionFlag = communionFlag;
+	}
+	public Date getSst() {
+		return sst;
+	}
+	public void setSst(Date sst) {
+		this.sst = sst;
 	}
 	
 	

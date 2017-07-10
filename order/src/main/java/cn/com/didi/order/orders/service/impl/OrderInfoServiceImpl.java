@@ -179,6 +179,7 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		}
 		for(OrderListBaseDto one:lists){
 			one.setStateText(renderService.renderStateText(one));
+			one.setCommunionFlag(renderService.judgeCommunionFlag(one));
 		}
 	}
 

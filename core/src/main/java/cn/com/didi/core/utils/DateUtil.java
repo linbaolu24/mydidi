@@ -47,6 +47,9 @@ public class DateUtil {
 	public static long getIntervalDay(Date date1,Date date2){
 		return  ((date2.getTime()-date1.getTime())/(24*60*60*1000));
 	}
+	public static boolean lessInterval(Date from,Date end,int interval){
+		return  ((end.getTime()-from.getTime())<=interval*(24*60*60*1000));
+	}
 	public static Date getDateIntervalYear(Date time,int intervalYear){
 		return DateUtils.addYears(time, intervalYear);
 	}

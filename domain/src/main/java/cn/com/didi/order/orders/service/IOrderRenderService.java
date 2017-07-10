@@ -14,4 +14,10 @@ public interface IOrderRenderService {
 	 * @return
 	 */
 	public String renderStateText(OrderListBaseDto listBase);
+	/**
+	 * 判定交流标志
+	 * @param listBase
+	 * @return
+	 */
+	public Integer judgeCommunionFlag(OrderListBaseDto listBase);
 }

@@ -1,10 +1,15 @@
 package cn.com.didi.order.orders.service.impl;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 
+import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.util.CodeNameConstatns;
+import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderListBaseDto;
@@ -43,6 +48,22 @@ public class OrderRenderServiceImpl implements IOrderRenderService{
 			return null;
 		}
 		return dto.getText();
+	}
+
+	@Override
+	public Integer judgeCommunionFlag(OrderListBaseDto listBase) {
+
+		if (OrderState.ORDER_STATE_CANNEL.codeEqual(listBase.getState())) {
+			return 0;
+		}
+		if (listBase.getOrt() == null) {
+			return 0;
+		}
+		Date sst = listBase.getSst();
+		if (sst != null && !DateUtil.lessInterval(sst, new Date(), 7)) {
+			return 0;
+		}
+		return 1;
 	}
 	
 
