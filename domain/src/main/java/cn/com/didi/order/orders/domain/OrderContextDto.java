@@ -1,5 +1,6 @@
 package cn.com.didi.order.orders.domain;
 
+import cn.com.didi.core.lock.ILock;
 import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.domains.UseAbleDto;
@@ -18,6 +19,7 @@ public class OrderContextDto {
 	private OrderMessageOperation lastSuccess;
 	private int flag;
 	private UseAbleDto<VipDto> used;
+	private ILock lock;
 	
 	public OrderDto getOrderDto() {
 		return orderDto;
@@ -80,6 +82,14 @@ public class OrderContextDto {
 
 	public void setUsed(UseAbleDto<VipDto> used) {
 		this.used = used;
+	}
+
+	public ILock getLock() {
+		return lock;
+	}
+
+	public void setLock(ILock lock) {
+		this.lock = lock;
 	}
 	
 }

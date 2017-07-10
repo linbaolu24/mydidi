@@ -150,6 +150,18 @@ public class OrderMessageConstans {
 	 */
 	public static final Message ORDER_COUSMER_MERCHANT_DISTANCE_TOO_LONG=newMessage(DomainMessageConstans.CODE_ORDER_COUSMER_MERCHANT_DISTANCE_TOO_LONG);//="5003000024";
 	
+	/**
+	 * 
+	 * 美容美发已锁定
+	 */
+	public static final Message ORDER_MRMF_LOCKED =newMessage(DomainMessageConstans.CODE_ORDER_MRMF_LOCKED);//="5003000025";
+	/**
+	 * 
+	 * 美容美发锁定失败
+	 */
+	public static final Message ORDER_MRMF_LOCK_FAIL =newMessage(DomainMessageConstans.CODE_ORDER_MRMF_LOCK_FAIL);//="5003000026";
+	
+	
 	
 	/*以下为交易*/
 	/**

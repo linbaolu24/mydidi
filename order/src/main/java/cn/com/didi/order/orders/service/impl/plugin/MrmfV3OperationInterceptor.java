@@ -7,10 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.message.Message;
-import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.UseAbleDto;
 import cn.com.didi.domain.util.LatLngUtiil;
-import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.domain.util.SpecialTypeEnum;
 import cn.com.didi.order.orders.domain.OrderContextDto;
 import cn.com.didi.order.orders.domain.OrderDto;
@@ -26,7 +24,7 @@ import cn.com.didi.user.users.service.IVipService;
  * @author xlm
  *
  */
-@Service
+@Service(value="normalOrderOperationInterceptor")
 public class MrmfV3OperationInterceptor extends MrmfV2OperationInterceptor{
 	private static final Logger LOGGER = LoggerFactory.getLogger(MrmfV3OperationInterceptor.class);
 	@Resource
