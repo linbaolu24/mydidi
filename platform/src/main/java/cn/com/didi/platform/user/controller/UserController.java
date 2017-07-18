@@ -104,7 +104,16 @@ public class UserController {
 		dto.setState(State.VALID.getState());
 		service.addMerchantV2(dto.dto(), dto.getServiceList(), dto.getAreaList());
 		return ResultFactory.success();
-
+	}
+	
+	@RequestMapping(value = "/platform/b/editMerchant", method = RequestMethod.POST)
+	public IResult editMerchant(@RequestBody MerchantExtDto dto) {
+		//AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
+		//dto.setAccountId(null);
+		dto.setCr(null);
+		dto.setState(null);
+		service.editMerchant(dto.dto(), dto.getServiceList(), dto.getAreaList());
+		return ResultFactory.success();
 	}
 	
 	@RequestMapping(value = "/platform/b/cr", method = RequestMethod.POST)

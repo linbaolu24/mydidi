@@ -27,6 +27,7 @@ import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.util.AdCategoryEnum;
 import cn.com.didi.domain.util.DisplayPositionEnum;
@@ -103,9 +104,21 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 		
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
 		PageList<AdDto> list = (PageList<AdDto>) adMapper.selectAdPage(interval,pageBounds);
+		processAdList(list);
 		return new MybatisPaginatorPage<>(list);
 	}
 
+	protected void  processAdList(List<AdDto> list){
+		if(list!=null){
+			Date now=new Date();
+			for(AdDto one:list){
+				int result=AdUtils.isEndAd(now, one);
+				if(result>0){
+					one.setState(String.valueOf(one.getState()));
+				}
+			}
+		}
+	}
 	@Override
 	@Transactional
 	public void updateState(List<IdStateDto> lists) {

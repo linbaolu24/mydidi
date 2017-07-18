@@ -86,6 +86,10 @@ public class OrderListBaseDto {
 	private Integer cost;
 	private String ryUserId;
 	private Integer communionFlag;
+	/**
+	 * 交流文案
+	 */
+	private String communionTip;
 	
 	/**
 	 * 状态文本
@@ -152,6 +156,12 @@ public class OrderListBaseDto {
 	}
 	public void setSst(Date sst) {
 		this.sst = sst;
+	}
+	public String getCommunionTip() {
+		return communionTip;
+	}
+	public void setCommunionTip(String communionTip) {
+		this.communionTip = communionTip;
 	}
 	
 	

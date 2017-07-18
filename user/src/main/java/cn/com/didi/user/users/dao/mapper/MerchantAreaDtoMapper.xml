@@ -312,13 +312,18 @@
   </resultMap>
   
    <!--  and area_code = #{areaCode,jdbcType=VARCHAR}  (select ca.cname from code_area ca where ca.area_code=ma.area_code) area-->
-  <select id="selectMerchantArea" resultMap="AreaBaseResultMap" >
+ <!--  <select id="selectMerchantArea" resultMap="AreaBaseResultMap" >
     select 
     ma.area_code,ma.cname area
     from merchant_area ma
     where ma.account_Id = #{accountId,jdbcType=BIGINT}
-  </select>
-  
+  </select> -->
+ <select id="selectMerchantArea" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from merchant_area 
+    where account_Id = #{accountId,jdbcType=BIGINT}
+  </select> 
   
   
    <select id="selectPoints" resultMap="BaseResultMap" >
@@ -337,6 +342,6 @@
 		ms.account_Id=ma.account_Id and ms.sls_id=#{slsId,jdbcType=INTEGER}
 		and ma.lat&lt;= #{point.y,jdbcType=DECIMAL} and ma.rlat&gt;= #{point.y,jdbcType=DECIMAL} 
 		and ma.lng&lt;= #{point.x,jdbcType=DECIMAL}
-		and ma.rlng&gt;=#{point.x,jdbcType=DECIMAL}
+		and ma.rlng&gt;=#{point.x,jdbcType=DECIMAL}  and ms.state='0' and ms.cr='0'
 	</select>
 </mapper>

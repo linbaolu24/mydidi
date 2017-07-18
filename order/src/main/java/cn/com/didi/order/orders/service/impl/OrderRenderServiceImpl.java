@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.utils.DateUtil;
@@ -54,6 +53,7 @@ public class OrderRenderServiceImpl implements IOrderRenderService{
 	public Integer judgeCommunionFlag(OrderListBaseDto listBase) {
 
 		if (OrderState.ORDER_STATE_CANNEL.codeEqual(listBase.getState())) {
+			listBase.setCommunionTip("订单已取消，如有需要，请联系客服0577-64600006");
 			return 0;
 		}
 		if (listBase.getOrt() == null) {
@@ -61,6 +61,7 @@ public class OrderRenderServiceImpl implements IOrderRenderService{
 		}
 		Date sst = listBase.getSst();
 		if (sst != null && !DateUtil.lessInterval(sst, new Date(), 7)) {
+			listBase.setCommunionTip("订单已关闭，如有需要，请联系客服0577-64600006");
 			return 0;
 		}
 		return 1;

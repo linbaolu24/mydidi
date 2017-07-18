@@ -1,11 +1,15 @@
 package cn.com.didi.user.ad.util;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import cn.com.didi.core.property.Couple;
+import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.util.AdCategoryEnum;
 import cn.com.didi.user.ad.domain.AdDto;
 import cn.com.didi.user.ad.domain.AdPicDto;
@@ -81,6 +85,37 @@ public class AdUtils {
 		if(record.getCreateTime()==null){
 			record.setCreateTime(new Date());
 		}
+		
+	}
+	
+	/**
+	 * 未开始 3 结束 1 -1表示不处理
+	 * @param now
+	 * @param dto
+	 * @return
+	 */
+	public static int isEndAd(Date now,AdDto dto){
+		Calendar cal=DateUtils.toCalendar(now);
+		int hour=cal.get(Calendar.HOUR_OF_DAY);
+		cal=DateUtils.truncate(cal, Calendar.DAY_OF_MONTH);
+		Date end=dto.getAdsEnd();
+		Date start=dto.getAdsStart();
+		if(end==null||start==null){
+			return 1;
+		}
+		Date days=cal.getTime();
+		int startCom=days.compareTo(start);
+		if(startCom<0){
+			return 3;
+		}
+		int endCom=days.compareTo(end);
+		if(endCom<0){
+			return -1;
+		}
+		if(endCom>0){
+			return 1;
+		}
+		return hour<dto.getAdsTimeEnd()?-1:1;
 		
 	}
 }

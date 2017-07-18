@@ -32,6 +32,7 @@ import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.ArrivalStatusEnum;
+import cn.com.didi.domain.util.BusinessCategory;
 import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.LatLngUtiil;
 import cn.com.didi.domain.util.State;
@@ -129,9 +130,12 @@ public class MerchantServiceImpl implements IMerchantService {
 		dto.setMpn(profilePhoto);
 		MerchantHolderDto dtoExt = new MerchantHolderDto();
 		dtoExt.setDto(dto);
-		List<MerchantAreaDto> list = selectMerchantArea(accountId);
+		
+		if (!BusinessCategory.THIRD.codeEqual(dto.getBusinessCategory())) {
+			List<MerchantAreaDto> list = selectMerchantArea(accountId);
+			dtoExt.setAreaList(list);
+		}
 		List<MerchantServiceDto> slist = selectMerchantService(accountId);
-		dtoExt.setAreaList(list);
 		dtoExt.setServiceList(slist);
 		return dtoExt;
 	}
@@ -254,9 +258,9 @@ public class MerchantServiceImpl implements IMerchantService {
 	@Override
 	public MerchantDto selectMerchantAndAdress(Long accountId) {
 		MerchantDto dto = selectMerchant(accountId);
-		if (dto != null && !StringUtils.isEmpty(dto.getAddressCode())) {
+		/*if (dto != null && !StringUtils.isEmpty(dto.getAddressCode())) {
 			dto.setAddress(areaService.selectAreaName(dto.getAddressCode()));
-		}
+		}*/
 		return dto;
 
 	}
@@ -442,8 +446,9 @@ public class MerchantServiceImpl implements IMerchantService {
 		if (temp == null) {
 			return;
 		}
-		merchant.setCr(temp.getCr());
-		merchant.setState(temp.getState());
+		merchant.setCr(null);
+		merchant.setState(null);
+		merchant.setBusinessCategory(null);
 		merchantMapper.updateByPrimaryKeySelective(merchant);
 		if(!StringUtils.isEmpty(merchant.getMpn())){
 			userService.updateProfilePhoto(merchant.getAccountId(), merchant.getMpn());
