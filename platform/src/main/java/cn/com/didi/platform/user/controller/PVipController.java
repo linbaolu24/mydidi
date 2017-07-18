@@ -40,6 +40,13 @@ public class PVipController {
 		vipService.updateVip(interval.getAccountId(), null, interval.getCname(), interval.getBpn(), interval.getProfilePhoto());
 		return ResultFactory.success();
 	}
+	@RequestMapping(value = "/platform/vip/delete", method = RequestMethod.POST)
+	public IResult deleteVip(@RequestBody VipDto interval) {
+		AssertUtil.assertNotNull(interval.getAccountId(), "账户ID");
+		AssertUtil.assertNotNull(interval.getSlsId(), "服务ID");
+		vipService.deleteVip(interval.getAccountId(), interval.getSlsId());
+		return ResultFactory.success();
+	}
 	@RequestMapping(value = "/platform/vip/set", method = RequestMethod.POST)
 	public IResult setVip(@RequestBody Map<String,String> map) {
 		String value=map.get(DomainConstatns.AMOUNT);

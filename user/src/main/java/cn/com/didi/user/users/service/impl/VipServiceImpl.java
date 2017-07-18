@@ -184,4 +184,11 @@ public class VipServiceImpl implements IVipService{
 	public int getVipFee(Integer slsId) {
 		return appEnvService.getDeposite();
 	}
+	@Override
+	public void deleteVip(Long accountId, Integer slsId) {
+		VipDtoKey key=new VipDtoKey();
+		key.setAccountId(accountId);
+		key.setSlsId(slsId);;
+		vipMapper.deleteByPrimaryKey(key);
+	}
 }

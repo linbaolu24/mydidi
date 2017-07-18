@@ -17,4 +17,5 @@ public interface IVipService {
 	public void updateVip(Long accountId,Integer slsId,String cname,String bpn,String pp);
 	public void setVipFee(Integer slsId,int fee);
 	public int getVipFee(Integer slsId);
+	public void deleteVip(Long accountId,Integer slsId);
 }
