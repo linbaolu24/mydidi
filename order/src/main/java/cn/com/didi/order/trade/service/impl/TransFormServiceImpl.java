@@ -1,5 +1,7 @@
 package cn.com.didi.order.trade.service.impl;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,6 +14,7 @@ import cn.com.didi.core.lock.LockManager;
 import cn.com.didi.core.property.ICodeAble;
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
+import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.domains.WechatPayCustomerReturnVo;
 import cn.com.didi.domain.domains.ali.AlipayTransToAccountResponse;
 import cn.com.didi.domain.util.DealEnum;
@@ -51,6 +54,10 @@ public class TransFormServiceImpl implements ITransFormService {
 		}
 		if(!TradeCategory.OUT.codeEqual(dto.getCategory())){
 			throw new IllegalArgumentException("非提现记录不能审核。");
+		}
+		long interval=DateUtil.getIntervalDay(new Date(),dto.getCreateTime());
+		if(interval<=0){
+			throw new IllegalArgumentException("提现申请需要在24小时后才能审核。");
 		}
 		dto.setCause(cause);
 		if (DealEnum.NOT_PASSING.equals(deal)) {

@@ -147,7 +147,7 @@ public class TradeInfoServiceImpl implements ITradeInfoService {
 	}
 	public IPage<DealListDto> selectDraws(TimeInterval interval){
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
-		interval.setEndTime(accountAssers.getMaxDrawEndTime(interval.getEndTime()));
+		//interval.setEndTime(accountAssers.getMaxDrawEndTime(interval.getEndTime()));
 		PageList<DealListDto> list = (PageList<DealListDto>) dealDtoMapper.selectDraws(interval, pageBounds);
 		return new MybatisPaginatorPage<>(list);
 	}
