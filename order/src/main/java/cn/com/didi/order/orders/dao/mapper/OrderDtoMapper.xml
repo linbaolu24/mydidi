@@ -1021,6 +1021,7 @@ td.business_Category,
 td.business_Charge,
 td.consumer_account_id,
 td.merchant_account_id,
+td.cost,
 td.special_type,
 (select CONCAT(us.user_name,'_B') from users us where us.account_Id=td.merchant_account_id) as ry_user_id
 from t_order td where td.consumer_account_id=#{time.accountId,jdbcType=BIGINT} and not (state='2' and ort is null) ORDER BY ort DESC
@@ -1045,6 +1046,7 @@ td.business_Category,
 td.business_Charge,
 td.consumer_account_id,
 td.merchant_account_id,
+td.cost,
 td.special_type,
 (select CONCAT(us.user_name,'_C') from users us where account_Id=td.consumer_account_id) as ry_user_id
 from t_order td where td.merchant_account_id=#{time.accountId,jdbcType=BIGINT} and not (state='2' and ort is null) ORDER BY ort DESC
