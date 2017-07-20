@@ -116,6 +116,17 @@ public class UserController {
 		return ResultFactory.success();
 	}
 	
+	@RequestMapping(value = "/platform/b/editDetail", method = RequestMethod.POST)
+	public IResult merchantEditDetail(@RequestBody UserDto dto) {
+		AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
+		MerchantHolderDto extDto = service.getEditMerchant(dto.getAccountId());
+		if (extDto == null) {
+			return ResultFactory.success();
+		}
+		return ResultFactory.success(extDto.toMerchantExtDto());
+
+	}
+	
 	@RequestMapping(value = "/platform/b/cr", method = RequestMethod.POST)
 	public IResult checkMerchant(@RequestBody List<MerchantCrDto> dto) {
 		if (dto == null) {

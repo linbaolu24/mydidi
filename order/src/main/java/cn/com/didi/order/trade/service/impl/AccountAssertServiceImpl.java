@@ -93,7 +93,7 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 			return false;
 		}
 		MerchantDayRemainingDto remain=countRemain(dto.getAccountId(), payEnum);
-		if(remain==null||Math.abs(remain.getRemaining())<=Math.abs(dto.getRemaining())){//余额不足
+		if(remain==null||Math.abs(remain.getRemaining())<Math.abs(dto.getRemaining())){//余额不足
 			return false;
 		}
 		MerchantRemainingUtil.copyProperty(dto, remain);

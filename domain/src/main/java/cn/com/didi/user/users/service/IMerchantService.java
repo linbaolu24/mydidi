@@ -67,6 +67,11 @@ public interface IMerchantService {
 	 * @return
 	 */
 	MerchantHolderDto getMerchant(Long accountId);
+	/**
+	 * @param accountId
+	 * @return
+	 */
+	MerchantHolderDto getEditMerchant(Long accountId);
 
 	/**
 	 * @param accountId

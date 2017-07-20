@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -40,6 +42,8 @@ import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.thirdExt.select.ListPage;
 import cn.com.didi.user.area.service.IAreaService;
+import cn.com.didi.user.item.domain.SlServiceDto;
+import cn.com.didi.user.item.service.IItemService;
 import cn.com.didi.user.users.dao.mapper.MerchantAreaDtoMapper;
 import cn.com.didi.user.users.dao.mapper.MerchantDtoMapper;
 import cn.com.didi.user.users.dao.mapper.MerchantServiceDtoMapper;
@@ -82,6 +86,8 @@ public class MerchantServiceImpl implements IMerchantService {
 	protected IShapeGenerator shapeGenerator;
 	@Resource
 	protected IOrderInfoService orderInfoService;
+	@Resource
+	protected IItemService itemService;
 	//@Resource
 	//protected IItemService itemService;
 
@@ -138,6 +144,35 @@ public class MerchantServiceImpl implements IMerchantService {
 		List<MerchantServiceDto> slist = selectMerchantService(accountId);
 		dtoExt.setServiceList(slist);
 		return dtoExt;
+	}
+	
+	@Override
+	public MerchantHolderDto getEditMerchant(Long accountId) {
+		MerchantHolderDto holder=getMerchant(accountId);
+		if(holder==null){
+			return null;
+		}
+		if(CollectionUtils.isEmpty(holder.getServiceList())){
+			return holder;
+		}
+		List<MerchantServiceDto> lists=holder.getServiceList();
+		List<Integer> sls=lists.stream().map(one->one.getSlsId()).collect(Collectors.toList());
+		List<SlServiceDto> slsList=itemService.selectSlsList(sls);
+		if(CollectionUtils.isEmpty(slsList)){
+			Iterator<MerchantServiceDto> ite=lists.iterator();
+			while(ite.hasNext()){
+				MerchantServiceDto one=ite.next();
+				for(SlServiceDto slsOne:slsList){
+					if(one.getSlsId().equals(slsOne.getServiceId())){
+						one.setFlsId(slsOne.getFlsId());
+					}
+				}
+				if(one.getFlsId()==null){
+					ite.remove();
+				}
+			}
+		}
+		return holder;
 	}
 
 	// @Override

@@ -161,7 +161,11 @@ public class OrderMessageConstans {
 	 */
 	public static final Message ORDER_MRMF_LOCK_FAIL =newMessage(DomainMessageConstans.CODE_ORDER_MRMF_LOCK_FAIL);//="5003000026";
 	
-	
+	/**
+	 * 
+	 * 订单已被其他商户获取
+	 */
+	public static final Message ORDER_TAKED_BY_OTHER_MERCHANT =newMessage(DomainMessageConstans.CODE_ORDER_TAKED_BY_OTHER_MERCHANT);//="5003000027";
 	
 	/*以下为交易*/
 	/**

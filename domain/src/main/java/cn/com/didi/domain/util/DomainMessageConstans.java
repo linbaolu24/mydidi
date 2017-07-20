@@ -270,6 +270,10 @@ public class DomainMessageConstans {
 	 * 美容美发锁定失败
 	 */
 	public static final String CODE_ORDER_MRMF_LOCK_FAIL="5003000026";
+	/**
+	 * 订单已被其他商户获取
+	 */
+	public static final String CODE_ORDER_TAKED_BY_OTHER_MERCHANT="5003000027";
 	
 	
 	

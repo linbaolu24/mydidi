@@ -17,6 +17,8 @@ public class MerchantServiceDto extends MerchantServiceDtoKey implements Seriali
      * Certification results 0表示认证通过 1表示认证待认证 2 表示认证不通过
      */
     private String cr;
+    //add by my
+    private Integer flsId;
 
     private static final long serialVersionUID = 1L;
   //add by my
@@ -66,6 +68,14 @@ public class MerchantServiceDto extends MerchantServiceDtoKey implements Seriali
 
 	public void setCname(String cname) {
 		this.cname = cname;
+	}
+
+	public Integer getFlsId() {
+		return flsId;
+	}
+
+	public void setFlsId(Integer flsId) {
+		this.flsId = flsId;
 	}
     
 }

@@ -255,6 +255,9 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 	public IOrderRuslt<OrderDto> accept(Long orderId, Long bId) {
 		OrderDto info = orderInfoService.selectOrderSubjectInformation(orderId);
 		IOrderRuslt<OrderDto> temp = normalMercharVerify(info, bId);
+		if(temp!=null&&DomainMessageConstans.CODE_ORDER_ACCOUTID_NOT_EQUAL.equals(temp.getCode())){
+			return new OrderRuslt<>(OrderMessageConstans.ORDER_TAKED_BY_OTHER_MERCHANT);
+		}
 		if (temp != null) {
 			return temp;
 		}
