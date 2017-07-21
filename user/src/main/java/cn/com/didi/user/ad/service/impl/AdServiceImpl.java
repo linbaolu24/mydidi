@@ -114,7 +114,7 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 			for(AdDto one:list){
 				int result=AdUtils.isEndAd(now, one);
 				if(result>0){
-					one.setState(String.valueOf(one.getState()));
+					one.setState(String.valueOf(result));
 				}
 			}
 		}
