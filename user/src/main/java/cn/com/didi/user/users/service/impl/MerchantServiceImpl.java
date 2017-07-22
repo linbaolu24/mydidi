@@ -465,6 +465,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		//merchant.setWechatAccount(null);// 禁止更新微信账号
 		//merchant.setBusinessCategory(null);//禁止更新业务类型
 		MerchantDto temp = merchantMapper.selectByPrimaryKey(merchant.getAccountId());
+		merchant.setCr(null);
 		editMerchant(merchant, serviceList, areaList,temp);
 		
 	}
@@ -481,7 +482,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		if (temp == null) {
 			return;
 		}
-		merchant.setCr(null);
+		
 		merchant.setState(null);
 		merchant.setBusinessCategory(null);
 		merchantMapper.updateByPrimaryKeySelective(merchant);
@@ -696,6 +697,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		if(CrEnum.PASSING.codeEqual(dto.getCr())){
 			throw new IllegalArgumentException("已审核通过,不能编辑。");
 		}
+		merchant.setCr(CrEnum.WATTING.getCode());
 		editMerchant(merchant, serviceList, areaList,dto);
 	}
 	
