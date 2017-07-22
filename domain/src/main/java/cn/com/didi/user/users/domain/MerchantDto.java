@@ -145,8 +145,8 @@ public class MerchantDto implements Serializable {
 	private String wechatName;
 	/***/
 	private String service;
-
-
+    /**合并状态*/
+	private String comState;
 	
 	 /**
      * 用户名
@@ -567,6 +567,14 @@ public class MerchantDto implements Serializable {
 
 	public void setWechatName(String wechatName) {
 		this.wechatName = wechatName;
+	}
+
+	public String getComState() {
+		return comState;
+	}
+
+	public void setComState(String comState) {
+		this.comState = comState;
 	}
 
 }

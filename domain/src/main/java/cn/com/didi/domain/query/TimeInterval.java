@@ -55,6 +55,8 @@ public class TimeInterval implements Serializable{
 	 */
 	private Number id;
 	private String phone;
+	/**对于平台商户查询就是cr*/
+	private String comState;
 
 	public Date getStartTime() {
 		return startTime;
@@ -122,6 +124,17 @@ public class TimeInterval implements Serializable{
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+
+	public String getComState() {
+		return comState;
+	}
+
+	public void setComState(String comState) {
+		this.comState = comState;
+	}
+
+	
+	
 
 	
 }

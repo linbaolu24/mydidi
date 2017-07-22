@@ -529,7 +529,9 @@
      <if test="time.state !=null "> 
      and state=#{time.state,jdbcType=CHAR}
      </if>
-     
+      <if test="time.comState !=null ">
+     and cr=#{time.comState,jdbcType=CHAR}
+     </if>
       <if test="time.key !=null ">
       and (cname like CONCAT(#{time.key,jdbcType=VARCHAR},'%') or bpn like CONCAT(#{time.key,jdbcType=VARCHAR},'%') )
       </if>
@@ -551,7 +553,9 @@
      <if test="time.state !=null ">
      and state=#{time.state,jdbcType=CHAR}
      </if>
-     
+      <if test="time.comState !=null ">
+     and cr=#{time.comState,jdbcType=CHAR}
+     </if>
       <if test="time.key !=null ">
       and (cname like CONCAT(#{time.key,jdbcType=VARCHAR},'%') or bpn like CONCAT(#{time.key,jdbcType=VARCHAR},'%') )
       </if>

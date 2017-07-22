@@ -35,6 +35,7 @@ import cn.com.didi.domain.domains.Point;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.domain.util.ArrivalStatusEnum;
 import cn.com.didi.domain.util.BusinessCategory;
+import cn.com.didi.domain.util.ComStateEnum;
 import cn.com.didi.domain.util.CrEnum;
 import cn.com.didi.domain.util.LatLngUtiil;
 import cn.com.didi.domain.util.State;
@@ -93,15 +94,45 @@ public class MerchantServiceImpl implements IMerchantService {
 
 	@Override
 	public IPage<MerchantDto> selectMerchants(TimeInterval interval) {
+		processComState(interval);
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), false);
 		Integer count= merchantMapper.selectMerchantCount(interval);
 		if(count==null){
 			count=0;
 		}
 		List<MerchantDto> list =  merchantMapper.selectMerchants(interval, pageBounds);
+		if(list!=null){
+			list.stream().forEach(this::processComState);
+		}
 		return new ListPage<>(list,count);
 	}
-
+	protected void processComState(MerchantDto mdto){
+		ComStateEnum comState=null;
+		if(CrEnum.PASSING.codeEqual(mdto.getCr())){
+			comState=ComStateEnum.getFromSate(mdto.getState());
+		}else{
+			comState=ComStateEnum.getFromCr(mdto.getCr());
+		}
+		mdto.setComState(comState.getCode());
+	}
+	protected void processComState(TimeInterval mdto){
+		String comState=mdto.getComState();
+		String realState=null;
+		if(!StringUtils.isEmpty(comState)){
+			State states=ComStateEnum.getSate(comState);
+			if(states!=null){
+				realState=states.getState();
+			}
+			CrEnum cr=ComStateEnum.getCr(comState);
+			if(cr!=null){
+				comState=cr.getCode();
+			}
+		}
+		mdto.setComState(comState);
+		mdto.setState(realState);
+		
+		
+	}
 	@Override
 	public MerchantDto selectMerchant(Long accountId) {
 		return merchantMapper.selectByPrimaryKey(accountId);
