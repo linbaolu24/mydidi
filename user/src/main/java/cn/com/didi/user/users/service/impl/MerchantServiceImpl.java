@@ -501,8 +501,8 @@ public class MerchantServiceImpl implements IMerchantService {
 			for (MerchantServiceDto one : serviceList) {
 				one.setAccountId(merchant.getAccountId());
 				one.setCreateTime(date);
-				one.setState(merchant.getState());
-				one.setCr(merchant.getCr());
+				one.setState(StringUtils.defaultIfBlank(merchant.getState(),temp.getState()));
+				one.setCr(StringUtils.defaultIfBlank(merchant.getCr(),temp.getCr()));
 				addMerchantService(one);
 			}
 		}
@@ -698,6 +698,5 @@ public class MerchantServiceImpl implements IMerchantService {
 		}
 		editMerchant(merchant, serviceList, areaList,dto);
 	}
-
 	
 }
