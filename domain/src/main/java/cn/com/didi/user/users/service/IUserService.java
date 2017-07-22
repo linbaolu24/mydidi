@@ -85,7 +85,7 @@ public interface IUserService {
 	 * @param message
 	 * @return
 	 */
-	public void reflashUserLinkId(Long accountId);
+	public String reflashUserLinkId(Long accountId);
 	
 	/**
 	 * 修改密码

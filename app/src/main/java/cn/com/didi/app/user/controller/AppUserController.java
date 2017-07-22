@@ -236,7 +236,9 @@ public class AppUserController {
 	@RequestMapping(value = "/app/user/reflashRyToken", method = { RequestMethod.POST })
 	public IResult reflashRyToken(HttpServletRequest request){
 		Long accountId=resolver.resolve(request);
-		tUserService.reflashUserLinkId(accountId);
+		String token=tUserService.reflashUserLinkId(accountId);
+		Map map=new HashMap(1);
+		map.put("ryToken", token);
 		return ResultFactory.success();
 	}
 }

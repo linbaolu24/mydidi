@@ -458,17 +458,19 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 	}
 
 	@Override
-	public void reflashUserLinkId(Long accounId) {
+	public String reflashUserLinkId(Long accounId) {
 
 		UserDto one = selectUser(accounId);
 		if (one == null) {
-			return;
+			return null;
 		}
 		UserLinkIdDto dto = userThirdAccountService.generatorUserLinkAndThrow(one.getUserName(), one.getRole());
 		if (dto != null) {
 			dto.setAccountId(one.getAccountId());
 			userLinkIdDtoMapper.updateByPrimaryKeySelective(dto);
+			return dto.getRyToken();
 		}
+		return null;
 
 	}
 	
