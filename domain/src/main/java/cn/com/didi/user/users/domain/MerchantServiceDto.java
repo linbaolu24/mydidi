@@ -77,5 +77,7 @@ public class MerchantServiceDto extends MerchantServiceDtoKey implements Seriali
 	public void setFlsId(Integer flsId) {
 		this.flsId = flsId;
 	}
-    
+    public void setServiceId(Integer slsId){
+    	this.setSlsId(slsId);
+    }
 }
