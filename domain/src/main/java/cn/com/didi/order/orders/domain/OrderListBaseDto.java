@@ -87,6 +87,10 @@ public class OrderListBaseDto {
 	private String ryUserId;
 	private Integer communionFlag;
 	/**
+	 * 手续费
+	 */
+	private Integer poundage;
+	/**
 	 * 交流文案
 	 */
 	private String communionTip;
@@ -162,6 +166,12 @@ public class OrderListBaseDto {
 	}
 	public void setCommunionTip(String communionTip) {
 		this.communionTip = communionTip;
+	}
+	public Integer getPoundage() {
+		return poundage;
+	}
+	public void setPoundage(Integer poundage) {
+		this.poundage = poundage;
 	}
 	
 	

@@ -116,6 +116,7 @@ public class AppBaseOrderController {
 		map.put(DomainConstatns.CNAME, order.getCname());
 		map.put(DomainConstatns.COMMISSION, order.getCommission());
 		map.put(DomainConstatns.SPECIALTYPE, order.getSpecialType());
+		map.put(DomainConstatns.POUNDAGE, order.getPoundage());
 		return map;
 
 	}

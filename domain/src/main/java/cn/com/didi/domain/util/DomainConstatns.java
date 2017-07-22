@@ -54,6 +54,10 @@ public class DomainConstatns {
 	 * consumerName
 	 */
 	public static final String CONSUMER_NAME= "consumerName";
+	/**
+	 * 手续费
+	 */
+	public static final String POUNDAGE= "poundage";
 	
 	public static final String UPDATE_TIME="updateTime";
 	
