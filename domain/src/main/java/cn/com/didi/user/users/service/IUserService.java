@@ -80,6 +80,12 @@ public interface IUserService {
 	 * @return
 	 */
 	public String reflashUserLinkId(String role);
+	/**
+	 * @param role
+	 * @param message
+	 * @return
+	 */
+	public void reflashUserLinkId(Long accountId);
 	
 	/**
 	 * 修改密码

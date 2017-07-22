@@ -233,7 +233,12 @@ public class AppUserController {
 		map.put(DomainConstatns.PROFILE_PHOTO, StringUtils.defaultIfBlank(value, null));
 		return ResultFactory.success(map);
 	}
- 
+	@RequestMapping(value = "/app/user/reflashRyToken", method = { RequestMethod.POST })
+	public IResult reflashRyToken(HttpServletRequest request){
+		Long accountId=resolver.resolve(request);
+		tUserService.reflashUserLinkId(accountId);
+		return ResultFactory.success();
+	}
 }
 
 /*==========================================分隔线=========================================================*/

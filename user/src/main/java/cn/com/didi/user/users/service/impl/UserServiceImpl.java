@@ -456,6 +456,22 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		}
 		return null;
 	}
+
+	@Override
+	public void reflashUserLinkId(Long accounId) {
+
+		UserDto one = selectUser(accounId);
+		if (one == null) {
+			return;
+		}
+		UserLinkIdDto dto = userThirdAccountService.generatorUserLinkAndThrow(one.getUserName(), one.getRole());
+		if (dto != null) {
+			dto.setAccountId(one.getAccountId());
+			userLinkIdDtoMapper.updateByPrimaryKeySelective(dto);
+		}
+
+	}
+	
 	public List<UserDto> selectUsers(String role){
 		UserDtoExample example=new UserDtoExample();
 		UserDtoExample.Criteria cri=example.createCriteria();
