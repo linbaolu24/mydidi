@@ -158,7 +158,7 @@ public class MerchantServiceImpl implements IMerchantService {
 		List<MerchantServiceDto> lists=holder.getServiceList();
 		List<Integer> sls=lists.stream().map(one->one.getSlsId()).collect(Collectors.toList());
 		List<SlServiceDto> slsList=itemService.selectSlsList(sls);
-		if(CollectionUtils.isEmpty(slsList)){
+		if(!CollectionUtils.isEmpty(slsList)){
 			Iterator<MerchantServiceDto> ite=lists.iterator();
 			while(ite.hasNext()){
 				MerchantServiceDto one=ite.next();
