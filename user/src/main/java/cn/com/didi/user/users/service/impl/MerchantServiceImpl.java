@@ -165,11 +165,12 @@ public class MerchantServiceImpl implements IMerchantService {
 				for(SlServiceDto slsOne:slsList){
 					if(one.getSlsId().equals(slsOne.getServiceId())){
 						one.setFlsId(slsOne.getFlsId());
+						break;
 					}
 				}
-				if(one.getFlsId()==null){
+				/*if(one.getFlsId()==null){
 					ite.remove();
-				}
+				}*/
 			}
 		}
 		return holder;
