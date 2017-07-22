@@ -36,7 +36,7 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 
 	@Override
 	public List<IReciverDto> list(Point poi, Integer slsId) {
-		List<MerchantAreaDto> areaDto = merchantService.select(poi, 5, slsId);
+		List<MerchantAreaDto> areaDto = merchantService.select(poi, 20, slsId);
 		if (CollectionUtils.isEmpty(areaDto)) {
 			return null;
 		}

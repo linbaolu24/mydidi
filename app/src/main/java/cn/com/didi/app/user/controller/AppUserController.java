@@ -239,7 +239,7 @@ public class AppUserController {
 		String token=tUserService.reflashUserLinkId(accountId);
 		Map map=new HashMap(1);
 		map.put("ryToken", token);
-		return ResultFactory.success();
+		return ResultFactory.success(map);
 	}
 }
 
