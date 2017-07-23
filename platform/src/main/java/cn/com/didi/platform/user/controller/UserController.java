@@ -95,7 +95,10 @@ public class UserController {
 	public IResult addMerchantV2(@RequestBody MerchantExtDto dto) {
 		//AssertUtil.assertNotNullAppend(dto.getAccountId(), ACCOUNT_ID);
 		dto.setAccountId(null);
-		if(BusinessCategory.SELF.equals(dto.getBusinessCategory())){
+		if(StringUtils.isEmpty(dto.getBusinessCategory())){
+			dto.setBusinessCategory(BusinessCategory.SELF.getCode());
+		}
+		if(BusinessCategory.SELF.codeEqual(dto.getBusinessCategory())){
 		dto.setCr(CrEnum.PASSING.getCode());
 		}else{
 			dto.setCr(CrEnum.NOT_PASSING.getCode());
