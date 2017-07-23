@@ -231,6 +231,7 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 		}
 		Calendar cal=Calendar.getInstance();
 		int hour=cal.get(Calendar.HOUR_OF_DAY);
+		cal=DateUtils.truncate(cal, Calendar.DAY_OF_MONTH);
 		List<AdDto> adDto=adMapper.selectAdList(org.apache.commons.lang.StringUtils.defaultIfBlank( display.getDisplayPosition(),null), cal.getTime(), hour);
 		if(CollectionUtils.isEmpty(adDto)){
 			return null;
