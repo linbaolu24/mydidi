@@ -236,6 +236,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		info.setSourceState(info.getState());;
 		OrderRuslt<Void> orderResult = new OrderRuslt<Void>(info.getOrderId());
 		List<IReciverDto> reciverDtos = search.list(new Point( info.getLng(),info.getLat()), info.getSlsId());
+		LOGGER.debug("抢单通知师傅的列表为{}",reciverDtos);
 		if (CollectionUtils.isEmpty(reciverDtos)) {
 			// todo 没有找到接单人
 			orderResult.setCode(OrderMessageConstans.ORDER_NOTIFY_DIS_NO_MASTER.getCode());

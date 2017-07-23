@@ -41,6 +41,11 @@ public class ReciverDto implements IReciverDto{
 	public ReciverDto() {
 		super();
 	}
+	@Override
+	public String toString() {
+		return "ReciverDto [accountId=" + accountId + ", reciveId=" + reciveId + ", reciveType=" + reciveType
+				+ ", accountType=" + accountType + "]";
+	}
 	
 	
 	
