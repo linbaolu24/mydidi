@@ -404,6 +404,40 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		}
 		return count;
 	}
+	
+	@Transactional
+	public int orderCancel(OrderDto dto,OrderState dest,Integer cost) {
+		int count=updateOrderCannelState(dto.getOrderId(), dest.getCode(), dto.getState(), cost);
+		try {
+			if (BusinessCategory.THIRD.getCode().equals(dto.getBusinessCategory())) {
+				OrderNotifyDtoExample example = new OrderNotifyDtoExample();
+				OrderNotifyDtoExample.Criteria cri = example.createCriteria();
+				cri.andOrderIdEqualTo(dto.getOrderId());
+				orderNotifyMapper.deleteByExample(example);
+			}
+		} catch (Exception e) {
+			LOGGER.error("删除通知列表异常====" + e.getMessage(), e);
+		}
+		return count;
+	}
+	
+	@Transactional
+	public int orderTimeOut(OrderDto dto) {
+		int count=updateOrderFailState(dto.getOrderId(), OrderState.ORDER_STATE_FAIL.getCode(), dto.getState(),
+				"timeout");
+		try {
+			if (BusinessCategory.THIRD.getCode().equals(dto.getBusinessCategory())) {
+				OrderNotifyDtoExample example = new OrderNotifyDtoExample();
+				OrderNotifyDtoExample.Criteria cri = example.createCriteria();
+				cri.andOrderIdEqualTo(dto.getOrderId());
+				orderNotifyMapper.deleteByExample(example);
+			}
+		} catch (Exception e) {
+			LOGGER.error("删除通知列表异常====" + e.getMessage(), e);
+		}
+		return count;
+	}
+
 
 	@Override
 	public int orderReassignment(Long orderId, IMerchantDto reciver) {

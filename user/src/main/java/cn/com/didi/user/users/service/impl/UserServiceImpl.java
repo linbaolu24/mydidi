@@ -499,7 +499,21 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		}
 		return null;
 	}
-
+	@Override
+	public String getProfilePhotoByRyUserId(String ryUserId) {
+		if(StringUtils.isEmpty(ryUserId)){
+			return null;
+		}
+		String[] userAndRolery=ryUserId.split("-");
+		if(userAndRolery.length<2){
+			return null;
+		}
+		UserDto user=selectUser(userAndRolery[0], userAndRolery[1]);
+		if(user!=null){
+			return user.getProfilePhoto();
+		}
+		return null;
+	}
 
 	@Override
 	public void updateUserLinked(UserLinkIdDto userLinked) {
@@ -524,6 +538,8 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		userDtoMapper.updateByPrimaryKeySelective(dto);
 		
 	}
+
+	
 
 	
 	

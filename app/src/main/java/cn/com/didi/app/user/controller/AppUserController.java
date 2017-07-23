@@ -233,6 +233,18 @@ public class AppUserController {
 		map.put(DomainConstatns.PROFILE_PHOTO, StringUtils.defaultIfBlank(value, null));
 		return ResultFactory.success(map);
 	}
+	
+	@RequestMapping(value = "/app/user/getProfilePhotoByRyUserId", method = { RequestMethod.POST })
+	public IResult getProfilePhotoByRyUserId(@RequestBody Map<String,String> map,HttpServletRequest request){
+		Long accountId=resolver.resolve(request);
+		String ryUserId=map.get("ryUserId");
+		AssertUtil.assertNotNullAppend(ryUserId, "用户Id");
+		
+		String value=tUserService.getProfilePhotoByRyUserId(ryUserId);
+		Map map1=new HashMap(1);
+		map1.put(DomainConstatns.PROFILE_PHOTO, StringUtils.defaultIfBlank(value, null));
+		return ResultFactory.success(map1);
+	}
 	@RequestMapping(value = "/app/user/reflashRyToken", method = { RequestMethod.POST })
 	public IResult reflashRyToken(HttpServletRequest request){
 		Long accountId=resolver.resolve(request);

@@ -189,6 +189,12 @@ public interface IUserService {
 	 * @return
 	 */
 	public String getProfilePhoto(Long accountId);
+	/**
+	 * @param accountId
+	 * @param pp
+	 * @return
+	 */
+	public String getProfilePhotoByRyUserId(String ryUserId);
 
 	/**
 	 * @param accountId

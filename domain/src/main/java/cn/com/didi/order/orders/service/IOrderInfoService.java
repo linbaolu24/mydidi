@@ -8,6 +8,7 @@ import cn.com.didi.core.select.IPage;
 import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.query.TimeInterval;
+import cn.com.didi.domain.util.OrderState;
 import cn.com.didi.order.orders.domain.OrderBListDto;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
@@ -188,6 +189,16 @@ public interface IOrderInfoService {
 	 * @return
 	 */
 	public int orderTaking(OrderDto dto);
+	/**
+	 * @param dto
+	 * @return
+	 */
+	public int orderCancel(OrderDto dto,OrderState dest,Integer cost);
+	/**
+	 * @param dto
+	 * @return
+	 */
+	public int orderTimeOut(OrderDto dto);
 	/**
 	 * @param dto
 	 * @param reciver
