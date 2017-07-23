@@ -1,5 +1,6 @@
 package cn.com.didi.user.ad.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -27,7 +29,6 @@ import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
-import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.domains.IdStateDto;
 import cn.com.didi.domain.util.AdCategoryEnum;
 import cn.com.didi.domain.util.DisplayPositionEnum;
@@ -151,10 +152,10 @@ public class AdServiceImpl implements  IAdService ,ApplicationListener<ContextRe
 		 }
 		 return couple;
 	}
-
 	public Couple<AdDto, List<AdPicDto>> queryAdReal(DisplayPositionEnum display) {
 		Calendar cal=Calendar.getInstance();
 		int hour=cal.get(Calendar.HOUR_OF_DAY);
+		cal=DateUtils.truncate(cal, Calendar.DAY_OF_MONTH);
 		AdDto dto=adMapper.selectAd(display.getCode(), cal.getTime(), hour);
 		if(dto==null){
 			return null;
