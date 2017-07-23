@@ -447,6 +447,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			return new OrderRuslt<>(OrderMessageConstans.ORDER_HAVE_TIKEING.getMessage(),
 					OrderMessageConstans.ORDER_HAVE_TIKEING.getCode());
 		}
+		String sourceState=order.getState();
 		//int count=orderInfoService.updateOrderFailState(orderId, OrderState.ORDER_STATE_FAIL.getCode(), order.getState(),
 				//"timeout");
 		int count=orderInfoService.orderTimeOut(order);
@@ -454,6 +455,18 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if(orderResult!=null){
 			return orderResult;
 		}
+		
+		if (OrderState.ORDER_STATE_NOTIFY.codeEqual(sourceState)) {
+			
+			List<Long> ms = orderInfoService.listNotifyMerchant(order.getOrderId());
+			LOGGER.debug("已通知的商户列表为{},对用户发送消息",ms);
+			List<IReciverDto> lists = search.match(ms);
+			order.setState(OrderState.ORDER_STATE_CANNEL.getCode());
+			if (!CollectionUtils.isEmpty(lists)) {
+				MessageDto tempMDto=orderMessageFinder.findCCancelMessage(order);
+				sendMessage(order, tempMDto, lists);
+			}
+		} 
 		return null;
 	}
 
@@ -470,7 +483,7 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 		if (OrderState.ORDER_STATE_START_SERVICE.isLess(order.getState())&&(!"1".equals(order.getCancelFlag()))) {// 如果已经完成服务
 			return new OrderRuslt<>(OrderMessageConstans.ORDER_SERVICE_FINISH_CANNOT_CANNEL);
 		}
-		
+		String sourceState=order.getState();
 		OrderStateDto stateDto = new OrderStateDto();
 		stateDto.setCost(order.getCost());
 		stateDto.setState(order.getState());
@@ -494,7 +507,16 @@ public class OrderServiceImpl extends AbstractDecoratAbleMessageOrderService {
 			order.setState(state.getCode());
 			interceptor(OrderMessageOperation.CANCELED, new OrderContextDto(order));
 			MessageDto tempMDto=orderMessageFinder.findCCancelMessage(order);
-			sendMessage(order,  tempMDto, true);
+			if (OrderState.ORDER_STATE_NOTIFY.codeEqual(sourceState)) {
+				List<Long> ms = orderInfoService.listNotifyMerchant(order.getOrderId());
+				LOGGER.debug("已通知的商户列表为{},对用户发送消息",ms);
+				List<IReciverDto> lists = search.match(ms);
+				if (!CollectionUtils.isEmpty(lists)) {
+					sendMessage(order, tempMDto, lists);
+				}
+			} else {
+				sendMessage(order, tempMDto, true);
+			}
 		}
 		OrderRuslt<OrderStateDto> or = new OrderRuslt<>(orderId);
 		or.setData(stateDto);

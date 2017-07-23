@@ -526,4 +526,10 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 		return orderNotifyMapper.selectByExample(example);
 	}
 
+
+	@Override
+	public List<Long> listNotifyMerchant(Long orderId) {
+		return orderNotifyMapper.selectMerchatId(orderId);
+	}
+
 }

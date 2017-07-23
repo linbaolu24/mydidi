@@ -235,4 +235,5 @@ public interface IOrderInfoService {
 	 * @return
 	 */
 	public List<OrderNotifyDto> listNotifyOrders(Long merchantId,List<Integer> slsList);
+	public List<Long> listNotifyMerchant(Long orderId);
 }

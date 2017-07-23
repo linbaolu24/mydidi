@@ -41,6 +41,13 @@ public interface IReciverSearchService {
 	 * @return
 	 */
 	public IReciverDto match(Long accoutId,Role role);
+
+	/**
+	 * 从账户ID获取接收者
+	 * @param accoutId
+	 * @return
+	 */
+	public List<IReciverDto> match(List<Long> accoutId);
 	/**
 	 * 获取商家信息
 	 * @param accountId

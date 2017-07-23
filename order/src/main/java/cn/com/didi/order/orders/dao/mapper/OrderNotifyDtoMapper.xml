@@ -387,4 +387,11 @@
       #{record.lat,jdbcType=DECIMAL}, #{record.validFlag,jdbcType=CHAR}, #{record.createTime,jdbcType=TIMESTAMP}
       </foreach>
   </insert>
+  
+  <select id="selectMerchatId" resultType="java.lang.Long"  >
+    select 
+    merchant_account_id
+    from t_order_notify
+    where order_id = #{orderId,jdbcType=BIGINT}
+  </select>
 </mapper>

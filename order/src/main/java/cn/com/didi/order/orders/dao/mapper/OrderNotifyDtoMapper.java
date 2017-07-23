@@ -31,4 +31,10 @@ public interface OrderNotifyDtoMapper {
     int updateByPrimaryKey(OrderNotifyDto record);
     //add by my
     int insertNotifyList(@Param("record") OrderNotifyDto record,@Param("rlist") List<IReciverDto> lists);
+    /**
+     * @param record
+     * @param lists
+     * @return
+     */
+    List<Long> selectMerchatId(Long orderId);
 }

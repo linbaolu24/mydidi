@@ -10,9 +10,11 @@ import com.gexin.rp.sdk.base.IPushResult;
 import com.gexin.rp.sdk.base.impl.ListMessage;
 import com.gexin.rp.sdk.base.impl.SingleMessage;
 import com.gexin.rp.sdk.base.impl.Target;
+import com.gexin.rp.sdk.base.payload.APNPayload;
 import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.AbstractTemplate;
 import com.gexin.rp.sdk.template.NotificationTemplate;
+import com.gexin.rp.sdk.template.TransmissionTemplate;
 
 import cn.com.didi.core.property.IResult;
 import cn.com.didi.core.property.ResultFactory;
@@ -137,7 +139,8 @@ public class PushMessageServiceImpl implements IPushMessageService {
 
 	@SuppressWarnings("deprecation")
 	public AbstractTemplate notificationTemplateDemo(MessageDto context) {
-		NotificationTemplate template = new NotificationTemplate();
+		
+		/*NotificationTemplate template = new NotificationTemplate();
 		// 设置APPID与APPKEY
 		template.setAppId(appId);
 		template.setAppkey(appKey);
@@ -156,7 +159,15 @@ public class PushMessageServiceImpl implements IPushMessageService {
 		template.setIsClearable(true);
 		// 设置打开的网址地址
 		template.setTransmissionType(2);
+		template.setTransmissionContent(context.getContent());*/
+		TransmissionTemplate template = new TransmissionTemplate();
+		template.setAppId(appId);
+		template.setAppkey(appKey);
 		template.setTransmissionContent(context.getContent());
+		template.setTransmissionType(2);
+		APNPayload load=new APNPayload();
+		load.setContentAvailable(1);
+		template.setAPNInfo(load);
 		return template;
 	}
 	

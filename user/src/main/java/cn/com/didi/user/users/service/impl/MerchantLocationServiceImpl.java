@@ -3,6 +3,8 @@ package cn.com.didi.user.users.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -171,6 +173,18 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 	@Override
 	public IPage<IReciverDto> listMerchats(BusinessCategory category, IPageBound pageBounds) {
 		return userService.listAllBusiness(category, pageBounds);
+	}
+
+	@Override
+	public List<IReciverDto> match(List<Long> accoutId) {
+		if(CollectionUtils.isEmpty(accoutId)){
+			return null;
+		}
+		List<UserLinkIdDto> linkedId=userService.selectUserLinkedId(accoutId);
+		if(CollectionUtils.isEmpty(linkedId)){
+			return null;
+		}
+		return linkedId.stream().map(this::userLinkIdDtoToReciverDto).collect(Collectors.toList());
 	}
 
 }
