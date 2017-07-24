@@ -482,6 +482,7 @@ public class MerchantDto implements Serializable {
 		userDto.setProfilePhoto(getMpn());
 		userDto.setState(getState());
 		userDto.setCreateTime(getCreateTime());
+		userDto.setBusinessCategory(getBusinessCategory());
 		return userDto;
 	}
 

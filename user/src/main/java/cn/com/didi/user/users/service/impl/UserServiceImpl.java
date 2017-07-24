@@ -500,7 +500,7 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		return null;
 	}
 	@Override
-	public String getProfilePhotoByRyUserId(String ryUserId) {
+	public UserDto getProfilePhotoByRyUserId(String ryUserId) {
 		if(StringUtils.isEmpty(ryUserId)){
 			return null;
 		}
@@ -509,10 +509,7 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 			return null;
 		}
 		UserDto user=selectUser(userAndRolery[0], userAndRolery[1]);
-		if(user!=null){
-			return user.getProfilePhoto();
-		}
-		return null;
+		return user;
 	}
 
 	@Override

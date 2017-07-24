@@ -194,7 +194,7 @@ public interface IUserService {
 	 * @param pp
 	 * @return
 	 */
-	public String getProfilePhotoByRyUserId(String ryUserId);
+	public UserDto getProfilePhotoByRyUserId(String ryUserId);
 
 	/**
 	 * @param accountId
