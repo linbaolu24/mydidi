@@ -233,16 +233,32 @@ public class AppUserController {
 		map.put(DomainConstatns.PROFILE_PHOTO, StringUtils.defaultIfBlank(value, null));
 		return ResultFactory.success(map);
 	}
-	
+	protected String mhPhone(String phone){
+		if(!StringUtils.isEmpty(phone)){
+			return phone.substring(3)+"****"+phone.substring(7, phone.length());
+		}
+		return null;
+	}
+    protected String mhCname(String phone){
+    	if(!StringUtils.isEmpty(phone)){
+    		return phone.substring(1)+"师傅";
+    	}
+    	return null;
+	}
 	@RequestMapping(value = "/app/user/getProfilePhotoByRyUserId", method = { RequestMethod.POST })
 	public IResult getProfilePhotoByRyUserId(@RequestBody Map<String,String> map,HttpServletRequest request){
 		Long accountId=resolver.resolve(request);
 		String ryUserId=map.get("ryUserId");
 		AssertUtil.assertNotNullAppend(ryUserId, "用户Id");
-		
-		String value=tUserService.getProfilePhotoByRyUserId(ryUserId);
+		UserDto dto=tUserService.getProfilePhotoByRyUserId(ryUserId);
+		String name=dto.getUserName();
+		name=mhPhone(name);
+		if(Role.BUSINESS.codeEqual(dto.getRole())&&!StringUtils.isEmpty(dto.getCname())){
+			name=mhCname(dto.getCname());
+		}
 		Map map1=new HashMap(1);
-		map1.put(DomainConstatns.PROFILE_PHOTO, StringUtils.defaultIfBlank(value, null));
+		map1.put(DomainConstatns.PROFILE_PHOTO, StringUtils.defaultIfBlank(dto.getProfilePhoto(), null));
+		map1.put(DomainConstatns.CNAME, StringUtils.defaultIfBlank(name, null));
 		return ResultFactory.success(map1);
 	}
 	@RequestMapping(value = "/app/user/reflashRyToken", method = { RequestMethod.POST })
