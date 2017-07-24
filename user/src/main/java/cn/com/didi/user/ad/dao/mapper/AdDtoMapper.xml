@@ -368,7 +368,7 @@
     <if test="time.startTime != null">and create_time&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
     <if test="time.endTime != null">and create_time&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>
     <if test="time.state != null">and state = #{time.state,jdbcType=CHAR}</if>
-    <if test="time.key != null">and cname = #{time.key,jdbcType=VARCHAR}</if>
+    <if test="time.key != null">and cname like CONCAT(#{time.key,jdbcType=VARCHAR},'%')</if>
     <if test="time.displayPosition != null"> and display_position = #{time.displayPosition,jdbcType=VARCHAR}</if>
    </where>
     order by create_time desc

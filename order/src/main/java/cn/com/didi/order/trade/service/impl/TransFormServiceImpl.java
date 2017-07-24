@@ -55,7 +55,7 @@ public class TransFormServiceImpl implements ITransFormService {
 		if(!TradeCategory.OUT.codeEqual(dto.getCategory())){
 			throw new IllegalArgumentException("非提现记录不能审核。");
 		}
-		long interval=DateUtil.getIntervalDay(new Date(),dto.getCreateTime());
+		long interval=DateUtil.getIntervalDay(dto.getCreateTime(),new Date());
 		if(interval<=0){
 			throw new IllegalArgumentException("提现申请需要在24小时后才能审核。");
 		}
