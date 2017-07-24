@@ -235,7 +235,7 @@ public class AppUserController {
 	}
 	protected String mhPhone(String phone){
 		if(!StringUtils.isEmpty(phone)){
-			return phone.substring(3)+"****"+phone.substring(7, phone.length());
+			return phone.substring(0,3)+"****"+phone.substring(7);
 		}
 		return null;
 	}
