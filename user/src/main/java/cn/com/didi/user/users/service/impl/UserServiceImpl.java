@@ -504,7 +504,7 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 		if(StringUtils.isEmpty(ryUserId)){
 			return null;
 		}
-		String[] userAndRolery=ryUserId.split("-");
+		String[] userAndRolery=ryUserId.split("_");
 		if(userAndRolery.length<2){
 			return null;
 		}

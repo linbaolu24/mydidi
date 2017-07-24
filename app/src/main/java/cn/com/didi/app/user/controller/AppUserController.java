@@ -251,6 +251,13 @@ public class AppUserController {
 		String ryUserId=map.get("ryUserId");
 		AssertUtil.assertNotNullAppend(ryUserId, "用户Id");
 		UserDto dto=tUserService.getProfilePhotoByRyUserId(ryUserId);
+		if(dto==null){
+			LOGGER.debug("未找到用户信息返回null");
+			Map map1=new HashMap(1);
+			map1.put(DomainConstatns.PROFILE_PHOTO, null);
+			map1.put(DomainConstatns.CNAME, null);
+			return ResultFactory.success(map1); 
+		}
 		String name=dto.getUserName();
 		name=mhPhone(name);
 		if(Role.BUSINESS.codeEqual(dto.getRole())&&!StringUtils.isEmpty(dto.getCname())){
