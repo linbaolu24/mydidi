@@ -104,6 +104,9 @@ public class UserController {
 			dto.setCr(CrEnum.NOT_PASSING.getCode());
 			dto.setCause("未绑定微信账号。");
 		}
+		if(StringUtils.isEmpty(dto.getLocationAddress())){
+			dto.setLocationAddress(dto.getDetailAddress());
+		}
 		dto.setState(State.VALID.getState());
 		service.addMerchantV2(dto.dto(), dto.getServiceList(), dto.getAreaList());
 		return ResultFactory.success();
