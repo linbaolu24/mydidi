@@ -4,6 +4,7 @@ public class OrderListDto extends OrderListBaseDto{
 	
 	private String masterName;
 	private String mci;
+
 	public String getMci() {
 		return mci;
 	}
@@ -16,5 +17,6 @@ public class OrderListDto extends OrderListBaseDto{
 	public void setMasterName(String masterName) {
 		this.masterName = masterName;
 	}
+	
 	
 }

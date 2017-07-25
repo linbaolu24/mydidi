@@ -29,6 +29,7 @@ import cn.com.didi.domain.util.NameConstans;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
+import cn.com.didi.order.orders.domain.OrderTimeInterval;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderService;
 import cn.com.didi.order.result.IOrderRuslt;
@@ -54,7 +55,7 @@ public class POrderController {
 	@Resource
 	protected IMerchantService merchantService;
 	@RequestMapping(value = "/platform/order/list",method={RequestMethod.POST})
-	public IResult orderList(@RequestBody TimeInterval timeInterval){
+	public IResult orderList(@RequestBody OrderTimeInterval timeInterval){
 		if(!StringUtils.isEmpty(timeInterval.getKey())){
 			timeInterval.setId(Long.parseLong(timeInterval.getKey()));
 		}

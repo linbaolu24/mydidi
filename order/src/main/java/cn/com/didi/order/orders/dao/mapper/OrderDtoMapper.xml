@@ -872,7 +872,53 @@
   </update>
   
   
-   <resultMap id="BaseListResultMap" type="cn.com.didi.order.orders.domain.OrderListDto" >
+   <resultMap id="BasePListResultMap" type="cn.com.didi.order.orders.domain.OrderPListDto" >
+    <id column="order_id" property="orderId" jdbcType="BIGINT" />
+    <result column="sls_id" property="slsId" jdbcType="INTEGER" />
+    <result column="fls_id" property="flsId" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+    <result column="cci" property="cci" jdbcType="VARCHAR" />
+    <result column="consumer_address" property="consumerAddress" jdbcType="VARCHAR" />
+    <result column="cas" property="cas" jdbcType="VARCHAR" />
+    <result column="consumer_name" property="consumerName" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="CHAR" />
+    <result column="cause" property="cause" jdbcType="VARCHAR" />
+    <result column="consumer_account_id" property="consumerAccountId" jdbcType="BIGINT" />
+    <result column="merchant_account_id" property="merchantAccountId" jdbcType="BIGINT" />
+    <result column="Lng" property="lng" jdbcType="DECIMAL" />
+    <result column="lat" property="lat" jdbcType="DECIMAL" />
+    <result column="business_charge" property="businessCharge" jdbcType="CHAR" />
+    <result column="business_category" property="businessCategory" jdbcType="CHAR" />
+    <result column="master_name" property="masterName" jdbcType="VARCHAR" />
+    <result column="mci" property="mci" jdbcType="VARCHAR" />
+    <result column="cost" property="cost" jdbcType="INTEGER" />
+    <result column="deal_id" property="dealId" jdbcType="BIGINT" />
+    <result column="ort" property="ort" jdbcType="TIMESTAMP" />
+    <result column="oct" property="oct" jdbcType="TIMESTAMP" />
+    <result column="sst" property="sst" jdbcType="TIMESTAMP" />
+    <result column="oet" property="oet" jdbcType="TIMESTAMP" />
+    <result column="ofst" property="ofst" jdbcType="TIMESTAMP" />
+    <result column="evaluation" property="evaluation" jdbcType="INTEGER" />
+    <result column="text_evaluation" property="textEvaluation" jdbcType="VARCHAR" />
+    <result column="cancel_flag" property="cancelFlag" jdbcType="CHAR" />
+    <result column="commission" property="commission" jdbcType="INTEGER" />
+    <result column="poundage" property="poundage" jdbcType="INTEGER" />
+    <result column="mlng" property="mlng" jdbcType="DECIMAL" />
+    <result column="mlat" property="mlat" jdbcType="DECIMAL" />
+    <result column="cment" property="cment" jdbcType="VARCHAR" />
+    <result column="special_type" property="specialType" jdbcType="CHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
+    <result column="cancel_cause" property="cancelCause" jdbcType="VARCHAR" />
+    <result column="Internal_flag" property="internalFlag" jdbcType="INTEGER" />
+    <!-- <result column="ry_token" property="ryToken" jdbcType="VARCHAR" /> -->
+    <result column="ry_user_id" property="ryUserId" jdbcType="VARCHAR" />
+     <result column="crp" property="crp" jdbcType="VARCHAR" />
+      <result column="mrp" property="mrp" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="BaseListResultMap" type="cn.com.didi.order.orders.domain.OrderListDto" >
     <id column="order_id" property="orderId" jdbcType="BIGINT" />
     <result column="sls_id" property="slsId" jdbcType="INTEGER" />
     <result column="fls_id" property="flsId" jdbcType="INTEGER" />
@@ -963,7 +1009,7 @@
   </resultMap>
    
    
-   <select id="selectOrders" resultMap="BaseListResultMap"  >
+   <select id="selectOrders" resultMap="BasePListResultMap"  >
     select 
     td.order_Id,
     td.state,
@@ -971,7 +1017,21 @@
     td.oct,
     td.business_Category, 
     td.business_Charge,
-    td.cost
+    td.cost,
+    (select user_name from users where account_Id=consumer_account_id) as crp,
+    IF(merchant_account_id is null,null,(select user_name from users where account_Id=merchant_account_id)) as mrp
+    from t_order td
+    <where>
+    <if test="time.startTime != null">oct&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.endTime != null">and oct&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.id !=null "> and order_id=#{time.id,jdbcType=BIGINT}</if>
+    <if test="time.state !=null "> and state=#{time.state,jdbcType=VARCHAR}</if>
+    </where>
+     </select>
+     
+     <select id="countOrders" resultType="java.lang.Integer"  >
+    select 
+     count(1)
     from t_order td
     <where>
     <if test="time.startTime != null">oct&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
@@ -982,7 +1042,49 @@
      
    </select>
    
-   <select id="selectOrdersByUserPhone" resultMap="BaseListResultMap"  >
+    <select id="countOrdersByUserPhone" resultType="java.lang.Integer" >
+    select 
+      count(1)
+    from t_order td
+    <where>
+    <if test="time.startTime != null">and oct&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.endTime != null">and oct&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.id !=null "> and order_id=#{time.id,jdbcType=BIGINT}</if>
+    <if test="time.state !=null "> and td.state=#{time.state,jdbcType=VARCHAR}</if>
+    <if test="time.crp !=null ">and consumer_account_id=(select account_id from users where user_name=#{time.crp,jdbcType=VARCHAR} and role ='C')</if>
+     <if test="time.mrp !=null ">and merchant_account_id=(select account_id from users where user_name=#{time.mrp,jdbcType=VARCHAR} and role ='B')</if>
+    </where>
+   </select>
+   
+   
+   
+   
+   <select id="selectOrdersByUserPhone" resultMap="BasePListResultMap"  >
+    select 
+    td.order_Id,
+    td.state,
+    td.cname,
+    td.oct,
+    td.business_Category, 
+    td.business_Charge,
+    td.cost,
+    (select user_name from users where account_Id=consumer_account_id) as crp,
+    IF(merchant_account_id is null,null,(select user_name from users where account_Id=merchant_account_id)) as mrp
+    from t_order td
+    <where>
+    <if test="time.startTime != null">and oct&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.endTime != null">and oct&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>
+    <if test="time.id !=null "> and order_id=#{time.id,jdbcType=BIGINT}</if>
+    <if test="time.state !=null "> and td.state=#{time.state,jdbcType=VARCHAR}</if>
+    <if test="time.crp !=null ">and consumer_account_id=(select account_id from users where user_name=#{time.crp,jdbcType=VARCHAR} and role ='C')</if>
+     <if test="time.mrp !=null ">and merchant_account_id=(select account_id from users where user_name=#{time.mrp,jdbcType=VARCHAR} and role ='B')</if>
+    </where>
+     
+   </select>
+   
+   
+   
+   <!-- <select id="selectOrdersByUserPhone" resultMap="BasePListResultMap"  >
     select 
     td.order_Id,
     td.state,
@@ -1000,7 +1102,7 @@
     <if test="time.state !=null "> and td.state=#{time.state,jdbcType=VARCHAR}</if>
     </where>
      
-   </select>
+   </select> -->
   
   
   <select id="selectCOrderList" resultMap="BaseListResultMap"  >

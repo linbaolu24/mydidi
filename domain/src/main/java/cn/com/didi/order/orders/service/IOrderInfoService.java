@@ -17,6 +17,7 @@ import cn.com.didi.order.orders.domain.OrderNotifyDto;
 import cn.com.didi.order.orders.domain.OrderPromptDto;
 import cn.com.didi.order.orders.domain.OrderRenderDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
+import cn.com.didi.order.orders.domain.OrderTimeInterval;
 
 /**
  * 订单信息服务
@@ -28,7 +29,7 @@ public interface IOrderInfoService {
 	 * @param interval
 	 * @return
 	 */
-	public IPage<OrderListDto> selectOrders(TimeInterval interval);
+	public IPage<OrderListDto> selectOrders(OrderTimeInterval interval);
 	/**
 	 * @param orderId
 	 * @return

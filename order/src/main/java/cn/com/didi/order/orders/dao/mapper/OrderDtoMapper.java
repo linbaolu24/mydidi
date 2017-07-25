@@ -52,6 +52,12 @@ public interface OrderDtoMapper {
 	 * @return
 	 */
 	List<OrderListDto> selectOrders(@Param("time") TimeInterval interval, RowBounds bounds);
+	/**
+	 * @param interval
+	 * @param bounds
+	 * @return
+	 */
+	int countOrders(@Param("time") TimeInterval interval);
 	
 	/**
 	 * @param interval
@@ -60,7 +66,12 @@ public interface OrderDtoMapper {
 	 */
 	List<OrderListDto> selectOrdersByUserPhone(@Param("time") TimeInterval interval, RowBounds bounds);
 	
-	
+	/**
+	 * @param interval
+	 * @param bounds
+	 * @return
+	 */
+	int countOrdersByUserPhone(@Param("time") TimeInterval interval);
 	
 	/**
 	 * @param interval

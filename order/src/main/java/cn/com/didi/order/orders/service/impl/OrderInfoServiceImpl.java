@@ -45,12 +45,14 @@ import cn.com.didi.order.orders.domain.OrderPromptDto;
 import cn.com.didi.order.orders.domain.OrderRenderDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDtoExample;
+import cn.com.didi.order.orders.domain.OrderTimeInterval;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderRenderService;
 import cn.com.didi.order.orders.service.IOrderStateTransform;
 import cn.com.didi.order.orders.util.OrderMessageOperation;
 import cn.com.didi.order.orders.util.OrderUtils;
 import cn.com.didi.order.util.OrderMessageConstans;
+import cn.com.didi.thirdExt.select.ListPage;
 import cn.com.didi.thirdExt.select.MybatisPaginatorPage;
 
 @Service
@@ -71,15 +73,18 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	@Resource
 	protected OrderNotifyDtoMapper orderNotifyMapper;
 
-	public IPage<OrderListDto> selectOrders(TimeInterval interval) {
-		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), true);
-		PageList<OrderListDto> list=null;
-		if (StringUtils.isEmpty(interval.getPhone())) {
-			list = (PageList<OrderListDto>) orderMapper.selectOrders(interval, pageBounds);
+	public IPage<OrderListDto> selectOrders(OrderTimeInterval interval) {
+		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), false);
+		List<OrderListDto> list=null;
+		int count;
+		if (StringUtils.isEmpty(interval.getCrp())&&StringUtils.isEmpty(interval.getMrp())) {
+			count=orderMapper.countOrders(interval);
+			list =  orderMapper.selectOrders(interval, pageBounds);
 		} else {
-			list = (PageList<OrderListDto>) orderMapper.selectOrdersByUserPhone(interval, pageBounds);
+			count=orderMapper.countOrdersByUserPhone(interval);
+			list = orderMapper.selectOrdersByUserPhone(interval, pageBounds);
 		}
-		return new MybatisPaginatorPage<>(list);
+		return new ListPage<>(list,count);
 	}
 	
 
