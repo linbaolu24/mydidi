@@ -120,6 +120,9 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 	}
 
 	protected IMerchantDto convert(MerchantDto mdto) {
+		if(mdto==null){
+			return null;
+		}
 		SimpleMerchantDto smdto = new SimpleMerchantDto();
 		smdto.setMasterName(mdto.getMastername());
 		smdto.setMci(StringUtils.defaultIfEmpty(mdto.getContactInformation(), mdto.getBpn()));

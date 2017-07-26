@@ -74,6 +74,7 @@ public class MrmfV3OperationInterceptor extends MrmfV2OperationInterceptor{
 		return new OrderRuslt<>(OrderMessageConstans.ORDER_MRMF_NOT_VIP);	
 	}
 	protected <R> IOrderRuslt<R> merchantVerify(OrderContextDto data) {
+		LOGGER.debug("======先判断商户,在判断距离=========");
 		IOrderRuslt<R> result=super.merchantVerify(data);
 		if(result!=null&&!result.success()){
 			return result;
@@ -86,6 +87,7 @@ public class MrmfV3OperationInterceptor extends MrmfV2OperationInterceptor{
 		OrderDto dto=data.getOrderDto();
 		double rdistance=Math.abs(LatLngUtiil.getDistance(dto.getLng().doubleValue(), dto.getLat().doubleValue(),
 				dto.getMlng().doubleValue(), dto.getLat().doubleValue()));
+		LOGGER.debug("当前实际距离{}米,控制距离{}米",rdistance,distance);
 		if(rdistance>distance){
 			Message message=OrderMessageConstans.ORDER_COUSMER_MERCHANT_DISTANCE_TOO_LONG;
 			return new OrderRuslt<>(message.getMessage(distance),message.getCode());
