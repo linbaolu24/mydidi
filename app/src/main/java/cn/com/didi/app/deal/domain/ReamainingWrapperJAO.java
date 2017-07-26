@@ -31,7 +31,7 @@ public class ReamainingWrapperJAO {
 		super();
 		this.reamainingDto = reamainingDto;
 		PayAccountEnum enums=	ICodeAble.getCode(PayAccountEnum.values(), reamainingDto.getPat());
-		this.setAccount(enums.getAccoutId(account));
+		this.setAccount(enums.getAccoutName(account));
 	}
 	
 }

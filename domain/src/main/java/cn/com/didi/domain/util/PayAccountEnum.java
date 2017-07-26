@@ -26,6 +26,11 @@ public enum PayAccountEnum implements ICodeAble{
 			// TODO Auto-generated method stub
 			return 0;
 		}*/
+
+		@Override
+		public String getAccoutName(UserLinkIdDto payAccount) {
+			return payAccount.getAlipayAccount();
+		}
 	}, WECHATPAY("1") {
 		@Override
 		public String getAccoutId(PayAccountDto payAccount) {
@@ -40,6 +45,11 @@ public enum PayAccountEnum implements ICodeAble{
 		@Override
 		public int getMinTransAmount() {
 			return 100;
+		}
+
+		@Override
+		public String getAccoutName(UserLinkIdDto payAccount) {
+			return payAccount.getWechatName();
 		}
 
 		/*@Override
@@ -62,6 +72,7 @@ public enum PayAccountEnum implements ICodeAble{
 
 	public abstract String getAccoutId(PayAccountDto payAccount);
 	public abstract String getAccoutId(UserLinkIdDto payAccount);
+	public abstract String getAccoutName(UserLinkIdDto payAccount);
 	public abstract int getMinTransAmount();
 	//public abstract int getMxxTransAmount();
 	
