@@ -21,6 +21,17 @@ public class DateUtil {
 		int day=cal.get(cal.DAY_OF_MONTH);
 		return year*10000+month*100+day;
 	}
+
+	public static Date getDate(int year,int month,int day,boolean truncate) {
+
+		Calendar cal=Calendar.getInstance();
+		cal.set(year, month, day);
+		if(truncate){
+			DateUtils.truncate(cal, Calendar.DAY_OF_MONTH);
+		}
+		return cal.getTime();
+	}
+	
 	
 	public static int getCurrentYYYYMMDD(Date date){
 		
@@ -43,6 +54,7 @@ public class DateUtil {
 	}
 	public static void main(String[] args) {
 		System.out.println(getIntervalYYYYMMDD(-3));
+		System.out.println(getDate(1990, 01, 1,false));
 	}
 	public static long getIntervalDay(Date date1,Date date2){
 		return  ((date2.getTime()-date1.getTime())/(24*60*60*1000));

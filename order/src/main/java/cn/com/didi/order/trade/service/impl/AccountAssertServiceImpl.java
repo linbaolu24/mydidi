@@ -6,7 +6,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import cn.com.didi.core.utils.DateUtil;
@@ -23,6 +22,7 @@ import cn.com.didi.order.trade.util.MerchantRemainingUtil;
 @Service
 public class AccountAssertServiceImpl implements IAccountAssetsService{
 	private static int DEAULT_DAY=19900101;
+	private static Date DEAULT_DAY_DATE=DateUtil.getDate(1990, 1, 1,false);
 	private int LOCKED=-1;
 	private int selectLocked=7;
 	private static final Long SYSTEM_ACCOUNT_ID=0L;
@@ -161,7 +161,7 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		if (lockedSupport()) {
 			sum = myMerchantDayRemainingDtoMapper.countFrozeRemain(accountId, maxDay);
 		} else {
-			Date fromDate=DateUtil.getInterval(-selectLocked);
+			Date fromDate=DEAULT_DAY_DATE;
 			sum=myDealDtoMapper.countSum(accountId, fromDate, TradeCategory.OUT.getCode());
 		}
 		return sum == null ? 0 : sum;
@@ -176,7 +176,7 @@ public class AccountAssertServiceImpl implements IAccountAssetsService{
 		List<MerchantDayRemainingDto> lists=countRemain(accountId, maxDay);
 		DrawInfoDto infoDto=new DrawInfoDto();
 		infoDto.setPending(countFrozeRemain);
-		infoDto.setTotal(countFrozeRemain);
+		infoDto.setTotal(0L);
 		infoDto.setRemainDto(lists);
 		if(lists!=null){
 			lists.forEach(one->infoDto.setTotal(infoDto.getTotal()+one.getRemaining()));

@@ -608,7 +608,7 @@
     sum( amount)
     from deal where 
     category=#{cat,jdbcType=CHAR} and dai=#{dai,jdbcType=BIGINT} 
-    and create_time&gt;#{fromDate,jdbcType=TIMESTAMP}
+    and create_time&gt;#{fromDate,jdbcType=TIMESTAMP} and state='0'
   </select>
   
   <update id="updateDealStateAndSourceArray">
