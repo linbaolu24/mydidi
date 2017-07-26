@@ -112,6 +112,11 @@ public class OrderListBaseDto {
      * 特殊标志
      */
     private String specialType;
+    /**
+     * 违约金
+     */
+    private Integer commission;
+    //private Integer comm
 
 	public Long getConsumerAccountId() {
 		return consumerAccountId;
@@ -172,6 +177,12 @@ public class OrderListBaseDto {
 	}
 	public void setPoundage(Integer poundage) {
 		this.poundage = poundage;
+	}
+	public Integer getCommission() {
+		return commission;
+	}
+	public void setCommission(Integer commission) {
+		this.commission = commission;
 	}
 	
 	

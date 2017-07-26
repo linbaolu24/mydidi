@@ -151,10 +151,10 @@ public class OrderDto implements Serializable {
     private String cancelFlag;
 
     /**
-     * 佣金
+     * 佣金 表示违约金
      */
     private Integer commission;
-
+    /**表示手续费*/
     private Integer poundage;
 
     /**
