@@ -104,7 +104,7 @@ public class MrmfOperationInterceptor
 		order.setMasterName(dto.getMasterName());
 		order.setMerchantAccountId(dto.getMerchantId());
 		order.setMlat(dto.getLat());
-		order.setMlng(order.getMlng());
+		order.setMlng(dto.getLng());
 		order.setMci(dto.getMci());
 		order.setState(OrderState.ORDER_STATE_START_SERVICE.getCode());
 		return null;

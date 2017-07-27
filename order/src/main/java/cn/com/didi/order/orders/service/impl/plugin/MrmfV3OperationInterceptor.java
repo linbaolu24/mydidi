@@ -86,7 +86,7 @@ public class MrmfV3OperationInterceptor extends MrmfV2OperationInterceptor{
 		}
 		OrderDto dto=data.getOrderDto();
 		double rdistance=Math.abs(LatLngUtiil.getDistance(dto.getLng().doubleValue(), dto.getLat().doubleValue(),
-				dto.getMlng().doubleValue(), dto.getLat().doubleValue()));
+				dto.getMlng().doubleValue(), dto.getMlat().doubleValue()));
 		LOGGER.debug("当前实际距离{}米,控制距离{}米",rdistance,distance);
 		if(rdistance>distance){
 			Message message=OrderMessageConstans.ORDER_COUSMER_MERCHANT_DISTANCE_TOO_LONG;
