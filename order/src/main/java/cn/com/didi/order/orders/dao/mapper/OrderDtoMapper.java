@@ -12,6 +12,7 @@ import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderDtoExample;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
+import cn.com.didi.order.orders.domain.OrderPListDto;
 import cn.com.didi.order.orders.domain.OrderPromptDto;
 import cn.com.didi.user.users.domain.MerchantDto;
 
@@ -51,7 +52,7 @@ public interface OrderDtoMapper {
 	 * @param bounds
 	 * @return
 	 */
-	List<OrderListDto> selectOrders(@Param("time") TimeInterval interval, RowBounds bounds);
+	List<OrderPListDto> selectOrders(@Param("time") TimeInterval interval, RowBounds bounds);
 	/**
 	 * @param interval
 	 * @param bounds
@@ -64,7 +65,7 @@ public interface OrderDtoMapper {
 	 * @param bounds
 	 * @return
 	 */
-	List<OrderListDto> selectOrdersByUserPhone(@Param("time") TimeInterval interval, RowBounds bounds);
+	List<OrderPListDto> selectOrdersByUserPhone(@Param("time") TimeInterval interval, RowBounds bounds);
 	
 	/**
 	 * @param interval

@@ -14,6 +14,7 @@ import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
 import cn.com.didi.order.orders.domain.OrderNotifyDto;
+import cn.com.didi.order.orders.domain.OrderPListDto;
 import cn.com.didi.order.orders.domain.OrderPromptDto;
 import cn.com.didi.order.orders.domain.OrderRenderDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
@@ -29,7 +30,7 @@ public interface IOrderInfoService {
 	 * @param interval
 	 * @return
 	 */
-	public IPage<OrderListDto> selectOrders(OrderTimeInterval interval);
+	public IPage<OrderPListDto> selectOrders(OrderTimeInterval interval);
 	/**
 	 * @param orderId
 	 * @return

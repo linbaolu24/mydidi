@@ -41,6 +41,7 @@ import cn.com.didi.order.orders.domain.OrderListBaseDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
 import cn.com.didi.order.orders.domain.OrderNotifyDto;
 import cn.com.didi.order.orders.domain.OrderNotifyDtoExample;
+import cn.com.didi.order.orders.domain.OrderPListDto;
 import cn.com.didi.order.orders.domain.OrderPromptDto;
 import cn.com.didi.order.orders.domain.OrderRenderDto;
 import cn.com.didi.order.orders.domain.OrderStateRecordDto;
@@ -73,9 +74,9 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	@Resource
 	protected OrderNotifyDtoMapper orderNotifyMapper;
 
-	public IPage<OrderListDto> selectOrders(OrderTimeInterval interval) {
+	public IPage<OrderPListDto> selectOrders(OrderTimeInterval interval) {
 		PageBounds pageBounds = new PageBounds(interval.getPageIndex(), interval.getPageSize(), false);
-		List<OrderListDto> list=null;
+		List<OrderPListDto> list=null;
 		int count;
 		if (StringUtils.isEmpty(interval.getCrp())&&StringUtils.isEmpty(interval.getMrp())) {
 			count=orderMapper.countOrders(interval);

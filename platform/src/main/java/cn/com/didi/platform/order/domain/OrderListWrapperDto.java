@@ -7,9 +7,26 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 
 import cn.com.didi.order.orders.domain.OrderListDto;
+import cn.com.didi.order.orders.domain.OrderPListDto;
 
 public class OrderListWrapperDto {
-	private OrderListDto dto;
+	private OrderPListDto dto;
+
+	public String getCrp() {
+		return dto.getCrp();
+	}
+
+	public void setCrp(String crp) {
+		dto.setCrp(crp);
+	}
+
+	public String getMrp() {
+		return dto.getMrp();
+	}
+
+	public void setMrp(String mrp) {
+		dto.setMrp(mrp);
+	}
 
 	public Integer getCost() {
 		return dto.getCost();
@@ -130,20 +147,21 @@ public class OrderListWrapperDto {
 	public void setOrderId(String orderId) {
 		dto.setOrderId(Long.parseLong(orderId));
 	}
-	public static OrderListWrapperDto  wrapOrderListWrapperDto(OrderListDto list){
+	public static OrderListWrapperDto  wrapOrderListWrapperDto(OrderPListDto list){
 		OrderListWrapperDto dto=new OrderListWrapperDto();
 		dto.dto=list;
 		return dto;
 	}
 	
-	public static List<OrderListWrapperDto>  wrapOrderListWrapperDto(List<OrderListDto> list){
+	public static List<OrderListWrapperDto>  wrapOrderListWrapperDto(List<OrderPListDto> list){
 		if(CollectionUtils.isEmpty(list)){
            return null;
 		}
 		List<OrderListWrapperDto> lists=new ArrayList<>(list.size());
-		for(OrderListDto one:list){
+		for(OrderPListDto one:list){
 			lists.add(wrapOrderListWrapperDto(one));
 		}
 		return lists;
 	}
+	
 }

@@ -29,6 +29,7 @@ import cn.com.didi.domain.util.NameConstans;
 import cn.com.didi.order.orders.domain.OrderDto;
 import cn.com.didi.order.orders.domain.OrderEvaluationDto;
 import cn.com.didi.order.orders.domain.OrderListDto;
+import cn.com.didi.order.orders.domain.OrderPListDto;
 import cn.com.didi.order.orders.domain.OrderTimeInterval;
 import cn.com.didi.order.orders.service.IOrderInfoService;
 import cn.com.didi.order.orders.service.IOrderService;
@@ -59,7 +60,7 @@ public class POrderController {
 		if(!StringUtils.isEmpty(timeInterval.getKey())){
 			timeInterval.setId(Long.parseLong(timeInterval.getKey()));
 		}
-		IPage<OrderListDto>  page=orderInfoService.selectOrders(timeInterval);
+		IPage<OrderPListDto>  page=orderInfoService.selectOrders(timeInterval);
 		ListPage<OrderListWrapperDto> listPage=null;
 		if(page!=null){
 			List<OrderListWrapperDto> lists=OrderListWrapperDto.wrapOrderListWrapperDto(page.getList());
