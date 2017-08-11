@@ -143,6 +143,10 @@ public class OrderMessageConstans {
 	 * 不存在指定商户
 	 */
 	public static final Message ORDER_NO_SPECAIL_MERCHANT=newMessage(DomainMessageConstans.CODE_ORDER_NO_SPECAIL_MERCHANT);
+	/**
+	 * 提示商户已下线，请去其他店消费
+	 */
+	public static final Message ORDER_MERCHANT_OFF_LINE=newMessage(DomainMessageConstans.CODE_ORDER_MERCHANT_OFF_LINE);//"5003000028";
 	
 	/**
 	 * 

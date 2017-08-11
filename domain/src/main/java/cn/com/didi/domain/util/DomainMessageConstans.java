@@ -274,7 +274,10 @@ public class DomainMessageConstans {
 	 * 订单已被其他商户获取
 	 */
 	public static final String CODE_ORDER_TAKED_BY_OTHER_MERCHANT="5003000027";
-	
+	/**
+	 * 提示商户已下线，请去其他店消费
+	 */
+	public static final String CODE_ORDER_MERCHANT_OFF_LINE="5003000028";
 	
 	
 	/*以下位交易*/

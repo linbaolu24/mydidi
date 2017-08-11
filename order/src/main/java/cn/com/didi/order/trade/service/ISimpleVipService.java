@@ -7,5 +7,5 @@ import cn.com.didi.domain.util.State;
  *
  */
 public interface ISimpleVipService {
-	void updateState(Long accountId,Integer slsId,Long dealId,State state);
+	void updateState(Long accountId,Integer slsId,Long dealId,State state,String pat);
 }

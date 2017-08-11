@@ -8,4 +8,5 @@ public interface IMerchantDto {
 	BigDecimal getLat();
 	BigDecimal getLng();
 	Long getMerchantId();
+	boolean validState();
 }

@@ -12,5 +12,5 @@ public interface TemporaryMapper {
 	 * 更新VIPState
 	 * @return
 	 */
-	public int updateVipState(@Param("accountId") Long accountId,@Param("slsId") Integer slsId,@Param("dealId") Long dealId,@Param("state") String state);
+	public int updateVipState(@Param("accountId") Long accountId,@Param("slsId") Integer slsId,@Param("dealId") Long dealId,@Param("state") String state,@Param("pat") String pat);
 }

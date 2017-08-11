@@ -88,7 +88,7 @@ public class TradeTranscationCallBackFinderImpl implements ITradeTranscationCall
 		public void invoke(PayResultDto pay) {
 			DealDto deal=pay.getDeal();
 			depositService.updateTradeState(deal.getOrderId(), DealEnum.FINISH.getCode());
-			simpleVipService.updateState(deal.getSai(), appEnv.getMfxfSlsId(), deal.getDealId(), State.VALID);
+			simpleVipService.updateState(deal.getSai(), appEnv.getMfxfSlsId(), deal.getDealId(), State.VALID,deal.getSat());
 		}
 	
 	}

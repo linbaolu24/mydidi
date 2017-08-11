@@ -12,8 +12,8 @@ public class SimpleVipServiceImpl implements ISimpleVipService{
 	@Resource
 	protected TemporaryMapper temporaryMapper;
 	@Override
-	public void updateState(Long accountId,Integer slsId,Long dealId,State state) {
-		temporaryMapper.updateVipState(accountId, slsId, dealId, state.getState());
+	public void updateState(Long accountId,Integer slsId,Long dealId,State state,String pat) {
+		temporaryMapper.updateVipState(accountId, slsId, dealId, state.getState(),pat);
 	}
 	
 }

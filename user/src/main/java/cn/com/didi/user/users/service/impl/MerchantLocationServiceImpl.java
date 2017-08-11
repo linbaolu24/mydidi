@@ -129,6 +129,8 @@ public class MerchantLocationServiceImpl implements IReciverSearchService {
 		smdto.setLat(mdto.getLat());
 		smdto.setLng(mdto.getLng());
 		smdto.setMerchantId(mdto.getAccountId());
+		smdto.setCr(mdto.getCr());
+		smdto.setState(mdto.getState());
 		return smdto;
 	}
 

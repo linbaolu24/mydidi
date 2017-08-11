@@ -100,6 +100,9 @@ public class MrmfOperationInterceptor
 		if (dto == null) {
 			return new OrderRuslt<>( OrderMessageConstans.ORDER_NO_SPECAIL_MERCHANT);
 		}
+		if(!dto.validState()){
+			return new OrderRuslt<>( OrderMessageConstans.ORDER_MERCHANT_OFF_LINE);
+		}
 		OrderDto order = data.getOrderDto();
 		order.setMasterName(dto.getMasterName());
 		order.setMerchantAccountId(dto.getMerchantId());

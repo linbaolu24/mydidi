@@ -6,7 +6,8 @@
     set 
       state = #{state,jdbcType=CHAR},
       create_time = now(),
-      deal_id = #{dealId,jdbcType=BIGINT}
+      deal_id = #{dealId,jdbcType=BIGINT},
+      pat=#{pat,jdbcType=VARCHAR}
     where account_Id = #{accountId,jdbcType=BIGINT}
       and sls_id = #{slsId,jdbcType=INTEGER}
    </update>
