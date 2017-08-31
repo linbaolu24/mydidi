@@ -63,7 +63,10 @@ public class VipDto extends VipDtoKey implements Serializable {
      * 订单ID
      */
     private Long dealId;
-
+    /**
+     * 间隔天数
+     */
+    private Integer intervalDay;
     private static final long serialVersionUID = 1L;
 
     /**
@@ -233,4 +236,13 @@ public class VipDto extends VipDtoKey implements Serializable {
     public void setDealId(Long dealId) {
         this.dealId = dealId;
     }
+
+	public Integer getIntervalDay() {
+		return intervalDay;
+	}
+
+	public void setIntervalDay(Integer intervalDay) {
+		this.intervalDay = intervalDay;
+	}
+    
 }

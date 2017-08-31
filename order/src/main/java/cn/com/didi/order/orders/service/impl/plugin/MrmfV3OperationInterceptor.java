@@ -42,7 +42,7 @@ public class MrmfV3OperationInterceptor extends MrmfV2OperationInterceptor{
 				if(result!=null&&!result.success()){
 					return result;
 				}
-				result=handleCountController(order, data);
+				result=handleCountController(order, data,dto);
 				if(OrderMessageOperation.AUTH.equals(operation)&&(result==null||result.success())){
 					UseAbleDto<VipDto> userAbleDto=new UseAbleDto<>(0, 0, "");
 					userAbleDto.setData(dto);

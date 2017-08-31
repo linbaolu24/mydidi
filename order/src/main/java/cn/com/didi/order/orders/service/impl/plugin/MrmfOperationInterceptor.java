@@ -71,7 +71,7 @@ public class MrmfOperationInterceptor
 				if(result!=null&&!result.success()){
 					return result;
 				}
-				result=handleCountController(order, data);
+				result=handleCountController(order, data,null);
 				return result;
 			} else if (OrderMessageOperation.BEFORE_ADD.equals(operation)) {
 				Couple<IMerchantDto, IReciverDto> couple = reciverSearch
@@ -183,9 +183,15 @@ public class MrmfOperationInterceptor
 			LOGGER.error("订单 {},通知商户失败.", order, e);
 		}
 	}
-	public  <R> IOrderRuslt<R> handleCountController(OrderDto order, OrderContextDto data){
+
+	public  <R> IOrderRuslt<R> handleCountController(OrderDto order, OrderContextDto data,VipDto vipDto){
 		LOGGER.debug("次数控制校验");
-		long interval=appEnv.getMrmfDayInterval();
+		long interval=-1;
+		if(vipDto!=null&&vipDto.getIntervalDay()!=null){
+			interval=vipDto.getIntervalDay().intValue();
+		}else{
+			interval=appEnv.getMrmfDayInterval();
+		}
 		if(interval<=0){
 			return null;
 		}

@@ -191,4 +191,12 @@ public class VipServiceImpl implements IVipService{
 		key.setSlsId(slsId);;
 		vipMapper.deleteByPrimaryKey(key);
 	}
+	@Override
+	public void upgradeVip(VipDto dto) {
+		if(dto.getSlsId()==null){
+			dto.setSlsId(appEnvService.getMfxfSlsId());
+		}
+		dto.setIntervalDay(1);
+		vipMapper.upgradeVip(dto);
+	}
 }

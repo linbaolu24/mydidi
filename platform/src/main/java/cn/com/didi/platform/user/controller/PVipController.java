@@ -40,6 +40,11 @@ public class PVipController {
 		vipService.updateVip(interval.getAccountId(), null, interval.getCname(), interval.getBpn(), interval.getProfilePhoto());
 		return ResultFactory.success();
 	}
+	@RequestMapping(value = "/platform/vip/upgrade", method = RequestMethod.POST)
+	public IResult upgradeVip(@RequestBody VipDto interval) {
+		vipService.upgradeVip(interval);
+		return ResultFactory.success();
+	}
 	@RequestMapping(value = "/platform/vip/delete", method = RequestMethod.POST)
 	public IResult deleteVip(@RequestBody VipDto interval) {
 		AssertUtil.assertNotNull(interval.getAccountId(), "账户ID");
@@ -67,4 +72,6 @@ public class PVipController {
 		map.put(DomainConstatns.AMOUNT,NumberUtil.intToDecimal2(fee));
 		return ResultFactory.success(map);
 	}
+	
+	
 }

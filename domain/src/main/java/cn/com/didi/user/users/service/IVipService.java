@@ -18,4 +18,5 @@ public interface IVipService {
 	public void setVipFee(Integer slsId,int fee);
 	public int getVipFee(Integer slsId);
 	public void deleteVip(Long accountId,Integer slsId);
+	public void upgradeVip(VipDto dto);
 }

@@ -34,4 +34,5 @@ public interface VipDtoMapper {
     
     //add by my
     public List<VipDto> selectVips(@Param("time")TimeInterval interval,RowBounds rows);
+    public int upgradeVip(VipDto record);
 }

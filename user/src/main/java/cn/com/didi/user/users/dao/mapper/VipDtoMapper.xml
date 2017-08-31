@@ -16,6 +16,7 @@
     <result column="pat" property="pat" jdbcType="VARCHAR" />
     <result column="referee" property="referee" jdbcType="VARCHAR" />
     <result column="deal_id" property="dealId" jdbcType="BIGINT" />
+    <result column="interval_day" property="intervalDay" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -77,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List" >
     account_Id, sls_id, cname, profile_photo, bpn, state, role, business_category, create_time, 
-    update_time, phone, pat, referee, deal_id
+    update_time, phone, pat, referee, deal_id,interval_day
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.users.domain.VipDtoExample" >
     select
@@ -362,4 +363,14 @@
    </where>
     order by create_time desc
     </select>
+    
+    
+    
+    <update id="updateByPrimaryKey" parameterType="cn.com.didi.user.users.domain.VipDto" >
+    update t_vip
+    set interval_day=#{intervalDay,jdbcType=INTEGER},
+        upgrade_time=now()
+    where account_Id = #{accountId,jdbcType=BIGINT}
+      and sls_id = #{slsId,jdbcType=INTEGER}
+  </update>
 </mapper>

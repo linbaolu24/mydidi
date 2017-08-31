@@ -39,7 +39,7 @@ public class MrmfV2OperationInterceptor extends MrmfOperationInterceptor{
 				if(result!=null&&!result.success()){
 					return result;
 				}
-				result = handleCountController(order, data);
+				result = handleCountController(order, data,dto);
 				return result;
 			}else if (OrderMessageOperation.AUTH.equals(operation)){
 				VipDto dto=getVipDto(order, data);
