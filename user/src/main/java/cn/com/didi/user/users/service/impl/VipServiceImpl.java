@@ -196,7 +196,7 @@ public class VipServiceImpl implements IVipService{
 		if(dto.getSlsId()==null){
 			dto.setSlsId(appEnvService.getMfxfSlsId());
 		}
-		dto.setIntervalDay(2);
+		dto.setIntervalDay(1);
 		vipMapper.upgradeVip(dto);
 	}
 }
