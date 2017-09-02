@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
+import cn.com.didi.core.property.Couple;
 import cn.com.didi.domain.query.TimeInterval;
 import cn.com.didi.order.orders.domain.OrderBListDto;
 import cn.com.didi.order.orders.domain.OrderDto;
@@ -126,5 +127,6 @@ public interface OrderDtoMapper {
 	OrderDto selectOrderSubjectInformation(Long orderId);
 	
 	Long existOrder(OrderDtoExample example);
-	Date selectLastOfst(OrderDtoExample example);
+	 Couple<Integer, Date> selectLastOfst(OrderDtoExample example);
+	
 }

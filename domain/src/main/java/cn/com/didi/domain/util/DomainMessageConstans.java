@@ -278,6 +278,7 @@ public class DomainMessageConstans {
 	 * 提示商户已下线，请去其他店消费
 	 */
 	public static final String CODE_ORDER_MERCHANT_OFF_LINE="5003000028";
+
 	
 	
 	/*以下位交易*/

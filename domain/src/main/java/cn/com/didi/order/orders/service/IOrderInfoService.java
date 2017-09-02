@@ -220,7 +220,7 @@ public interface IOrderInfoService {
 	 * @param orderStates
 	 * @return
 	 */
-	public Date selectLastOfst(Long accountId,Integer slsId,String... orderStates);
+	public Couple<Integer, Date> selectLastOfst(Long accountId,Integer slsId,String... orderStates);
 	/**
 	 * @param acLong
 	 * @param slsId

@@ -187,25 +187,36 @@ public class MrmfOperationInterceptor
 	public  <R> IOrderRuslt<R> handleCountController(OrderDto order, OrderContextDto data,VipDto vipDto){
 		LOGGER.debug("次数控制校验");
 		long interval=-1;
+		int allCount=-1;
 		if(vipDto!=null&&vipDto.getIntervalDay()!=null){
 			interval=vipDto.getIntervalDay().intValue();
+			allCount=15;
 		}else{
 			interval=appEnv.getMrmfDayInterval();
+			allCount=10;
 		}
 		if(interval<=0){
 			return null;
 		}
-		Date date=orderInfoService.selectLastOfst(order.getConsumerAccountId(), order.getSlsId(),
+		 Couple<Integer, Date> cou=orderInfoService.selectLastOfst(order.getConsumerAccountId(), order.getSlsId(),
 				OrderState.ORDER_STATE_PENDING_CHARGE.getCode(),OrderState.ORDER_STATE_Pending_EVALUATION.getCode(),OrderState.ORDER_STATE_FINISH.getCode());
-		if(date==null){
+		if(cou==null){
 			return null;
 		}
-	
-		long realInterval=DateUtil.getIntervalDay(date,order.getOct());
-		LOGGER.debug("上次完成服务时间{},本次时间{},间隔{},系统间隔{}",date,order.getOct(),realInterval,interval);
-		if(realInterval<interval){
-			String message=OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getMessage(interval,interval-realInterval);
-			return new OrderRuslt<>(message,OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getCode());
+		Date date = cou.getSecond();
+		if (date != null) {
+			long realInterval = DateUtil.getIntervalDay(date, order.getOct());
+			LOGGER.debug("上次完成服务时间{},本次时间{},间隔{},系统间隔{}", date, order.getOct(), realInterval, interval);
+			if (realInterval < interval) {
+				String message = OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getMessage(interval,
+						interval - realInterval);
+				return new OrderRuslt<>(message, OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getCode());
+			}
+		}
+		Integer rCount=cou.getFirst();
+		if(rCount!=null&&allCount>0&&rCount>allCount){
+			String message = OrderMessageConstans.ORDER_MRMF_MONTH_NUM_CONTROLLER.getMessage(allCount);
+			return new  OrderRuslt<>(message,OrderMessageConstans.ORDER_MRMF_MONTH_NUM_CONTROLLER.getCode());
 		}
 		return null;
 	}

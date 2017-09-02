@@ -3,6 +3,7 @@ package cn.com.didi.order.orders.service.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -24,6 +26,7 @@ import cn.com.didi.core.excpetion.MessageObjectException;
 import cn.com.didi.core.filter.IOperationListener;
 import cn.com.didi.core.property.Couple;
 import cn.com.didi.core.select.IPage;
+import cn.com.didi.core.utils.DateUtil;
 import cn.com.didi.domain.domains.IMerchantDto;
 import cn.com.didi.domain.domains.IReciverDto;
 import cn.com.didi.domain.query.TimeInterval;
@@ -493,13 +496,16 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 	}
 
 	@Override
-	public Date selectLastOfst(Long accountId, Integer slsId, String... orderStates) {
+	public  Couple<Integer, Date> selectLastOfst(Long accountId, Integer slsId, String... orderStates) {
 		OrderDtoExample example=new OrderDtoExample();
 		OrderDtoExample.Criteria cri=example.createCriteria();
 		cri.andConsumerAccountIdEqualTo(accountId);
 		cri.andSlsIdEqualTo(slsId);
 		cri.andStateIn(Arrays.asList(orderStates));
 		cri.andOfstIsNotNull();
+		
+		Date date=DateUtil.getFirstDayOfMonth(Calendar.getInstance());
+		cri.andOfstGreaterThanOrEqualTo(date);
 		return orderMapper.selectLastOfst(example);
 	}
 	@Override

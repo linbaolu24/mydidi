@@ -1305,10 +1305,14 @@ GROUP BY merchant_account_id
     </if>
     limit 1
   </select>
+
+  <resultMap type="cn.com.didi.core.property.Couple" id="selectLastOfstMap">
+   <result column="first" property="first" jdbcType="INTEGER" />
+    <result column="second" property="second" jdbcType="TIMESTAMP" />
+  </resultMap>
   
-  
-   <select id="selectLastOfst" parameterType="cn.com.didi.order.orders.domain.OrderDtoExample" resultType="java.util.Date" >
-    select max(ofst) ofst from t_order
+   <select id="selectLastOfst" parameterType="cn.com.didi.order.orders.domain.OrderDtoExample" resultMap="selectLastOfstMap" >
+    select count(1) as first,max(ofst) as second from t_order
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
