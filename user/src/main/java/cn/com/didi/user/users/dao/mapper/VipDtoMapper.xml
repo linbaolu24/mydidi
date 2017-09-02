@@ -366,7 +366,7 @@
     
     
     
-    <update id="updateByPrimaryKey" parameterType="cn.com.didi.user.users.domain.VipDto" >
+    <update id="upgradeVip" parameterType="cn.com.didi.user.users.domain.VipDto" >
     update t_vip
     set interval_day=#{intervalDay,jdbcType=INTEGER},
         upgrade_time=now()
