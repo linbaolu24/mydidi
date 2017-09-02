@@ -213,7 +213,8 @@ public class MrmfOperationInterceptor
 				return new OrderRuslt<>(message, OrderMessageConstans.ORDER_MRMF_INTERVAL_NOT_ARRIVE.getCode());
 			}
 		}
-		Integer rCount=cou.getFirst();
+		Number number=cou.getFirst();
+		Integer rCount=number.intValue();
 		if(rCount!=null&&allCount>0&&rCount>allCount){
 			String message = OrderMessageConstans.ORDER_MRMF_MONTH_NUM_CONTROLLER.getMessage(allCount);
 			return new  OrderRuslt<>(message,OrderMessageConstans.ORDER_MRMF_MONTH_NUM_CONTROLLER.getCode());
