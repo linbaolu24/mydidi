@@ -1,6 +1,9 @@
 package cn.com.didi.webBase.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -35,6 +38,7 @@ public class AccessFilter extends OncePerRequestFilter implements Filter {
 	protected String[] filters;
 	protected String ignoreUrl;
 	protected String notLoging;
+	private Set ignoreToken=new HashSet<>(Arrays.asList("123098asclafnnnarsdslam...sdsflfaprokfallakkro2"));
 
 	@Override
 	protected void initFilterBean() {
@@ -86,6 +90,10 @@ public class AccessFilter extends OncePerRequestFilter implements Filter {
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		if (filters == null || filters.length == 0) {
 			return false;
+		}
+		String token=request.getHeader("jhl-accesstoken");
+		if(ignoreToken.contains(token)){
+			return true;
 		}
 		String str = request.getServletPath();
 		if (StringUtils.isEmpty(str) || str.equals("/")) {

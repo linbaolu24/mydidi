@@ -28,7 +28,7 @@ public class SystemController {
 					}
 					System.exit(0);
 				}
-			});
+			}).start();
 			return ResultFactory.success();
 		}
 		return ResultFactory.error("99999999", "无权限执行该操作");
