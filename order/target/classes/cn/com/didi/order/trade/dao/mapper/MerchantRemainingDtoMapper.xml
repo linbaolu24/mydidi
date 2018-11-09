@@ -3,8 +3,8 @@
 <mapper namespace="cn.com.didi.order.trade.dao.mapper.MerchantRemainingDtoMapper" >
   <resultMap id="BaseResultMap" type="cn.com.didi.order.trade.domain.MerchantRemainingDto" >
     <id column="account_Id" property="accountId" jdbcType="BIGINT" />
-    <id column="at" property="at" jdbcType="VARCHAR" />
-    <result column="remaining" property="remaining" jdbcType="INTEGER" />
+    <id column="pat" property="pat" jdbcType="VARCHAR" />
+    <result column="remaining" property="remaining" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -65,7 +65,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    account_Id, at, remaining
+    account_Id, pat, remaining
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.order.trade.domain.MerchantRemainingDtoExample" >
     select
@@ -87,12 +87,12 @@
     <include refid="Base_Column_List" />
     from merchant_remaining
     where account_Id = #{accountId,jdbcType=BIGINT}
-      and at = #{at,jdbcType=VARCHAR}
+      and pat = #{pat,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="cn.com.didi.order.trade.domain.MerchantRemainingDtoKey" >
     delete from merchant_remaining
     where account_Id = #{accountId,jdbcType=BIGINT}
-      and at = #{at,jdbcType=VARCHAR}
+      and pat = #{pat,jdbcType=VARCHAR}
   </delete>
   <delete id="deleteByExample" parameterType="cn.com.didi.order.trade.domain.MerchantRemainingDtoExample" >
     delete from merchant_remaining
@@ -101,9 +101,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.com.didi.order.trade.domain.MerchantRemainingDto" >
-    insert into merchant_remaining (account_Id, at, remaining
+    insert into merchant_remaining (account_Id, pat, remaining
       )
-    values (#{accountId,jdbcType=BIGINT}, #{at,jdbcType=VARCHAR}, #{remaining,jdbcType=INTEGER}
+    values (#{accountId,jdbcType=BIGINT}, #{pat,jdbcType=VARCHAR}, #{remaining,jdbcType=BIGINT}
       )
   </insert>
   <insert id="insertSelective" parameterType="cn.com.didi.order.trade.domain.MerchantRemainingDto" >
@@ -112,8 +112,8 @@
       <if test="accountId != null" >
         account_Id,
       </if>
-      <if test="at != null" >
-        at,
+      <if test="pat != null" >
+        pat,
       </if>
       <if test="remaining != null" >
         remaining,
@@ -123,11 +123,11 @@
       <if test="accountId != null" >
         #{accountId,jdbcType=BIGINT},
       </if>
-      <if test="at != null" >
-        #{at,jdbcType=VARCHAR},
+      <if test="pat != null" >
+        #{pat,jdbcType=VARCHAR},
       </if>
       <if test="remaining != null" >
-        #{remaining,jdbcType=INTEGER},
+        #{remaining,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -143,11 +143,11 @@
       <if test="record.accountId != null" >
         account_Id = #{record.accountId,jdbcType=BIGINT},
       </if>
-      <if test="record.at != null" >
-        at = #{record.at,jdbcType=VARCHAR},
+      <if test="record.pat != null" >
+        pat = #{record.pat,jdbcType=VARCHAR},
       </if>
       <if test="record.remaining != null" >
-        remaining = #{record.remaining,jdbcType=INTEGER},
+        remaining = #{record.remaining,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -157,8 +157,8 @@
   <update id="updateByExample" parameterType="map" >
     update merchant_remaining
     set account_Id = #{record.accountId,jdbcType=BIGINT},
-      at = #{record.at,jdbcType=VARCHAR},
-      remaining = #{record.remaining,jdbcType=INTEGER}
+      pat = #{record.pat,jdbcType=VARCHAR},
+      remaining = #{record.remaining,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -167,21 +167,27 @@
     update merchant_remaining
     <set >
       <if test="remaining != null" >
-        remaining = #{remaining,jdbcType=INTEGER},
+        remaining = #{remaining,jdbcType=BIGINT},
       </if>
     </set>
     where account_Id = #{accountId,jdbcType=BIGINT}
-      and at = #{at,jdbcType=VARCHAR}
+      and pat = #{pat,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.com.didi.order.trade.domain.MerchantRemainingDto" >
     update merchant_remaining
-    set remaining = #{remaining,jdbcType=INTEGER}
+    set remaining = #{remaining,jdbcType=BIGINT}
     where account_Id = #{accountId,jdbcType=BIGINT}
-      and at = #{at,jdbcType=VARCHAR}
+      and pat = #{pat,jdbcType=VARCHAR}
   </update>
   
+  <!-- add by my -->
   <update id="updateAddRemaining">
-		insert INTO merchant_remaining(account_id,at,remaining) VALUES(#{accountId,jdbcType=BIGINT},#{at,jdbcType=VARCHAR},#{remaining,jdbcType=INTEGER}) on
-		DUPLICATE key update remaining=remaining+#{remaining,jdbcType=INTEGER}
+		insert INTO merchant_remaining(account_id,pat,remaining) VALUES(#{accountId,jdbcType=BIGINT},#{pat,jdbcType=VARCHAR},#{remaining,jdbcType=BIGINT}) on
+		DUPLICATE key update remaining=remaining+#{remaining,jdbcType=BIGINT}
 	</update>
+	
+	
+	<select id="countRemain"  resultType="java.lang.Long" >
+	select SUM(remaining) remaining from merchant_remaining where account_Id=0 GROUP BY account_Id
+	</select>
 </mapper>

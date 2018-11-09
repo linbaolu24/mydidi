@@ -19,7 +19,7 @@
 		<property name="accessKey" value="${file.qn.accessKey}"></property>
 		<property name="secretKey" value="${file.qn.secretKey}"></property>
 		<property name="bucket" value="${file.qn.bucket:didi}"></property>
-		<property name="downLoadUrl" value="{file.qn.downLoadUrl}"></property>
+		<property name="downLoadUrl" value="${file.qn.downLoadUrl}"></property>
 		<property name="zone">
 			<value type="java.lang.Integer">${file.qn.zone:2}</value>
 		</property>
@@ -38,12 +38,36 @@
 			<value type="java.lang.Boolean">${http.logRequestTime:true}</value>
 		</property>
 	</bean>
+	<bean id="mappedHttpExe" class="cn.com.didi.thirdExt.http.MappedHttpExeService">
+	<property name="normal" ref="simpleHttpExe"></property>
+	<property name="wechatHttpExeService" ref="simpleHttpExeForWechat"></property>
+	<property name="appEnv" ref="appEnvImpl"></property>
+	</bean>
+	<bean id="simpleHttpExeForWechat" class="cn.com.didi.thirdExt.http.SimpleHttpExeService">
+	<property name="maxPerRoute">
+		<value type="java.lang.Integer">${http.wechat.maxPerRoute:-1}</value>
+	</property>
+	<property name="maxTotal">
+		<value type="java.lang.Integer">${http.wechat.maxTotal:-1}</value>
+	</property>
+	<property name="logRequestTime">
+		<value type="java.lang.Boolean">${http.logRequestTime:true}</value>
+	</property>
+	<property name="initalize" ref="wechatHttpsInitalize"></property>
+</bean>
+
+	<bean id="wechatHttpsInitalize" class="cn.com.didi.thirdExt.http.WechatHttpsInitalize">
+		<property name="env" ref="appEnvImpl"></property>
+	</bean>
+
+	 
 	<bean id="simpleHttpService" class="cn.com.didi.thirdExt.http.SimpleHttpService">
-		<property name="httpExe" ref="simpleHttpExe"></property>
+		<property name="httpExe" ref="mappedHttpExe"></property>
 	</bean>
 	<bean id="messageApplicationContext" class="cn.com.didi.thirdExt.message.MessageApplicationContext"></bean>
 	<bean id="cacheEnvironment" class="cn.com.didi.thirdExt.property.CacheEnvironment">
 	<property name="hashAble" ref="redisCache"></property>
+	<property name="sysParamService" ref="cachedCodeAndParam"></property>
 	 </bean>
 	<bean id="redisCache" class="cn.com.didi.thirdExt.cache.RedisCache"> </bean>
 	
@@ -59,4 +83,69 @@
 	
 	
 	<bean id="didiSimpleCodecImpl" class="cn.com.didi.core.property.impl.codec.SimpleCodecImpl"> </bean>
+	<bean id="jsonConfigureShapeGenerator" class="cn.com.didi.thirdExt.shape.JsonConfigureShapeGenerator"></bean>
+	
+	
+	
+    <bean id="cachedCodeAndParam" class="cn.com.didi.thirdExt.property.CachedDeracotorSysParamAndCodeDicService" primary="true">
+    <property name="hashAble" ref="redisCache"></property>
+    <property name="wrappedCodeDicService" ref="${cached.wrappedCodeDicService:codeDicServiceImpl}"></property>
+     <property name="wrappedSysParamService" ref="${cached.wrappedSysParamService:sysParamServiceImpl}"></property>
+    </bean>
+    
+      <bean id="stateTextResolverImpl" class="cn.com.didi.thirdExt.property.StateTextResolverImpl" primary="true">
+    <property name="codeDicService" ref="${stateText.codeDicService:cachedCodeAndParam}"></property>
+    </bean>
+    
+    <bean id="myLockManagerFacotyBean"
+	class="cn.com.didi.thirdExt.lock.RedissoonLockManagerFactory">
+	<property name="mock" value="${lock.mock:false}"></property>
+	<property name="url" value="${lock.redis.url}"></property>
+	<property name="password" value="${lock.redis.password}"></property>
+   </bean>
+
+
+
+
+	<bean id="appEnvImpl" class="cn.com.didi.thirdExt.produce.impl.AppEnvImpl"
+		init-method="init">
+		<property name="appEnviroment" ref="cacheEnvironment"></property>
+		<property name="orderTransJson" value="${appEnv.orderTransJson}"></property>
+
+		<property name="depositeAliNotifyUrl" value="${appEnv.deposite.depositeAliNotifyUrl}"></property>
+	
+		<property name="ipAdress" value="${ip.address}"></property>
+		
+		
+		<property name="mfxfSlsId" value="${appEnv.mfxfSlsId}"></property>
+		
+		<property name="ryAppKey" value="${appEnv.ryAppKey}"></property>
+		<property name="ryAppSecret" value="${appEnv.ryAppSecret}"></property>
+		<property name="ryBAppKey" value="${appEnv.ryBAppKey}"></property>
+		<property name="ryBAppSecret" value="${appEnv.ryBAppSecret}"></property>
+		
+		<property name="passAliNotifySign" value="${appEnv.passAliNotifySign}"></property>
+		<property name="passWchatNotifySign" value="${appEnv.passWchatNotifySign}"></property>
+
+	    <property name="depositeWechatNotifyUrl" value="${wechat.deposite.notifyUrl}"></property>
+		<property name="keyStoreResource"
+			value="${wechat.keyStore.resource:classpath:apiclient_cert.p12}"></property>
+		<property name="wechatPassword" value="${wechat.keyStore.password}"></property>
+		<property name="wechatPayNotifyUrl" value="${wechat.notifyUrl}"></property>
+		
+		
+		<property name="wechatCAppId" value="${wechat.cAppId}"></property>
+		<property name="wechatCAppSecret" value="${wechat.cAppSecret}"></property>
+		<property name="wechatCAppSignKey" value="${wechat.cAppSignKey}"></property>
+		<property name="wechatCMchId" value="${wechat.cMchId}"></property>
+		
+		
+		<property name="wechatMchId" value="${wechat.bMchId}"></property>
+		<property name="wechatAppSignedkey" value="${wechat.bAppSignKey}"></property>
+		<property name="wechatAppId" value="${wechat.bAppId}"></property>
+		<property name="wechatAppSecret" value="${wechat.bAppSecret}"></property>
+		<property name="wechatCAppName" value="${wechat.wechatCAppName}"></property>
+		
+		<property name="appName" value="${appEnv.appName}" />
+	</bean>
 </beans>

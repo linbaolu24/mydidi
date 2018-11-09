@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.didi.user.users.dao.mapper.UserDtoMapper" >
-  <resultMap id="BaseResultMap" type="cn.com.didi.user.users.domain.UserDto" >
+ <resultMap id="BaseResultMap" type="cn.com.didi.user.users.domain.UserDto" >
     <id column="account_Id" property="accountId" jdbcType="BIGINT" />
     <result column="user_name" property="userName" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
@@ -13,6 +13,10 @@
     <result column="role" property="role" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="address_code" property="addressCode" jdbcType="VARCHAR" />
+    <result column="business_category" property="businessCategory" jdbcType="CHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List" >
     account_Id, user_name, password, pcode, cname, bpn, state, profile_photo, role, create_time, 
-    address_code
+    address_code, business_category, remark, ext1, ext2
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.users.domain.UserDtoExample" >
     select
@@ -111,11 +115,13 @@
     insert into users (account_Id, user_name, password, 
       pcode, cname, bpn, 
       state, profile_photo, role, 
-      create_time, address_code)
+      create_time, address_code, business_category, 
+      remark, ext1, ext2)
     values (#{accountId,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{pcode,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, #{bpn,jdbcType=VARCHAR}, 
       #{state,jdbcType=CHAR}, #{profilePhoto,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{addressCode,jdbcType=VARCHAR})
+      #{createTime,jdbcType=TIMESTAMP}, #{addressCode,jdbcType=VARCHAR}, #{businessCategory,jdbcType=CHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.didi.user.users.domain.UserDto" useGeneratedKeys="true" keyProperty="accountId">
     insert into users
@@ -153,6 +159,18 @@
       <if test="addressCode != null" >
         address_code,
       </if>
+      <if test="businessCategory != null" >
+        business_category,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="ext1 != null" >
+        ext1,
+      </if>
+      <if test="ext2 != null" >
+        ext2,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="accountId != null" >
@@ -187,6 +205,18 @@
       </if>
       <if test="addressCode != null" >
         #{addressCode,jdbcType=VARCHAR},
+      </if>
+      <if test="businessCategory != null" >
+        #{businessCategory,jdbcType=CHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null" >
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        #{ext2,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -232,6 +262,18 @@
       <if test="record.addressCode != null" >
         address_code = #{record.addressCode,jdbcType=VARCHAR},
       </if>
+      <if test="record.businessCategory != null" >
+        business_category = #{record.businessCategory,jdbcType=CHAR},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ext1 != null" >
+        ext1 = #{record.ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ext2 != null" >
+        ext2 = #{record.ext2,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -249,7 +291,11 @@
       profile_photo = #{record.profilePhoto,jdbcType=VARCHAR},
       role = #{record.role,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      address_code = #{record.addressCode,jdbcType=VARCHAR}
+      address_code = #{record.addressCode,jdbcType=VARCHAR},
+      business_category = #{record.businessCategory,jdbcType=CHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      ext1 = #{record.ext1,jdbcType=VARCHAR},
+      ext2 = #{record.ext2,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -287,6 +333,18 @@
       <if test="addressCode != null" >
         address_code = #{addressCode,jdbcType=VARCHAR},
       </if>
+      <if test="businessCategory != null" >
+        business_category = #{businessCategory,jdbcType=CHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null" >
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
     </set>
     where account_Id = #{accountId,jdbcType=BIGINT}
   </update>
@@ -301,12 +359,26 @@
       profile_photo = #{profilePhoto,jdbcType=VARCHAR},
       role = #{role,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      address_code = #{addressCode,jdbcType=VARCHAR}
+      address_code = #{addressCode,jdbcType=VARCHAR},
+      business_category = #{businessCategory,jdbcType=CHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR}
     where account_Id = #{accountId,jdbcType=BIGINT}
   </update>
+
+
+
+
+
+
+
+
+
+ <!-- add by my -->
   <select id="selectUsers" resultMap="BaseResultMap">
   select  account_Id, user_name, cname, bpn, state, role, create_time, 
-    address_code from users where role!='P' 
+    address_code,remark from users where role='C' 
     <if test="time.startTime != null">and create_time&gt;=#{time.startTime,jdbcType=TIMESTAMP}</if>
     <if test="time.endTime != null">and create_time&lt;=#{time.endTime,jdbcType=TIMESTAMP}</if>
     <if test="time.state != null">and state = #{time.state,jdbcType=CHAR}</if>
@@ -327,4 +399,11 @@
     </if>
     order by create_time desc
     </select>
+    
+    <select id="selectUserPhone" resultType="java.lang.String">
+  select distinct user_name  from users where role!='P' 
+  <if test="role != null"> and role =#{role,jdbcType=VARCHAR}</if>
+    </select>
+    
+    
 </mapper>

@@ -1,0 +1,15 @@
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\push\service\impl\MapperPushMessageServiceImpl.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\push\service\IPushMessageService.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\vm\RedisRegistry.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\push\service\impl\PushTransmissionMessageServiceImpl.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\produce\IMessageProduce.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\util\MessageConstants.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\shortmessage\service\IShortMessageService.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\IMessage.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\registry\Node.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\push\service\impl\PushMessageServiceImpl.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\registry\IRegistry.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\shortmessage\domain\ShortMessgaeDto.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\shortmessage\service\impl\ShortMessageServiceImpl.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\vm\VmRegistry.java
+D:\soft installer\didi\didi\didi\message\src\main\java\cn\com\didi\message\listener\IMessageListener.java

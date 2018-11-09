@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="web">
+    <wb-module deploy-name="appWeb">
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
@@ -7,19 +7,13 @@
         <dependent-module archiveName="core-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/core/core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="platform-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/platform/platform">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="user-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/user/user">
+        <dependent-module archiveName="app-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/app/app">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="webBase-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/webBase/webBase">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="order-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/order/order">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="app-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/app/app">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="boot-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/boot/boot">
@@ -34,7 +28,10 @@
         <dependent-module archiveName="message-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/message/message">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <property name="context-root" value="web"/>
+        <dependent-module archiveName="user-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/user/user">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/web/target/classes"/>
+        <property name="context-root" value="appWeb"/>
     </wb-module>
 </project-modules>

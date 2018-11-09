@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.com.didi.user.users.dao.mapper.MerchantAreaDtoMapper" >
-  <resultMap id="BaseResultMap" type="cn.com.didi.user.users.domain.MerchantAreaDto" >
+ <resultMap id="BaseResultMap" type="cn.com.didi.user.users.domain.MerchantAreaDto" >
     <id column="account_Id" property="accountId" jdbcType="BIGINT" />
     <id column="area_code" property="areaCode" jdbcType="VARCHAR" />
     <result column="Lng" property="lng" jdbcType="DECIMAL" />
     <result column="lat" property="lat" jdbcType="DECIMAL" />
+    <result column="shape" property="shape" jdbcType="VARCHAR" />
+    <result column="point" property="point" jdbcType="VARCHAR" />
+    <result column="rlat" property="rlat" jdbcType="DECIMAL" />
+    <result column="rlng" property="rlng" jdbcType="DECIMAL" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -66,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    account_Id, area_code, Lng, lat
+    account_Id, area_code, Lng, lat, shape, point, rlat, rlng, cname, ext1, ext2
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.com.didi.user.users.domain.MerchantAreaDtoExample" >
     select
@@ -103,9 +110,13 @@
   </delete>
   <insert id="insert" parameterType="cn.com.didi.user.users.domain.MerchantAreaDto" >
     insert into merchant_area (account_Id, area_code, Lng, 
-      lat)
+      lat, shape, point, 
+      rlat, rlng, cname, 
+      ext1, ext2)
     values (#{accountId,jdbcType=BIGINT}, #{areaCode,jdbcType=VARCHAR}, #{lng,jdbcType=DECIMAL}, 
-      #{lat,jdbcType=DECIMAL})
+      #{lat,jdbcType=DECIMAL}, #{shape,jdbcType=VARCHAR}, #{point,jdbcType=VARCHAR}, 
+      #{rlat,jdbcType=DECIMAL}, #{rlng,jdbcType=DECIMAL}, #{cname,jdbcType=VARCHAR}, 
+      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.com.didi.user.users.domain.MerchantAreaDto" >
     insert into merchant_area
@@ -122,6 +133,27 @@
       <if test="lat != null" >
         lat,
       </if>
+      <if test="shape != null" >
+        shape,
+      </if>
+      <if test="point != null" >
+        point,
+      </if>
+      <if test="rlat != null" >
+        rlat,
+      </if>
+      <if test="rlng != null" >
+        rlng,
+      </if>
+      <if test="cname != null" >
+        cname,
+      </if>
+      <if test="ext1 != null" >
+        ext1,
+      </if>
+      <if test="ext2 != null" >
+        ext2,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="accountId != null" >
@@ -135,6 +167,27 @@
       </if>
       <if test="lat != null" >
         #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="shape != null" >
+        #{shape,jdbcType=VARCHAR},
+      </if>
+      <if test="point != null" >
+        #{point,jdbcType=VARCHAR},
+      </if>
+      <if test="rlat != null" >
+        #{rlat,jdbcType=DECIMAL},
+      </if>
+      <if test="rlng != null" >
+        #{rlng,jdbcType=DECIMAL},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null" >
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        #{ext2,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -159,6 +212,27 @@
       <if test="record.lat != null" >
         lat = #{record.lat,jdbcType=DECIMAL},
       </if>
+      <if test="record.shape != null" >
+        shape = #{record.shape,jdbcType=VARCHAR},
+      </if>
+      <if test="record.point != null" >
+        point = #{record.point,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rlat != null" >
+        rlat = #{record.rlat,jdbcType=DECIMAL},
+      </if>
+      <if test="record.rlng != null" >
+        rlng = #{record.rlng,jdbcType=DECIMAL},
+      </if>
+      <if test="record.cname != null" >
+        cname = #{record.cname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ext1 != null" >
+        ext1 = #{record.ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ext2 != null" >
+        ext2 = #{record.ext2,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -169,7 +243,14 @@
     set account_Id = #{record.accountId,jdbcType=BIGINT},
       area_code = #{record.areaCode,jdbcType=VARCHAR},
       Lng = #{record.lng,jdbcType=DECIMAL},
-      lat = #{record.lat,jdbcType=DECIMAL}
+      lat = #{record.lat,jdbcType=DECIMAL},
+      shape = #{record.shape,jdbcType=VARCHAR},
+      point = #{record.point,jdbcType=VARCHAR},
+      rlat = #{record.rlat,jdbcType=DECIMAL},
+      rlng = #{record.rlng,jdbcType=DECIMAL},
+      cname = #{record.cname,jdbcType=VARCHAR},
+      ext1 = #{record.ext1,jdbcType=VARCHAR},
+      ext2 = #{record.ext2,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -183,6 +264,27 @@
       <if test="lat != null" >
         lat = #{lat,jdbcType=DECIMAL},
       </if>
+      <if test="shape != null" >
+        shape = #{shape,jdbcType=VARCHAR},
+      </if>
+      <if test="point != null" >
+        point = #{point,jdbcType=VARCHAR},
+      </if>
+      <if test="rlat != null" >
+        rlat = #{rlat,jdbcType=DECIMAL},
+      </if>
+      <if test="rlng != null" >
+        rlng = #{rlng,jdbcType=DECIMAL},
+      </if>
+      <if test="cname != null" >
+        cname = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null" >
+        ext1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        ext2 = #{ext2,jdbcType=VARCHAR},
+      </if>
     </set>
     where account_Id = #{accountId,jdbcType=BIGINT}
       and area_code = #{areaCode,jdbcType=VARCHAR}
@@ -190,7 +292,14 @@
   <update id="updateByPrimaryKey" parameterType="cn.com.didi.user.users.domain.MerchantAreaDto" >
     update merchant_area
     set Lng = #{lng,jdbcType=DECIMAL},
-      lat = #{lat,jdbcType=DECIMAL}
+      lat = #{lat,jdbcType=DECIMAL},
+      shape = #{shape,jdbcType=VARCHAR},
+      point = #{point,jdbcType=VARCHAR},
+      rlat = #{rlat,jdbcType=DECIMAL},
+      rlng = #{rlng,jdbcType=DECIMAL},
+      cname = #{cname,jdbcType=VARCHAR},
+      ext1 = #{ext1,jdbcType=VARCHAR},
+      ext2 = #{ext2,jdbcType=VARCHAR}
     where account_Id = #{accountId,jdbcType=BIGINT}
       and area_code = #{areaCode,jdbcType=VARCHAR}
   </update>
@@ -202,19 +311,37 @@
     <result column="area" property="area" jdbcType="VARCHAR" />
   </resultMap>
   
-   <!--  and area_code = #{areaCode,jdbcType=VARCHAR} -->
-  <select id="selectMerchantArea" resultMap="AreaBaseResultMap" >
+   <!--  and area_code = #{areaCode,jdbcType=VARCHAR}  (select ca.cname from code_area ca where ca.area_code=ma.area_code) area-->
+ <!--  <select id="selectMerchantArea" resultMap="AreaBaseResultMap" >
     select 
-    ma.area_code,(select ca.cname from code_area ca where ca.area_code=ma.area_code) area
+    ma.area_code,ma.cname area
     from merchant_area ma
     where ma.account_Id = #{accountId,jdbcType=BIGINT}
-  </select>
-  
+  </select> -->
+ <select id="selectMerchantArea" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from merchant_area 
+    where account_Id = #{accountId,jdbcType=BIGINT}
+  </select> 
   
   
    <select id="selectPoints" resultMap="BaseResultMap" >
    select me.account_Id,me.lat,me.lng from merchant_service ms,merchant me where ms.sls_id=#{slsId,jdbcType=INTEGER} and ms.account_Id=me.account_Id
    and me.lat&gt;= #{leftDown.lat,jdbcType=DECIMAL} and me.lat&lt;=#{rightTop.lat,jdbcType=DECIMAL} 
-   and me.Lng&gt;=#{leftDown.lng,jdbcType=DECIMAL} and me.Lng&lt;=#{rightTop.lng,jdbcType=DECIMAL}   and me.state='0'
+   and me.Lng&gt;=#{leftDown.lng,jdbcType=DECIMAL} and me.Lng&lt;=#{rightTop.lng,jdbcType=DECIMAL}   and me.state='0' and me.cr='0'
   </select>
+  
+   <sql id="Base_Column_List_MA" >
+    ma.account_Id, ma.area_code, ma.Lng, ma.lat, ma.shape, ma.point, ma.rlat, ma.rlng
+  </sql>
+	<select id="selectAreas" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List_MA"></include>
+		from merchant_service ms,merchant_area ma where
+		ms.account_Id=ma.account_Id and ms.sls_id=#{slsId,jdbcType=INTEGER}
+		and ma.lat&lt;= #{point.y,jdbcType=DECIMAL} and ma.rlat&gt;= #{point.y,jdbcType=DECIMAL} 
+		and ma.lng&lt;= #{point.x,jdbcType=DECIMAL}
+		and ma.rlng&gt;=#{point.x,jdbcType=DECIMAL}  and ms.state='0' and ms.cr='0'
+	</select>
 </mapper>
